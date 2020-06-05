@@ -1,0 +1,9 @@
+0 : LeftUp
+1 : Left
+2 : LeftDown
+3 : Down
+4 : RightDown
+5 : Right
+6 : RightUp
+7 : Up
+8 : Center

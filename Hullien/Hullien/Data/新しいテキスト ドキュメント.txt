@@ -1,0 +1,27 @@
+D+E+B ボックス表示
+
+D+E+S スフィア表示
+
+C+
+UP
+DOWN
+RIGHT
+LEFT カメラ移動
+
+P+
+UP
+DOWN
+RIGHT
+LEFT
+Q
+E プレイヤ移動.
+
+R +
+UP
+DOWN
+RIGHT
+LEFT
+Q
+E プレイヤ回転.
+
+T+O+Tab Editorシーン
