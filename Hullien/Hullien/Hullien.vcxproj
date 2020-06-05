@@ -163,6 +163,7 @@
     <ClCompile Include="SourceCode\Common\Shader\Toon\Toon.cpp" />
     <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp" />
     <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Character.cpp" />
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
     <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
@@ -226,6 +227,8 @@
     <ClInclude Include="SourceCode\Common\Shader\Toon\Toon.h" />
     <ClInclude Include="SourceCode\Common\Sprite\CSprite.h" />
     <ClInclude Include="SourceCode\Editor\ControllerEdit\ControllerEdit.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Character.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemList.h" />
     <ClInclude Include="SourceCode\GameObject\GameObject.h" />
     <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />
     <ClInclude Include="SourceCode\GameObject\ObjectList.h" />
