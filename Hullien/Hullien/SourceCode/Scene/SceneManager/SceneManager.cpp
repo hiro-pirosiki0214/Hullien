@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "..\Scenes\SceneList.h"
+#include "..\..\Utility\XInput\XInput.h"
 
 CSceneManager::CSceneManager()
 	: m_pScene		( nullptr )
@@ -21,6 +22,8 @@ CSceneManager::~CSceneManager()
 void CSceneManager::Update()
 {
 	if( m_pScene == nullptr ) return;
+
+	CXInput::StatsUpdate();	// コントローラーの更新.
 
 	if( m_IsLoadEnd == false ){
 		// 読み込みが終了していない場合.

@@ -25,7 +25,7 @@ void CRotLookAtCenter::RotationLookAtObject( const D3DXVECTOR3& vLookPos )
 
 	// ÉJÉÅÉâà íuÇéZèo.
 	m_vPosition.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
-	m_vPosition.y = m_vLookPosition.y + ( sinf(m_vDegree.y) * m_Length );
+//	m_vPosition.y = m_vLookPosition.y + ( sinf(m_vDegree.y) * m_Length );
 	m_vPosition.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
 }
 
@@ -63,6 +63,14 @@ void CRotLookAtCenter::DegreeVerticalMove( const float& movePower )
 void CRotLookAtCenter::SetLength( const float& length )
 {
 	m_Length = length;
+}
+
+//-------------------------------.
+// çÇÇ≥ÇÃê›íË.
+//-------------------------------.
+void CRotLookAtCenter::SetHeight( const float& height )
+{
+	m_vPosition.y = height;
 }
 
 //-------------------------------.

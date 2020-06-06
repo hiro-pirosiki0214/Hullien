@@ -4,6 +4,7 @@
 #include "..\..\SceneBase\SceneBase.h"
 
 class CGroundStage;	// 地面クラス.
+class CPlayer;		// プレイヤークラス.
 
 /**********************************
 *	ゲームシーンクラス.
@@ -23,6 +24,7 @@ public:
 
 private:
 	std::shared_ptr<CGroundStage>	m_pGroundStage;
+	std::shared_ptr<CPlayer>		m_pPlayer;
 };
 
 #endif	// #ifndef GAME_H.

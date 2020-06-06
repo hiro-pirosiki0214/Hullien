@@ -5,6 +5,8 @@ enum class enObjectTagList
 {
 	None,
 
+	Player,
+
 	Max,
 
 } typedef EObjectTag;

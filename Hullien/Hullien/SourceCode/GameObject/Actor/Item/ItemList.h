@@ -2,7 +2,7 @@
 #define ITEM_H
 
 // アイテムリスト.
-enum enItemList
+enum  class enItemList
 {
 	None,
 
@@ -12,6 +12,9 @@ enum enItemList
 	MoveSpeedUp,	// 移動速度UP.
 
 	Max,
+
 } typedef EItemList;
+
+typedef int HasAnyItem;	// どのアイテムを持っているか.
 
 #endif	// #ifndef ITEM_H.

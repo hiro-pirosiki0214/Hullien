@@ -28,6 +28,8 @@ public:  //------ 関数 -------.
 
 	// カメラと注視点の長さ設定.
 	void SetLength( const float& length );
+	// 高さの設定.
+	void SetHeight( const float& height );
 	// 横方向の最大、最小の設定.
 	void SetHorizontalDegree( const float& max, const float& min );
 	// 縦方向の最大、最小の設定.
