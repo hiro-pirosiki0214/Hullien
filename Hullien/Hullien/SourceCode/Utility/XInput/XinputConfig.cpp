@@ -53,7 +53,8 @@ std::vector<std::string> CXInputConfig::FileReading()
 		int index = (i+1)/2;
 		enBUTTON_LIST no	= static_cast<enBUTTON_LIST>(i/2);
 		enBUTTON_LIST temp	= static_cast<enBUTTON_LIST>(std::stoi(readList[i+1]));
-		m_ButtonList[index] = m_Button[no] = temp;
+//		m_ButtonList[index] =  = temp;
+		m_Button[no] = m_ButtonList[temp];
 	}
 
 	return readList;

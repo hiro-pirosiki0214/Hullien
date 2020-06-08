@@ -11,6 +11,29 @@ class CImGuiManager
 {
 	inline static const char* FONT_FILE_PATH  = "Data\\Texture\\_Font\\mplus-1p-medium.ttf";
 	inline static const float FONT_SIZE = 18.0f;
+
+public:
+	struct stSuccess
+	{
+		int		FrameCount;		// ƒJƒEƒ“ƒg.
+		int		RenderTime;		// •`‰æŠÔ.
+		bool	IsSucceeded;	// ¬Œ÷‚©‚Ç‚¤‚©.
+		stSuccess()
+			: FrameCount	( 0 )
+			, RenderTime	( 60 )
+			, IsSucceeded	( false )
+		{}
+		void Render()
+		{
+			if( IsSucceeded == false ) return;
+			ImGui::Text( u8"¬Œ÷" );
+			FrameCount++;
+			if( FrameCount != RenderTime ) return;
+			FrameCount = 0;
+			IsSucceeded = false;
+		}
+	} typedef SSuccess;
+
 public:
 	CImGuiManager();
 	~CImGuiManager();

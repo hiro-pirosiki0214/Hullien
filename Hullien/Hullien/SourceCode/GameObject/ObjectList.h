@@ -5,7 +5,7 @@ enum class enObjectTagList
 {
 	None,
 
-	Player,
+	Player,	// ƒvƒŒƒCƒ„[.
 
 	Max,
 

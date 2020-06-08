@@ -32,7 +32,6 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
-
 	m_pPlayer->Update();
 #if 0	// Ÿ‚ÌƒV[ƒ“‚ÖˆÚ“®.
 	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){

@@ -344,7 +344,7 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	{
 		if (m_pD3dxMesh->m_pAnimController)
 		{
-//			m_pD3dxMesh->m_pAnimController->AdvanceTime(m_dAnimSpeed, NULL);
+			m_pD3dxMesh->m_pAnimController->AdvanceTime(m_dAnimSpeed, NULL);
 		}
 	}
 

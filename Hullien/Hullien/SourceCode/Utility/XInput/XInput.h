@@ -23,6 +23,7 @@ class CXInput : public CXInputConfig
 {
 	const int FOUR_LIMITED_CONTROLLER = 4;	//!< Ú‘±ƒRƒ“ƒgƒ[ƒ‰‚ÌÅ‘å”.
 	
+public:
 	enum enBUTTON_STATE
 	{
 		enNOT_PUSHING		= 0,		//!< ‰Ÿ‚µ‚Ä‚¢‚È‚¢ó‘Ô.

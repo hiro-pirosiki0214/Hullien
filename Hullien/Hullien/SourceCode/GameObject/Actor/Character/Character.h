@@ -14,7 +14,6 @@ public:
 
 protected:
 	float		m_Life;			// 体力.
-	float		m_MoveSpeed;	// 移動速度.
 	D3DXVECTOR3	m_MoveVector;	// 移動ベクトル.
 };
 

@@ -1,6 +1,8 @@
 #include "SceneManager.h"
 #include "..\Scenes\SceneList.h"
 #include "..\..\Utility\XInput\XInput.h"
+#include "..\..\Utility\ImGuiManager\ImGuiManager.h"
+#include "..\..\Editor\EditRenderer\EditRenderer.h"
 
 CSceneManager::CSceneManager()
 	: m_pScene		( nullptr )
@@ -33,7 +35,9 @@ void CSceneManager::Update()
 		// 読み込みが終了したら.
 		m_pScene->Update();	// シーンの更新.
 		m_pScene->Render();	// シーンの描画.
+		CEditRenderer::Render();
 	}
+
 	ChangeEditScene();	// エディットシーンに切り替える.
 }
 
