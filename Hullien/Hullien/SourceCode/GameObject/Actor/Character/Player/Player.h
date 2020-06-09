@@ -105,8 +105,8 @@ private:
 	void EditRender();
 	// デバッグ用の描画.
 	void DebugRender();
+
 private:
-	std::shared_ptr<CDX9SkinMesh>		m_pSkinMesh;	// スキンメッシュ.
 	std::shared_ptr<CRotLookAtCenter>	m_pCamera;		// カメラクラス.
 	D3DXVECTOR3	m_OldPosition;			// 前回の座標.
 	enAnimNo	m_NowAnimNo;			// 今のアニメーション番号.

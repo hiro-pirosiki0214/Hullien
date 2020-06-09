@@ -15,7 +15,7 @@ CGameObject::~CGameObject()
 //-----------------------------.
 // オブジェクトタグ取得関数.
 //-----------------------------.
-EObjectTag CGameObject::GetObjectTag()
+EObjectTag CGameObject::GetObjectTag() const
 {
 	return m_ObjectTag;
 }
@@ -23,7 +23,7 @@ EObjectTag CGameObject::GetObjectTag()
 //-----------------------------.
 // 座標取得関数.
 //-----------------------------.
-D3DXVECTOR3 CGameObject::GetPosition()
+D3DXVECTOR3 CGameObject::GetPosition() const
 {
 	return m_vPosition;
 }

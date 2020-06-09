@@ -19,7 +19,8 @@ public:
 	// ˆÚ“®‘¬“xAŒø—ÍŠÔİ’èŠÖ”.
 	virtual void SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& ){}
 	// ‘ŠèÀ•W‚Ìİ’è.
-	virtual void SetOpponentPos( const CActor& ){}
+	virtual void SetOpponentPos( CActor& actor ){}
+
 };
 
 #endif	// #ifndef ACTOR_H.

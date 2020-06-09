@@ -5,6 +5,7 @@
 
 class CGroundStage;	// 地面クラス.
 class CPlayer;		// プレイヤークラス.
+class CAlienA;
 
 /**********************************
 *	ゲームシーンクラス.
@@ -25,6 +26,7 @@ public:
 private:
 	std::shared_ptr<CGroundStage>	m_pGroundStage;
 	std::shared_ptr<CPlayer>		m_pPlayer;
+	std::shared_ptr<CAlienA>		m_pEnemy;
 };
 
 #endif	// #ifndef GAME_H.

@@ -5,6 +5,8 @@
 
 class CAlienA : public CAlien
 {
+	const char* MODEL_NAME = "GhostB_s";
+
 public:
 	CAlienA();
 	virtual ~CAlienA();
@@ -15,6 +17,11 @@ public:
 	virtual void Update() override;
 	// •`‰æŠÖ”.
 	virtual void Render() override;
+
+private:
+	// ˆÚ“®ŠÖ”.
+	virtual void Move() override;
+	
 };
 
 #endif	// #ifndef ALIEN_A_H.

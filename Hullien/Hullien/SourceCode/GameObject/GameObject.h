@@ -19,9 +19,9 @@ public:
 	virtual void Render() = 0;
 
 	// オブジェクトタグ取得関数.
-	EObjectTag GetObjectTag();
+	EObjectTag GetObjectTag() const;
 	// 座標取得関数.
-	D3DXVECTOR3 GetPosition();
+	D3DXVECTOR3 GetPosition() const;
 
 protected:
 	EObjectTag	m_ObjectTag;	// オブジェクトタグ.

@@ -10,9 +10,8 @@
 #include "..\..\..\..\Utility\FileManager\FileManager.h"
 #include "..\..\..\..\Common\DebugText\DebugText.h"
 
-CPlayer::CPlayer()	
-	: m_pSkinMesh					( nullptr )
-	, m_pCamera						( nullptr )
+CPlayer::CPlayer()
+	: m_pCamera						( nullptr )
 	, m_OldPosition					( 0.0f, 0.0f, 0.0f )
 	, m_NowAnimNo					( CPlayer::enAnimNo::Walk )
 	, m_OldAnimNo					( CPlayer::enAnimNo::None )
@@ -24,6 +23,7 @@ CPlayer::CPlayer()
 	, m_Parameter					()
 	, m_HasFinishedParamSetting		( false )
 {
+	m_ObjectTag = EObjectTag::Player;
 	m_pCamera = std::make_shared<CRotLookAtCenter>();
 	m_vSclae = { 0.03f, 0.03f, 0.03f };
 }
@@ -35,11 +35,9 @@ CPlayer::~CPlayer()
 // èâä˙âªä÷êî.
 bool CPlayer::Init()
 {
-	if( m_pSkinMesh != nullptr ) return true;
 	if( ParameterSetting() == false ) return false;
-	CMeshResorce::GetSkin( m_pSkinMesh, MODEL_NAME );
+	if( GetModel( MODEL_NAME ) == false ) return false;
 	SetAttackFrameList();
-	if( m_pSkinMesh == nullptr ) return false;
 	return true;
 }
 

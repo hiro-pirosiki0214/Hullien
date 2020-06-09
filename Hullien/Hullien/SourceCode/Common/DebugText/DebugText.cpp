@@ -104,11 +104,11 @@ void CDebugText::RenderFont( int FontIndex, float x, float y )
 	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 
 	//•`‰æ.
-	SetBlend( true );
+	SetCoverage( true );
 	SetRasterizerState( enRS_STATE::Back );
 	m_pContext11->Draw( 4, 0 );
 	SetRasterizerState( enRS_STATE::None );
-	SetBlend( false );
+	SetCoverage( false );
 }
 
 //----------------------------.

@@ -13,6 +13,11 @@ public:
 	virtual void Move() = 0;
 
 protected:
+	// モデルの取得.
+	bool GetModel( const char* modelName );
+
+protected:
+	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;	// スキンメッシュ.
 	float		m_Life;			// 体力.
 	D3DXVECTOR3	m_MoveVector;	// 移動ベクトル.
 };
