@@ -15,7 +15,7 @@ CCommon::CCommon()
 	, m_vPos					( 0.0f, 0.0f, 0.0f )
 	, m_vRot					( 0.0f, 0.0f, 0.0f )
 	, m_vScale					( 1.0f, 1.0f, 1.0f )
-	, m_fAlpha					( 1.0f )
+	, m_vColor					( 1.0f, 1.0f, 1.0f, 1.0f )
 {
 }
 

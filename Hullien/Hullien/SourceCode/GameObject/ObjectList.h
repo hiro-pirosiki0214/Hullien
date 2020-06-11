@@ -5,7 +5,9 @@ enum class enObjectTagList
 {
 	None,
 
-	Player,	// プレイヤー.
+	Player,		// プレイヤー.
+
+	Alien_A,	// 宇宙人A.
 
 	Max,
 

@@ -82,7 +82,6 @@ private:
 	std::unique_ptr<CDebugTextShader> m_pShader;		// シェーダー.
 
 	float		m_fKerning[100];	// カーニング.
-	D3DXVECTOR4	m_vColor;			// 色.
 
 private:
 	// コピー・ムーブコンストラクタ, 代入演算子の削除.

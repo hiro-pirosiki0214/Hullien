@@ -32,6 +32,7 @@ cbuffer per_frame		: register( b2 )
     float4 g_vLightDir; //ﾗｲﾄ方向.
     matrix g_mLightRot; //ﾗｲﾄ回転行列.
     float4 g_fIntensity; //ﾗｲﾄ強度(明るさ). ※xのみ使用する.
+    float4 g_Color;     // 色.
 };
 //ボーンのポーズ行列が入る.
 cbuffer per_bones		: register( b3 )
@@ -114,14 +115,14 @@ Skin SkinVert( VSSkinIn Input )
 // バーテックスシェーダ.
 VS_OUTPUT VS_Main(VSSkinIn input)
 {
-    VS_OUTPUT output = (VS_OUTPUT) 0;;
+    VS_OUTPUT output = (VS_OUTPUT) 0;
 	Skin vSkinned = SkinVert( input);
 
 	output.Pos	= mul( vSkinned.Pos, g_mWVP );
     output.Normal = normalize(mul(vSkinned.Norm, (float3x3) g_mW));
 	output.Tex	= input.Tex;
-    output.Light = normalize(g_vLightDir);
-    float3 PosWorld = mul(input.Pos, g_mW);
+    output.Light = normalize(g_vLightDir).xyz;
+    float3 PosWorld = mul(input.Pos, g_mW).xyz;
     output.EyeVector = normalize(g_vCamPos.xyz - PosWorld);
 
 	return output;
@@ -148,7 +149,8 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
     float4 Color = ambient + diffuse + specular;
 
 	//ﾗｲﾄ強度を反映.
-    Color *= g_fIntensity.x;
-
+    Color *= g_fIntensity.x * g_Color;
+    Color.a = g_Color.a;
+    
     return Color;
 }

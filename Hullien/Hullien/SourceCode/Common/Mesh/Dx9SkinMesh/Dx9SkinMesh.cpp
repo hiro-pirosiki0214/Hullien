@@ -707,6 +707,9 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	{
 
 		CBUFFER_PER_FRAME cb;
+
+		cb.vColor = m_vColor;
+		
 		//¶Ò×ˆÊ’u.
 		D3DXVECTOR3 camPos = CCameraManager::GetPosition();
 		cb.vCamPos = D3DXVECTOR4( camPos.x, camPos.y, camPos.z, 0.0f );

@@ -7,7 +7,6 @@ CDebugText::CDebugText()
 	, m_pAsciiTexture	( nullptr )
 	, m_pShader			( std::make_unique<CDebugTextShader>() )
 	, m_fKerning		()
-	, m_vColor			( 0.0f, 0.0f, 0.0f, 0.0f )
 {
 }
 
@@ -43,7 +42,6 @@ HRESULT CDebugText::Init(
 	if( FAILED( GetInstance()->InitSampleLinear())) return E_FAIL;
 	if( FAILED( GetInstance()->InitTexture())) return E_FAIL;
 
-	GetInstance()->m_fAlpha = vColor.w;
 	GetInstance()->m_vColor = vColor;
 	float scale = Scale / 25.0f;
 	GetInstance()->m_vScale = { scale, scale, scale };

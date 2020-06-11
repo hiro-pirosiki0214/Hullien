@@ -212,7 +212,7 @@ void CSprite::Render( const bool& isBillboard )
 
 	AnimUpdate();
 	// コンスタントバッファの設定.
-	m_pSpriteShader->SetConstantBufferData( mWVP, m_fAlpha, { m_UV.x, m_UV.y } );
+	m_pSpriteShader->SetConstantBufferData( mWVP, m_vColor.w, { m_UV.x, m_UV.y } );
 
 	// 3D用のシェーダーを設定.
 	m_pSpriteShader->ShaderSet( m_pVertexBuffer );
@@ -237,7 +237,7 @@ void CSprite::RenderUI()
 	AnimUpdate();
 	// コンスタントバッファの設定.
 	m_pSpriteShader->SetConstantBufferData( 
-		CreateWorldMatrix(), m_fAlpha, { m_UV.x, m_UV.y } );
+		CreateWorldMatrix(), m_vColor.w, { m_UV.x, m_UV.y } );
 
 	// UI用のシェーダーを設定.
 	m_pSpriteShader->ShaderUISet( m_pVertexBufferUI );

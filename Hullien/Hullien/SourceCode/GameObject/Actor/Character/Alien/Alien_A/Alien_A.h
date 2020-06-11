@@ -5,6 +5,7 @@
 
 class CAlienA : public CAlien
 {
+	const char* PARAMETER_FILE_PATH	= "Data\\GamePram\\Alien\\Alien_A\\Alien_A.bin";
 	const char* MODEL_NAME = "GhostB_s";
 
 public:
@@ -17,11 +18,30 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// 当たり判定関数.
+	virtual void Collision( CActor* pActor ) override;
+	// スポーン.
+	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
 
 private:
-	// 移動関数.
+	// スポーン.
+	virtual void Spawning() override;
+	// 移動.
 	virtual void Move() override;
-	
+	// 拐う.
+	virtual void Abduct() override;
+	// 怯み.
+	virtual void Fright() override;
+	// 死亡.
+	virtual void Death() override;
+	// 逃げる.
+	virtual void Escape() override;
+
+	// 当たり判定の設定.
+	bool ColliderSetting();
+
+private:
+	stAlienParam m_Parameter;	// パラメータ.
 };
 
 #endif	// #ifndef ALIEN_A_H.

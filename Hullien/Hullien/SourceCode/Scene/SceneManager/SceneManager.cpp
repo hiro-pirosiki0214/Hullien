@@ -91,8 +91,8 @@ void CSceneManager::NextSceneMove()
 //=================================.
 void CSceneManager::ChangeEditScene()
 {
-	if( ( GetAsyncKeyState('E') & 0x0001 ) &&
-		( GetAsyncKeyState('D') & 0x0001 ) ){
+	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
+		( GetAsyncKeyState('D') & 0x8000 ) ){
 		if( !(GetAsyncKeyState(VK_BACK) & 0x0001 ) ) return;
 		m_pScene	= std::make_shared<CEditor>( this );
 		m_IsLoadEnd	= false;

@@ -4,6 +4,7 @@
 #include "..\..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
 #include "..\..\..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 
 #include "..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\..\..\Editor\EditRenderer\EditRenderer.h"
@@ -21,7 +22,6 @@ CPlayer::CPlayer()
 	, m_IsDuringAvoid				( false )
 	, m_AvoidMoveSpeed				( 0.0f )
 	, m_Parameter					()
-	, m_HasFinishedParamSetting		( false )
 {
 	m_ObjectTag = EObjectTag::Player;
 	m_pCamera = std::make_shared<CRotLookAtCenter>();
@@ -35,8 +35,10 @@ CPlayer::~CPlayer()
 // 初期化関数.
 bool CPlayer::Init()
 {
-	if( ParameterSetting() == false ) return false;
+	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 	if( GetModel( MODEL_NAME ) == false ) return false;
+	if( ColliderSetting() == false ) return false;
+
 	SetAttackFrameList();
 	return true;
 }
@@ -72,11 +74,17 @@ void CPlayer::Render()
 	m_pSkinMesh->Render();
 
 #if _DEBUG
+	m_pCollManager->DebugRender();
 	// エディット用の描画関数をエディットレンダラーに追加.
 	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
 	// デバッグ描画.
 	DebugRender();
 #endif	// #if _DEBUG.
+}
+
+// 当たり判定関数.
+void CPlayer::Collision( CActor* pActor )
+{
 }
 
 // 操作関数.
@@ -256,15 +264,26 @@ bool CPlayer::IsPushAttack()
 	return true;
 }
 
-// パラメータの設定.
-bool CPlayer::ParameterSetting()
+// ライフ計算関数.
+void CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
+{	
+	proc( m_Parameter.Life );
+}
+
+// 当たり判定の設定.
+bool CPlayer::ColliderSetting()
 {
-	if( m_HasFinishedParamSetting == true ) return true;
-
-	// 読み込みが正常に行えてなければ終了.
-	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
-
-	m_HasFinishedParamSetting = true;
+	if( m_pSkinMesh == nullptr ) return false;
+	if( m_pCollManager == nullptr ){
+		m_pCollManager = std::make_shared<CCollisionManager>();
+	}
+	if( FAILED( m_pCollManager->InitSphere( 
+		m_pSkinMesh->GetMesh(),
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
 }
 
@@ -272,27 +291,35 @@ bool CPlayer::ParameterSetting()
 void CPlayer::EditRender()
 {
 #if _DEBUG
-	ImGui::SetNextWindowSize( ImVec2(400.0f,300.0f), ImGuiCond_::ImGuiCond_Once );
-	ImGui::SetNextWindowPos( ImVec2(WND_W-400,0.0f), ImGuiCond_::ImGuiCond_Once );
+	ImGui::SetNextWindowSize( ImVec2(440.0f,450.0f), ImGuiCond_::ImGuiCond_Once );
+	ImGui::SetNextWindowPos( ImVec2(WND_W-440,0.0f), ImGuiCond_::ImGuiCond_Once );
 	ImGui::GetWindowSize();
 	bool isOpen = true;
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
 	ImGui::Begin( u8"プレイヤーの設定", &isOpen );
 
 	// 各パラメータの設定.
+	ImGui::InputFloat( u8"移動速度", &m_Parameter.MoveSpeed );
+	ImGui::InputFloat( u8"体力", &m_Parameter.Life );
 	ImGui::InputInt( u8"攻撃コンボ最大数", &m_Parameter.AttackComboMax );
 	ImGui::InputInt( u8"攻撃キュー追加最大数", &m_Parameter.AttackQueueMax );
-	ImGui::InputFloat( u8"移動速度", &m_Parameter.MoveSpeed );
 	ImGui::InputFloat( u8"回避の移動距離", &m_Parameter.AvoidMoveDistance );
 	ImGui::InputFloat( u8"回避用の移動速度", &m_Parameter.AvoidMoveSpeed );
 	ImGui::InputFloat( u8"カメラの移動速度", &m_Parameter.CameraMoveSpeed );
 	ImGui::InputFloat( u8"カメラの距離", &m_Parameter.CameraDistance );
 	ImGui::InputFloat( u8"カメラの高さ", &m_Parameter.CameraHeight );
+	ImGui::InputFloat( u8"スフィアの調整座標 X", &m_Parameter.SphereAdjPos.x );
+	ImGui::InputFloat( u8"スフィアの調整座標 Y", &m_Parameter.SphereAdjPos.y );
+	ImGui::InputFloat( u8"スフィアの調整座標 Z", &m_Parameter.SphereAdjPos.z );
+	ImGui::InputFloat( u8"スフィアの調整半径", &m_Parameter.SphereAdjRadius );
 
 	static CImGuiManager::SSuccess s_Success;
 	if( ImGui::Button(u8"読込") == true ){
 		// データの読み込み.
 		s_Success.IsSucceeded = CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter );
+		if( s_Success.IsSucceeded == true ){
+			ColliderSetting();
+		}
 	}
 	ImGui::SameLine();
 	if( ImGui::Button(u8"保存") == true ){
@@ -309,9 +336,13 @@ void CPlayer::EditRender()
 // デバッグ用の描画.
 void CPlayer::DebugRender()
 {
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*0, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*-1, 0.0f } );
 	CDebugText::Render( "- Player Parameter -" );
+
 	// 座標の描画.
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*0 ,0.0f } );
+	CDebugText::Render( "----- Position -----" );
+
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*1, 0.0f } );
 	CDebugText::Render( "Pos_x : ", m_vPosition.x );				 
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*2, 0.0f } );
@@ -319,34 +350,40 @@ void CPlayer::DebugRender()
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*3, 0.0f } );
 	CDebugText::Render( "Pos_z : ", m_vPosition.z );
 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*4 ,0.0f } );
-	CDebugText::Render( "--------------------" );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*5, 0.0f } );
+	CDebugText::Render( "----- Rotation -----" );
 
 	// 回転の描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*5, 0.0f } );
-	CDebugText::Render( "Rot_x : ", m_vRotation.x );				 
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*6, 0.0f } );
-	CDebugText::Render( "Rot_x : ", m_vRotation.y );				 
+	CDebugText::Render( "Rot_x : ", m_vRotation.x );				 
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*7, 0.0f } );
-	CDebugText::Render( "Rot_x : ", m_vRotation.z );
-
+	CDebugText::Render( "Rot_y : ", m_vRotation.y );				 
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*8, 0.0f } );
-	CDebugText::Render( "--------------------" );
+	CDebugText::Render( "Rot_z : ", m_vRotation.z );
+
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*10, 0.0f } );
+	CDebugText::Render( "----- Parameter ----" );
+
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*11, 0.0f } );
+	CDebugText::Render( "LifePoint : ", m_Parameter.Life );
+
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*13, 0.0f } );
+	CDebugText::Render( "----- Animation ----" );
 	
 	// アニメーション番号の描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*9, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*14, 0.0f } );
 	CDebugText::Render( "Now_AnimationNo : ", (int)m_NowAnimNo );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*10, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*15, 0.0f } );
 	CDebugText::Render( "Old_AnimationNo : ", (int)m_OldAnimNo );
 
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*17, 0.0f } );
+	CDebugText::Render( "------ Other -------" );
+
 	// 攻撃カウントの描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*11, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*18, 0.0f } );
 	CDebugText::Render( "AttackComboCount : ", m_AttackComboCount );
 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*12, 0.0f } );
-	CDebugText::Render( "--------------------" );
-
 	// 回避中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*13, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*19, 0.0f } );
 	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
 }

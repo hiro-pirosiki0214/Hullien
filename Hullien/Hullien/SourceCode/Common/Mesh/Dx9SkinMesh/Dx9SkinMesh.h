@@ -39,6 +39,7 @@ public:
 		D3DXVECTOR4	vLightDir;	//ﾗｲﾄ方向.
 		D3DXMATRIX	mLightRot;	//ﾗｲﾄ回転行列.
 		D3DXVECTOR4	fIntensity;	//ﾗｲﾄ強度(明るさ). ※xのみ使用する.
+		D3DXVECTOR4	vColor;		//色.
 	};
 
 	//ボーン単位.

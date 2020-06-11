@@ -26,8 +26,10 @@ public:
 	// サイズの設定.
 	void SetScale( const D3DXVECTOR3& vScale ){ m_vScale = vScale; }
 	void SetScale( const float& fScale ){ m_vScale = { fScale, fScale, fScale }; }
+	// 色の設定.
+	void SetColor( const D3DXVECTOR4& vColor ){ m_vColor = vColor; }
 	// アルファ値の設定.
-	void SetAlpha( const float& fAlpha ){ m_fAlpha = fAlpha; }
+	void SetAlpha( const float& fAlpha ){ m_vColor.w = fAlpha; }
 
 	// ブレンドを有効:無効に設定する.
 	void SetBlend( bool EnableAlpha );
@@ -70,7 +72,7 @@ protected:
 	D3DXVECTOR3 m_vPos;		// 座標情報.
 	D3DXVECTOR3 m_vRot;		// 回転情報.
 	D3DXVECTOR3	m_vScale;	// スケール情報.
-	float		m_fAlpha;	// アルファ値.
+	D3DXVECTOR4 m_vColor;	// 色.
 };
 
 #endif	// #ifndef COMMON_H.

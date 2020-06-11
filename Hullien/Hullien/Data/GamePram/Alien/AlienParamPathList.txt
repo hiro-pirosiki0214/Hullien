@@ -1,0 +1,1 @@
+Data\\GameParam\\Alien\\Alien_A\\Alien_A.bin

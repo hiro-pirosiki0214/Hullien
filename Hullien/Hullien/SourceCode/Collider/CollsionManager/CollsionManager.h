@@ -43,11 +43,11 @@ public: //------ 関数 -------.
 	*/
 
 	// スフィア同士の当たり判定.
-	bool IsShereToShere( CSphereCollision* pSphere );
+	bool IsShereToShere( CCollisionManager* pManager );
 	// OBB同士の当たり判定.
-	bool IsOBBToOBB( COBBoxCollision* pBox );
+	bool IsOBBToOBB( CCollisionManager* pManager );
 	// カプセル同士の当たり判定.
-	bool IsCapsuleToCapsule( CCapsuleCollision* pCapsule );
+	bool IsCapsuleToCapsule( CCollisionManager* pManager );
 
 	/*
 	//- 取得関数 -.

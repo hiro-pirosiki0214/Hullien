@@ -3,9 +3,9 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
-class CGroundStage;	// 地面クラス.
-class CPlayer;		// プレイヤークラス.
-class CAlienA;
+class CGroundStage;		// 地面クラス.
+class CPlayer;			// プレイヤークラス.
+class CAlienManager;	// 宇宙人管理クラス.
 
 /**********************************
 *	ゲームシーンクラス.
@@ -26,7 +26,7 @@ public:
 private:
 	std::shared_ptr<CGroundStage>	m_pGroundStage;
 	std::shared_ptr<CPlayer>		m_pPlayer;
-	std::shared_ptr<CAlienA>		m_pEnemy;
+	std::shared_ptr<CAlienManager>	m_pAlienManager;
 };
 
 #endif	// #ifndef GAME_H.

@@ -1,10 +1,12 @@
 #include "Character.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 
+#include "..\..\..\Utility\FileManager\FileManager.h"
+
 CCharacter::CCharacter()
-	: m_pSkinMesh	( nullptr )
-	, m_Life		( 1.0f )
-	, m_MoveVector	( 0.0f, 0.0f, 0.0f )
+	: m_pSkinMesh				( nullptr )
+	, m_MoveVector				( 0.0f, 0.0f, 0.0f )
+	, m_HasFinishedParamSetting	( false )
 {
 	
 }

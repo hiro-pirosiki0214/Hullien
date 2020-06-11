@@ -538,6 +538,8 @@ void CDX9StaticMesh::Render()
 	{
 		CBUFFER_PER_FRAME cb;	//ºÝ½ÀÝÄÊÞ¯Ì§.
 
+		cb.vColor = m_vColor;
+
 		//¶Ò×ˆÊ’u.
 		D3DXVECTOR3 camPos = CCameraManager::GetPosition();
 		cb.vCamPos = D3DXVECTOR4( camPos.x, camPos.y, camPos.z, 0.0f );

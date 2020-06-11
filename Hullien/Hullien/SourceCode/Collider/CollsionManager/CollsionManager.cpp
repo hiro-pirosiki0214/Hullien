@@ -111,14 +111,17 @@ void CCollisionManager::DebugRender()
 //----------------------------------.
 // ƒXƒtƒBƒA“¯Žm‚Ì“–‚½‚è”»’è.
 //----------------------------------.
-bool CCollisionManager::IsShereToShere( CSphereCollision* pSphere )
+bool CCollisionManager::IsShereToShere( CCollisionManager* pManager )
 {
+	if( pManager == nullptr ) return false;
+	if( pManager->GetSphere() == nullptr ) return false;
+
 	// 2“_ŠÔ(’†S“_)‚Ì‹——£‚ð‹‚ß‚é.
-	const D3DXVECTOR3 vLength = pSphere->GetPosition() - m_pSphere->GetPosition();
+	const D3DXVECTOR3 vLength = pManager->GetSphere()->GetPosition() - m_pSphere->GetPosition();
 	// ’·‚³‚É•ÏŠ·‚·‚é.
 	const float length = D3DXVec3Length( &vLength );
 	// 2‚Â‚Ì”¼Œa‚Ì‡Œv.
-	float twoRadiusTotal = m_pSphere->GetRadius() + pSphere->GetRadius();
+	float twoRadiusTotal = m_pSphere->GetRadius() + pManager->GetSphere()->GetRadius();
 	
 	// 2“_ŠÔ‚Ì‹——£‚ª2‚Â‚Ì”¼Œa‚Ì‡Œv‚æ‚è‘å‚«‚¢‚Ì‚Å.
 	// Õ“Ë‚µ‚Ä‚¢‚È‚¢.
@@ -136,8 +139,11 @@ bool CCollisionManager::IsShereToShere( CSphereCollision* pSphere )
 //----------------------------------.
 // OBB“¯Žm‚Ì“–‚½‚è”»’è.
 //----------------------------------.
-bool CCollisionManager::IsOBBToOBB( COBBoxCollision* pBox )
+bool CCollisionManager::IsOBBToOBB( CCollisionManager* pManager )
 {
+	if( pManager == nullptr ) return false;
+	if( pManager->GetOBB() == nullptr ) return false;
+
 	auto LenSegOnSeparateAxis = []( D3DXVECTOR3 *Sep, D3DXVECTOR3 *e1, D3DXVECTOR3 *e2, D3DXVECTOR3 *e3 = 0 )
 	{
 		// 3‚Â‚Ì“àÏ‚Ìâ‘Î’l‚Ì˜a‚Å“Š‰eü•ª’·‚ðŒvŽZ.
@@ -152,10 +158,10 @@ bool CCollisionManager::IsOBBToOBB( COBBoxCollision* pBox )
 	D3DXVECTOR3 NAe1 = m_pBox->GetDirection(0), Ae1 = NAe1 * m_pBox->GetLength().x;
 	D3DXVECTOR3 NAe2 = m_pBox->GetDirection(1), Ae2 = NAe2 * m_pBox->GetLength().y;
 	D3DXVECTOR3 NAe3 = m_pBox->GetDirection(2), Ae3 = NAe3 * m_pBox->GetLength().z;
-	D3DXVECTOR3 NBe1 = pBox->GetDirection(0), Be1 = NBe1 * pBox->GetLength().x;
-	D3DXVECTOR3 NBe2 = pBox->GetDirection(1), Be2 = NBe2 * pBox->GetLength().y;
-	D3DXVECTOR3 NBe3 = pBox->GetDirection(2), Be3 = NBe3 * pBox->GetLength().z;
-	D3DXVECTOR3 Interval = m_pBox->GetPosition() - pBox->GetPosition();
+	D3DXVECTOR3 NBe1 = pManager->GetOBB()->GetDirection(0), Be1 = NBe1 * pManager->GetOBB()->GetLength().x;
+	D3DXVECTOR3 NBe2 = pManager->GetOBB()->GetDirection(1), Be2 = NBe2 * pManager->GetOBB()->GetLength().y;
+	D3DXVECTOR3 NBe3 = pManager->GetOBB()->GetDirection(2), Be3 = NBe3 * pManager->GetOBB()->GetLength().z;
+	D3DXVECTOR3 Interval = m_pBox->GetPosition() - pManager->GetOBB()->GetPosition();
 
 	FLOAT rA, rB, L;
 
@@ -221,14 +227,17 @@ bool CCollisionManager::IsOBBToOBB( COBBoxCollision* pBox )
 //----------------------------------.
 // ƒJƒvƒZƒ‹“¯Žm‚Ì“–‚½‚è”»’è.
 //----------------------------------.
-bool CCollisionManager::IsCapsuleToCapsule( CCapsuleCollision* pCapsule )
+bool CCollisionManager::IsCapsuleToCapsule( CCollisionManager* pManager )
 {
+	if( pManager == nullptr ) return false;
+	if( pManager->GetCapsule() == nullptr ) return false;
+
 	Point p1, p2;
 	float t1, t2;
 	Segment c1 = m_pCapsule->GetSegment();
-	Segment c2 = pCapsule->GetSegment();
+	Segment c2 = pManager->GetCapsule()->GetSegment();
 	float d = m_pCapsule->calcSegmentSegmentDist( c1, c2, p1, p2, t1, t2 );
-	if( d <= m_pCapsule->GetRadius() + pCapsule->GetRadius() == false ){
+	if( d <= m_pCapsule->GetRadius() + pManager->GetCapsule()->GetRadius() == false ){
 		m_pCapsule->SetChangeColor( false );
 		return false;
 	}

@@ -4,6 +4,7 @@
 #include "..\..\SceneBase\SceneBase.h"
 
 class CControllerEdit;
+class CSpawnEdit;
 
 class CEditor : public CSceneBase
 {
@@ -20,6 +21,7 @@ public:
 
 private:
 	std::unique_ptr<CControllerEdit> m_pControllerEdit;
+	std::unique_ptr<CSpawnEdit>	m_pSpawnEdit;
 };
 
 #endif	// #ifndef EDITOR_H.

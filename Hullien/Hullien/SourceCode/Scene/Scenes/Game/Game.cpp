@@ -1,18 +1,18 @@
 #include "..\SceneList.h"
 #include "..\..\..\GameObject\GroundStage\GroundStage.h"
 #include "..\..\..\GameObject\Actor\Character\Player\Player.h"
-#include "..\..\..\GameObject\Actor\Character\Alien\Alien_A\Alien_A.h"
+#include "..\..\..\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 
 	, m_pGroundStage	( nullptr )
 	, m_pPlayer			( nullptr )
-	, m_pEnemy			( nullptr )
+	, m_pAlienManager	( nullptr )
 {
 	m_pGroundStage = std::make_shared<CGroundStage>();
 	m_pPlayer = std::make_shared<CPlayer>();
-	m_pEnemy = std::make_shared<CAlienA>();
+	m_pAlienManager = std::make_shared<CAlienManager>();
 }
 
 CGame::~CGame()
@@ -26,7 +26,7 @@ bool CGame::Load()
 {
 	if( m_pGroundStage->Init() == false ) return false;
 	if( m_pPlayer->Init() == false ) return false;
-	if( m_pEnemy->Init() == false ) return false;
+	if( m_pAlienManager->Init() == false ) return false;
 	return true;
 }
 
@@ -35,9 +35,15 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
+	// プレイヤーの当たり判定関数.
+	auto playerCollProc = [&]( CActor* pActor )
+	{
+		m_pPlayer->Collision( pActor );
+	};
+
 	m_pPlayer->Update();
-	m_pEnemy->SetOpponentPos( *m_pPlayer.get() );
-	m_pEnemy->Update();
+	m_pAlienManager->Update( m_pPlayer.get(), playerCollProc );
+
 #if 0	// 次のシーンへ移動.
 	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
 		m_pSceneManager->NextSceneMove();
@@ -52,5 +58,5 @@ void CGame::Render()
 {
 	m_pGroundStage->Render();
 	m_pPlayer->Render();
-	m_pEnemy->Render();
+	m_pAlienManager->Render();
 }

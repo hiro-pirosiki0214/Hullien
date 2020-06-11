@@ -3,6 +3,9 @@
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 
 CAlien::CAlien()
+	: m_GirlPosition	( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation	( 0.0f, 0.0f, 0.0f )
+	, m_NowState		( EAlienState::None )
 {
 }
 
@@ -11,12 +14,40 @@ CAlien::~CAlien()
 }
 
 // 相手座標の設定.
-void CAlien::SetOpponentPos( CActor& actor )
+void CAlien::SetTargetPos( CActor& actor )
 {
 	// 女の子じゃなければ終了.
 	// 今は女の子がいないのでplyaerで対処.
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;
 	m_GirlPosition = actor.GetPosition();	// 女の子の座標を取得.
+}
+
+// 現在の状態の更新関数.
+void CAlien::CurrentStateUpdate()
+{
+	switch( m_NowState )
+	{
+	case EAlienState::Spawn:
+		this->Spawning();
+		break;
+	case EAlienState::Move:
+		this->Move();
+		break;
+	case EAlienState::Abduct:
+		this->Abduct();
+		break;
+	case EAlienState::Fright:
+		this->Fright();
+		break;
+	case EAlienState::Death:
+		this->Death();
+		break;
+	case EAlienState::Escape:
+		this->Escape();
+		break;
+	default:
+		break;
+	}
 }
 
 // 移動ベクトル設定関数.
@@ -55,5 +86,20 @@ void CAlien::TargetRotation()
 	// 内積が許容範囲なら.
 	if( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ){
 		m_vRotation.y = m_TargetRotation.y;	// ターゲットへの回転取得.
+		// 移動用ベクトルを取得.
+		m_MoveVector.x = sinf( m_vRotation.y );
+		m_MoveVector.z = cosf( m_vRotation.y );
 	}
+}
+
+// 移動関数.
+void CAlien::VectorMove( const float& moveSpeed )
+{
+	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_GirlPosition - m_vPosition) );
+
+	if( lenght <= 0.05f ) return;
+
+	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+
 }

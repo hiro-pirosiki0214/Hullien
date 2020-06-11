@@ -26,6 +26,7 @@ cbuffer per_frame : register(b2)
     float4 g_vLightDir; //ﾗｲﾄ方向.
     matrix g_mLightRot; //ﾗｲﾄ回転行列.
     float4 g_fIntensity; //ﾗｲﾄ強度(明るさ). ※xのみ使用する.
+    float4 g_Color; // 色.
 };
 
 //頂点ｼｪｰﾀﾞの出力ﾊﾟﾗﾒｰﾀ.
@@ -57,9 +58,9 @@ VS_OUTPUT VS_Main(float4 Pos : POSITION,
 
 	//ﾗｲﾄ方向:
 	// ﾃﾞｨﾚｸｼｮﾅﾙﾗｲﾄは、どこでも同じ方向.位置は無関係.
-    Out.Light = normalize(g_vLightDir);
+    Out.Light = normalize(g_vLightDir).xyz;
 
-    float3 PosWorld = mul(Pos, g_mW);
+    float3 PosWorld = mul(Pos, g_mW).xyz;
 
 	//視線ﾍﾞｸﾄﾙ:
 	// ﾜｰﾙﾄﾞ空間上での頂点から頂点へ向かうﾍﾞｸﾄﾙ.
@@ -97,7 +98,8 @@ float4 PS_Main( VS_OUTPUT In ) : SV_Target
     float4 Color = ambient + diffuse + specular;
 
 	//ﾗｲﾄ強度を反映.
-    Color *= g_fIntensity.x;
+    Color *= g_fIntensity.x * g_Color;
+    Color.a = g_Color.a;
 
     return Color;
 }
@@ -113,18 +115,18 @@ VS_OUTPUT VS_NoTex(float4 Pos : POSITION,
 
 	//法線をﾜｰﾙﾄﾞ空間に.
 	Norm.w = 0;	//w=0で移動成分を反映させない.
-	output.Normal = mul(Norm, g_mW);
+	output.Normal = mul(Norm, g_mW).xyz;
 	output.Pos = mul(Pos, g_mWVP);
 	//ﾗｲﾄ方向.
-	output.Light = g_vLightDir;
+	output.Light = g_vLightDir.xyz;
 	//視線ﾍﾞｸﾄﾙ.
-	float3 PosWorld = mul(Pos, g_mW);
-	output.EyeVector = g_vCamPos - PosWorld;
+	float3 PosWorld = mul(Pos, g_mW).xyz;
+	output.EyeVector = g_vCamPos.xyz - PosWorld;
 
 	float3 Normal = normalize(output.Normal);
 	float3 LightDir = normalize(output.Light);
 	float3 ViewDir = normalize(output.EyeVector);
-	float4 NL = saturate(dot(Normal, LightDir));
+	float NL = saturate(dot(Normal, LightDir));
 
 	float3 Reflect = normalize(2 * NL*Normal - LightDir);
 	float4 Specular = pow(saturate(dot(Reflect, ViewDir)), 4);
@@ -150,7 +152,7 @@ float4 PS_NoTex(VS_OUTPUT input) : SV_Target
 cbuffer Ita_Global : register(b4)	//ﾚｼﾞｽﾀを数分追加.
 {
 	matrix g_WVP;	//ﾜｰﾙﾄﾞ,ﾋﾞｭｰ,ﾌﾟﾛｼﾞｪｸｼｮﾝまでの変換行列.
-	float4 g_Color;	//色.
+	float4 g_Color2;	//色.
 	float4 g_UV;	//UV座標.
 };
 

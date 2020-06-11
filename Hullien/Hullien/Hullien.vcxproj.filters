@@ -207,6 +207,15 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCode\Global.h">
@@ -422,10 +431,27 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFOParam.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Data\Shader\DebugText.hlsl" />
     <FxCompile Include="Data\Shader\Sprite.hlsl" />
     <FxCompile Include="Data\Shader\SimpleShader.hlsl" />
+    <FxCompile Include="Data\Shader\Mesh.hlsl" />
+    <FxCompile Include="Data\Shader\SkinMesh.hlsl" />
   </ItemGroup>
 </Project>
