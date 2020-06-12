@@ -261,7 +261,9 @@
     <ClInclude Include="SourceCode\Global.h" />
     <ClInclude Include="SourceCode\Main\Main.h" />
     <ClInclude Include="SourceCode\Utility\ImGuiManager\ImGuiManager.h" />
-    <ClInclude Include="SourceCode\Utility\Log\MyLog.h" />
+    <ClInclude Include="SourceCode\Utility\Log\MyLog.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SourceCode\Utility\MyVector\MyVector.h" />
     <ClInclude Include="SourceCode\Resource\EffectResource\EffectResource.h" />
     <ClInclude Include="SourceCode\Resource\LoadManager\LoadManager.h" />
