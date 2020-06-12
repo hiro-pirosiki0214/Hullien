@@ -3,6 +3,9 @@
 
 #include "..\GameObject.h"
 
+/****************************************
+*	UIŒ³ƒNƒ‰ƒX.
+**/
 class CWidget : public CGameObject
 {
 public:
