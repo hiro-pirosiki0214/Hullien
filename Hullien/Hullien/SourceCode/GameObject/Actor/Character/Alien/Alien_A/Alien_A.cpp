@@ -7,7 +7,6 @@
 #include "..\..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 
 CAlienA::CAlienA()
-	: m_Parameter	()
 {
 	m_vSclae = { 0.05f, 0.05f, 0.05f };
 }
@@ -27,15 +26,8 @@ bool CAlienA::Init()
 // 更新関数.
 void CAlienA::Update()
 {
-	SetMoveVector( m_GirlPosition );
+	SetMoveVector( m_TargetPosition );
 	CurrentStateUpdate();	// 現在の状態の更新.
-
-	if( GetAsyncKeyState('Q') & 0x8000 ){
-		TargetRotation();
-	}
-	if( GetAsyncKeyState('W') & 0x8000 ){
-		Move();
-	}
 } 
 
 // 描画関数.
@@ -48,7 +40,7 @@ void CAlienA::Render()
 	rot.y += static_cast<float>(D3DX_PI);
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
-
+	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
 	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
@@ -67,16 +59,7 @@ void CAlienA::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	if( pActor->GetObjectTag() != EObjectTag::Player ) return;
-
-	// 球体の当たり判定.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
-
-	auto lifeDe = []( float& life )
-	{
-		life -= 1.0f;
-	};
-	pActor->LifeCalculation( lifeDe );
+	GirlCollision( pActor );
 }
 
 // スポーン.
@@ -96,33 +79,104 @@ bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 // スポーン.
 void CAlienA::Spawning()
 {
-
+	// モデルのアルファ値を足していく.
+	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
+	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
 }
 
 // 移動.
 void CAlienA::Move()
 {
-	CAlien::VectorMove( m_Parameter.MoveSpeed );
+	switch( m_NowMoveState )
+	{
+	case EMoveState::Rotation:
+		TargetRotation();
+		break;
+	case EMoveState::Move:
+		CAlien::VectorMove( 0.1f );
+		break;
+	case EMoveState::Attack:
+		break;
+	case EMoveState::Wait:
+		m_WaitCount++;	// 待機カウント加算.
+		if( m_WaitCount < m_Parameter.WaitTime*FPS ) return;
+		m_NowMoveState = EMoveState::Rotation;	// 移動状態を回転する.
+		m_WaitCount = 0;	// 待機カウントの初期化.
+		break;
+	}
+	if( *m_pIsAlienOtherAbduct == false ) return;
+	if( m_NowState == EAlienState::Abduct ) return;
+	m_NowState		= EAlienState::Escape;
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
 }
 
 // 拐う.
 void CAlienA::Abduct()
 {
+	SetMoveVector( *m_pAbductUFOPosition );
+	m_TargetPosition = *m_pAbductUFOPosition;
+	TargetRotation();
+	CAlien::VectorMove( 0.1f );
+	if( *m_pIsAlienOtherAbduct == true ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
 }
 
 // 怯み.
 void CAlienA::Fright()
 {
+	m_InvincibleCount++;
+	if( IsInvincibleTime( m_Parameter.InvincibleTime+5 ) == false ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
 }
 
 // 死亡.
 void CAlienA::Death()
 {
+	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
+	if( m_ModelAlpha > 0.0f ) return;
+	m_IsDelete = true;
 }
 
 // 逃げる.
 void CAlienA::Escape()
 {
+	SetMoveVector( *m_pAbductUFOPosition );
+	m_TargetPosition = *m_pAbductUFOPosition;
+	TargetRotation();
+	CAlien::VectorMove( 0.1f );
+	if( *m_pIsAlienOtherAbduct == true ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 女の子との当たり判定.
+void CAlienA::GirlCollision( CActor* pActor )
+{
+	// オブジェクトのタグが女の子じゃなければ終了.
+	if( pActor->GetObjectTag() != EObjectTag::Player ) return;
+	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
+	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
+
+	bool isAbduct = false;
+	if( m_NowState == EAlienState::Abduct ){
+		isAbduct = true;
+	} else {
+		if( *m_pIsAlienOtherAbduct == true ) return;
+		isAbduct = true;
+	}
+
+	if( isAbduct == false ) return;
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	pActor->SetTargetPos( *this );
+
+	if( m_NowState == EAlienState::Abduct ) return;
+	m_NowState = EAlienState::Abduct;
+	m_NowMoveState = EMoveState::Rotation;
 }
 
 // 当たり判定の設定.

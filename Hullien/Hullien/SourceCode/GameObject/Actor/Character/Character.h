@@ -9,12 +9,15 @@ protected:
 	// キャラクターパラメータ.
 	struct stParameter
 	{
-		float	Life;		// 体力.
-		float	MoveSpeed;	// 移動速度.
-
+		float	Life;			// 体力.
+		float	AttackPower;	// 攻撃力.
+		float	MoveSpeed;		// 移動速度.
+		int		InvincibleTime;	// 無敵時間.
 		stParameter()
-			: Life		( 1.0f )
-			, MoveSpeed	( 0.5f )
+			: Life				( 1.0f )
+			, AttackPower		( 0.5f )
+			, MoveSpeed			( 0.5f )
+			, InvincibleTime	( 0 )
 		{}
 	} typedef SParameter;
 
@@ -26,6 +29,8 @@ public:
 	virtual void Move() = 0;
 
 protected:
+	// 無敵時間かどうか.
+	bool IsInvincibleTime( const int& invincibleTime );
 	// モデルの取得.
 	bool GetModel( const char* modelName );
 	// パラメータの設定.
@@ -45,6 +50,7 @@ protected:
 protected:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;	// スキンメッシュ.
 	D3DXVECTOR3	m_MoveVector;	// 移動ベクトル.
+	int	m_InvincibleCount;		// 無敵カウント.
 
 	bool m_HasFinishedParamSetting;	// パラメーターの設定が終わったか.
 };

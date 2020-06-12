@@ -85,6 +85,23 @@ void CPlayer::Render()
 // 当たり判定関数.
 void CPlayer::Collision( CActor* pActor )
 {
+	if( pActor == nullptr ) return;
+	if( m_pCollManager == nullptr ) return;
+	if( m_pCollManager->GetSphere() == nullptr ) return;
+
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	
+	// 攻撃関数.
+	auto attackProc = [&]( float& life ){ life -= m_Parameter.AttackPower; };
+	if( GetAsyncKeyState('C') & 0x8000 )
+		pActor->LifeCalculation( attackProc );
+}
+
+// 相手座標の設定関数.
+void CPlayer::SetTargetPos( CActor& actor )
+{
+	m_vPosition = actor.GetPosition();
 }
 
 // 操作関数.
@@ -291,7 +308,7 @@ bool CPlayer::ColliderSetting()
 void CPlayer::EditRender()
 {
 #if _DEBUG
-	ImGui::SetNextWindowSize( ImVec2(440.0f,450.0f), ImGuiCond_::ImGuiCond_Once );
+	ImGui::SetNextWindowSize( ImVec2(440.0f,470.0f), ImGuiCond_::ImGuiCond_Once );
 	ImGui::SetNextWindowPos( ImVec2(WND_W-440,0.0f), ImGuiCond_::ImGuiCond_Once );
 	ImGui::GetWindowSize();
 	bool isOpen = true;
@@ -301,6 +318,8 @@ void CPlayer::EditRender()
 	// 各パラメータの設定.
 	ImGui::InputFloat( u8"移動速度", &m_Parameter.MoveSpeed );
 	ImGui::InputFloat( u8"体力", &m_Parameter.Life );
+	ImGui::InputFloat( u8"攻撃力", &m_Parameter.AttackPower );
+	ImGui::InputInt( u8"無敵時間", &m_Parameter.InvincibleTime );
 	ImGui::InputInt( u8"攻撃コンボ最大数", &m_Parameter.AttackComboMax );
 	ImGui::InputInt( u8"攻撃キュー追加最大数", &m_Parameter.AttackQueueMax );
 	ImGui::InputFloat( u8"回避の移動距離", &m_Parameter.AvoidMoveDistance );
@@ -366,24 +385,28 @@ void CPlayer::DebugRender()
 
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*11, 0.0f } );
 	CDebugText::Render( "LifePoint : ", m_Parameter.Life );
-
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*12, 0.0f } );
+	CDebugText::Render( "AttackPower : ", m_Parameter.AttackPower );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*13, 0.0f } );
+	CDebugText::Render( "InvincibleTime : ", m_Parameter.InvincibleTime );
+
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*15, 0.0f } );
 	CDebugText::Render( "----- Animation ----" );
 	
 	// アニメーション番号の描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*14, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*16, 0.0f } );
 	CDebugText::Render( "Now_AnimationNo : ", (int)m_NowAnimNo );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*15, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*17, 0.0f } );
 	CDebugText::Render( "Old_AnimationNo : ", (int)m_OldAnimNo );
 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*17, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*19, 0.0f } );
 	CDebugText::Render( "------ Other -------" );
 
 	// 攻撃カウントの描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*18, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*20, 0.0f } );
 	CDebugText::Render( "AttackComboCount : ", m_AttackComboCount );
 
 	// 回避中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*19, 0.0f } );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*21, 0.0f } );
 	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
 }

@@ -79,6 +79,8 @@ public:
 	virtual void Render() override;
 	// “–‚½‚è”»’èŠÖ”.
 	virtual void Collision( CActor* pActor ) override;
+	// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
+	virtual void SetTargetPos( CActor& actor ) override;
 
 private:
 	// ‘€ìŠÖ”.

@@ -3,9 +3,16 @@
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 
 CAlien::CAlien()
-	: m_GirlPosition	( 0.0f, 0.0f, 0.0f )
-	, m_TargetRotation	( 0.0f, 0.0f, 0.0f )
-	, m_NowState		( EAlienState::None )
+	: m_TargetPosition		( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation		( 0.0f, 0.0f, 0.0f )
+	, m_pAbductUFOPosition	( nullptr )
+	, m_Parameter			()
+	, m_NowState			( EAlienState::None )
+	, m_NowMoveState		( EMoveState::None )
+	, m_ModelAlpha			( 0.0f )
+	, m_WaitCount			( 0 )
+	, m_pIsAlienOtherAbduct	( nullptr )
+	, m_IsDelete			( false )
 {
 }
 
@@ -16,10 +23,26 @@ CAlien::~CAlien()
 // 相手座標の設定.
 void CAlien::SetTargetPos( CActor& actor )
 {
+	if( m_NowMoveState == EMoveState::Move ) return;
+	if( *m_pIsAlienOtherAbduct == true ) return;
+
 	// 女の子じゃなければ終了.
 	// 今は女の子がいないのでplyaerで対処.
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;
-	m_GirlPosition = actor.GetPosition();	// 女の子の座標を取得.
+	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+}
+
+// ライフ計算関数.
+void CAlien::LifeCalculation( const std::function<void(float&)>& proc )
+{
+	if( m_NowState == EAlienState::Spawn ) return;
+	if( m_NowState == EAlienState::Death ) return;
+	if( m_NowState == EAlienState::Fright ) return;
+
+	proc( m_Parameter.Life );
+	m_NowState = EAlienState::Fright;
+	if( m_Parameter.Life > 0.0f ) return;
+	m_NowState = EAlienState::Death;
 }
 
 // 現在の状態の更新関数.
@@ -66,6 +89,8 @@ void CAlien::SetMoveVector( const D3DXVECTOR3& targetPos )
 // 目的の座標へ回転.
 void CAlien::TargetRotation()
 {
+	if( m_NowMoveState != EMoveState::Rotation ) return;
+
 	// 自身のベクトルを用意.
 	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
 	myVector.x = sinf( m_vRotation.y );
@@ -89,17 +114,21 @@ void CAlien::TargetRotation()
 		// 移動用ベクトルを取得.
 		m_MoveVector.x = sinf( m_vRotation.y );
 		m_MoveVector.z = cosf( m_vRotation.y );
+		m_NowMoveState = EMoveState::Move;
 	}
 }
 
 // 移動関数.
 void CAlien::VectorMove( const float& moveSpeed )
 {
-	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_GirlPosition - m_vPosition) );
+	if( m_NowMoveState != EMoveState::Move ) return;
 
-	if( lenght <= 0.05f ) return;
+	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
 
 	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 
+	if( lenght >= 1.0f ) return;
+
+	m_NowMoveState = EMoveState::Wait;
 }

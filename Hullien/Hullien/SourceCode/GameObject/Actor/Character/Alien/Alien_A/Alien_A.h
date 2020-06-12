@@ -37,11 +37,12 @@ private:
 	// 逃げる.
 	virtual void Escape() override;
 
+	// 女の子との当たり判定.
+	void GirlCollision( CActor* pActor );
+
 	// 当たり判定の設定.
 	bool ColliderSetting();
 
-private:
-	stAlienParam m_Parameter;	// パラメータ.
 };
 
 #endif	// #ifndef ALIEN_A_H.

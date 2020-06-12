@@ -67,7 +67,6 @@ struct VS_OUTPUT
 	float2	Tex			: TEXCOORD3;
 };
 
-
 //指定した番号のボーンのポーズ行列を返す.
 //サブ関数（バーテックスシェーダーで使用）.
 matrix FetchBoneMatrix( uint iBone )
@@ -125,7 +124,7 @@ VS_OUTPUT VS_Main(VSSkinIn input)
     float3 PosWorld = mul(input.Pos, g_mW).xyz;
     output.EyeVector = normalize(g_vCamPos.xyz - PosWorld);
 
-	return output;
+    return output;
 }
 
 

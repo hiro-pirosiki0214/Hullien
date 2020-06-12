@@ -6,6 +6,7 @@
 CCharacter::CCharacter()
 	: m_pSkinMesh				( nullptr )
 	, m_MoveVector				( 0.0f, 0.0f, 0.0f )
+	, m_InvincibleCount			( 0 )
 	, m_HasFinishedParamSetting	( false )
 {
 	
@@ -13,6 +14,12 @@ CCharacter::CCharacter()
 
 CCharacter::~CCharacter()
 {
+}
+
+// –³“GŽžŠÔ‚©‚Ç‚¤‚©.
+bool CCharacter::IsInvincibleTime( const int& invincibleTime )
+{
+	return m_InvincibleCount > invincibleTime * FPS;
 }
 
 // ƒ‚ƒfƒ‹‚ÌŽæ“¾.

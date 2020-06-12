@@ -25,6 +25,8 @@ public:
 	void SetAlienParameterList( std::vector<CAlien::SAlienParam>* );
 	// スポーンパラメータの設定.
 	void SetSpawnParameter( const SSpawnUFOParam& param ){ m_SpawnParameter = param; }
+	// 連れ去るUFOの座標設定.
+	void SetAbductUFOPosition( D3DXVECTOR3* pPos ){ m_pAbductUFOPosition = pPos; }
 
 private:
 	// 更新関数.外部で使用しないので隠蔽.
@@ -34,7 +36,8 @@ private:
 	std::shared_ptr<CAlien> AlienFactory();
 
 private:
-	SSpawnUFOParam m_SpawnParameter;	// スポーンパラメータ.
+	SSpawnUFOParam	m_SpawnParameter;		// スポーンパラメータ.
+	D3DXVECTOR3*	m_pAbductUFOPosition;	// 連れ去るUFOの座標.
 	std::vector<CAlien::SAlienParam>* m_pAlienParamList;	// 宇宙人パラメータリスト.
 	int	m_FrameCount;	// 経過フレームカウント.
 	int m_AlienIndex;	// 宇宙人.

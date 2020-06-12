@@ -8,17 +8,28 @@ class CAlien : public CCharacter
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 
+protected:
+	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
+
+
 public:
 	// 宇宙人パラメータ.
 	struct stAlienParam : public stParameter
 	{
 		float		RotationalSpeed;	// 回転速度.
+		float		ModelAlphaAddValue;	// モデルのアルファ値の加算する値.
+		float		ModelAlphaSubValue;	// モデルのアルファ値の減算する値.
+		int			WaitTime;			// 待機時間.
 		D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
 		float		SphereAdjRadius;	// スフィアの調整半径.
 
 		stAlienParam()
-			: SphereAdjPos		( 0.0f, 0.0f, 0.0f )
-			, SphereAdjRadius	( 0.0f )
+			: RotationalSpeed		( 0.05f )
+			, ModelAlphaAddValue	( 0.01f )
+			, ModelAlphaSubValue	( 0.01f )
+			, WaitTime				( 3 )
+			, SphereAdjPos			( 0.0f, 0.0f, 0.0f )
+			, SphereAdjRadius		( 0.0f )
 		{}
 	} typedef SAlienParam;
 
@@ -47,9 +58,11 @@ protected:
 		Rotation,
 		Move,
 		Attack,
+		Wait,
 
 		Max,
 	} typedef EMoveState;
+
 public:
 	CAlien();
 	virtual ~CAlien();
@@ -59,6 +72,19 @@ public:
 	// スポーン.
 	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
 
+	// ライフ計算関数.
+	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+	// モデルのアルファ値の取得.
+	float GetModelAplha() const { return m_ModelAlpha; }
+	// 連れ去っているかどうか.
+	bool IsAbduct() const { return m_NowState == EAlienState::Abduct; }
+	// ほかの宇宙人が連れ去っているか設定.
+	void SetOtherAbduct( bool* pisAbduct ){ m_pIsAlienOtherAbduct = pisAbduct; }
+	// 連れ去るUFOの座標の取得.
+	void SetAbductUFOPosition( D3DXVECTOR3* pos ){ m_pAbductUFOPosition = pos; }
+
+	// 消去するかどうか.
+	bool IsDelete() const { return m_IsDelete; }
 protected:
 	// 現在の状態の更新関数.
 	void CurrentStateUpdate();
@@ -83,9 +109,17 @@ protected:
 	virtual void Escape() = 0;
 
 protected:
-	D3DXVECTOR3	m_GirlPosition;		// 女の子の座標.
-	D3DXVECTOR3	m_TargetRotation;	// 目標の回転情報.
-	EAlienState	m_NowState;			// 現在の状態.
+	D3DXVECTOR3		m_TargetPosition;		// 女の子の座標.
+	D3DXVECTOR3		m_TargetRotation;		// 目標の回転情報.
+	D3DXVECTOR3*	m_pAbductUFOPosition;	// UFOの座標.
+	SAlienParam		m_Parameter;			// パラメータ.
+	EAlienState		m_NowState;				// 現在の状態.
+	EMoveState		m_NowMoveState;			// 現在の移動状態.
+	float			m_ModelAlpha;			// モデルのアルファ値.
+	int				m_WaitCount;			// 待機カウント.
+	bool*			m_pIsAlienOtherAbduct;	// 他の宇宙人が連れ去っているかどうか.
+
+	bool			m_IsDelete;			// 消去するかどうか.
 };
 
 #endif	// #ifndef ALIEN_H.

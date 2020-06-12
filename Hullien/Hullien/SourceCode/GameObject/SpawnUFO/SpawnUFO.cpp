@@ -3,10 +3,11 @@
 #include "..\Actor\Character\Alien\Alien_A\Alien_A.h"
 
 CSpawnUFO::CSpawnUFO()
-	: m_SpawnParameter	()
-	, m_pAlienParamList	( nullptr )
-	, m_FrameCount		( 0 )
-	, m_AlienIndex		( 0 )
+	: m_SpawnParameter		()
+	, m_pAbductUFOPosition	( nullptr )
+	, m_pAlienParamList		( nullptr )
+	, m_FrameCount			( 0 )
+	, m_AlienIndex			( 0 )
 {
 }
 
@@ -39,6 +40,7 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	if( m_FrameCount != m_SpawnParameter.SpawnTime ) return;
 	std::shared_ptr<CAlien> tempAlien = AlienFactory();
 	if( tempAlien == nullptr ) return;
+	if( m_pAbductUFOPosition == nullptr ) return;
 
 	alienList.emplace_back( tempAlien );	// 宇宙人の追加.
 	// 宇宙人のパラメータリストが空なら終了.
@@ -47,7 +49,9 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 
 	// リストにあったパラメータとスポーン座標を設定し、スポーンさせる.
 	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnParameter.Position );
-//	m_FrameCount = 0;
+	// 連れ去るUFOの座標を設定.
+	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
+	m_FrameCount = 0;
 }
 
 // 宇宙人のパラメータリストを設定する.
