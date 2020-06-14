@@ -70,7 +70,7 @@ public:
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
 	// スポーン.
-	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
+	virtual bool Spawn( const SAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
 
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
@@ -94,19 +94,24 @@ protected:
 	void TargetRotation();
 	// 移動関数.
 	virtual void VectorMove( const float& moveSpeed );
+	// 待機関数.
+	virtual void WaitMove();
 
 	// スポーン中.
-	virtual void Spawning() = 0;
+	virtual void Spawning();
 	// 移動.
-	virtual void Move() override {}
+	virtual void Move() override;
 	// 拐う.
-	virtual void Abduct() = 0;
+	virtual void Abduct();
 	// 怯み.
-	virtual void Fright() = 0;
+	virtual void Fright();
 	// 死亡.
-	virtual void Death() = 0;
+	virtual void Death();
 	// 逃げる.
-	virtual void Escape() = 0;
+	virtual void Escape();
+
+	// 女の子との当たり判定.
+	void GirlCollision( CActor* pActor );
 
 protected:
 	D3DXVECTOR3		m_TargetPosition;		// 女の子の座標.

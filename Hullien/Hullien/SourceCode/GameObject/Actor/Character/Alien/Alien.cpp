@@ -2,6 +2,8 @@
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 
+#include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+
 CAlien::CAlien()
 	: m_TargetPosition		( 0.0f, 0.0f, 0.0f )
 	, m_TargetRotation		( 0.0f, 0.0f, 0.0f )
@@ -131,4 +133,106 @@ void CAlien::VectorMove( const float& moveSpeed )
 	if( lenght >= 1.0f ) return;
 
 	m_NowMoveState = EMoveState::Wait;
+}
+
+// 待機関数.
+void CAlien::WaitMove()
+{
+	if( m_NowMoveState != EMoveState::Wait ) return;
+	m_WaitCount++;	// 待機カウント加算.
+	if( m_WaitCount < m_Parameter.WaitTime*FPS ) return;
+	m_NowMoveState = EMoveState::Rotation;	// 移動状態を回転する.
+	m_WaitCount = 0;	// 待機カウントの初期化.
+}
+
+// スポーン中.
+void CAlien::Spawning()
+{
+	// モデルのアルファ値を足していく.
+	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
+	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 移動.
+void CAlien::Move()
+{
+	TargetRotation();			// 回転.
+	CAlien::VectorMove( m_Parameter.MoveSpeed );	// 移動.
+	CAlien::WaitMove();			// 待機.
+
+	if( *m_pIsAlienOtherAbduct == false ) return;
+	if( m_NowState == EAlienState::Abduct ) return;
+	m_NowState		= EAlienState::Escape;
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
+}
+
+// 拐う.
+void CAlien::Abduct()
+{
+	SetMoveVector( *m_pAbductUFOPosition );
+	m_TargetPosition = *m_pAbductUFOPosition;
+
+	TargetRotation();
+	CAlien::VectorMove( m_Parameter.MoveSpeed );
+
+	if( *m_pIsAlienOtherAbduct == true ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 怯み.
+void CAlien::Fright()
+{
+	m_InvincibleCount++;
+	if( IsInvincibleTime( m_Parameter.InvincibleTime+5 ) == false ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 死亡.
+void CAlien::Death()
+{
+	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
+	if( m_ModelAlpha > 0.0f ) return;
+	m_IsDelete = true;
+}
+
+// 逃げる.
+void CAlien::Escape()
+{
+	SetMoveVector( *m_pAbductUFOPosition );
+	m_TargetPosition = *m_pAbductUFOPosition;
+	TargetRotation();
+	CAlien::VectorMove( 0.1f );
+	if( *m_pIsAlienOtherAbduct == true ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 女の子との当たり判定.
+void CAlien::GirlCollision( CActor* pActor )
+{
+	// オブジェクトのタグが女の子じゃなければ終了.
+	if( pActor->GetObjectTag() != EObjectTag::Player ) return;
+	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
+	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
+
+	bool isAbduct = false;
+	if( m_NowState == EAlienState::Abduct ){
+		isAbduct = true;
+	} else {
+		if( *m_pIsAlienOtherAbduct == true ) return;
+		isAbduct = true;
+	}
+
+	if( isAbduct == false ) return;
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	pActor->SetTargetPos( *this );
+
+	if( m_NowState == EAlienState::Abduct ) return;
+	m_NowState = EAlienState::Abduct;
+	m_NowMoveState = EMoveState::Rotation;
 }

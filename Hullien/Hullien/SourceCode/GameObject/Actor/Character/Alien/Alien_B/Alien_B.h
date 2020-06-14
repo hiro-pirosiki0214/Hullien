@@ -1,15 +1,15 @@
-#ifndef ALIEN_A_H
-#define ALIEN_A_H
+#ifndef ALIEN_B_H
+#define ALIEN_B_H
 
 #include "..\Alien.h"
 
-class CAlienA : public CAlien
+class CAlienB : public CAlien
 {
 	const char* MODEL_NAME = "GhostB_s";
 
 public:
-	CAlienA();
-	virtual ~CAlienA();
+	CAlienB();
+	virtual ~CAlienB();
 
 	// ‰Šú‰»ŠÖ”.
 	virtual bool Init() override;
@@ -38,7 +38,6 @@ private:
 
 	// “–‚½‚è”»’è‚Ìİ’è.
 	bool ColliderSetting();
-
 };
 
-#endif	// #ifndef ALIEN_A_H.
+#endif	// #ifndef ALIEN_B_H.

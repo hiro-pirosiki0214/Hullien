@@ -1,4 +1,4 @@
-#include "Alien_A.h"
+#include "Alien_B.h"
 #include "..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 
@@ -6,17 +6,17 @@
 #include "..\..\..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 
-CAlienA::CAlienA()
+CAlienB::CAlienB()
 {
 	m_vSclae = { 0.05f, 0.05f, 0.05f };
 }
 
-CAlienA::~CAlienA()
+CAlienB::~CAlienB()
 {
 }
 
 // 初期化関数.
-bool CAlienA::Init()
+bool CAlienB::Init()
 {
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
@@ -24,14 +24,14 @@ bool CAlienA::Init()
 }
 
 // 更新関数.
-void CAlienA::Update()
+void CAlienB::Update()
 {
 	SetMoveVector( m_TargetPosition );
 	CurrentStateUpdate();	// 現在の状態の更新.
-} 
+}
 
 // 描画関数.
-void CAlienA::Render()
+void CAlienB::Render()
 {
 	if( m_pSkinMesh == nullptr ) return;
 
@@ -40,7 +40,7 @@ void CAlienA::Render()
 	rot.y += static_cast<float>(D3DX_PI);
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
+	m_pSkinMesh->SetColor( { 0.8f, 0.5f, 0.5f, m_ModelAlpha } );
 	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
@@ -53,7 +53,7 @@ void CAlienA::Render()
 }
 
 // 当たり判定関数.
-void CAlienA::Collision( CActor* pActor )
+void CAlienB::Collision( CActor* pActor )
 {
 	if( pActor == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
@@ -63,7 +63,7 @@ void CAlienA::Collision( CActor* pActor )
 }
 
 // スポーン.
-bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
+bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != EAlienState::None ) return true;
@@ -72,48 +72,47 @@ bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_Parameter = param;	// パラメータを設定.
 	m_vPosition = spawnPos;	// スポーン座標の設定.
 	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
-
 	return true;
 }
 
 // スポーン.
-void CAlienA::Spawning()
+void CAlienB::Spawning()
 {
 	CAlien::Spawning();
 }
 
 // 移動.
-void CAlienA::Move()
+void CAlienB::Move()
 {
 	CAlien::Move();
 }
 
 // 拐う.
-void CAlienA::Abduct()
+void CAlienB::Abduct()
 {
 	CAlien::Abduct();
 }
 
 // 怯み.
-void CAlienA::Fright()
+void CAlienB::Fright()
 {
 	CAlien::Fright();
 }
 
 // 死亡.
-void CAlienA::Death()
+void CAlienB::Death()
 {
 	CAlien::Death();
 }
 
 // 逃げる.
-void CAlienA::Escape()
+void CAlienB::Escape()
 {
 	CAlien::Escape();
 }
 
 // 当たり判定の設定.
-bool CAlienA::ColliderSetting()
+bool CAlienB::ColliderSetting()
 {
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){

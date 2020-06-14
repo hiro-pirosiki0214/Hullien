@@ -9,7 +9,7 @@ enum class enSceneNo
 	None,
 
 	Title,		// タイトル.
-	GameMain,	// ゲームメイン.S
+	GameMain,	// ゲームメイン.
 	GameClear,	// ゲームクリア.
 	GameOver,	// ゲームオーバー.
 

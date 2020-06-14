@@ -1,6 +1,7 @@
 #include "SpawnUFO.h"
 #include "..\Actor\Character\Alien\AlienList.h"
 #include "..\Actor\Character\Alien\Alien_A\Alien_A.h"
+#include "..\Actor\Character\Alien\Alien_B\Alien_B.h"
 
 CSpawnUFO::CSpawnUFO()
 	: m_SpawnParameter		()
@@ -63,13 +64,17 @@ void CSpawnUFO::SetAlienParameterList( std::vector<CAlien::SAlienParam>* alienPa
 // ìGÇÃçÏê¨.
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {
-	const EAlienList alienNo = EAlienList::A;
+	const EAlienList alienNo = EAlienList::B;
 	switch( alienNo )
 	{
 	case EAlienList::A:
 		m_AlienIndex = static_cast<int>(EAlienList::A);
 		m_AlienIndex--;
 		return std::make_shared<CAlienA>();
+	case EAlienList::B:
+		m_AlienIndex = static_cast<int>(EAlienList::A);
+		m_AlienIndex--;
+		return std::make_shared<CAlienB>();
 	default:
 		break;
 	}
