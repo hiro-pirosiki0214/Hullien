@@ -1,16 +1,19 @@
 #include "Editor.h"
+#include "..\..\SceneManager\SceneManager.h"
 #include "..\..\..\Editor\ControllerEdit\ControllerEdit.h"
 #include "..\..\..\Editor\SpawnEdit\SpawnEdit.h"
-#include "..\..\SceneManager\SceneManager.h"
+#include "..\..\..\Editor\AlienParamEdit\AlienParamEdit.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 
 	, m_pControllerEdit	( nullptr )
 	, m_pSpawnEdit		( nullptr )
+	, m_pAlienParamEdit	( nullptr )
 {
 	m_pControllerEdit = std::make_unique<CControllerEdit>();
 	m_pSpawnEdit = std::make_unique<CSpawnEdit>();
+	m_pAlienParamEdit = std::make_unique<CAlienParamEdit>();
 }
 
 CEditor::~CEditor()
@@ -21,6 +24,7 @@ CEditor::~CEditor()
 bool CEditor::Load()
 {
 	if( m_pSpawnEdit->Init() == false ) return false;
+	if( m_pAlienParamEdit->Init() == false ) return false;
 	return true;
 }
 
@@ -41,6 +45,7 @@ void CEditor::Render()
 	// コントローラーエディットの描画.
 	m_pControllerEdit->Render();
 	m_pSpawnEdit->Render();
+	m_pAlienParamEdit->Render();
 
 	// ImGui最終描画.
 	CImGuiManager::Render();

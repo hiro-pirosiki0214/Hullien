@@ -111,6 +111,13 @@ void CAlienB::Escape()
 	CAlien::Escape();
 }
 
+// UŒ‚ŠÖ”.
+void CAlienB::Attack()
+{
+	if( m_NowMoveState != EMoveState::Attack ) return;
+
+}
+
 // “–‚½‚è”»’è‚Ìİ’è.
 bool CAlienB::ColliderSetting()
 {

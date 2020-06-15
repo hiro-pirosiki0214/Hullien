@@ -36,6 +36,9 @@ private:
 	// “¦‚°‚é.
 	virtual void Escape() override;
 
+	// UŒ‚ŠÖ”.
+	void Attack();
+
 	// “–‚½‚è”»’è‚Ìİ’è.
 	bool ColliderSetting();
 };

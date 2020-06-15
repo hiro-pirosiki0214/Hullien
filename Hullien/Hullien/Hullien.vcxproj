@@ -162,6 +162,7 @@
     <ClCompile Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\Toon\Toon.cpp" />
     <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp" />
+    <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\EditRenderer\EditRenderer.cpp" />
     <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.h" />
     <ClInclude Include="SourceCode\Common\Shader\Toon\Toon.h" />
     <ClInclude Include="SourceCode\Common\Sprite\CSprite.h" />
+    <ClInclude Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.h" />
     <ClInclude Include="SourceCode\Editor\ControllerEdit\ControllerEdit.h" />
     <ClInclude Include="SourceCode\Editor\EditRenderer\EditRenderer.h" />
     <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h" />

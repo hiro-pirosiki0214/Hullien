@@ -9,7 +9,7 @@ class CRotLookAtCenter;
 class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
-	const char* PARAMETER_FILE_PATH = "Data\\GamePram\\Player\\Player.bin";
+	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
 	const char*	MODEL_NAME	= "Sayaka_s";		// モデル名.
 
 	// アニメーション番号.

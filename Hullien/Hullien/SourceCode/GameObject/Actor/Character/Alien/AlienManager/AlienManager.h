@@ -11,8 +11,8 @@ class CSpawnUFO;
 
 class CAlienManager
 {
-	const char* SPAWN_PARAM_FILE_PATH = "Data\\GamePram\\Alien\\SpaenParam\\SpaenParam.bin";
-	const char* ALIEN_PARAM_LIST_FILE_PATH = "Data\\GamePram\\Alien\\AlienParamPathList.txt";
+	const char* SPAWN_PARAM_FILE_PATH = "Data\\GameParam\\Alien\\SpaenParam\\SpaenParam.bin";
+	const char* ALIEN_PARAM_LIST_FILE_PATH = "Data\\GameParam\\Alien\\AlienParamPathList.txt";
 public:
 	CAlienManager();
 	~CAlienManager();

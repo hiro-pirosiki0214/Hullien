@@ -1,0 +1,6 @@
+Data\GameParam\Alien\Alien_A\Alien_A.bin
+Data\GameParam\Alien\Alien_A\Alien_Ada.bin
+Data\GameParam\Alien\Alien_B\Alien_B.bin
+Data\GameParam\Alien\Alien_B\Alien_Bda.bin
+Data\GameParam\Alien\Alien_C\Alien_C.bin
+Data\GameParam\Alien\Alien_D\Alien_D.bin

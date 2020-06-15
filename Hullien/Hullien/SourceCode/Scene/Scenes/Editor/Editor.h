@@ -5,6 +5,7 @@
 
 class CControllerEdit;
 class CSpawnEdit;
+class CAlienParamEdit;
 
 class CEditor : public CSceneBase
 {
@@ -22,6 +23,7 @@ public:
 private:
 	std::unique_ptr<CControllerEdit> m_pControllerEdit;
 	std::unique_ptr<CSpawnEdit>	m_pSpawnEdit;
+	std::unique_ptr<CAlienParamEdit>	m_pAlienParamEdit;
 };
 
 #endif	// #ifndef EDITOR_H.
