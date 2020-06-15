@@ -8,6 +8,7 @@
 
 CAlienA::CAlienA()
 {
+	m_ObjectTag = EObjectTag::Alien_A;
 	m_vSclae = { 0.05f, 0.05f, 0.05f };
 }
 

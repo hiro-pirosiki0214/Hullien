@@ -89,7 +89,7 @@ protected:
 	// 現在の状態の更新関数.
 	void CurrentStateUpdate();
 	// 移動ベクトル設定関数.
-	void SetMoveVector( const D3DXVECTOR3& targetPos );
+	virtual void SetMoveVector( const D3DXVECTOR3& targetPos );
 	// 目的の座標へ回転.
 	void TargetRotation();
 	// 移動関数.

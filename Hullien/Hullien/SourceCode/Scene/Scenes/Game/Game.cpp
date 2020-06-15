@@ -1,6 +1,7 @@
 #include "..\SceneList.h"
 #include "..\..\..\GameObject\GroundStage\GroundStage.h"
 #include "..\..\..\GameObject\Actor\Character\Player\Player.h"
+#include "..\..\..\GameObject\Actor\Character\Girl\Girl.h"
 #include "..\..\..\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
@@ -8,10 +9,12 @@ CGame::CGame( CSceneManager* pSceneManager )
 
 	, m_pGroundStage	( nullptr )
 	, m_pPlayer			( nullptr )
+	, m_pGirl				( nullptr )
 	, m_pAlienManager	( nullptr )
 {
 	m_pGroundStage = std::make_shared<CGroundStage>();
 	m_pPlayer = std::make_shared<CPlayer>();
+	m_pGirl = std::make_shared<CGirl>();
 	m_pAlienManager = std::make_shared<CAlienManager>();
 }
 
@@ -26,6 +29,7 @@ bool CGame::Load()
 {
 	if( m_pGroundStage->Init() == false ) return false;
 	if( m_pPlayer->Init() == false ) return false;
+	if( m_pGirl->Init() == false ) return false;
 	if( m_pAlienManager->Init() == false ) return false;
 	return true;
 }
@@ -35,14 +39,20 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
-	// プレイヤーの当たり判定関数.
-	auto playerCollProc = [&]( CActor* pActor )
-	{
-		m_pPlayer->Collision( pActor );
-	};
 
-	m_pPlayer->Update();
-	m_pAlienManager->Update( m_pPlayer.get(), playerCollProc );
+	m_pPlayer->Update();	// プレイヤーの更新.
+	m_pGirl->Update();		// 女の子の更新.
+
+	// 宇宙人の更新.
+	m_pAlienManager->Update( 
+		m_pPlayer.get(),
+		m_pGirl.get(),
+		[&](CActor* pActor)
+	{
+		// プレイヤー、女の子の当たり判定.
+		m_pPlayer->Collision( pActor );
+		m_pGirl->Collision( pActor );
+	} );
 
 #if 0	// 次のシーンへ移動.
 	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
@@ -56,7 +66,8 @@ void CGame::Update()
 //============================.
 void CGame::Render()
 {
-	m_pGroundStage->Render();
-	m_pPlayer->Render();
-	m_pAlienManager->Render();
+	m_pGroundStage->Render();	// ステージの描画.
+	m_pPlayer->Render();			// プレイヤーの描画.
+	m_pGirl->Render();				// 女の子の描画.
+	m_pAlienManager->Render();	// 宇宙人達の描画.
 }

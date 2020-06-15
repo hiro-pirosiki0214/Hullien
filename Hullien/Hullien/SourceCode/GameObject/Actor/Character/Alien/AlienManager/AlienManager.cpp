@@ -11,7 +11,7 @@ CAlienManager::CAlienManager()
 	: m_AilenList			()
 	, m_SpawnUFOList		()
 	, m_AlienParamList		()
-	, m_AbductUFOPosition	( 0.0f, 0.0f, 0.0f )
+	, m_AbductUFOPosition	( 10.0f, 0.0f, 0.0f )
 	, m_IsAlienAbduct		( false )
 	, m_SortCount			( 0 )
 {
@@ -30,7 +30,7 @@ bool CAlienManager::Init()
 }
 
 // 更新関数.
-void CAlienManager::Update( CActor* pActor, std::function<void(CActor*)> collProc )
+void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(CActor*)> collProc )
 {
 	Spawn();	// スポーン.
 	bool isAbduct = false;
@@ -38,17 +38,25 @@ void CAlienManager::Update( CActor* pActor, std::function<void(CActor*)> collPro
 	for( size_t i = 0; i < m_AilenList.size(); i++ ){
 		m_AilenList[i]->SetOtherAbduct( &m_IsAlienAbduct );
 
-		m_AilenList[i]->SetTargetPos( *pActor );
+		// 座標の設定.
+		m_AilenList[i]->SetTargetPos( *pPlayer );
+		m_AilenList[i]->SetTargetPos( *pGirl );
+		// 更新処理.
 		m_AilenList[i]->Update();
+		// プレイヤー、女の子の当たり判定.
 		collProc( m_AilenList[i].get() );
-		m_AilenList[i]->Collision( pActor );
+		// 宇宙人の当たり判定.
+		m_AilenList[i]->Collision( pPlayer );
+		m_AilenList[i]->Collision( pGirl );
 
+		// 女の子を連れ去っているか確認.
 		if( isAbduct == false ){
 			if( m_AilenList[i]->IsAbduct() == true ){
 				isAbduct = m_IsAlienAbduct = true;
 			}
 		}
 
+		// リストから指定の宇宙人を消すか.
 		if( m_AilenList[i]->IsDelete() == false ) continue;
 		m_AilenList[i] = m_AilenList.back();
 		m_AilenList.pop_back();

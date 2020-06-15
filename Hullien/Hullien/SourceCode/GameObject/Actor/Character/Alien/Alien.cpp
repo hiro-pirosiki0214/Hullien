@@ -29,8 +29,7 @@ void CAlien::SetTargetPos( CActor& actor )
 	if( *m_pIsAlienOtherAbduct == true ) return;
 
 	// 女の子じゃなければ終了.
-	// 今は女の子がいないのでplyaerで対処.
-	if( actor.GetObjectTag() != EObjectTag::Player ) return;
+	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
 	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
 }
 
@@ -215,7 +214,7 @@ void CAlien::Escape()
 void CAlien::GirlCollision( CActor* pActor )
 {
 	// オブジェクトのタグが女の子じゃなければ終了.
-	if( pActor->GetObjectTag() != EObjectTag::Player ) return;
+	if( pActor->GetObjectTag() != EObjectTag::Girl ) return;
 	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
 	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
 

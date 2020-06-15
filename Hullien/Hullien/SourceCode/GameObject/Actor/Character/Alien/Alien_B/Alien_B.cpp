@@ -7,7 +7,11 @@
 #include "..\..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 
 CAlienB::CAlienB()
+	: m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
+	, m_HasAimPlayer	( false )
+	, m_RotAcc				( 0.0f )
 {
+	m_ObjectTag = EObjectTag::Alien_B;
 	m_vSclae = { 0.05f, 0.05f, 0.05f };
 }
 
@@ -58,8 +62,8 @@ void CAlienB::Collision( CActor* pActor )
 	if( pActor == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
-
-	GirlCollision( pActor );
+	PlayerCollison( pActor );		// プレイヤーとの当たり判定.
+	GirlCollision( pActor );			// 女の子との当たり判定.
 }
 
 // スポーン.
@@ -75,6 +79,17 @@ bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	return true;
 }
 
+// 相手座標の設定.
+void CAlienB::SetTargetPos( CActor& actor )
+{
+	// 女の子の座標を取得.
+	CAlien::SetTargetPos( actor );
+
+	// プレイヤーじゃなければ終了.
+	if( actor.GetObjectTag() != EObjectTag::Player ) return;
+	m_vPlayerPos = actor.GetPosition();	// プレイヤーの座標を取得.
+}
+
 // スポーン.
 void CAlienB::Spawning()
 {
@@ -84,7 +99,21 @@ void CAlienB::Spawning()
 // 移動.
 void CAlienB::Move()
 {
-	CAlien::Move();
+	AimPlayerDecision();	// プレイヤーを狙うか判定.
+	TargetRotation();			// 回転.
+	if( m_HasAimPlayer == true ){
+		CAlienB::VectorMove( m_Parameter.MoveSpeed );		// 移動.
+		Attack();						// 攻撃.
+		CAlien::WaitMove();		// 待機.
+	} else {
+		CAlien::VectorMove( m_Parameter.MoveSpeed );		// 移動.
+		CAlien::WaitMove();		// 待機.
+	}
+
+	if (*m_pIsAlienOtherAbduct == false) return;
+	if (m_NowState == EAlienState::Abduct) return;
+	m_NowState = EAlienState::Escape;
+	m_NowMoveState = EMoveState::Rotation;	// 移動状態を回転する.
 }
 
 // 拐う.
@@ -111,11 +140,69 @@ void CAlienB::Escape()
 	CAlien::Escape();
 }
 
+// 移動関数.
+void CAlienB::VectorMove( const float& moveSpeed )
+{
+	if( m_NowMoveState != EMoveState::Move ) return;
+
+	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
+
+	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+
+	if( lenght >= 1.0f ) return;
+
+	m_NowMoveState = EMoveState::Attack;
+	m_RotAcc = 0.0f;
+}
+
 // 攻撃関数.
 void CAlienB::Attack()
 {
 	if( m_NowMoveState != EMoveState::Attack ) return;
 
+	const float power = 1.0f;
+	static float pow = 0.99f;
+	m_vRotation.y += (power - pow);
+	pow -= 0.01f;
+//	m_RotAcc += power - pow;
+
+	if( pow > -power ) return;
+	m_NowMoveState = EMoveState::Wait;
+}
+
+// プレイヤーとの当たり判定.
+void CAlienB::PlayerCollison( CActor* pActor )
+{
+	// オブジェクトのタグがプレイヤーじゃなければ終了.
+	if( pActor->GetObjectTag() != EObjectTag::Player ) return;
+	if( m_NowMoveState != EMoveState::Attack ) return;	// 攻撃状態じゃなければ終了.
+	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
+	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
+
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+//	pActor->LifeCalculation();
+}
+
+// プレイヤーを狙うか判定.
+void CAlienB::AimPlayerDecision()
+{
+	if( m_NowMoveState == EMoveState::Attack ) return;
+
+	// プレイヤーとの距離を計算.
+	float playerLenght = D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) );
+	// 女の子との距離を計算.
+	float girlLenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
+
+	if( playerLenght <= girlLenght ){
+		// プレイヤーのほうが近いのでプレイヤーを狙う.
+		m_HasAimPlayer = true;
+		SetMoveVector( m_vPlayerPos );
+	} else {
+		// 女の子のほうを狙う.
+		m_HasAimPlayer = false;
+		SetMoveVector( m_TargetPosition );
+	}
 }
 
 // 当たり判定の設定.

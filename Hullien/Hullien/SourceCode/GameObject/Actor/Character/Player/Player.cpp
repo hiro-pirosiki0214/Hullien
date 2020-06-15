@@ -46,12 +46,12 @@ bool CPlayer::Init()
 // 更新関数.
 void CPlayer::Update()
 {
-	Controller();		// 操作.
+	Controller();			// 操作.
 	AttackController();	// 攻撃操作.
-	AvoidController();	// 回避操作.
+	AvoidController();		// 回避操作.
 	AttackAnimation();	// 攻撃アニメーション.
-	Move();				// 移動.
-	AvoidMove();		// 回避動作.
+	Move();					// 移動.
+	AvoidMove();			// 回避動作.
 
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
 	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// 高さの設定.
@@ -101,7 +101,7 @@ void CPlayer::Collision( CActor* pActor )
 // 相手座標の設定関数.
 void CPlayer::SetTargetPos( CActor& actor )
 {
-	m_vPosition = actor.GetPosition();
+//	m_vPosition = actor.GetPosition();
 }
 
 // 操作関数.

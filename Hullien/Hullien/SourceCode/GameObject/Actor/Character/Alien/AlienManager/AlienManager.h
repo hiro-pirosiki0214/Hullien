@@ -20,7 +20,7 @@ public:
 	// ‰Šú‰»ŠÖ”.
 	bool Init();
 	// XVŠÖ”.
-	void Update( CActor* pActor, std::function<void(CActor*)> collProc );
+	void Update( CActor* pPlayer, CActor* pGirl, std::function<void(CActor*)> collProc );
 	// •`‰æŠÖ”.
 	void Render();
 

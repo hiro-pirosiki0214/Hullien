@@ -171,6 +171,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Character.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Player\Player.cpp" />
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Character.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\Girl.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Player\Player.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemList.h" />
     <ClInclude Include="SourceCode\GameObject\GameObject.h" />

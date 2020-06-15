@@ -21,6 +21,8 @@ public:
 	virtual void Collision( CActor* pActor ) override;
 	// スポーン.
 	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
+	// 相手座標の設定.
+	virtual void SetTargetPos(CActor& actor) override;
 
 private:
 	// スポーン.
@@ -36,11 +38,24 @@ private:
 	// 逃げる.
 	virtual void Escape() override;
 
+	// 移動関数.
+	virtual void VectorMove( const float& moveSpeed ) override;
 	// 攻撃関数.
 	void Attack();
+	// プレイヤーとの当たり判定.
+	void PlayerCollison( CActor* pActor );
+
+	// プレイヤーを狙うか判定.
+	void AimPlayerDecision();
 
 	// 当たり判定の設定.
 	bool ColliderSetting();
+
+private:
+	D3DXVECTOR3 m_vPlayerPos;	// プレイヤーの座標.
+	bool m_HasAimPlayer;				// プレイヤーを狙うかどうか.
+
+	float m_RotAcc;
 };
 
 #endif	// #ifndef ALIEN_B_H.

@@ -6,8 +6,10 @@ enum class enObjectTagList
 	None,
 
 	Player,		// プレイヤー.
+	Girl,			// 女の子.
 
-	Alien_A,	// 宇宙人A.
+	Alien_A,		// 宇宙人A.
+	Alien_B,		// 宇宙人B.
 
 	Max,
 
