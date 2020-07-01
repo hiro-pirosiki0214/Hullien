@@ -53,9 +53,9 @@ private:
 
 private:
 	D3DXVECTOR3 m_vPlayerPos;	// プレイヤーの座標.
-	bool m_HasAimPlayer;				// プレイヤーを狙うかどうか.
-
-	float m_RotAcc;
+	bool	m_HasAimPlayer;		// プレイヤーを狙うかどうか.
+	bool	m_OldHasAimPlayer;	// 前回プレイヤーを狙っていたか.
+	float	m_RotAccValue;		// 回転加速値.
 };
 
 #endif	// #ifndef ALIEN_B_H.

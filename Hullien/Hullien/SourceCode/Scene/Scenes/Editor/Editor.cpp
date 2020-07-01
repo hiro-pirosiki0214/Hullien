@@ -31,7 +31,9 @@ bool CEditor::Load()
 // XVŠÖ”.
 void CEditor::Update()
 {
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
+	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
+		( GetAsyncKeyState('D') & 0x8000 ) ){
+		if( !(GetAsyncKeyState('W') & 0x8000 ) ) return;
 		m_pSceneManager->NextSceneMove();
 	}
 }

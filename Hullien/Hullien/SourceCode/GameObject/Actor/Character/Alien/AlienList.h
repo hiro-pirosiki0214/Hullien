@@ -6,7 +6,9 @@ enum class enAlienList
 	None,
 
 	A,
+	Ada,
 	B,
+	Bda,
 	C,
 	D,
 	 

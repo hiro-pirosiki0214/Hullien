@@ -17,17 +17,41 @@ public:
 	struct stAlienParam : public stParameter
 	{
 		float		RotationalSpeed;	// 回転速度.
+
 		float		ModelAlphaAddValue;	// モデルのアルファ値の加算する値.
 		float		ModelAlphaSubValue;	// モデルのアルファ値の減算する値.
+
 		int			WaitTime;			// 待機時間.
+
+		float		PlayerAimLenght;	// プレイヤーを狙う範囲.
+
+		float		AttackLenght;		// 攻撃する距離.
+		float		AttackRotInitPower;	// 攻撃時の初期回転力.
+		float		AttackRotPower;		// 攻撃時の回転力.
+		float		AttackRotAddValue;	// 攻撃時の回転加算値.
+		float		AttackMoveSpeed;	// 攻撃移動速度.
+		float		AttackMoveRange;	// 攻撃移動範囲.
+
 		D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
 		float		SphereAdjRadius;	// スフィアの調整半径.
 
 		stAlienParam()
-			: RotationalSpeed		( 0.05f )
-			, ModelAlphaAddValue	( 0.01f )
-			, ModelAlphaSubValue	( 0.01f )
-			, WaitTime				( 3 )
+			: RotationalSpeed		( 0.0f )
+
+			, ModelAlphaAddValue	( 0.0f )
+			, ModelAlphaSubValue	( 0.0f )
+
+			, WaitTime				( 0 )
+
+			, PlayerAimLenght		( 0.0f )
+
+			, AttackLenght			( 0.0f )
+			, AttackRotInitPower	( 0.0f )
+			, AttackRotPower		( 0.0f )
+			, AttackRotAddValue		( 0.0f )
+			, AttackMoveSpeed		( 0.0f )
+			, AttackMoveRange		( 0.0f )
+
 			, SphereAdjPos			( 0.0f, 0.0f, 0.0f )
 			, SphereAdjRadius		( 0.0f )
 		{}

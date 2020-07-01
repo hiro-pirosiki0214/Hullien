@@ -72,7 +72,7 @@ std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 		m_AlienIndex--;
 		return std::make_shared<CAlienA>();
 	case EAlienList::B:
-		m_AlienIndex = static_cast<int>(EAlienList::A);
+		m_AlienIndex = static_cast<int>(EAlienList::B);
 		m_AlienIndex--;
 		return std::make_shared<CAlienB>();
 	default:

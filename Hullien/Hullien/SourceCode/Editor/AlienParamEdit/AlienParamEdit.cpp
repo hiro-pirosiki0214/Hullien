@@ -100,6 +100,13 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	ImGui::InputFloat( u8"移動回転速度", &s.RotationalSpeed );
 	ImGui::InputFloat( u8"スポーン時のモデル透過加算値", &s.ModelAlphaAddValue );
 	ImGui::InputFloat( u8"スポーン時のモデル透過減算値", &s.ModelAlphaSubValue );
+	ImGui::InputFloat( u8"プレイヤーを狙う範囲", &s.PlayerAimLenght );
+	ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
+	ImGui::InputFloat( u8"攻撃時の初期回転力", &s.AttackRotInitPower );
+	ImGui::InputFloat( u8"攻撃時の回転力", &s.AttackRotPower );
+	ImGui::InputFloat( u8"攻撃時の回転加算値", &s.AttackRotAddValue );
+	ImGui::InputFloat( u8"攻撃移動速度", &s.AttackMoveSpeed );
+	ImGui::InputFloat( u8"攻撃移動範囲", &s.AttackMoveRange );
 	ImGui::InputFloat( u8"スフィアの調整座標 X", &s.SphereAdjPos.x );
 	ImGui::InputFloat( u8"スフィアの調整座標 Y", &s.SphereAdjPos.y );
 	ImGui::InputFloat( u8"スフィアの調整座標 Z", &s.SphereAdjPos.z );
