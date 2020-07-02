@@ -86,10 +86,10 @@ HRESULT CSprite::InitModel()
 		static_cast<LONG>( m_SState.Base.w / m_SState.Stride.w );// xの最大マス数.
 	m_PatternMax.y = 
 		static_cast<LONG>( m_SState.Base.h / m_SState.Stride.h );// yの最大マス数.
-																 //-------------------------------.
-																 // UI用.
-																 //-------------------------------.
-																 // バッファ構造体.
+	//-------------------------------.
+	// UI用.
+	//-------------------------------.
+	// バッファ構造体.
 	D3D11_BUFFER_DESC bd;
 	bd.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法(デフォルト).
 	bd.ByteWidth			= sizeof(CSpriteShader::VERTEX)*4;	// 頂点のサイズ.
@@ -109,11 +109,6 @@ HRESULT CSprite::InitModel()
 		_ASSERT_EXPR( false, L"頂点ﾊﾞｯﾌｧ作成失敗" );
 		return E_FAIL;
 	}
-
-	// 頂点バッファをｾｯﾄ.
-	UINT stride = sizeof(CSpriteShader::VERTEX);	// データ間隔.
-	UINT offset = 0;
-	m_pContext11->IASetVertexBuffers( 0, 1, &m_pVertexBufferUI, &stride, &offset );
 
 	//-------------------------------.
 	// 3D用.
@@ -144,9 +139,6 @@ HRESULT CSprite::InitModel()
 		_ASSERT_EXPR( false, L"頂点ﾊﾞｯﾌｧ作成失敗" );
 		return E_FAIL;
 	}
-
-	// 頂点バッファをセット.
-	m_pContext11->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
 
 	InitSample();
 
@@ -217,8 +209,6 @@ void CSprite::Render( const bool& isBillboard )
 	// 3D用のシェーダーを設定.
 	m_pSpriteShader->ShaderSet( m_pVertexBuffer );
 
-	//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄをｾｯﾄ.
-	m_pContext11->IASetInputLayout( m_pVertexLayout );
 	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
 	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 
@@ -242,8 +232,6 @@ void CSprite::RenderUI()
 	// UI用のシェーダーを設定.
 	m_pSpriteShader->ShaderUISet( m_pVertexBufferUI );
 
-	//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄをｾｯﾄ.
-	m_pContext11->IASetInputLayout( m_pVertexLayout );
 	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
 	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
 
@@ -261,7 +249,7 @@ D3DXMATRIX CSprite::CreateWorldMatrix()
 	D3DXMATRIX mScale, mRot, mTran;
 
 	// 拡大縮小行列作成.
-//	D3DXMatrixScaling( &mScale, m_vScale.x, m_vScale.y, 1.0f );
+	D3DXMatrixScaling( &mScale, m_vScale.x, m_vScale.y, 1.0f );
 	// 回転行列を作成.
 	D3DXMatrixRotationYawPitchRoll( &mRot, m_vRot.x, m_vRot.y, m_vRot.z );
 	// 平行移動行列.

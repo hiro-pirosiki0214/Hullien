@@ -14,11 +14,9 @@ public:
 	{
 		ALIGN16 D3DXMATRIX	mW;				// ワールド行列.
 		ALIGN16 D3DXMATRIX	mWVP;
-		ALIGN16 float		fViewPortWidth;	// ビューポート幅.
-		ALIGN16 float		fViewPortHeight;// ビューポート高さ.
-		ALIGN16 float		fAlpha;			// アルファ値(透過で使用する).
 		ALIGN16 D3DXVECTOR4 vColor;			// カラー(RGBAの型に合わせる).
 		ALIGN16 D3DXVECTOR2 vUV;			// UV座標.
+		ALIGN16 D3DXVECTOR2 vViewPort;
 	};
 	// 頂点の構造体.
 	struct VERTEX

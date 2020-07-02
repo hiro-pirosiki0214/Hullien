@@ -7,12 +7,11 @@ SamplerState g_samLinear : register(s0);
 //ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ.
 cbuffer global : register(b0)
 {
-    matrix g_mW; // ﾜｰﾙﾄﾞ行列.
-    matrix g_mWVP; // ﾜｰﾙﾄﾞ行列.
-    float4 g_Color; // カラー.
-    float2 g_vUV; // UV座標.
-    float g_fViewPortW; // ビューポート幅.
-    float g_fViewPortH; // ビューポート高さ.
+    matrix g_mW			: packoffset( c0 ); // ﾜｰﾙﾄﾞ行列.
+    matrix g_mWVP		: packoffset( c4 ); // ﾜｰﾙﾄﾞ行列.
+    float4 g_Color		: packoffset( c8 ); // カラー.
+    float2 g_vUV		: packoffset( c9 ); // UV座標.
+	float2 g_fViewPort	: packoffset( c10 ); // UV座標.
 };
 
 //構造体.
@@ -47,8 +46,8 @@ VS_OUTPUT VS_MainUI(
     output.Pos = mul(Pos, g_mW);
 
 	// スクリーン座標に合わせる計算,
-    output.Pos.x = (output.Pos.x / g_fViewPortW) * 2.0f - 1.0f;
-    output.Pos.y = 1.0f - (output.Pos.y / g_fViewPortH) * 2.0f;
+    output.Pos.x = (output.Pos.x / g_fViewPort.x) * 2.0f - 1.0f;
+    output.Pos.y = 1.0f - (output.Pos.y / g_fViewPort.y) * 2.0f;
 
     output.Tex = Tex;
 	

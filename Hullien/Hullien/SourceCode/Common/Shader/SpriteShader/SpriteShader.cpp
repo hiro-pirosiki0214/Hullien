@@ -62,8 +62,8 @@ void CSpriteShader::SetConstantBufferData( const D3DXMATRIX& mWVP, const float& 
 		D3DXMatrixTranspose( &cb.mWVP, &cb.mWVP );//行列を転置する.
 		D3DXMatrixTranspose( &cb.mW, &cb.mW );//行列を転置する.
 											  // ビューポートの幅,高さを渡す.
-		cb.fViewPortWidth	= static_cast<float>(WND_W);
-		cb.fViewPortHeight	= static_cast<float>(WND_H);
+		cb.vViewPort.x	= static_cast<float>(WND_W);
+		cb.vViewPort.y	= static_cast<float>(WND_H);
 
 		// アルファ値を渡す.
 		cb.vColor.w = fAlpha;

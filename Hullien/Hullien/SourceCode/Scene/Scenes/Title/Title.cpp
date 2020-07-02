@@ -6,7 +6,6 @@
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\DebugText\DebugText.h"
 
-
 CTitle::CTitle( CSceneManager* pSceneManager )
 	: CSceneBase	( pSceneManager )
 {

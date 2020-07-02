@@ -8,8 +8,6 @@
 #include "..\..\..\Collider\Colliders\Capsule\CapsuleModel.h"
 #include "..\..\..\Collider\Colliders\Capsule\CapsuleCollision.h"
 
-class CRotLookAtCenter;
-
 /**********************************
 *	タイトルシーンクラス.
 */
@@ -25,7 +23,6 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
-private:
 };
 
 #endif	// #ifndef TITLE_H.
