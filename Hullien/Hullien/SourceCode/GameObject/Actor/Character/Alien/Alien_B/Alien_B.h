@@ -22,7 +22,7 @@ public:
 	// スポーン.
 	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
 	// 相手座標の設定.
-	virtual void SetTargetPos(CActor& actor) override;
+	virtual void SetTargetPos( CActor& actor ) override;
 
 private:
 	// スポーン.
