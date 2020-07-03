@@ -9,6 +9,12 @@
 **/
 class CTitleWidget : public CSceneWidget
 {
+private:
+	const char* SPRITE_NAME_BG = "BackGround";	//背景スプライト名.
+	const char* SPRITE_NAME_SS = "SelectStart";	//開始スプライト名.
+	const char* SPRITE_NAME_SE = "SelectExit";	  	//終了スプライト名.
+	const char* SPRITE_NAME_T   = "Title";			//タイトルスプライト名.
+
 	const int BACKGROUND	= 0;	//背景配列番号.
 	const int START				= 1;   //開始配列番号.
 	const int END					= 2;   //終了配列番号.

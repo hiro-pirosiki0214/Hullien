@@ -8,9 +8,9 @@
 **/
 class CWidget : public CGameObject
 {
+protected:
 	const float ALPHA_MAX = 1.0f;
 
-protected:
 	// フェードの状態.
 	enum class enFadeState
 	{

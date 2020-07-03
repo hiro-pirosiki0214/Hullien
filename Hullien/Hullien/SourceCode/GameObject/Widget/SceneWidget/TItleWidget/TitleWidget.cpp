@@ -24,13 +24,13 @@ bool CTitleWidget::Init()
 	// スプライトの読み込み.
 	const char* SpriteName[] =
 	{	
-		"BackGround",
-		"SelectStart",
-		"SelectExit",
-		"Title",
+		SPRITE_NAME_BG,
+		SPRITE_NAME_SS,
+		SPRITE_NAME_SE,
+		SPRITE_NAME_T,
 	};
 	int SpriteMax = sizeof(SpriteName) / sizeof(SpriteName[0]);
-
+	// メモリの最大値設定.
 	m_pSprites.reserve(SpriteMax);
 	for (int sprite = 0; sprite < SpriteMax; sprite++)
 	{
@@ -75,11 +75,11 @@ void CTitleWidget::Render()
 // カーソル設定関数.
 void CTitleWidget::SettingCursor()
 {
-	if (GetAsyncKeyState( VK_UP ) & 0x0001)
+	if (GetAsyncKeyState( VK_UP ) & 0x8000)
 	{
 		m_SelectState = CTitleWidget::ESelectState::Start;
 	}
-	if (GetAsyncKeyState( VK_DOWN ) & 0x0001)
+	if (GetAsyncKeyState( VK_DOWN ) & 0x8000)
 	{
 		m_SelectState = CTitleWidget::ESelectState::End;
 	}
