@@ -38,7 +38,7 @@ void CTitle::Update()
 	switch ( m_pWidget->GetSelectState() )
 	{
 	case CTitleWidget::ESelectState::Start:
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000) {
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001) {
 			m_pSceneManager->NextSceneMove();
 		}
 		break;
@@ -52,5 +52,6 @@ void CTitle::Update()
 //============================.
 void CTitle::Render()
 {
+	if ( m_pWidget == nullptr ) return;
 	m_pWidget->Render();
 }

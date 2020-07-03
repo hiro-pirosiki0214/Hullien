@@ -177,6 +177,8 @@
     <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LifeGauge\LifeGauge.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp" />
@@ -263,6 +265,8 @@
     <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LifeGauge\LifeGauge.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h" />

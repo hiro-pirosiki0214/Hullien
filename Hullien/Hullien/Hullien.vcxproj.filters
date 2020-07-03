@@ -249,6 +249,12 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCode\Global.h">
@@ -510,6 +516,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -48,12 +48,15 @@ bool CTitleWidget::Init()
 void CTitleWidget::Update()
 {
 	// ƒJ[ƒ\ƒ‹‚ÌÝ’è.
+	if (m_pCursor == nullptr) return;
 	SettingCursor();
 }
 
 // •`‰æŠÖ”.
 void CTitleWidget::Render()
 {
+	if (m_pSprites.size() == 0) return;
+
 	//”wŒi.
 	m_pSprites[BACKGROUND]->SetDeprh(false);
 	m_pSprites[BACKGROUND]->RenderUI();
