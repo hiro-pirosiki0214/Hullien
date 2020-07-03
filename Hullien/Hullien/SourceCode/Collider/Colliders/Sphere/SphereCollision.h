@@ -13,6 +13,7 @@ public:  //------- ŠÖ” -------.
 
 	// ƒ‚ƒfƒ‹‚Ì”¼Œa‚Ìì¬.
 	HRESULT InitModelRadius( LPD3DXMESH pMesh );
+	HRESULT InitModelRadius( const float& radius );
 	// “–‚½‚è”»’è‚Ì•\¦.
 	virtual void DebugRender() override;
 

@@ -24,16 +24,32 @@ public: //------ 関数 -------.
 		LPD3DXMESH pMesh, D3DXVECTOR3* pPos, 
 		D3DXVECTOR3* pRot, float* pScale,
 		const D3DXVECTOR3& adjPos, const float& adjRadius );
+	HRESULT InitSphere( 
+		D3DXVECTOR3* pPos, 
+		D3DXVECTOR3* pRot, float* pScale,
+		const D3DXVECTOR3& adjPos, const float& radius );
 	// ボックスの初期化.
 	HRESULT InitBox( 
 		LPD3DXMESH pMesh, D3DXVECTOR3* pPos, 
 		D3DXVECTOR3* pRot, float* pScale,
 		const D3DXVECTOR3& adjPos, const D3DXVECTOR3& adjlength );
+	HRESULT InitBox( 
+		D3DXVECTOR3* pPos, 
+		D3DXVECTOR3* pRot, float* pScale,
+		const D3DXVECTOR3& adjPos, 
+		const float& height,
+		const float& wight );
 	// カプセルの初期化.
 	HRESULT InitCapsule( 
 		LPD3DXMESH pMesh, D3DXVECTOR3* pPos, 
 		D3DXVECTOR3* pRot, float* pScale,
+		const D3DXVECTOR3& adjPos,
 		const float& adjRadius, const float& adjHeight );
+	HRESULT InitCapsule( 
+		D3DXVECTOR3* pPos, 
+		D3DXVECTOR3* pRot, float* pScale,
+		const D3DXVECTOR3& adjPos,
+		const float& radius, const float& height );
 
 	// デバッグ用描画.
 	void DebugRender();

@@ -38,6 +38,21 @@ HRESULT CSphereCollision::InitModelRadius( LPD3DXMESH pMesh )
 }
 
 //----------------------------------------.
+// ƒ‚ƒfƒ‹‚Ì”¼Œa‚Ìì¬.
+//----------------------------------------.
+HRESULT CSphereCollision::InitModelRadius( const float& radius )
+{
+	m_Radius = radius;
+#ifdef _DEBUG
+	if( FAILED( m_pDebugSphere->Init( m_Radius ))){
+		ERROR_MESSAGE("Model creation failed");
+		return E_FAIL;
+	}
+#endif	// #ifdef _DEBUG.
+	return S_OK;
+}
+
+//----------------------------------------.
 // “–‚½‚è”»’è‚Ì•\Ž¦.
 //----------------------------------------.
 void CSphereCollision::DebugRender()

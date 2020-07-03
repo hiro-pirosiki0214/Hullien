@@ -63,6 +63,24 @@ HRESULT CCollisionManager::InitSphere(
 }
 
 //-------------------------.
+// スフィアの初期化.
+//-------------------------.
+HRESULT CCollisionManager::InitSphere( 
+	D3DXVECTOR3* pPos, 
+	D3DXVECTOR3* pRot, float* pScale,
+	const D3DXVECTOR3& adjPos, const float& radius )
+{
+	if( m_pSphere == nullptr ) m_pSphere = new CSphereCollision();
+	m_pSphere->SetAdjPosition( adjPos );
+	m_pSphere->SetAdjRadius( 0.0f );
+	m_pSphere->SetPosition( pPos );
+	m_pSphere->SetRotation( pRot );
+	m_pSphere->SetScale( pScale );
+	if( FAILED( m_pSphere->InitModelRadius( radius ))) return E_FAIL;
+	return S_OK;
+}
+
+//-------------------------.
 // ボックスの初期化.
 //-------------------------.
 HRESULT CCollisionManager::InitBox( 
@@ -81,20 +99,62 @@ HRESULT CCollisionManager::InitBox(
 }
 
 //-------------------------.
+// ボックスの初期化.
+//-------------------------.
+HRESULT CCollisionManager::InitBox( 
+	D3DXVECTOR3* pPos, 
+	D3DXVECTOR3* pRot, float* pScale,
+	const D3DXVECTOR3& adjPos, 
+	const float& height,
+	const float& wight )
+{
+	if( m_pBox == nullptr ) m_pBox = new COBBoxCollision();
+	m_pBox->SetAdjPosition( adjPos );
+	m_pBox->SetAdjLength( { 0.0f, 0.0f, 0.0f } );
+	m_pBox->SetPosition( pPos );
+	m_pBox->SetRotation( pRot );
+	m_pBox->SetScale( pScale );
+	if( FAILED( m_pBox->InitModelBox( height, wight ))) return E_FAIL;
+	return S_OK;
+}
+
+//-------------------------.
 // カプセルの初期化.
 //-------------------------.
 HRESULT CCollisionManager::InitCapsule( 
 	LPD3DXMESH pMesh, D3DXVECTOR3* pPos, 
 	D3DXVECTOR3* pRot, float* pScale,
+	const D3DXVECTOR3& adjPos,
 	const float& adjRadius, const float& adjHeight )
 {
 	if( m_pCapsule == nullptr ) m_pCapsule = new CCapsuleCollision();
 	m_pCapsule->SetAdjRadius( adjRadius );
 	m_pCapsule->SetAdjHeight( adjHeight );
+	m_pCapsule->SetAdjPosition( adjPos );
 	m_pCapsule->SetPosition( pPos );
 	m_pCapsule->SetRotation( pRot );
 	m_pCapsule->SetScale( pScale );
 	if( FAILED( m_pCapsule->InitModelCapsule( pMesh ))) return E_FAIL;
+	return S_OK;
+}
+
+//-------------------------.
+// カプセルの初期化.
+//-------------------------.
+HRESULT CCollisionManager::InitCapsule( 
+	D3DXVECTOR3* pPos, 
+	D3DXVECTOR3* pRot, float* pScale,
+	const D3DXVECTOR3& adjPos,
+	const float& radius, const float& height )
+{
+	if( m_pCapsule == nullptr ) m_pCapsule = new CCapsuleCollision();
+	m_pCapsule->SetAdjRadius( 0.0f );
+	m_pCapsule->SetAdjHeight( 0.0f );
+	m_pCapsule->SetAdjPosition( adjPos );
+	m_pCapsule->SetPosition( pPos );
+	m_pCapsule->SetRotation( pRot );
+	m_pCapsule->SetScale( pScale );
+	if( FAILED( m_pCapsule->InitModelCapsule( height, radius ))) return E_FAIL;
 	return S_OK;
 }
 

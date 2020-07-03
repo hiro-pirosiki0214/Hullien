@@ -37,6 +37,17 @@ HRESULT COBBoxCollision::InitModelBox( LPD3DXMESH pMesh )
 }
 
 //----------------------------------------.
+// モデルのボックスの作成.
+//----------------------------------------.
+HRESULT COBBoxCollision::InitModelBox( const float& height, const float& widht )
+{
+
+
+	return S_OK;
+}
+
+
+//----------------------------------------.
 // 当たり判定の表示.
 //----------------------------------------.
 void COBBoxCollision::DebugRender()
