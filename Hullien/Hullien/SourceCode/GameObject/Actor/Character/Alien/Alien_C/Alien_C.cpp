@@ -4,6 +4,8 @@
 
 CAlienC::CAlienC()
 {
+	m_ObjectTag = EObjectTag::Alien_C;
+	m_vSclae = { 0.05f, 0.05f, 0.05f };
 }
 
 CAlienC::~CAlienC()
@@ -23,6 +25,10 @@ void CAlienC::Update()
 {
 	SetMoveVector( m_TargetPosition );
 	CurrentStateUpdate();	// Œ»İ‚Ìó‘Ô‚ÌXV.
+	// ‘Ì—Í‚ª0‚æ‚è‘½‚¯‚ê‚ÎI—¹.
+	if( m_Parameter.Life > 0.0f ) return;
+	// ‘Ì—Í‚ª‚È‚¯‚ê‚Î”š”­‚³‚¹‚é.
+	m_IsExplosion = true;
 }
 
 // •`‰æŠÖ”.
@@ -35,7 +41,7 @@ void CAlienC::Render()
 	rot.y += static_cast<float>(D3DX_PI);
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
+	m_pSkinMesh->SetColor( { 0.5f, 0.5f, 0.8f, m_ModelAlpha } );
 	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();

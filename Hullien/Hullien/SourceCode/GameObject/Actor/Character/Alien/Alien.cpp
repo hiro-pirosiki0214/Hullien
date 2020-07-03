@@ -14,6 +14,7 @@ CAlien::CAlien()
 	, m_ModelAlpha			( 0.0f )
 	, m_WaitCount			( 0 )
 	, m_pIsAlienOtherAbduct	( nullptr )
+	, m_IsExplosion			( false )
 	, m_IsDelete			( false )
 {
 }
@@ -216,6 +217,7 @@ void CAlien::GirlCollision( CActor* pActor )
 	// オブジェクトのタグが女の子じゃなければ終了.
 	if( pActor->GetObjectTag() != EObjectTag::Girl ) return;
 	if( m_NowMoveState == EMoveState::Attack ) return;	// 攻撃状態は終了.
+	if( m_NowState == EAlienState::Spawn ) return;	// スポーン状態なら終了.
 	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
 	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
 

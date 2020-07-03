@@ -8,6 +8,7 @@
 #include <functional>
 
 class CSpawnUFO;
+class CExplosion;
 
 class CAlienManager
 {
@@ -28,6 +29,9 @@ private:
 	// スポーン.
 	void Spawn();
 
+	// 爆発できるかどうか確認.
+	void ExplosionConfirming( const std::shared_ptr<CAlien>& ailen );
+
 	// スポーンUFOの初期化.
 	bool SpawnUFOInit();
 	// 宇宙人パラメータリストの読み込み.
@@ -42,6 +46,7 @@ private:
 	std::vector<std::shared_ptr<CAlien>> m_AilenList;	// 宇宙人リスト.
 	std::vector<CSpawnUFO> m_SpawnUFOList;				// スポーンUFOリスト.
 	std::vector<CAlien::SAlienParam> m_AlienParamList;	// 宇宙人パラメータリスト.
+	std::vector<CExplosion>	m_ExplosionList;			// 爆発リスト.
 	D3DXVECTOR3	m_AbductUFOPosition;	// 連れ去るUFOの座標.
 	bool		m_IsAlienAbduct;		// 宇宙人が連れ去っているかどうか.
 	int			m_SortCount;			// ソートする時のカウント.

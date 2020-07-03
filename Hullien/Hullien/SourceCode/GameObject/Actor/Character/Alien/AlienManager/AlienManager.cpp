@@ -1,6 +1,7 @@
 #include "AlienManager.h"
 #include "..\..\..\..\SpawnUFO\SpawnUFO.h"
 #include "..\AlienList.h"
+#include "..\..\..\Explosion\Explosion.h"
 
 #include "..\..\..\..\..\Common\DebugText\DebugText.h"
 #include "..\..\..\..\..\Utility\FileManager\FileManager.h"
@@ -56,6 +57,11 @@ void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(C
 			}
 		}
 
+		// 爆発できるか確認.
+		ExplosionConfirming( m_AilenList[i] );
+		// 爆発と宇宙人の当たり判定.
+		for( auto& e : m_ExplosionList ) e.Collision( m_AilenList[i].get() );
+
 		// リストから指定の宇宙人を消すか.
 		if( m_AilenList[i]->IsDelete() == false ) continue;
 		m_AilenList[i] = m_AilenList.back();
@@ -71,13 +77,11 @@ void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(C
 void CAlienManager::Render()
 {
 	// 宇宙人達の描画.
-	for( auto& a : m_AilenList ){
-		a->Render();
-	}
+	for( auto& a : m_AilenList ) a->Render();
 	// スポーンUFOの描画.
-	for( auto& s : m_SpawnUFOList ){
-		s.Render();
-	}
+	for( auto& s : m_SpawnUFOList ) s.Render();
+	// 爆発の描画.
+	for( auto& e : m_ExplosionList ) e.Render();
 #if _DEBUG
 	DebugRender();
 #endif	// #if _DEBUG.
@@ -89,6 +93,19 @@ void CAlienManager::Spawn()
 	for( auto& s : m_SpawnUFOList ){
 		s.SpawnAlien( m_AilenList );
 	}
+}
+
+// 爆発できるかどうか確認.
+void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
+{
+	// 宇宙人Cじゃなければ終了.
+	if( ailen->GetObjectTag() != EObjectTag::Alien_C ) return;
+	// 爆発しなければ終了.
+	if( ailen->IsExplosion() == false ) return;
+
+	// 爆発を追加.
+	m_ExplosionList.emplace_back();
+	m_ExplosionList.back().Init();
 }
 
 // スポーンUFOの初期化.

@@ -11,6 +11,7 @@ enum class enObjectTagList
 	Alien_A,		// ‰F’ˆlA.
 	Alien_B,		// ‰F’ˆlB.
 	Alien_C,		// ‰F’ˆlC.
+	Alien_D,		// ‰F’ˆlD.
 
 	Max,
 

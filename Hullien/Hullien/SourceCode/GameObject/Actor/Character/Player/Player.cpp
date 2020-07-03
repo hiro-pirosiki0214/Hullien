@@ -93,7 +93,7 @@ void CPlayer::Collision( CActor* pActor )
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	
 	// UŒ‚ŠÖ”.
-	auto attackProc = [&]( float& life ){ life -= m_Parameter.AttackPower; };
+	auto attackProc = [&]( float& life ){ life -= 10.0f; };
 	if( GetAsyncKeyState('C') & 0x8000 )
 		pActor->LifeCalculation( attackProc );
 }

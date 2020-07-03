@@ -6,6 +6,7 @@
 class CControllerEdit;
 class CSpawnEdit;
 class CAlienParamEdit;
+class CExplosionEdit;
 
 class CEditor : public CSceneBase
 {
@@ -21,9 +22,10 @@ public:
 	virtual void Render() override;
 
 private:
-	std::unique_ptr<CControllerEdit> m_pControllerEdit;
-	std::unique_ptr<CSpawnEdit>	m_pSpawnEdit;
+	std::unique_ptr<CControllerEdit>	m_pControllerEdit;
+	std::unique_ptr<CSpawnEdit>			m_pSpawnEdit;
 	std::unique_ptr<CAlienParamEdit>	m_pAlienParamEdit;
+	std::unique_ptr<CExplosionEdit>		m_pExplosionEdit;
 };
 
 #endif	// #ifndef EDITOR_H.

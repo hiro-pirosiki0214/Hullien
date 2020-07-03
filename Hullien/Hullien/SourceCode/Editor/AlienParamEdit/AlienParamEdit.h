@@ -8,9 +8,10 @@
 
 class CAlienParamEdit
 {
-	const ImVec2 WINDOW_SIZE = { 560.0f, 450.0f };	// ウィンドウサイズ.
+	const ImVec2 WINDOW_SIZE = { 560.0f, 700.0f };	// ウィンドウサイズ.
 	const ImVec2 RENDER_POSITION = { 720.0f, 20.0f };		// 描画座標.
 	const char* FILE_PATH = "Data\\GameParam\\Alien\\AlienParamPathList.txt";
+
 public:
 	CAlienParamEdit();
 	~CAlienParamEdit();

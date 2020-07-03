@@ -20,6 +20,7 @@ CSpawnEdit::~CSpawnEdit()
 // 初期化関数.
 bool CSpawnEdit::Init()
 {
+	if( FileReading() == false ) return false;
 	if( m_pStaticMesh != nullptr ) return true;
 	if( m_pStaticMesh == nullptr ){
 		m_pStaticMesh = CMeshResorce::GetStatic("SpawnPoint");
@@ -154,21 +155,11 @@ void CSpawnEdit::SpawnParamRender( const int& index )
 		m_Index = index;
 	};
 
-	float val = 7.0f;
+	ImGui::InputFloat( u8"座標 : X", &s.Position.x );
+	ImGui::InputFloat( u8"座標 : Y", &s.Position.y );
+	ImGui::InputFloat( u8"座標 : Z", &s.Position.z );
+	ImGui::InputInt( u8"スポーン間隔時間", &s.SpawnTime );
 	ImGui::PushItemWidth(100); // これから先のUIパーツの幅を70で固定します.
-	hasMovedSillider = ImGui::SliderFloat( "X", &s.Position.x, -val, val ); 
-	ImGui::SameLine();
-	checkSetIndex();
-
-	hasMovedSillider = ImGui::SliderFloat( "Y", &s.Position.y, -val, val ); 
-	ImGui::SameLine();
-	checkSetIndex();
-
-	hasMovedSillider = ImGui::SliderFloat( "Z", &s.Position.z, -val, val );
-	checkSetIndex();
-
-	hasMovedSillider = ImGui::SliderInt( "SpawnTime", &s.SpawnTime, 0, 100 );
-	checkSetIndex();
 
 	ImGui::PopItemWidth();
 }

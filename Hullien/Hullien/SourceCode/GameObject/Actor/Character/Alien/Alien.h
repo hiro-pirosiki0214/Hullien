@@ -106,9 +106,11 @@ public:
 	void SetOtherAbduct( bool* pisAbduct ){ m_pIsAlienOtherAbduct = pisAbduct; }
 	// 連れ去るUFOの座標の取得.
 	void SetAbductUFOPosition( D3DXVECTOR3* pos ){ m_pAbductUFOPosition = pos; }
-
+	// 爆発するか.
+	bool IsExplosion() const { return m_IsExplosion; }
 	// 消去するかどうか.
 	bool IsDelete() const { return m_IsDelete; }
+
 protected:
 	// 現在の状態の更新関数.
 	void CurrentStateUpdate();
@@ -147,7 +149,7 @@ protected:
 	float			m_ModelAlpha;			// モデルのアルファ値.
 	int				m_WaitCount;			// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;	// 他の宇宙人が連れ去っているかどうか.
-
+	bool			m_IsExplosion;		// 爆発するか.
 	bool			m_IsDelete;			// 消去するかどうか.
 };
 

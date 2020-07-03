@@ -2,6 +2,7 @@
 #include "..\Actor\Character\Alien\AlienList.h"
 #include "..\Actor\Character\Alien\Alien_A\Alien_A.h"
 #include "..\Actor\Character\Alien\Alien_B\Alien_B.h"
+#include "..\Actor\Character\Alien\Alien_C\Alien_C.h"
 
 CSpawnUFO::CSpawnUFO()
 	: m_SpawnParameter		()
@@ -52,7 +53,7 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnParameter.Position );
 	// 連れ去るUFOの座標を設定.
 	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
-//	m_FrameCount = 0;
+	m_FrameCount = 0;
 }
 
 // 宇宙人のパラメータリストを設定する.
@@ -64,7 +65,7 @@ void CSpawnUFO::SetAlienParameterList( std::vector<CAlien::SAlienParam>* alienPa
 // 敵の作成.
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {
-	const EAlienList alienNo = EAlienList::B;
+	const EAlienList alienNo = EAlienList::C;
 	switch( alienNo )
 	{
 	case EAlienList::A:
@@ -75,6 +76,10 @@ std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 		m_AlienIndex = static_cast<int>(EAlienList::B);
 		m_AlienIndex--;
 		return std::make_shared<CAlienB>();
+	case EAlienList::C:
+		m_AlienIndex = static_cast<int>(EAlienList::C);
+		m_AlienIndex--;
+		return std::make_shared<CAlienC>();
 	default:
 		break;
 	}
