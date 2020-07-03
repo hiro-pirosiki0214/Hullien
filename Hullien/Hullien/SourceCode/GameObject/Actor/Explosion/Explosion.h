@@ -9,16 +9,16 @@ public:
 	// 爆発パラメーター.
 	struct stExplosionParam
 	{
-		float		ExplosionTime;		// 爆発時間.
+		float		ExplosionSpeed;		// 爆発速度.
 		float		AttackPower;		// 爆発力.
+		float		SphereMaxRadius;	// スフィアの最大半径.
 		D3DXVECTOR3	SphereAdjPos;		// スフィアの調整用座標.
-		float		SphereAdjRadius;	// スフィアの調整用半径.
 
 		stExplosionParam()
-			: ExplosionTime		( 0.0f )
+			: ExplosionSpeed	( 0.0f )
 			, AttackPower		( 0.0f )
+			, SphereMaxRadius	( 0.0f )
 			, SphereAdjPos		( 0.0f, 0.0f, 0.0f )
-			, SphereAdjRadius	( 0.0f )
 		{}
 	} typedef SExplosionParam;
 
@@ -42,12 +42,10 @@ public:
 private:
 	// 当たり判定の設定.
 	bool ColliderSetting();
-	// モデルの取得(なくなってエフェクトになる).
-	bool GetModel( const char* modelName );
 
 private:
 	SExplosionParam	m_Param;		// 爆発パラメーター.
-	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;
+	float	m_CollSphereRadius;		// 当たり判定の半径.
 };
 
 #endif	// #ifndef EXPLOSION_H.

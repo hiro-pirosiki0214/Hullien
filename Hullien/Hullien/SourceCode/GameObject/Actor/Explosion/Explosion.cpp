@@ -4,7 +4,8 @@
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 
 CExplosion::CExplosion()
-	: m_Param			()
+	: m_Param				()
+	, m_CollSphereRadius	( 0.0f )
 {
 }
 
@@ -15,8 +16,6 @@ CExplosion::~CExplosion()
 // 初期化関数.
 bool CExplosion::Init()
 {
-	const char* MODEL_NAME = "GhostA";	// モデル名(後で消す予定).
-	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	return true;
 }
@@ -29,8 +28,16 @@ void CExplosion::Update()
 // 描画関数.
 void CExplosion::Render()
 {
-	m_Param.ExplosionTime += 0.1f;
-	if( m_Param.ExplosionTime >= 1.0f )return;
+	m_CollSphereRadius += m_Param.ExplosionSpeed;
+	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
+	if( m_pCollManager == nullptr ) return;
+	// 当たり判定のサイズを変更.
+	m_pCollManager->InitSphere(
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Param.SphereAdjPos,
+		m_CollSphereRadius );
 #if _DEBUG
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
@@ -41,7 +48,7 @@ void CExplosion::Collision( CActor* pActor )
 {
 	// エフェクトの描画をする予定.
 	
-	if( m_Param.ExplosionTime >= 1.0f )return;
+	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
 	if( pActor == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
@@ -60,31 +67,11 @@ void CExplosion::Collision( CActor* pActor )
 	pActor->LifeCalculation( attackProc );	// 対象の体力を減らす.
 }
 
-// モデルの取得.
-bool CExplosion::GetModel( const char* modelName )
-{
-	// 既に読み込めていたら終了.
-	if( m_pStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pStaticMesh, modelName );
-	// モデルが読み込めてなければ false.
-	if( m_pStaticMesh == nullptr ) return false;
-	return true;
-}
-
 // 当たり判定の設定.
 bool CExplosion::ColliderSetting()
 {
-	if( m_pStaticMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vSclae.x,
-		m_Param.SphereAdjPos,
-		m_Param.SphereAdjRadius ) )) return false;
 	return true;
 }
