@@ -62,6 +62,6 @@ VS_OUTPUT VS_MainUI(
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
     float4 color = g_Texture.Sample(g_samLinear, input.Tex);
-    color.a *= g_Color.a;
+    color *= g_Color;
     return color;
 }

@@ -34,6 +34,23 @@ void CCamera::InitViewProj()
 		&m_vLookPosition,	// カメラ注視座標.
 		&VIEW_UP_VECTOR );	// カメラベクトル.
 
+#if 1
+	// 視野角の変更.
+	static float p = 4.0f;
+	if( GetAsyncKeyState('V') & 0x8000 ) p -= 0.01f;
+	if( GetAsyncKeyState('B') & 0x8000 ) p += 0.01f;
+	m_ViewingAngle = static_cast<float>(D3DX_PI/p);
+	//{
+	//	static float w = FLOAT_WND_W;
+	//	static float h = FLOAT_WND_H;
+	//	if( GetAsyncKeyState('V') & 0x8000 ) w -= 1.0f;
+	//	if( GetAsyncKeyState('B') & 0x8000 ) w += 1.0f;
+	//	if( GetAsyncKeyState('N') & 0x8000 ) h -= 1.0f;
+	//	if( GetAsyncKeyState('M') & 0x8000 ) h += 1.0f;
+	//	const float aspect = w/h;
+	//}
+#endif
+
 	// プロジェクション(射影)変換.
 	D3DXMatrixPerspectiveFovLH(
 		&m_ProjMatrix,				// (out)ProjMatrix.

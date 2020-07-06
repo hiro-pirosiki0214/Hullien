@@ -110,8 +110,8 @@ void CAlienB::Move()
 		CAlien::WaitMove();		// ‘Ò‹@.
 	}
 
-	if (*m_pIsAlienOtherAbduct == false) return;
-	if (m_NowState == EAlienState::Abduct) return;
+	if( *m_pIsAlienOtherAbduct == false ) return;
+	if( m_NowState == EAlienState::Abduct ) return;
 	m_NowState = EAlienState::Escape;
 	m_NowMoveState = EMoveState::Rotation;	// ˆÚ“®ó‘Ô‚ğ‰ñ“]‚·‚é.
 }

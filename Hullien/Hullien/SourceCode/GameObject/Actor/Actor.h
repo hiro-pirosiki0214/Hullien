@@ -23,6 +23,8 @@ public:
 	virtual void SetAttackEffectTime( const std::function<void(float&,float&)>& ){}
 	// ˆÚ“®‘¬“xAŒø—ÍŠÔİ’èŠÖ”.
 	virtual void SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& ){}
+	// –ƒáƒ‚Ìİ’è.
+	virtual void SetParalysisTime( const std::function<void(float&)>& ){}
 	// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
 	virtual void SetTargetPos( CActor& actor ){}
 

@@ -204,7 +204,7 @@ void CSprite::Render( const bool& isBillboard )
 
 	AnimUpdate();
 	// コンスタントバッファの設定.
-	m_pSpriteShader->SetConstantBufferData( mWVP, m_vColor.w, { m_UV.x, m_UV.y } );
+	m_pSpriteShader->SetConstantBufferData( mWVP, m_vColor, { m_UV.x, m_UV.y } );
 
 	// 3D用のシェーダーを設定.
 	m_pSpriteShader->ShaderSet( m_pVertexBuffer );
@@ -227,7 +227,7 @@ void CSprite::RenderUI()
 	AnimUpdate();
 	// コンスタントバッファの設定.
 	m_pSpriteShader->SetConstantBufferData( 
-		CreateWorldMatrix(), m_vColor.w, { m_UV.x, m_UV.y } );
+		CreateWorldMatrix(), m_vColor, { m_UV.x, m_UV.y } );
 
 	// UI用のシェーダーを設定.
 	m_pSpriteShader->ShaderUISet( m_pVertexBufferUI );
@@ -251,7 +251,7 @@ D3DXMATRIX CSprite::CreateWorldMatrix()
 	// 拡大縮小行列作成.
 	D3DXMatrixScaling( &mScale, m_vScale.x, m_vScale.y, 1.0f );
 	// 回転行列を作成.
-	D3DXMatrixRotationYawPitchRoll( &mRot, m_vRot.x, m_vRot.y, m_vRot.z );
+	D3DXMatrixRotationYawPitchRoll( &mRot, m_vRot.y, m_vRot.x, m_vRot.z );
 	// 平行移動行列.
 	D3DXMatrixTranslation( &mTran, m_vPos.x, m_vPos.y, m_vPos.z );
 

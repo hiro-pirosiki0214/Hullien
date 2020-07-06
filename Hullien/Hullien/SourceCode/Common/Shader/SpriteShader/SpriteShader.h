@@ -37,7 +37,7 @@ public:
 	// コンスタントバッファにデータを渡す.
 	void SetConstantBufferData( 
 		const D3DXMATRIX& mWVP, 
-		const float& fAlpha, 
+		const D3DXVECTOR4& color, 
 		const D3DXVECTOR2& texPos );
 
 	// 各種シェーダの設定.

@@ -27,6 +27,7 @@ bool CAlienManager::Init()
 {
 	if( SpawnUFOInit() == false ) return false;
 	if( ReadAlienParamList() == false ) return false;
+	if( ReadExplosionParam() == false ) return false;
 	return true;
 }
 
@@ -106,6 +107,7 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 	// 爆発を追加.
 	m_ExplosionList.emplace_back();
 	m_ExplosionList.back().Init();
+	m_ExplosionList.back().SetExplosionParam( m_ExplosionParam );
 }
 
 // スポーンUFOの初期化.
@@ -141,6 +143,13 @@ bool CAlienManager::ReadAlienParamList()
 		s.SetAlienParameterList( &m_AlienParamList );
 	}
 
+	return true;
+}
+
+// 爆発パラメータの読み込み.
+bool CAlienManager::ReadExplosionParam()
+{
+	if( CFileManager::BinaryReading( EXPLOSION_PARAM_FILE_PATH, m_ExplosionParam ) == false ) return false;
 	return true;
 }
 

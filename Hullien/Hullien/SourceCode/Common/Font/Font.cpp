@@ -47,7 +47,7 @@ void CFont::RenderFont( ID3D11Texture2D* texture )
 	CreateResourceView( texture );
 
 	// シェーダーに各値を設定.
-	m_pShader->SetConstantBufferData( CreateWorldMatrix(), m_vColor.w, TEXTUR_UV_POS );
+	m_pShader->SetConstantBufferData( CreateWorldMatrix(), m_vColor, TEXTUR_UV_POS );
 	m_pShader->ShaderUISet( m_pVertexBuffer );
 
 	// プリミティブトポロジー.

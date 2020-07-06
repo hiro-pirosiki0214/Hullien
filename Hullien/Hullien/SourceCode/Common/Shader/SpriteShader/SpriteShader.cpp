@@ -42,7 +42,7 @@ HRESULT CSpriteShader::Release()
 //--------------------------------.
 // コンスタントバッファにデータを渡す.
 //--------------------------------.
-void CSpriteShader::SetConstantBufferData( const D3DXMATRIX& mWVP, const float& fAlpha, const D3DXVECTOR2& texPos )
+void CSpriteShader::SetConstantBufferData( const D3DXMATRIX& mWVP, const D3DXVECTOR4& color, const D3DXVECTOR2& texPos )
 {
 	// シェーダーのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -66,7 +66,7 @@ void CSpriteShader::SetConstantBufferData( const D3DXMATRIX& mWVP, const float& 
 		cb.vViewPort.y	= static_cast<float>(WND_H);
 
 		// アルファ値を渡す.
-		cb.vColor.w = fAlpha;
+		cb.vColor = color;
 
 		// テクスチャ座標.
 		cb.vUV.x = texPos.x;

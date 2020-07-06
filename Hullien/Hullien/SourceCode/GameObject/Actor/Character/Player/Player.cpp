@@ -21,6 +21,9 @@ CPlayer::CPlayer()
 	, m_AttackDataQueue				()
 	, m_IsDuringAvoid				( false )
 	, m_AvoidMoveSpeed				( 0.0f )
+	, m_IsParalysis					( false )
+	, m_ParalysisCount				( 0.0f )
+	, m_ParalysisTime				( 0.0f )
 	, m_Parameter					()
 {
 	m_ObjectTag = EObjectTag::Player;
@@ -46,13 +49,23 @@ bool CPlayer::Init()
 // 更新関数.
 void CPlayer::Update()
 {
-	Controller();			// 操作.
-	AttackController();	// 攻撃操作.
-	AvoidController();		// 回避操作.
-	AttackAnimation();	// 攻撃アニメーション.
-	Move();					// 移動.
-	AvoidMove();			// 回避動作.
+	if( m_IsParalysis == false ){
+		Controller();		// 操作.
+		AttackController();	// 攻撃操作.
+		AvoidController();	// 回避操作.
+		AttackAnimation();	// 攻撃アニメーション.
+		Move();				// 移動.
+		AvoidMove();		// 回避動作.
+	} else {
+		m_ParalysisCount += 1.0f;
+		if( m_ParalysisCount >= m_ParalysisTime * FPS ){
+			m_IsParalysis = false;
+		}
+	}
+	
 
+
+	CameraController();	// カメラ操作.
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
 	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// 高さの設定.
 	// プレイヤーを注視して回転.
@@ -110,7 +123,11 @@ void CPlayer::Controller()
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
+}
 
+// カメラ操作.
+void CPlayer::CameraController()
+{
 	// カメラの回転移動.
 	// 横方向.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
@@ -285,6 +302,14 @@ bool CPlayer::IsPushAttack()
 void CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 {	
 	proc( m_Parameter.Life );
+}
+
+// 麻痺の設定.
+void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
+{
+	proc( m_ParalysisTime );
+	m_IsParalysis = true;
+	m_ParalysisCount = 0.0f;
 }
 
 // 当たり判定の設定.

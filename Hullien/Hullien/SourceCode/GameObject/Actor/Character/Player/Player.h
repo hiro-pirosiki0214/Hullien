@@ -85,6 +85,8 @@ public:
 private:
 	// 操作関数.
 	void Controller();
+	// カメラ操作.
+	void CameraController();
 	// 攻撃操作関数.
 	void AttackController();
 	// 回避操作関数.
@@ -107,6 +109,8 @@ private:
 
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+	// 麻痺の設定.
+	virtual void SetParalysisTime( const std::function<void(float&)>& ) override;
 
 	// 当たり判定の設定.
 	bool ColliderSetting();
@@ -127,6 +131,11 @@ private:
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 	float			m_AvoidMoveSpeed;	// 回避用移動速度.
+
+	bool			m_IsParalysis;		// 麻痺中か.
+	float			m_ParalysisCount;	// 麻痺カウント.
+	float			m_ParalysisTime;	// 麻痺時間.
+
 	SPlayerParam	m_Parameter;		// パラメーター.
 };
 
