@@ -22,7 +22,6 @@ CPlayer::CPlayer()
 	, m_IsDuringAvoid				( false )
 	, m_AvoidMoveSpeed				( 0.0f )
 	, m_IsParalysis					( false )
-	, m_ParalysisCount				( 0.0f )
 	, m_ParalysisTime				( 0.0f )
 	, m_Parameter					()
 {
@@ -57,10 +56,7 @@ void CPlayer::Update()
 		Move();				// 移動.
 		AvoidMove();		// 回避動作.
 	} else {
-		m_ParalysisCount += 1.0f;
-		if( m_ParalysisCount >= m_ParalysisTime * FPS ){
-			m_IsParalysis = false;
-		}
+		ParalysisUpdate();	// 麻痺時の更新.
 	}
 	
 
@@ -218,6 +214,16 @@ void CPlayer::AvoidMove()
 	m_vRotation.z = 0.0f;	// 回転　アニメーション設定後消す.
 }
 
+// 麻痺中の更新関数.
+void CPlayer::ParalysisUpdate()
+{
+	if( m_IsParalysis == false ) return;
+	m_ParalysisTime -= 1.0f;	// 麻痺時間を減らす.
+
+	if( m_ParalysisTime > 0.0f ) return;
+	m_IsParalysis = false;	// 麻痺を外す.
+}
+
 // 攻撃アニメーション.
 void CPlayer::AttackAnimation()
 {
@@ -309,7 +315,7 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 {
 	proc( m_ParalysisTime );
 	m_IsParalysis = true;
-	m_ParalysisCount = 0.0f;
+	m_ParalysisTime *= FPS;
 }
 
 // 当たり判定の設定.
@@ -434,4 +440,10 @@ void CPlayer::DebugRender()
 	// 回避中か.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*21, 0.0f } );
 	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
+
+	// 麻痺中か.
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*22, 0.0f } );
+	CDebugText::Render( "IsParalysis : ", m_IsParalysis==true?"true":"false" );
+	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*23, 0.0f } );
+	CDebugText::Render( "ParalysisTime : ", m_ParalysisTime );
 }

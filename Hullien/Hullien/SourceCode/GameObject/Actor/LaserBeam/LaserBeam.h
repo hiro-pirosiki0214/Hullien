@@ -5,6 +5,9 @@
 
 class CLaserBeam : public CActor
 {
+	const float DEFAULT_MOVE_SPEED		= 0.1f;	// 移動速度.
+	const float DEFAULT_PARALYSIS_TIME	= 3.0f;	// 麻痺の時間.
+
 public:
 	CLaserBeam();
 	virtual ~CLaserBeam();
@@ -22,9 +25,16 @@ public:
 	virtual void SetTargetPos( CActor& actor ) override;
 
 	// ビームを打つ.
-	void Shot();
+	void Shot( const D3DXVECTOR3& pos );
 	// パラメータを初期に戻す.
 	void ResetParam();
+	// ベジェ曲線の制御点の設定.
+	void SetControlPointList( std::vector<D3DXVECTOR3> pointList );
+
+	// 移動速度の設定.
+	void SetMoveSpped( const float& moveSpeed ){ m_MoveSpeed = moveSpeed; }
+	// 麻痺時間の設定.
+	void SetParalysisTime( const float& time ){ m_ParalysisTime = time; }
 
 	// 攻撃中か.
 	bool IsInAttack() const { return m_IsInAttack; }
@@ -32,13 +42,25 @@ public:
 	bool IsEndAttack() const { return m_IsEndAttack; }
 
 private:
+	// 二次ベジェ曲線.
+	void SecondaryBeziercurve();
+	// 三次ベジェ曲線.
+	void ThirdBezierCurve();
+
 	// 当たり判定の設定.
 	bool CollisionSetting();
 
 private:
+	float m_MoveSpeed;
+	float m_ParalysisTime;
 	D3DXVECTOR3	m_TargetPosition;	// 攻撃対象の座標.
 	bool m_IsInAttack;		// 攻撃中.
 	bool m_IsEndAttack;		// 攻撃終了.
+
+	float m_FrameCount;		// フレームカウント.
+	float m_FrameTime;		// フレーム時間.
+	D3DXVECTOR3 m_InitPosition;	// 初期座標.
+	std::vector<D3DXVECTOR3> m_ControlPointList;	// 制御座標.
 };
 
 #endif	// #ifndef LASER_BEAM_H.

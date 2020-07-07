@@ -5,7 +5,7 @@ enum class enAlienList
 {
 	None,
 
-	A,
+	A = 0,
 	Ada,
 	B,
 	Bda,

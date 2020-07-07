@@ -8,11 +8,12 @@
 CAlienD::CAlienD()
 	: m_pAttackRangeSprite	( nullptr )
 	, m_pLaserBeam			( nullptr )
+	, m_ControlPositions	( 2 )
 	, m_AttackCount			( 0.0f )
 	, m_IsAttackStart		( false )
 {
 	m_ObjectTag = EObjectTag::Alien_D;
-	m_vSclae = { 0.05f, 0.05f, 0.05f };
+	m_vSclae = { 0.1f, 0.1f, 0.1f };
 	m_pLaserBeam = std::make_unique<CLaserBeam>();
 }
 
@@ -69,6 +70,12 @@ bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_Parameter = param;	// パラメータを設定.
 	m_vPosition = spawnPos;	// スポーン座標の設定.
 	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
+	
+	// レーザーの移動速度の設定.
+	m_pLaserBeam->SetMoveSpped( m_Parameter.LaserMoveSpeed );
+	// レーザーの麻痺時間の設定.
+	m_pLaserBeam->SetParalysisTime( m_Parameter.ParalysisTime );
+
 	return true;
 }
 
@@ -107,9 +114,9 @@ void CAlienD::AttackRangeSpriteRender()
 		color.w = m_AttackCount;
 	}
 
-	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_TargetPosition.y+0.002f, m_TargetPosition.z } );
+	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_TargetPosition.y+m_Parameter.AttackRangeSpritePosY, m_TargetPosition.z } );
 	m_pAttackRangeSprite->SetRotation( { static_cast<float>(D3DXToRadian(90)), 0.0f, 0.0f } );
-	m_pAttackRangeSprite->SetScale( 10.0f );
+	m_pAttackRangeSprite->SetScale( m_Parameter.AttackRangeSpriteScale );	
 	m_pAttackRangeSprite->SetColor( color );
 	m_pAttackRangeSprite->SetBlend( true );
 	m_pAttackRangeSprite->SetRasterizerState( CCommon::enRS_STATE::Back );
@@ -166,13 +173,38 @@ void CAlienD::Attack()
 {
 	if( m_NowMoveState != EMoveState::Attack ) return;
 
-	const float attackSpeed = m_IsAttackStart == false ? 0.005f : -0.01f;
+	const float attackSpeed = m_IsAttackStart == false ? 
+		m_Parameter.AttackRangeAddValue : m_Parameter.AttackRangeSubValue;
 	m_AttackCount += attackSpeed;	// 攻撃カウントの追加.
 
 	// 攻撃カウントが攻撃時間より多くなれば攻撃を始める.
 	if( m_AttackCount >= ATTACK_TIME ){
 		m_IsAttackStart = true;
-		m_pLaserBeam->Shot();	// ビームを打つ.
+
+		{
+			// 相手への向きを取得.
+			float radius = atan2f(
+				m_TargetPosition.x - m_vPosition.x,
+				m_TargetPosition.z - m_vPosition.z );
+
+			// 相手との距離を測る.
+			float lenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
+
+			lenght -= m_Parameter.ControlPointTwoLenght;	// 計算した距離を少し減らす.
+
+			// 上向き少し後ろ.
+			m_ControlPositions[0].x = m_vPosition.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
+			m_ControlPositions[0].y = m_vPosition.y + m_Parameter.ControlPointOneLenghtY;
+			m_ControlPositions[0].z = m_vPosition.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
+			// 少し上の少し前.
+			m_ControlPositions[1].x = m_vPosition.x + sinf( radius ) * lenght;
+			m_ControlPositions[1].y = m_vPosition.y + m_Parameter.ControlPointTwoLenghtY;
+			m_ControlPositions[1].z = m_vPosition.z + cosf( radius ) * lenght;
+		}
+		// 上で設定したコントロールポジションを設定.
+		m_pLaserBeam->SetControlPointList( m_ControlPositions );
+
+		m_pLaserBeam->Shot( m_vPosition );	// ビームを打つ.
 	}
 
 	if( m_AttackCount >= 0.0f ) return;
@@ -189,8 +221,15 @@ void CAlienD::VectorMove( const float& moveSpeed )
 	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 
+	float researchLengh = D3DXVec3Length( &D3DXVECTOR3(m_BeforeMoveingPosition - m_vPosition) );
+	if( researchLengh >= m_Parameter.ResearchLenght ){
+		m_NowMoveState = EMoveState::Rotation;
+		m_IsAttackStart = false;
+		return;
+	}
+
 	if( lenght >= m_Parameter.AttackLenght ) return;
-	m_pLaserBeam->ResetParam();
+	if( m_pLaserBeam->IsEndAttack() == false ) return;
 	m_IsAttackStart = false;
 	m_AttackCount = 0.0f;
 	m_NowMoveState = EMoveState::Attack;

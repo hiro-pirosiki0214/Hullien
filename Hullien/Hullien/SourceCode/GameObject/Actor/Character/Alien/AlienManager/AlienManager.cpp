@@ -182,18 +182,19 @@ void CAlienManager::DebugRender()
 	auto alienA_ADashPramRender = [&]()
 	{
 		size_t a_index = static_cast<size_t>(EAlienList::A);
+		if( m_AlienParamList.empty() == true ) return;
 		if( m_AlienParamList.size() < a_index ) return;
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*4, 0.0f } );
 		CDebugText::Render( "-- Alien A Param --" );
 
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*5, 0.0f } );
-		CDebugText::Render( "Life : ", m_AlienParamList[a_index-1].Life );
+		CDebugText::Render( "Life : ", m_AlienParamList[a_index].Life );
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*6, 0.0f } );
-		CDebugText::Render( "MoveSpeed : ", m_AlienParamList[a_index-1].MoveSpeed );
+		CDebugText::Render( "MoveSpeed : ", m_AlienParamList[a_index].MoveSpeed );
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*7, 0.0f } );
-		CDebugText::Render( "RotationalSpeed : ", m_AlienParamList[a_index-1].RotationalSpeed );
+		CDebugText::Render( "RotationalSpeed : ", m_AlienParamList[a_index].RotationalSpeed );
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*8, 0.0f } );
-		CDebugText::Render( "ModelAlphaAddValue : ", m_AlienParamList[a_index-1].ModelAlphaAddValue );
+		CDebugText::Render( "ModelAlphaAddValue : ", m_AlienParamList[a_index].ModelAlphaAddValue );
 	};
 	alienA_ADashPramRender();
 }

@@ -70,20 +70,27 @@ std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 	switch( alienNo )
 	{
 	case EAlienList::A:
-		m_AlienIndex = static_cast<int>(EAlienList::A);
-		m_AlienIndex--;
+		m_AlienIndex = static_cast<int>(alienNo);
 		return std::make_shared<CAlienA>();
+
+	case EAlienList::Ada:
+		m_AlienIndex = static_cast<int>(alienNo);
+		return std::make_shared<CAlienA>();
+
 	case EAlienList::B:
-		m_AlienIndex = static_cast<int>(EAlienList::B);
-		m_AlienIndex--;
+		m_AlienIndex = static_cast<int>(alienNo);
 		return std::make_shared<CAlienB>();
+
+	case EAlienList::Bda:
+		m_AlienIndex = static_cast<int>(alienNo);
+		return std::make_shared<CAlienB>();
+
 	case EAlienList::C:
-		m_AlienIndex = static_cast<int>(EAlienList::C);
-		m_AlienIndex--;
+		m_AlienIndex = static_cast<int>(alienNo);
 		return std::make_shared<CAlienC>();
+
 	case EAlienList::D:
-		m_AlienIndex = static_cast<int>(EAlienList::D);
-		m_AlienIndex--;
+		m_AlienIndex = static_cast<int>(alienNo);
 		return std::make_shared<CAlienD>();
 	default:
 		break;

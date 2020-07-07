@@ -97,6 +97,9 @@ private:
 	// 回避動作関数.
 	void AvoidMove();
 
+	// 麻痺中の更新関数.
+	void ParalysisUpdate();
+
 	// 攻撃アニメーション.
 	void AttackAnimation();
 	// アニメーション設定.
@@ -133,7 +136,6 @@ private:
 	float			m_AvoidMoveSpeed;	// 回避用移動速度.
 
 	bool			m_IsParalysis;		// 麻痺中か.
-	float			m_ParalysisCount;	// 麻痺カウント.
 	float			m_ParalysisTime;	// 麻痺時間.
 
 	SPlayerParam	m_Parameter;		// パラメーター.

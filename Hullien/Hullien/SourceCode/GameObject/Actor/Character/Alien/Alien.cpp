@@ -5,17 +5,18 @@
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 
 CAlien::CAlien()
-	: m_TargetPosition		( 0.0f, 0.0f, 0.0f )
-	, m_TargetRotation		( 0.0f, 0.0f, 0.0f )
-	, m_pAbductUFOPosition	( nullptr )
-	, m_Parameter			()
-	, m_NowState			( EAlienState::None )
-	, m_NowMoveState		( EMoveState::None )
-	, m_ModelAlpha			( 0.0f )
-	, m_WaitCount			( 0 )
-	, m_pIsAlienOtherAbduct	( nullptr )
-	, m_IsExplosion			( false )
-	, m_IsDelete			( false )
+	: m_TargetPosition			( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
+	, m_pAbductUFOPosition		( nullptr )
+	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
+	, m_Parameter				()
+	, m_NowState				( EAlienState::None )
+	, m_NowMoveState			( EMoveState::None )
+	, m_ModelAlpha				( 0.0f )
+	, m_WaitCount				( 0 )
+	, m_pIsAlienOtherAbduct		( nullptr )
+	, m_IsExplosion				( false )
+	, m_IsDelete				( false )
 {
 }
 
@@ -116,6 +117,7 @@ void CAlien::TargetRotation()
 		// 移動用ベクトルを取得.
 		m_MoveVector.x = sinf( m_vRotation.y );
 		m_MoveVector.z = cosf( m_vRotation.y );
+		m_BeforeMoveingPosition = m_vPosition;
 		m_NowMoveState = EMoveState::Move;
 	}
 }
@@ -129,6 +131,9 @@ void CAlien::VectorMove( const float& moveSpeed )
 
 	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+
+	float researchLengh = D3DXVec3Length( &D3DXVECTOR3(m_BeforeMoveingPosition - m_vPosition) );
+	if( researchLengh >= m_Parameter.ResearchLenght ) m_NowMoveState = EMoveState::Rotation;
 
 	if( lenght >= 1.0f ) return;
 

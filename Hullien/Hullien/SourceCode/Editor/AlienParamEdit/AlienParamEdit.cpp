@@ -3,6 +3,7 @@
 #include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\Utility\FileManager\FileManager.h"
+#include "..\..\GameObject\Actor\Character\Alien\AlienList.h"
 
 #include <filesystem>
 
@@ -91,6 +92,8 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 		m_Index = index;
 	};
 
+	EAlienList alienType = static_cast<EAlienList>(index);
+
 	//  各パラメータの設定.
 	ImGui::InputFloat( u8"移動速度", &s.MoveSpeed );
 	ImGui::InputFloat( u8"体力", &s.Life );
@@ -100,13 +103,42 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	ImGui::InputFloat( u8"移動回転速度", &s.RotationalSpeed );
 	ImGui::InputFloat( u8"スポーン時のモデル透過加算値", &s.ModelAlphaAddValue );
 	ImGui::InputFloat( u8"スポーン時のモデル透過減算値", &s.ModelAlphaSubValue );
-	ImGui::InputFloat( u8"プレイヤーを狙う範囲", &s.PlayerAimLenght );
-	ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
-	ImGui::InputFloat( u8"攻撃時の初期回転力", &s.AttackRotInitPower );
-	ImGui::InputFloat( u8"攻撃時の回転力", &s.AttackRotPower );
-	ImGui::InputFloat( u8"攻撃時の回転加算値", &s.AttackRotAddValue );
-	ImGui::InputFloat( u8"攻撃移動速度", &s.AttackMoveSpeed );
-	ImGui::InputFloat( u8"攻撃移動範囲", &s.AttackMoveRange );
+
+	switch( alienType )
+	{
+	case EAlienList::A:
+		break;
+	case EAlienList::Ada:
+		break;
+	case EAlienList::B:
+	case EAlienList::Bda:
+		ImGui::InputFloat( u8"プレイヤーを狙う範囲", &s.PlayerAimLenght );
+		ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
+		ImGui::InputFloat( u8"攻撃時の初期回転力", &s.AttackRotInitPower );
+		ImGui::InputFloat( u8"攻撃時の回転力", &s.AttackRotPower );
+		ImGui::InputFloat( u8"攻撃時の回転加算値", &s.AttackRotAddValue );
+		ImGui::InputFloat( u8"攻撃移動速度", &s.AttackMoveSpeed );
+		ImGui::InputFloat( u8"攻撃移動範囲", &s.AttackMoveRange );
+		break;
+	case EAlienList::C:
+		break;
+	case EAlienList::D:
+		ImGui::InputFloat( u8"レーザーの移動速度", &s.LaserMoveSpeed );
+		ImGui::InputFloat( u8"麻痺の時間", &s.ParalysisTime );
+		ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
+		ImGui::InputFloat( u8"攻撃時の範囲表示の調整用", &s.AttackRangeSpritePosY );
+		ImGui::InputFloat( u8"攻撃時の範囲表示の画像サイズ", &s.AttackRangeSpriteScale );
+		ImGui::InputFloat( u8"攻撃時の範囲表示のアルファが足される値", &s.AttackRangeAddValue );
+		ImGui::InputFloat( u8"攻撃時の範囲表示のアルファが引かれる値", &s.AttackRangeSubValue );
+		ImGui::InputFloat( u8"ベジェ曲線の一つ目操作座標の距離", &s.ControlPointOneLenght );
+		ImGui::InputFloat( u8"ベジェ曲線の一つ目操作座標のy座標の距離", &s.ControlPointOneLenghtY );
+		ImGui::InputFloat( u8"ベジェ曲線の二つ目操作座標の距離", &s.ControlPointTwoLenght );
+		ImGui::InputFloat( u8"ベジェ曲線の二つ目操作座標のy座標の距離", &s.ControlPointTwoLenghtY );
+		break;
+	default:
+		break;
+	}
+
 	ImGui::InputFloat( u8"スフィアの調整座標 X", &s.SphereAdjPos.x );
 	ImGui::InputFloat( u8"スフィアの調整座標 Y", &s.SphereAdjPos.y );
 	ImGui::InputFloat( u8"スフィアの調整座標 Z", &s.SphereAdjPos.z );

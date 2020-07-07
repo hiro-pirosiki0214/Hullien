@@ -11,7 +11,6 @@ class CAlien : public CCharacter
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
 
-
 public:
 	// 宇宙人パラメータ.
 	struct stAlienParam : public stParameter
@@ -25,12 +24,27 @@ public:
 
 		float		PlayerAimLenght;	// プレイヤーを狙う範囲.
 
+		float		ResearchLenght;		// 再検査する際の距離.
+
 		float		AttackLenght;		// 攻撃する距離.
 		float		AttackRotInitPower;	// 攻撃時の初期回転力.
 		float		AttackRotPower;		// 攻撃時の回転力.
 		float		AttackRotAddValue;	// 攻撃時の回転加算値.
 		float		AttackMoveSpeed;	// 攻撃移動速度.
 		float		AttackMoveRange;	// 攻撃移動範囲.
+
+		float		LaserMoveSpeed;		// レーザーの移動速度.
+		float		ParalysisTime;		// 麻痺の時間.
+
+		float		AttackRangeSpritePosY;	// 攻撃時の範囲表示の調整用.
+		float		AttackRangeSpriteScale;	// 攻撃時の範囲表示の画像サイズ.
+		float		AttackRangeAddValue;	// 攻撃時の範囲表示のアルファが足される値.
+		float		AttackRangeSubValue;	// 攻撃時の範囲表示のアルファが引かれる値.
+
+		float		ControlPointOneLenght;	// ベジェ曲線の一つ目操作座標の距離.
+		float		ControlPointOneLenghtY;	// ベジェ曲線の一つ目操作座標のy座標の距離.
+		float		ControlPointTwoLenght;	// ベジェ曲線の二つ目操作座標の距離.
+		float		ControlPointTwoLenghtY;	// ベジェ曲線の二つ目操作座標のy座標の距離.
 
 		D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
 		float		SphereAdjRadius;	// スフィアの調整半径.
@@ -44,6 +58,7 @@ public:
 			, WaitTime				( 0 )
 
 			, PlayerAimLenght		( 0.0f )
+			, ResearchLenght		( 0.0f )
 
 			, AttackLenght			( 0.0f )
 			, AttackRotInitPower	( 0.0f )
@@ -51,6 +66,18 @@ public:
 			, AttackRotAddValue		( 0.0f )
 			, AttackMoveSpeed		( 0.0f )
 			, AttackMoveRange		( 0.0f )
+
+			, LaserMoveSpeed		( 0.0f )
+			, ParalysisTime			( 0.0f )
+
+			, AttackRangeSpritePosY		( 0.0f )
+			, AttackRangeSpriteScale	( 1.0f )
+			, AttackRangeSubValue		( 0.0f )
+
+			, ControlPointOneLenght		( 0.0f )
+			, ControlPointOneLenghtY	( 0.0f )
+			, ControlPointTwoLenght		( 0.0f )
+			, ControlPointTwoLenghtY	( 0.0f )
 
 			, SphereAdjPos			( 0.0f, 0.0f, 0.0f )
 			, SphereAdjRadius		( 0.0f )
@@ -140,15 +167,16 @@ protected:
 	void GirlCollision( CActor* pActor );
 
 protected:
-	D3DXVECTOR3		m_TargetPosition;		// 女の子の座標.
-	D3DXVECTOR3		m_TargetRotation;		// 目標の回転情報.
-	D3DXVECTOR3*	m_pAbductUFOPosition;	// UFOの座標.
-	SAlienParam		m_Parameter;			// パラメータ.
-	EAlienState		m_NowState;				// 現在の状態.
-	EMoveState		m_NowMoveState;			// 現在の移動状態.
-	float			m_ModelAlpha;			// モデルのアルファ値.
-	int				m_WaitCount;			// 待機カウント.
-	bool*			m_pIsAlienOtherAbduct;	// 他の宇宙人が連れ去っているかどうか.
+	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
+	D3DXVECTOR3		m_TargetRotation;			// 目標の回転情報.
+	D3DXVECTOR3		m_BeforeMoveingPosition;	// 移動前の座標.
+	D3DXVECTOR3*	m_pAbductUFOPosition;		// UFOの座標.
+	SAlienParam		m_Parameter;				// パラメータ.
+	EAlienState		m_NowState;					// 現在の状態.
+	EMoveState		m_NowMoveState;				// 現在の移動状態.
+	float			m_ModelAlpha;				// モデルのアルファ値.
+	int				m_WaitCount;				// 待機カウント.
+	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.
 	bool			m_IsExplosion;		// 爆発するか.
 	bool			m_IsDelete;			// 消去するかどうか.
 };
