@@ -9,6 +9,7 @@
 
 CTitle::CTitle( CSceneManager* pSceneManager )
 	: CSceneBase	( pSceneManager )
+	, m_pCTest		(nullptr)
 {
 }
 
@@ -21,6 +22,8 @@ CTitle::~CTitle()
 //============================.
 bool CTitle::Load()
 {
+	m_pCTest = CSpriteResource::GetSprite( "pokemon" );
+
 	return true;
 }
 
@@ -39,4 +42,7 @@ void CTitle::Update()
 //============================.
 void CTitle::Render()
 {
+	if (m_pCTest == nullptr) return;
+
+	m_pCTest->RenderUI();
 }

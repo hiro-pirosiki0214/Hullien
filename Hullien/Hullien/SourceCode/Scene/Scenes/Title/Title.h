@@ -26,6 +26,7 @@ public:
 	// •`‰æŠÖ”.
 	virtual void Render() override;
 private:
+
 };
 
 #endif	// #ifndef TITLE_H.
