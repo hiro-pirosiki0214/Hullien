@@ -174,6 +174,19 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
     <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
     <ClCompile Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LifeGauge\LifeGauge.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\SpecialAbilityGauge\SpecialAbilityGauge.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Widget.cpp" />
     <ClCompile Include="SourceCode\Light\LightBase.cpp" />
     <ClCompile Include="SourceCode\Light\LightManager\LightManager.cpp" />
@@ -249,6 +262,19 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Actor.h" />
     <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.h" />
     <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFOParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LifeGauge\LifeGauge.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\SpecialAbilityGauge\SpecialAbilityGauge.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Widget.h" />
     <ClInclude Include="SourceCode\Light\LightBase.h" />
     <ClInclude Include="SourceCode\Light\LightManager\LightManager.h" />
@@ -261,7 +287,9 @@
     <ClInclude Include="SourceCode\Global.h" />
     <ClInclude Include="SourceCode\Main\Main.h" />
     <ClInclude Include="SourceCode\Utility\ImGuiManager\ImGuiManager.h" />
-    <ClInclude Include="SourceCode\Utility\Log\MyLog.h" />
+    <ClInclude Include="SourceCode\Utility\Log\MyLog.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="SourceCode\Utility\MyVector\MyVector.h" />
     <ClInclude Include="SourceCode\Resource\EffectResource\EffectResource.h" />
     <ClInclude Include="SourceCode\Resource\LoadManager\LoadManager.h" />

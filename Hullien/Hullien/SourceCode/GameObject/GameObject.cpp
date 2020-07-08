@@ -1,5 +1,8 @@
 #include "GameObject.h"
 
+/****************************************
+*	ゲームオブジェクト元クラス.
+**/
 CGameObject::CGameObject()
 	: m_ObjectTag	( EObjectTag::None )
 	, m_vPosition	( 0.0f, 0.0f, 0.0f )

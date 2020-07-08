@@ -1,8 +1,10 @@
 #include "..\SceneList.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h"
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase	( pSceneManager )
 {
+	m_pClearWidget = std::make_unique<CClearWidget>();
 }
 
 CGameClear::~CGameClear()
@@ -14,6 +16,9 @@ CGameClear::~CGameClear()
 //============================.
 bool CGameClear::Load()
 {
+
+	if ( m_pClearWidget->Init() == false ) return false;
+
 	return true;
 }
 
@@ -22,6 +27,8 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
+	m_pClearWidget->Update();
+
 	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
 		m_pSceneManager->NextSceneMove();
 	}
@@ -32,4 +39,6 @@ void CGameClear::Update()
 //============================.
 void CGameClear::Render()
 {
+	if (m_pClearWidget == nullptr) return;
+	m_pClearWidget->Render();
 }

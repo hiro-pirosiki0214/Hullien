@@ -14,7 +14,7 @@ class CSprite : public CCommon
 	};
 	enum  class enLocalPosition
 	{
-		None, 
+		None,
 
 		LeftUp = 0,	// 左上.
 		Left,		// 左.
@@ -60,45 +60,45 @@ public:
 	};
 
 	CSprite();
-	CSprite( 
+	CSprite(
 		ID3D11Device* pDevice11,
 		ID3D11DeviceContext* pContext11,
-		const char* fileName, 
-		const SPRITE_STATE& pSs );
+		const char* fileName,
+		const SPRITE_STATE& pSs);
 
 	~CSprite();
 
 	// 初期化.
-	HRESULT Init( 
+	HRESULT Init(
 		ID3D11Device* pDevice11,
-		ID3D11DeviceContext* pContext11, 
-		const char* fileName, 
-		const SPRITE_STATE& pSs );
+		ID3D11DeviceContext* pContext11,
+		const char* fileName,
+		const SPRITE_STATE& pSs);
 
 	// 解放.
 	void Release();
 
 	// レンダリング.
 	// 3D空間に配置.
-	void Render( const bool& isBillboard = false );
+	void Render(const bool& isBillboard = false);
 	// UIとして配置.
 	void RenderUI();
 	// アニメーション番号の設定.
-	void SetAnimNumber( const int& animNumber );
+	void SetAnimNumber(const int& animNumber);
 	// フレームタイムの設定(何フレームでアニメーションするか).
-	void SetFrameTime( const int& frameTime){ m_FrameTime = frameTime; }
+	void SetFrameTime(const int& frameTime) { m_FrameTime = frameTime; }
 	// アニメーションを再生する.
-	void PlayAnimation(){ m_IsAnimation = true; }
+	void PlayAnimation() { m_IsAnimation = true; }
 	// 表示画像サイズの取得.
-	D3DXVECTOR2 GetSpriteSize(){ return { m_SState.Disp.w, m_SState.Disp.h }; }
+	D3DXVECTOR2 GetSpriteSize() { return { m_SState.Disp.w, m_SState.Disp.h }; }
 	// 描画座標の取得.
-	D3DXVECTOR3 GetRenderPos(){ return m_SState.vPos; }
+	D3DXVECTOR3 GetRenderPos() { return m_SState.vPos; }
 
 private:
 	// モデル作成.
 	HRESULT InitModel();
 	// テクスチャ作成.
-	HRESULT CreateTexture( const char* fileName, ID3D11ShaderResourceView** pTexture );
+	HRESULT CreateTexture(const char* fileName, ID3D11ShaderResourceView** pTexture);
 	HRESULT InitSample();
 
 	D3DXMATRIX CreateWorldMatrix();
@@ -109,14 +109,14 @@ private:
 
 	void CreateVERTEX(
 		const float& w, const float& h,
-		const float& u, const float& v );
+		const float& u, const float& v);
 
 
 	// テクスチャの比率を取得.
-	int myGcd( int t, int t2)
+	int myGcd(int t, int t2)
 	{
-		if( t2 == 0 ) return t;
-		return myGcd( t2, t % t2 );
+		if (t2 == 0) return t;
+		return myGcd(t2, t % t2);
 	}
 private:
 	std::unique_ptr<CSpriteShader> m_pSpriteShader;	// スプライトシェーダー.

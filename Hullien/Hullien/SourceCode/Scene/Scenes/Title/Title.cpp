@@ -5,12 +5,13 @@
 #include "..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\DebugText\DebugText.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h"
 
-
-CTitle::CTitle( CSceneManager* pSceneManager )
-	: CSceneBase	( pSceneManager )
-	, m_pCTest		(nullptr)
+CTitle::CTitle(CSceneManager* pSceneManager)
+	: CSceneBase(pSceneManager)
+	, m_pWidget(nullptr)
 {
+	m_pWidget = std::make_unique< CTitleWidget >();
 }
 
 CTitle::~CTitle()
@@ -22,7 +23,7 @@ CTitle::~CTitle()
 //============================.
 bool CTitle::Load()
 {
-	m_pCTest = CSpriteResource::GetSprite( "pokemon" );
+	if (m_pWidget->Init() == false) return false;
 
 	return true;
 }
@@ -32,8 +33,17 @@ bool CTitle::Load()
 //============================.
 void CTitle::Update()
 {
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
-		m_pSceneManager->NextSceneMove();
+	m_pWidget->Update();
+
+	switch ( m_pWidget->GetSelectState() )
+	{
+	case CTitleWidget::ESelectState::Start:
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001) {
+			m_pSceneManager->NextSceneMove();
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -42,7 +52,6 @@ void CTitle::Update()
 //============================.
 void CTitle::Render()
 {
-	if (m_pCTest == nullptr) return;
-
-	m_pCTest->RenderUI();
+	if ( m_pWidget == nullptr ) return;
+	m_pWidget->Render();
 }

@@ -9,6 +9,7 @@
 #include "..\..\..\Collider\Colliders\Capsule\CapsuleCollision.h"
 
 class CRotLookAtCenter;
+class CTitleWidget;
 
 /**********************************
 *	タイトルシーンクラス.
@@ -16,7 +17,7 @@ class CRotLookAtCenter;
 class CTitle : public CSceneBase
 {
 public:
-	CTitle( CSceneManager* pSceneManager );
+	CTitle(CSceneManager* pSceneManager);
 	virtual ~CTitle();
 
 	// 読込関数.
@@ -25,7 +26,9 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+
 private:
+	std::unique_ptr<CTitleWidget>	m_pWidget;		//UIクラス.
 
 };
 

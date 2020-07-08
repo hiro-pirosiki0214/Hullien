@@ -216,6 +216,45 @@
     <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LifeGauge\LifeGauge.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\SpecialAbilityGauge\SpecialAbilityGauge.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SourceCode\Global.h">
@@ -444,6 +483,45 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LifeGauge\LifeGauge.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\SpecialAbilityGauge\SpecialAbilityGauge.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

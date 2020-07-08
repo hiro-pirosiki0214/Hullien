@@ -5,6 +5,9 @@
 
 #include "ObjectList.h"
 
+/****************************************
+*	ゲームオブジェクト元クラス.
+**/
 class CGameObject
 {
 public:

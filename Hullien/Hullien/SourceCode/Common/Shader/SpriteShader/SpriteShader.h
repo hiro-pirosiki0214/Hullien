@@ -12,13 +12,10 @@ public:
 	//※シェーダー内のコンスタントバッファと一致している必要あり.
 	struct C_BUFFER
 	{
-		ALIGN16 D3DXMATRIX	mW;				// ワールド行列.
-		ALIGN16 D3DXMATRIX	mWVP;
-		ALIGN16 float		fViewPortWidth;	// ビューポート幅.
-		ALIGN16 float		fViewPortHeight;// ビューポート高さ.
-		ALIGN16 float		fAlpha;			// アルファ値(透過で使用する).
-		ALIGN16 D3DXVECTOR4 vColor;			// カラー(RGBAの型に合わせる).
-		ALIGN16 D3DXVECTOR2 vUV;			// UV座標.
+		D3DXMATRIX	mW;				// ワールド行列.
+		D3DXMATRIX	mWVP;
+		D3DXVECTOR4 vColor;			// カラー(RGBAの型に合わせる).
+		D3DXVECTOR4 vUV_ViewPort;
 	};
 	// 頂点の構造体.
 	struct VERTEX
@@ -32,20 +29,20 @@ public:
 	virtual ~CSpriteShader();
 
 	// 初期化.
-	virtual HRESULT Init( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 ) override;
+	virtual HRESULT Init(ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11) override;
 	// 解放.
 	virtual HRESULT Release() override;
 
 	// コンスタントバッファにデータを渡す.
-	void SetConstantBufferData( 
-		const D3DXMATRIX& mWVP, 
-		const float& fAlpha, 
-		const D3DXVECTOR2& texPos );
+	void SetConstantBufferData(
+		const D3DXMATRIX& mWVP,
+		const float& fAlpha,
+		const D3DXVECTOR2& texPos);
 
 	// 各種シェーダの設定.
-	void ShaderSet( ID3D11Buffer* pVertexBuffer );
+	void ShaderSet(ID3D11Buffer* pVertexBuffer);
 	// 各種UI用のシェーダの設定.
-	void ShaderUISet( ID3D11Buffer* pVertexBuffer );
+	void ShaderUISet(ID3D11Buffer* pVertexBuffer);
 
 private:
 	// シェーダー作成.
