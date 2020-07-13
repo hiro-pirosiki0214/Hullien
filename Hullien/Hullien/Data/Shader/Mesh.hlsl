@@ -141,7 +141,25 @@ VS_OUTPUT VS_NoTex(float4 Pos : POSITION,
 //-------------------------------------------------
 float4 PS_NoTex(VS_OUTPUT input) : SV_Target
 {
-	float4 Color = input.Color;
+	//ŠÂ‹«Œõ@‡@.
+	float4 ambient = g_vAmbient;
+
+	//ŠgU”½ËŒõ ‡A.
+	float NL = saturate(dot(input.Normal, input.Light));
+	float4 diffuse =
+		(g_vDiffuse / 2 + g_Texture.Sample(g_SamLinear, input.Tex) / 2) * NL;
+
+	//‹¾–Ê”½ËŒõ ‡B.
+	float3 reflect = normalize(2 * NL * input.Normal - input.Light);
+	float4 specular =
+		pow(saturate(dot(reflect, input.EyeVector)), 4) * g_vSpecular;
+
+	//Ì«İÓÃŞÙÅIF@‡@‡A‡B‚Ì‡Œv.
+	float4 Color = ambient + diffuse + specular;
+
+	//×²Ä‹­“x‚ğ”½‰f.
+	Color *= g_fIntensity.x * g_Color;
+	Color.a = g_Color.a;
 	return Color;
 }
 

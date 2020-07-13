@@ -11,6 +11,7 @@ class CPlayer : public CCharacter
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
 	const char*	MODEL_NAME	= "Sayaka_s";		// モデル名.
+	const char* MODEL_TEMP_NAME = "kaitosize";	// 仮モデル名.
 
 	// アニメーション番号.
 	enum class enAnimNo

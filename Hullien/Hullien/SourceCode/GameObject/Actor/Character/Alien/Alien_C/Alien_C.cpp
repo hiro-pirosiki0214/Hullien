@@ -1,11 +1,11 @@
 #include "Alien_C.h"
 #include "..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
+#include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 
 CAlienC::CAlienC()
 {
 	m_ObjectTag = EObjectTag::Alien_C;
-	m_vSclae = { 0.05f, 0.05f, 0.05f };
 }
 
 CAlienC::~CAlienC()
@@ -15,7 +15,11 @@ CAlienC::~CAlienC()
 // 初期化関数.
 bool CAlienC::Init()
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
+#else
+	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
+#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
 	return true;
 }
@@ -34,6 +38,7 @@ void CAlienC::Update()
 // 描画関数.
 void CAlienC::Render()
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
@@ -41,14 +46,29 @@ void CAlienC::Render()
 	rot.y += static_cast<float>(D3DX_PI);
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.5f, 0.8f, m_ModelAlpha } );
+	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
 	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	m_pSkinMesh->SetBlend( false );
+#else
+	if( m_pTempStaticMesh == nullptr ) return;
+
+	if( m_pTempStaticMesh == nullptr ) return;
+	m_pTempStaticMesh->SetPosition( m_vPosition );
+	m_pTempStaticMesh->SetRotation( m_vRotation );
+	m_pTempStaticMesh->SetScale( m_vSclae );
+	m_pTempStaticMesh->SetColor( { 0.0f, 0.0f, 0.8f, m_ModelAlpha } );
+	m_pTempStaticMesh->SetBlend( true );
+	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pTempStaticMesh->Render();
+	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pTempStaticMesh->SetBlend( false );
+#endif	// #ifdef IS_TEMP_MODEL_RENDER.
 
 #if _DEBUG
+	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
 }
@@ -72,6 +92,7 @@ bool CAlienC::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	if( Init() == false ) return false;
 	m_Parameter = param;	// パラメータを設定.
 	m_vPosition = spawnPos;	// スポーン座標の設定.
+	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;
 	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
 
 	return true;
@@ -116,6 +137,7 @@ void CAlienC::Escape()
 // 当たり判定の設定.
 bool CAlienC::ColliderSetting()
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -128,4 +150,18 @@ bool CAlienC::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
+#else
+	if( m_pTempStaticMesh == nullptr ) return false;
+	if( m_pCollManager == nullptr ){
+		m_pCollManager = std::make_shared<CCollisionManager>();
+	}
+	if( FAILED( m_pCollManager->InitSphere( 
+		m_pTempStaticMesh->GetMesh(),
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		m_Parameter.SphereAdjRadius ) )) return false;
+	return true;
+#endif	// #ifndef IS_MODEL_RENDER.
 }

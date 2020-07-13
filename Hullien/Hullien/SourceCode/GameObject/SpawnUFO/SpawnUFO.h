@@ -2,11 +2,13 @@
 #define SPAWN_UFO_H
 
 #include "..\GameObject.h"
+#include "..\Actor\Character\Alien\AlienList.h"
 #include "..\Actor\Character\Alien\Alien.h"
 
 #include "SpawnUFOParam.h"
 
 #include <vector>
+#include <random>
 
 class CSpawnUFO : public CGameObject
 {
@@ -31,16 +33,32 @@ public:
 private:
 	// 更新関数.外部で使用しないので隠蔽.
 	virtual void Update() override;
+	// ウェーブカウントの更新.
+	void WaveCountUpdate(
+		int& waveCount, const int& waveTime, 
+		int& intervalcount, const int& intervalTime );
 
-	// 敵の作成.
+	// 宇宙人の作成.
 	std::shared_ptr<CAlien> AlienFactory();
+	// 宇宙人番号の取得.
+	int GetAlienNo();
+	// 宇宙人番号の作成.
+	int CreateAlienNo( const int& min, const int& max, const int& outVal );
 
 private:
 	SSpawnUFOParam	m_SpawnParameter;		// スポーンパラメータ.
 	D3DXVECTOR3*	m_pAbductUFOPosition;	// 連れ去るUFOの座標.
 	std::vector<CAlien::SAlienParam>* m_pAlienParamList;	// 宇宙人パラメータリスト.
 	int	m_FrameCount;	// 経過フレームカウント.
+	int m_SpawnCount;	// スポーンカウント.
 	int m_AlienIndex;	// 宇宙人.
+
+	int m_AlienCWaveCount;			// 宇宙人Cのウェーブカウント.
+	int m_AlienCWaveIntervalCount;	// 宇宙人Cのウェーブ間隔カウント.
+	int m_AlienDWaveCount;			// 宇宙人Dのウェーブカウント.
+	int m_AlienDWaveIntervalCount;	// 宇宙人Dのウェーブ間隔カウント,
+
+	std::mt19937 m_RandomSeed;	// ランダムシード.
 };
 
 #endif	// #ifndef SPAWN_UFO_H.

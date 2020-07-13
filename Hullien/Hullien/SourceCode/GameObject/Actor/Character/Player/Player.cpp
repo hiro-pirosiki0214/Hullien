@@ -1,5 +1,6 @@
 #include "Player.h"
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
+#include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
@@ -27,7 +28,6 @@ CPlayer::CPlayer()
 {
 	m_ObjectTag = EObjectTag::Player;
 	m_pCamera = std::make_shared<CRotLookAtCenter>();
-	m_vSclae = { 0.03f, 0.03f, 0.03f };
 }
 
 CPlayer::~CPlayer()
@@ -38,7 +38,11 @@ CPlayer::~CPlayer()
 bool CPlayer::Init()
 {
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
+#ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
+#else
+	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
+#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
 
 	SetAttackFrameList();
@@ -74,15 +78,10 @@ void CPlayer::Update()
 // 描画関数.
 void CPlayer::Render()
 {
-	if( m_pSkinMesh == nullptr ) return;
-
-	m_pSkinMesh->SetPosition( m_vPosition );
-	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetAnimSpeed( 0.01 );
-	m_pSkinMesh->Render();
+	MeshRender();	// メッシュの描画.
 
 #if _DEBUG
+	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
 	// エディット用の描画関数をエディットレンダラーに追加.
 	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
@@ -321,6 +320,7 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 // 当たり判定の設定.
 bool CPlayer::ColliderSetting()
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -333,6 +333,20 @@ bool CPlayer::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
+#else
+	if( m_pTempStaticMesh == nullptr ) return false;
+	if( m_pCollManager == nullptr ){
+		m_pCollManager = std::make_shared<CCollisionManager>();
+	}
+	if( FAILED( m_pCollManager->InitSphere( 
+		m_pTempStaticMesh->GetMesh(),
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		m_Parameter.SphereAdjRadius ) )) return false;
+	return true;
+#endif	// #ifndef IS_MODEL_RENDER.
 }
 
 // エディット用の描画関数.

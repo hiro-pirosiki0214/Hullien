@@ -1,5 +1,6 @@
 #include "Girl.h"
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
+#include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 
@@ -7,7 +8,6 @@ CGirl::CGirl()
 	: m_Parameter	()
 {
 	m_ObjectTag = EObjectTag::Girl;
-	m_vSclae = { 0.03f, 0.03f, 0.03f };
 }
 
 CGirl::~CGirl()
@@ -17,7 +17,11 @@ CGirl::~CGirl()
 // èâä˙âªä÷êî.
 bool CGirl::Init()
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
+#else
+	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
+#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
 
 	return true;
@@ -35,15 +39,10 @@ void CGirl::Update()
 // ï`âÊä÷êî.
 void CGirl::Render()
 {
-	if( m_pSkinMesh == nullptr ) return;
-
-	m_pSkinMesh->SetPosition( m_vPosition );
-	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetAnimSpeed( 0.01 );
-	m_pSkinMesh->Render();
+	MeshRender();	// ÉÅÉbÉVÉÖÇÃï`âÊ.
 
 #if _DEBUG
+	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
 }
@@ -70,6 +69,7 @@ void CGirl::Move()
 // ìñÇΩÇËîªíËÇÃçÏê¨.
 bool  CGirl::ColliderSetting()
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -82,4 +82,18 @@ bool  CGirl::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
+#else
+	if( m_pTempStaticMesh == nullptr ) return false;
+	if( m_pCollManager == nullptr ){
+		m_pCollManager = std::make_shared<CCollisionManager>();
+	}
+	if( FAILED( m_pCollManager->InitSphere( 
+		m_pTempStaticMesh->GetMesh(),
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		m_Parameter.SphereAdjRadius ) )) return false;
+	return true;
+#endif	// #ifndef IS_MODEL_RENDER.
 }

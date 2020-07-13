@@ -3,9 +3,13 @@
 
 #include "..\Actor.h"
 
+#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
+
 class CCharacter : public CActor
 {
 protected:
+	const float INIT_POSITION_ADJ_HEIGHT = 5.0f;	// 調整用座標の高さ.
+
 	// キャラクターパラメータ.
 	struct stParameter
 	{
@@ -29,10 +33,14 @@ public:
 	virtual void Move() = 0;
 
 protected:
+	// メッシュの表示.
+	void MeshRender();
 	// 無敵時間かどうか.
 	bool IsInvincibleTime( const int& invincibleTime );
 	// モデルの取得.
 	bool GetModel( const char* modelName );
+	// 当たり判定の設定.
+	bool ColliderSetting();
 	// パラメータの設定.
 	template<class inParam>
 	bool ParameterSetting( const char* fileName, inParam& param )
@@ -48,7 +56,11 @@ protected:
 	}
 
 protected:
-	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;	// スキンメッシュ.
+	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// スキンメッシュ.
+#ifdef IS_TEMP_MODEL_RENDER
+	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;	// 仮のモデルデータ.
+#endif	// #ifdef IS_TEMP_MODEL_RENDER.
+
 	D3DXVECTOR3	m_MoveVector;	// 移動ベクトル.
 	int	m_InvincibleCount;		// 無敵カウント.
 
