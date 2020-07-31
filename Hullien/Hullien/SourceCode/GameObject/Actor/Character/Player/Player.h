@@ -68,6 +68,36 @@ class CPlayer : public CCharacter
 		{}
 	} typedef SAttackData;
 
+	// アイテムや、麻痺などのタイマー.
+	struct stEffectTimer
+	{
+		bool	IsUpdate;	// 更新中か.
+		float	Time;		// 時間.
+
+		stEffectTimer()
+			: IsUpdate	( false )
+			, Time		( 0.0f )
+		{}
+
+		// タイマーの設定.
+		void Set()
+		{
+			Time *= FPS;
+			IsUpdate = true;
+		}
+		
+		// 更新.
+		bool Update()
+		{
+			if( IsUpdate == false ) return false;
+			Time--;
+
+			if( Time > 0.0f ) return false;
+			IsUpdate = false;
+			return true;
+		}
+	} typedef SEffectTimer;
+
 public:
 	CPlayer();
 	virtual ~CPlayer();
@@ -98,6 +128,12 @@ private:
 	// 回避動作関数.
 	void AvoidMove();
 
+	// 特殊能力回復更新関数.
+	void SpecialAbilityUpdate();
+	// 攻撃力UP更新関数.
+	void AttackUpUpdate();
+	// 移動速度UP更新関数.
+	void MoveSpeedUpUpdate();
 	// 麻痺中の更新関数.
 	void ParalysisUpdate();
 
@@ -113,6 +149,12 @@ private:
 
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+	// 特殊能力回復時間、効力時間設定関数.
+	virtual void SetSPEffectTime( const std::function<void(float&,float&)>& ) override;
+	// 攻撃力、効力時間設定関数.
+	virtual void SetAttackEffectTime( const std::function<void(float&,float&)>& ) override;
+	// 移動速度、効力時間設定関数.
+	virtual void SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& ) override;
 	// 麻痺の設定.
 	virtual void SetParalysisTime( const std::function<void(float&)>& ) override;
 
@@ -134,12 +176,20 @@ private:
 	std::queue<SAttackData>	m_AttackDataQueue;		// 攻撃データのキュー.
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
-	float			m_AvoidMoveSpeed;	// 回避用移動速度.
 
-	bool			m_IsParalysis;		// 麻痺中か.
-	float			m_ParalysisTime;	// 麻痺時間.
+	SPlayerParam	m_Parameter;			// パラメーター.
+	float			m_LifePoint;			// 体力.
+	float			m_SpecialAbility;		// 特殊能力.
+	bool			m_HasUsableSP;			// 特殊能力を使えるか.
 
-	SPlayerParam	m_Parameter;		// パラメーター.
+	float			m_SpecialAbilityValue;	// 特殊能力回復力.
+	float			m_AttackPower;			// 攻撃力.
+	float			m_MoveSpeed;			// 移動速度.
+
+	SEffectTimer	m_ItemSPRecoveryTimer;	// アイテムでの特殊能力回復タイマー.
+	SEffectTimer	m_ItemAttackTimer;		// アイテムでの攻撃力UPタイマー.
+	SEffectTimer	m_ItemMoveSpeedUpTimer;	// アイテムでの移動速度UPタイマー.
+	SEffectTimer	m_ParalysisTimer;		// 麻痺タイマー.
 };
 
 #endif	// #ifndef PLAYER_H.

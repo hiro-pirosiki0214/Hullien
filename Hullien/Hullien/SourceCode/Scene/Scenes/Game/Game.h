@@ -3,10 +3,11 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
-class CGroundStage;	// 地面クラス.
-class CPlayer;				// プレイヤークラス.
-class CGirl;
+class CGroundStage;		// 地面クラス.
+class CPlayer;			// プレイヤークラス.
+class CGirl;			// 女の子クラス.S
 class CAlienManager;	// 宇宙人管理クラス.
+class CItemManager;		// アイテム管理クラス.
 
 /**********************************
 *	ゲームシーンクラス.
@@ -29,6 +30,7 @@ private:
 	std::shared_ptr<CPlayer>		m_pPlayer;
 	std::shared_ptr<CGirl>			m_pGirl;
 	std::shared_ptr<CAlienManager>	m_pAlienManager;
+	std::shared_ptr<CItemManager>	m_pItemManager;
 };
 
 #endif	// #ifndef GAME_H.

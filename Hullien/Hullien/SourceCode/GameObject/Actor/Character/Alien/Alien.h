@@ -2,6 +2,7 @@
 #define ALIEN_H
 
 #include "..\Character.h"
+#include "..\..\Item\ItemList.h"
 
 class CAlien : public CCharacter
 {
@@ -129,6 +130,8 @@ public:
 	float GetModelAplha() const { return m_ModelAlpha; }
 	// 連れ去っているかどうか.
 	bool IsAbduct() const { return m_NowState == EAlienState::Abduct; }
+	// どのアイテムを持っているか取得.
+	EItemList GetAnyItem() const { return m_HasAnyItem; }
 	// ほかの宇宙人が連れ去っているか設定.
 	void SetOtherAbduct( bool* pisAbduct ){ m_pIsAlienOtherAbduct = pisAbduct; }
 	// 連れ去るUFOの座標の取得.
@@ -174,6 +177,7 @@ protected:
 	SAlienParam		m_Parameter;				// パラメータ.
 	EAlienState		m_NowState;					// 現在の状態.
 	EMoveState		m_NowMoveState;				// 現在の移動状態.
+	EItemList		m_HasAnyItem;				// どのアイテムを持っているか.
 	float			m_ModelAlpha;				// モデルのアルファ値.
 	int				m_WaitCount;				// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.

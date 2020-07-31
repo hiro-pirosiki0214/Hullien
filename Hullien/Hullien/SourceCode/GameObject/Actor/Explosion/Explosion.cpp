@@ -67,6 +67,12 @@ void CExplosion::Collision( CActor* pActor )
 	pActor->LifeCalculation( attackProc );	// ‘ÎÛ‚Ì‘Ì—Í‚ğŒ¸‚ç‚·.
 }
 
+// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
+void CExplosion::SetTargetPos( CActor& pActor )
+{
+	m_vPosition = pActor.GetPosition();
+}
+
 // “–‚½‚è”»’è‚Ìİ’è.
 bool CExplosion::ColliderSetting()
 {

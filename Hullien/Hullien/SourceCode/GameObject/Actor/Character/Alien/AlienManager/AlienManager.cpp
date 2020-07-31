@@ -12,7 +12,8 @@ CAlienManager::CAlienManager()
 	: m_AilenList			()
 	, m_SpawnUFOList		()
 	, m_AlienParamList		()
-	, m_AbductUFOPosition	( 10.0f, 0.0f, 0.0f )
+	, m_DropItemList		()
+	, m_AbductUFOPosition	( 50.0f, 0.0f, 50.0f )
 	, m_IsAlienAbduct		( false )
 	, m_SortCount			( 0 )
 {
@@ -36,6 +37,8 @@ void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(C
 {
 	Spawn();	// スポーン.
 	bool isAbduct = false;
+	m_DropItemList.clear();
+
 	// 宇宙人達の更新.
 	for( size_t i = 0; i < m_AilenList.size(); i++ ){
 		m_AilenList[i]->SetOtherAbduct( &m_IsAlienAbduct );
@@ -65,6 +68,10 @@ void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(C
 
 		// リストから指定の宇宙人を消すか.
 		if( m_AilenList[i]->IsDelete() == false ) continue;
+
+		// アイテムリストの設定.
+		SetDropItemList( m_AilenList[i] );
+
 		m_AilenList[i] = m_AilenList.back();
 		m_AilenList.pop_back();
 		i--;
@@ -108,6 +115,17 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 	m_ExplosionList.emplace_back();
 	m_ExplosionList.back().Init();
 	m_ExplosionList.back().SetExplosionParam( m_ExplosionParam );
+	m_ExplosionList.back().SetTargetPos( *ailen.get() );
+}
+
+// 落とすアイテムの設定.
+void CAlienManager::SetDropItemList( const std::shared_ptr<CAlien>& ailen )
+{
+	if( ailen->GetAnyItem() == EItemList::None ) return;
+	if( ailen->GetAnyItem() == EItemList::Max ) return;
+
+	// 落とすアイテムの設定.
+	m_DropItemList[ailen->GetAnyItem()] = ailen->GetPosition();
 }
 
 // スポーンUFOの初期化.
@@ -129,6 +147,7 @@ bool CAlienManager::ReadAlienParamList()
 	// 各宇宙人のパラメータパスリストの取得.
 	std::vector<std::string> readList = 
 		CFileManager::TextLoading( ALIEN_PARAM_LIST_FILE_PATH );
+
 	// テキストが読み込めてなかったら終了.
 	if( readList.empty() == true ) return false;
 
@@ -159,11 +178,13 @@ void CAlienManager::ModelAlphaSort()
 	m_SortCount++;
 	if( m_SortCount < FPS ) return;
 
-	auto comp = []( auto& a, auto b )
+	// ソートのラムダ関数.
+	auto comp = []( auto& a, auto& b )
 	{ return a->GetModelAplha() > b->GetModelAplha();};
 
+	// ソート.
 	std::sort( m_AilenList.begin(), m_AilenList.end(), comp );
-	m_SortCount = 0;
+	m_SortCount = 0;	// ソートカウントを初期化.
 }
 
 // デバッグ用の描画関数.

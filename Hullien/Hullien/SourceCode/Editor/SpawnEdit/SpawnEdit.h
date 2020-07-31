@@ -26,8 +26,6 @@ private:
 	bool FileReading();
 	// ファイルの書き込み.
 	bool FileWriting();
-	// 各タグの描画.
-	void TagRender();
 	// インデックスの描画.
 	void IndexRender();
 	// スポーン情報の描画.

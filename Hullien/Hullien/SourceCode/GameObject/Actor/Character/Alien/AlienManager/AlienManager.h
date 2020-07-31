@@ -26,6 +26,8 @@ public:
 	void Update( CActor* pPlayer, CActor* pGirl, std::function<void(CActor*)> collProc );
 	// 描画関数.
 	void Render();
+	// 落とすアイテムリストの取得.
+	DropItemList GetDropItemList(){ return m_DropItemList; }
 
 private:
 	// スポーン.
@@ -33,7 +35,8 @@ private:
 
 	// 爆発できるかどうか確認.
 	void ExplosionConfirming( const std::shared_ptr<CAlien>& ailen );
-
+	// 落とすアイテムの設定.
+	void SetDropItemList( const std::shared_ptr<CAlien>& ailen );
 	// スポーンUFOの初期化.
 	bool SpawnUFOInit();
 	// 宇宙人パラメータリストの読み込み.
@@ -53,6 +56,7 @@ private:
 	std::vector<CAlien::SAlienParam>		m_AlienParamList;	// 宇宙人パラメータリスト.
 	std::vector<CExplosion>		m_ExplosionList;	// 爆発リスト.
 	CExplosion::SExplosionParam	m_ExplosionParam;	// 爆発パラメーター.
+	DropItemList m_DropItemList;		// 落とすアイテムのリスト.
 	D3DXVECTOR3	m_AbductUFOPosition;	// 連れ去るUFOの座標.
 	bool		m_IsAlienAbduct;		// 宇宙人が連れ去っているかどうか.
 	int			m_SortCount;			// ソートする時のカウント.

@@ -35,6 +35,8 @@ public:
 	virtual void Render() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
+	// 相手座標の設定関数.
+	virtual void SetTargetPos( CActor& pActor ) override;
 
 	// パラメーターの設定.
 	void SetExplosionParam( const SExplosionParam& param ){ m_Param = param; }

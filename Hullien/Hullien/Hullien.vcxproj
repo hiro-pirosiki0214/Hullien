@@ -166,6 +166,7 @@
     <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\EditRenderer\EditRenderer.cpp" />
     <ClCompile Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\ItemEdit\ItemEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.cpp" />
@@ -177,6 +178,12 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Player\Player.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Explosion\Explosion.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemBase.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp" />
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
@@ -245,6 +252,7 @@
     <ClInclude Include="SourceCode\Editor\ControllerEdit\ControllerEdit.h" />
     <ClInclude Include="SourceCode\Editor\EditRenderer\EditRenderer.h" />
     <ClInclude Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.h" />
+    <ClInclude Include="SourceCode\Editor\ItemEdit\ItemEdit.h" />
     <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienList.h" />
@@ -257,7 +265,14 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\Girl.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Player\Player.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Explosion\Explosion.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EachItemEffectStruct.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemBase.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemList.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h" />
     <ClInclude Include="SourceCode\GameObject\GameObject.h" />
     <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />

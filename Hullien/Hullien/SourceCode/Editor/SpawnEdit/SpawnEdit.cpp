@@ -80,33 +80,6 @@ bool CSpawnEdit::FileWriting()
 	return CFileManager::BinaryVectorWriting( FILE_PATH, m_SpawnPramList );
 }
 
-// 各タグの描画.
-void CSpawnEdit::TagRender()
-{
-	// タグリストの設定.
-	std::vector<std::string> tagNameList;
-	tagNameList.emplace_back("Index");
-	for( size_t i = 0; i < m_SpawnPramList.size(); i++ ){
-		tagNameList.emplace_back("SpawnNo." + std::to_string(i) );
-	}
-
-	// 各タグの描画.
-	if( ImGui::BeginTabBar( "TabBarID" ) == false ) return;
-	for( size_t i = 0; i < tagNameList.size(); i++ ){
-		if( ImGui::BeginTabItem( tagNameList[i].c_str() ) == false ) continue;
-
-		if( i == 0 ){
-			// インデックスの描画.
-			IndexRender();
-		} else {
-			// スポーン情報の描画.
-			SpawnParamRender( i-1 );
-		}
-		ImGui::EndTabItem();
-	}
-	ImGui::EndTabBar();
-}
-
 // インデックスの描画.
 void CSpawnEdit::IndexRender()
 {

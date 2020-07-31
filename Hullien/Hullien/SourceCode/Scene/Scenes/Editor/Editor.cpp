@@ -4,6 +4,7 @@
 #include "..\..\..\Editor\SpawnEdit\SpawnEdit.h"
 #include "..\..\..\Editor\AlienParamEdit\AlienParamEdit.h"
 #include "..\..\..\Editor\ExplosionEdit\ExplosionEdit.h"
+#include "..\..\..\Editor\ItemEdit\ItemEdit.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -12,11 +13,13 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pSpawnEdit		( nullptr )
 	, m_pAlienParamEdit	( nullptr )
 	, m_pExplosionEdit	( nullptr ) 
+	, m_pItemEdit		( nullptr )
 {
 	m_pControllerEdit = std::make_unique<CControllerEdit>();
 	m_pSpawnEdit = std::make_unique<CSpawnEdit>();
 	m_pAlienParamEdit = std::make_unique<CAlienParamEdit>();
 	m_pExplosionEdit = std::make_unique<CExplosionEdit>();
+	m_pItemEdit = std::make_unique<CItemEdit>();
 }
 
 CEditor::~CEditor()
@@ -29,6 +32,7 @@ bool CEditor::Load()
 	if( m_pSpawnEdit->Init() == false ) return false;
 	if( m_pAlienParamEdit->Init() == false ) return false;
 	if( m_pExplosionEdit->Init() == false ) return false;
+	if( m_pItemEdit->Init() == false ) return false;
 	return true;
 }
 
@@ -53,6 +57,7 @@ void CEditor::Render()
 	m_pSpawnEdit->Render();
 	m_pAlienParamEdit->Render();
 	m_pExplosionEdit->Render();
+	m_pItemEdit->Render();
 
 	// ImGuiç≈èIï`âÊ.
 	CImGuiManager::Render();
