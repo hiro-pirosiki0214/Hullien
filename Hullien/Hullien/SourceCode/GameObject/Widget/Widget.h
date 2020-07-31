@@ -37,10 +37,10 @@ protected:
 	void FadeOut(float& alpha, const float& alphaSpeed);
 
 protected:
-	std::shared_ptr<CSprite>	m_pSprite;			//スプライトクラス.
-	EFadeState						m_FadeState;		//フェード状態.
-	float								m_Alpha;				//透過値.
-	float								m_AlphaMax;		//透過最大値.
+	std::shared_ptr<CSprite>	m_pSprite;		//スプライトクラス.
+	EFadeState					m_FadeState;	//フェード状態.
+	float						m_Alpha;		//透過値.
+	float						m_AlphaMax;		//透過最大値.
 
 private:
 	// 透過値設定関数.

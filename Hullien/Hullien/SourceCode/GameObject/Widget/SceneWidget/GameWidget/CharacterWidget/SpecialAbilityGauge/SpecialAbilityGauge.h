@@ -1,13 +1,18 @@
 #ifndef SPECIALABILITYGAUGE_H
 #define SPECIALABILITYGAUGE_H
 
-#include "..\GameWidget.h"
+#include "..\ChatacterWidget.h"
+#include <vector>
 
 /*******************************************
 *	特殊能力ゲージクラス.
 **/
-class CSpecialAbilityGauge : public CGameWidget
+class CSpecialAbilityGauge : public CCharacterWidget
 {
+private:
+	const char* SPRITE_GAGEBACK = "gagesize";	//ゲージ背景.
+	const char* SPRITE_GAGE		= "gagesize";	//ゲージ.		
+
 public:
 	CSpecialAbilityGauge();
 	virtual ~CSpecialAbilityGauge();
@@ -20,6 +25,11 @@ public:
 	virtual void Render() override;
 
 private:
+	// スプライト設定関数.
+	bool SpriteSetting();
+
+private:
+	std::vector<std::shared_ptr<CSprite>> m_pSprite;	// スプライトクラス.
 
 };
 

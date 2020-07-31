@@ -5,6 +5,9 @@
 #include "..\..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
 #include "..\..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h"
+#include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h"
+#include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h"
 
 #include "..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\..\..\Editor\EditRenderer\EditRenderer.h"
@@ -13,6 +16,7 @@
 
 CPlayer::CPlayer()
 	: m_pCamera						( nullptr )
+	, m_pWidget						()
 	, m_OldPosition					( 0.0f, 0.0f, 0.0f )
 	, m_NowAnimNo					( CPlayer::enAnimNo::Walk )
 	, m_OldAnimNo					( CPlayer::enAnimNo::None )
@@ -38,6 +42,7 @@ bool CPlayer::Init()
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
+	if( WidgetSetting() == false ) return false;
 
 	SetAttackFrameList();
 	return true;
@@ -72,6 +77,13 @@ void CPlayer::Render()
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetAnimSpeed( 0.01 );
 	m_pSkinMesh->Render();
+
+	// Widget.
+	if ( m_pWidget.size() == 0 ) return;
+	for (const auto& s : m_pWidget)
+	{
+		s->Render();
+	}
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -409,4 +421,17 @@ void CPlayer::DebugRender()
 	// ‰ñ”ð’†‚©.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*21, 0.0f } );
 	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
+}
+
+bool CPlayer::WidgetSetting()
+{
+	m_pWidget.emplace_back(std::make_shared<CLifeGauge>());
+	m_pWidget.emplace_back(std::make_shared<CSpecialAbilityGauge>());
+
+	for (const auto& s : m_pWidget)
+	{
+		if (s->Init() == false) return false;
+	}
+
+	return true;
 }

@@ -30,19 +30,7 @@ bool CCursor::Init()
 void CCursor::Update()
 {
 	if (m_pSprite == nullptr) return;
-
-	// 移動前の座標と現在の座標が違う場合.
-	if (m_vPosition != m_vOldPosition)
-	{
-		// 数値を初期化.
-		m_vSclae.x = 0.0f;
-		m_Acceleration = 0.0f;
-	}
-
-	// 拡大値が標準ならば処理しない.
-	if (m_vSclae.x >= SCALE_MAX) return;
-	// 拡大.
-	IncreaseScale();
+	MoveScale();	// スケールの動き.
 }
 
 // 描画関数.
@@ -57,17 +45,36 @@ void CCursor::Render()
 	m_pSprite->SetDeprh( true );
 }
 
+// スケール動き関数.
+void CCursor::MoveScale()
+{
+	// 移動前の座標と現在の座標が違う場合.
+	if (m_vPosition != m_vOldPosition)
+	{
+		// 数値を初期化.
+		m_vSclae.x = 0.0f;
+		m_Acceleration = 0.0f;
+	}
+
+	// 拡大値が標準ならば処理しない.
+	if (m_vSclae.x >= SCALE_MAX) return;
+	// 拡大.
+	IncreaseScale();
+}
+
 // 拡大関数.
 void CCursor::IncreaseScale()
 {
-	m_vOldPosition = m_vPosition;
+	m_vOldPosition = m_vPosition;	// 現在地を保持する.
+
 	m_vSclae.x += SCALE_SPEED - m_Acceleration;
 	m_Acceleration += ACC_SPEED;
 
+	// 拡大値が標準値になった時.
 	if ( m_vSclae.x >= SCALE_MAX)
 	{
 		m_vSclae.x = SCALE_MAX;
-		m_Acceleration = 0.0f;
+		m_Acceleration = 0.0f;	// 加速度の初期化.
 	}
 }
 
