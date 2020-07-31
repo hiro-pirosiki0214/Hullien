@@ -3,6 +3,7 @@
 #include "..\..\..\GameObject\Actor\Character\Player\Player.h"
 #include "..\..\..\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h"
 
 #include "..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\Resource\SpriteResource\SpriteResource.h"
@@ -14,11 +15,13 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_pPlayer			( nullptr )
 	, m_pAlienManager	( nullptr )
 	, m_pLimitTime		( nullptr )
+	, m_pMiniMap		( nullptr )
 {
 	m_pGroundStage = std::make_shared<CGroundStage>();
 	m_pPlayer = std::make_shared<CPlayer>();
 	m_pAlienManager = std::make_shared<CAlienManager>();
-	m_pLimitTime = std::make_shared<CLimitTime>();
+	m_pLimitTime = std::make_unique<CLimitTime>();
+	m_pMiniMap = std::make_unique<CMiniMap>();
 }
 
 CGame::~CGame()
@@ -34,6 +37,7 @@ bool CGame::Load()
 	if( m_pPlayer->Init() == false ) return false;
 	if( m_pAlienManager->Init() == false ) return false;
 	if( m_pLimitTime->Init() == false ) return false;
+	if( m_pMiniMap->Init() == false ) return false;
 
 	return true;
 }
@@ -72,5 +76,6 @@ void CGame::Render()
 	m_pPlayer->Render();
 	m_pAlienManager->Render();
 	m_pLimitTime->Render();
+	m_pMiniMap->Render();
 
 }

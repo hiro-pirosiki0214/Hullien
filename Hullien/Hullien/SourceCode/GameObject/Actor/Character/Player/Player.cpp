@@ -423,10 +423,11 @@ void CPlayer::DebugRender()
 	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
 }
 
+// ウィジェット設定.
 bool CPlayer::WidgetSetting()
 {
 	m_pWidget.emplace_back(std::make_shared<CLifeGauge>());
-	m_pWidget.emplace_back(std::make_shared<CSpecialAbilityGauge>());
+	//m_pWidget.emplace_back(std::make_shared<CSpecialAbilityGauge>());
 
 	for (const auto& s : m_pWidget)
 	{

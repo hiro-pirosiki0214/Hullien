@@ -10,12 +10,13 @@
 class CLimitTime : public CGameWidget
 {
 private:
-	const D3DXVECTOR3 ONETIME_INITPOS = D3DXVECTOR3(660.0f, 30.0f, 0.0f);	//時間一の位初期位置.
-	const D3DXVECTOR3 TENTIME_INITPOS = D3DXVECTOR3(630.0f, 30.0f, 0.0f);	//時間十の位初期位置.
-	const int LIMITTIME_MAX		= 60;	//制限時間最大.
-	const int FRAME_DIVISION	= 60;	//フレーム割る数.
-	const int ANIM_MAX			= 10;	//アニメーション最大数.
-	const int TEN				= 10;	//十.
+	const char* SPRITE_TIME				= "timeNumber";	//時間のスプライト名.
+	const D3DXVECTOR3 ONETIME_INITPOS	= D3DXVECTOR3(660.0f, 30.0f, 0.0f);	//時間一の位初期位置.
+	const D3DXVECTOR3 TENTIME_INITPOS	= D3DXVECTOR3(630.0f, 30.0f, 0.0f);	//時間十の位初期位置.
+	const int LIMITTIME_MAX				= 60;	//制限時間最大.
+	const int FRAME_DIVISION			= 90;	//フレーム割る数.
+	const int ANIM_MAX					= 10;	//アニメーション最大数.
+	const int TEN						= 10;	//十.
 
 public:
 	CLimitTime();
@@ -49,7 +50,7 @@ private:
 	std::vector<int>					  m_Anim;		// アニメーション番号.
 	int									  m_FrameCount;	// フレームカウント.
 	int									  m_Seconds;	// 秒.
-	bool								  m_IsFinish;	//終了したかどうか.
+	bool								  m_IsFinish;	// 終了したかどうか.
 };
 
 #endif	//#ifndef LIMITTIME_H.

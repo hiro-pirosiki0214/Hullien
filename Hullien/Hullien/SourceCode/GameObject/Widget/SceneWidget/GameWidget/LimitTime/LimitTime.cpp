@@ -36,12 +36,16 @@ bool CLimitTime::Init()
 // 更新関数.
 void CLimitTime::Update()
 {
+	if (m_pSprite.size() == 0) return;
+
 	CountDown();	//カウントダウン.
 }
 
 // 描画関数.
 void CLimitTime::Render()
 {
+	if( m_pSprite.size() == 0 ) return;
+
 	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
 		m_pSprite[sprite]->SetPosition( m_vPosition[sprite] );
@@ -59,8 +63,8 @@ bool CLimitTime::SpriteSetting()
 
 	const char* spriteName[] =
 	{
-		"timeNumber",
-		"timeNumber",
+		SPRITE_TIME,
+		SPRITE_TIME,
 	};
 	const int spriteMax = sizeof( spriteName ) / sizeof( spriteName[0] );
 

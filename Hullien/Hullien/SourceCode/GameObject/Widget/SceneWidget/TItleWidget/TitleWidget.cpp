@@ -10,7 +10,7 @@
 CTitleWidget::CTitleWidget()
 	: m_pSprites		()
 	, m_pCursor			( nullptr )
-	, m_SelectState	( CTitleWidget::ESelectState::Start )
+	, m_SelectState		( CTitleWidget::ESelectState::Start )
 {
 	m_pCursor = std::make_unique<CCursor>();
 }
@@ -23,10 +23,10 @@ CTitleWidget::~CTitleWidget()
 bool CTitleWidget::Init()
 {
 	// スプライトの読み込み.
-	if (SpriteSetting() == false) return false;
+	if( SpriteSetting() == false ) return false;
 
 	// カーソルの読み込み.
-	if(m_pCursor->Init() == false) return false;
+	if( m_pCursor->Init() == false ) return false;
 
 	return true;
 }
@@ -55,6 +55,14 @@ void CTitleWidget::Render()
 	// 文字.
 	for (size_t sprite = START; sprite < m_pSprites.size(); sprite++)
 	{
+		if (sprite == START)
+		{
+			m_pSprites[sprite]->SetPosition(D3DXVECTOR3(600.0f, 500.0f, 0.0f));
+		}
+		else if(sprite == END)
+		{
+			m_pSprites[sprite]->SetPosition(D3DXVECTOR3(600.0f, 600.0f, 0.0f));
+		}
 		m_pSprites[sprite]->SetDeprh(false);
 		m_pSprites[sprite]->RenderUI();
 		m_pSprites[sprite]->SetDeprh(true);
@@ -99,10 +107,10 @@ void CTitleWidget::CursorSetting()
 	switch (m_SelectState)
 	{
 	case CTitleWidget::ESelectState::Start:
-		m_pCursor->SetPosition(m_pSprites[START]->GetRenderPos());
+		m_pCursor->SetPosition(D3DXVECTOR3(600.0f, 500.0f, 0.0f));
 		break;
 	case CTitleWidget::ESelectState::End:
-		m_pCursor->SetPosition(m_pSprites[END]->GetRenderPos());
+		m_pCursor->SetPosition(D3DXVECTOR3(600.0f, 600.0f, 0.0f));
 		break;
 	default:
 		break;
