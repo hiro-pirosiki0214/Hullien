@@ -6,6 +6,9 @@
 CExplosion::CExplosion()
 	: m_Param				()
 	, m_CollSphereRadius	( 0.0f )
+#if _DEBUG
+	, m_ResizeCollTime		( 0.0f )
+#endif	// #if _DEBUG.
 {
 }
 
@@ -31,6 +34,13 @@ void CExplosion::Render()
 	m_CollSphereRadius += m_Param.ExplosionSpeed;
 	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
 	if( m_pCollManager == nullptr ) return;
+
+#if _DEBUG
+	m_pCollManager->DebugRender();
+	m_ResizeCollTime++;
+	if( m_ResizeCollTime < 15.0f ) return;
+	m_ResizeCollTime = 0.0f;
+#endif	// #if _DEBUG.
 	// 当たり判定のサイズを変更.
 	m_pCollManager->InitSphere(
 		&m_vPosition,
@@ -38,9 +48,6 @@ void CExplosion::Render()
 		&m_vSclae.x,
 		m_Param.SphereAdjPos,
 		m_CollSphereRadius );
-#if _DEBUG
-	m_pCollManager->DebugRender();
-#endif	// #if _DEBUG.
 }
 
 // 当たり判定関数.
@@ -53,7 +60,7 @@ void CExplosion::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	// 対象オブジェクトじゃなければ終了,
+	// 対象オブジェクトじゃなければ終了.
 	if( ( pActor->GetObjectTag() != EObjectTag::Alien_A ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_B ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_C ) &&

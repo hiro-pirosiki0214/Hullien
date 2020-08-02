@@ -24,7 +24,7 @@ public:
 	// ドロップ.
 	void Drop( const DropItemList& dropItemList );
 	// 更新関数.
-	void Update( CActor* pActor );
+	void Update( std::function<void(CActor*)> updateProc );
 	// 描画関数.
 	void Render();
 

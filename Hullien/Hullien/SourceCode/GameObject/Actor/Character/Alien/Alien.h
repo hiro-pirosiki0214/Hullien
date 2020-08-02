@@ -168,6 +168,8 @@ protected:
 
 	// 女の子との当たり判定.
 	void GirlCollision( CActor* pActor );
+	// バリアとの当たり判定.
+	void BarrierCollision( CActor* pActor );
 
 protected:
 	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
@@ -181,6 +183,7 @@ protected:
 	float			m_ModelAlpha;				// モデルのアルファ値.
 	int				m_WaitCount;				// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.
+	bool			m_IsBarrierHit;		// バリアに当たっているか.
 	bool			m_IsExplosion;		// 爆発するか.
 	bool			m_IsDelete;			// 消去するかどうか.
 };

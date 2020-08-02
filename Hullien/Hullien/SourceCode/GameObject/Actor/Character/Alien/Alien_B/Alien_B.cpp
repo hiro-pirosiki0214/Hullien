@@ -83,6 +83,7 @@ void CAlienB::Collision( CActor* pActor )
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 	PlayerCollison( pActor );		// プレイヤーとの当たり判定.
 	GirlCollision( pActor );		// 女の子との当たり判定.
+	BarrierCollision( pActor );
 }
 
 // スポーン.

@@ -60,9 +60,11 @@ void CAlienD::Render()
 void CAlienD::Collision( CActor* pActor )
 {
 	if( pActor == nullptr ) return;
-	AttackCollision( pActor );
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
+
+	AttackCollision( pActor );
+	BarrierCollision( pActor );
 }
 
 // ÉXÉ|Å[Éì.

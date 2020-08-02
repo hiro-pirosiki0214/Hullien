@@ -3,11 +3,7 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
-class CGroundStage;		// 地面クラス.
-class CPlayer;			// プレイヤークラス.
-class CGirl;			// 女の子クラス.S
-class CAlienManager;	// 宇宙人管理クラス.
-class CItemManager;		// アイテム管理クラス.
+class CGameActorManager;	// ゲームオブジェクト管理クラス.
 
 /**********************************
 *	ゲームシーンクラス.
@@ -26,11 +22,7 @@ public:
 	virtual void Render() override;
 
 private:
-	std::shared_ptr<CGroundStage>	m_pGroundStage;
-	std::shared_ptr<CPlayer>		m_pPlayer;
-	std::shared_ptr<CGirl>			m_pGirl;
-	std::shared_ptr<CAlienManager>	m_pAlienManager;
-	std::shared_ptr<CItemManager>	m_pItemManager;
+	std::unique_ptr<CGameActorManager> m_GameObjManager;
 };
 
 #endif	// #ifndef GAME_H.

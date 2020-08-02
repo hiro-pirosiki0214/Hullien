@@ -33,7 +33,7 @@ bool CAlienManager::Init()
 }
 
 // 更新関数.
-void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(CActor*)> collProc )
+void CAlienManager::Update( std::function<void(CActor*)> updateProc )
 {
 	Spawn();	// スポーン.
 	bool isAbduct = false;
@@ -43,16 +43,8 @@ void CAlienManager::Update( CActor* pPlayer, CActor* pGirl, std::function<void(C
 	for( size_t i = 0; i < m_AilenList.size(); i++ ){
 		m_AilenList[i]->SetOtherAbduct( &m_IsAlienAbduct );
 
-		// 座標の設定.
-		m_AilenList[i]->SetTargetPos( *pPlayer );
-		m_AilenList[i]->SetTargetPos( *pGirl );
-		// 更新処理.
-		m_AilenList[i]->Update();
-		// プレイヤー、女の子の当たり判定.
-		collProc( m_AilenList[i].get() );
-		// 宇宙人の当たり判定.
-		m_AilenList[i]->Collision( pPlayer );
-		m_AilenList[i]->Collision( pGirl );
+		// 更新関数.
+		updateProc( m_AilenList[i].get() );
 
 		// 女の子を連れ去っているか確認.
 		if( isAbduct == false ){

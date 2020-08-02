@@ -81,6 +81,7 @@ void CAlienC::Collision( CActor* pActor )
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
 	GirlCollision( pActor );
+	BarrierCollision( pActor );
 }
 
 // ÉXÉ|Å[Éì.

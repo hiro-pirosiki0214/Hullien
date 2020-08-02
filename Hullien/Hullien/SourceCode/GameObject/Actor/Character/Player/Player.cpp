@@ -66,6 +66,7 @@ void CPlayer::Update()
 	if( m_ParalysisTimer.IsUpdate == false ){
 		Controller();			// 操作.
 		AttackController();		// 攻撃操作.
+		SPController();			// 特殊能力操作.
 		AvoidController();		// 回避操作.
 		AttackAnimation();		// 攻撃アニメーション.
 		Move();					// 移動.
@@ -124,6 +125,15 @@ void CPlayer::SetTargetPos( CActor& actor )
 //	m_vPosition = actor.GetPosition();
 }
 
+// 特殊能力を使っているか.
+bool CPlayer::IsSpecialAbility()
+{
+	if( m_HasUsableSP == false ) return false;
+	// 特殊能力が使えるなら.
+	m_HasUsableSP = false;	// 初期化して.
+	return true;			// trueを返す.
+}
+
 // 操作関数.
 void CPlayer::Controller()
 {
@@ -156,6 +166,17 @@ void CPlayer::AttackController()
 	// 攻撃データがキューに追加されたら終了.
 	if( IsPushAttack() == true ) return;
 	m_AttackComboCount--;	// 攻撃カウントを減算.
+}
+
+// 特殊能力操作関数.
+void CPlayer::SPController()
+{
+	if( m_SpecialAbility < SPECIAL_ABILITY_MAX ) return;
+	// Yボタンが押された瞬間じゃなければ終了.
+	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
+
+	m_SpecialAbility = 0.0f;
+	m_HasUsableSP = true;
 }
 
 // 回避操作関数.
@@ -228,7 +249,6 @@ void CPlayer::AvoidMove()
 // 特殊能力回復更新関数.
 void CPlayer::SpecialAbilityUpdate()
 {
-	const float specialAbilityMax = 10.0f;		// 特殊能力最大.
 	const float specialAbilityValue = 0.01f;	// 特殊能力回復力.
 
 	// アイテムでの回復状態なら.
@@ -240,12 +260,11 @@ void CPlayer::SpecialAbilityUpdate()
 	}
 
 	// 特殊能力値が最大以上なら終了.
-	if( m_SpecialAbility >= specialAbilityMax ) return;
+	if( m_SpecialAbility >= SPECIAL_ABILITY_MAX ) return;
 	m_SpecialAbility += m_SpecialAbilityValue;	// 特殊能力値を加算.
 
-	if( m_SpecialAbility < specialAbilityMax ) return;
-	m_HasUsableSP = true;
-	m_SpecialAbility = specialAbilityMax;	// 最大値を超えないようにする.
+	if( m_SpecialAbility < SPECIAL_ABILITY_MAX ) return;
+	m_SpecialAbility = SPECIAL_ABILITY_MAX;	// 最大値を超えないようにする.
 }
 
 // 攻撃力UP更新関数.
@@ -359,10 +378,9 @@ void CPlayer::SetSPEffectTime( const std::function<void(float&,float&)>& proc )
 {
 	if( m_ItemSPRecoveryTimer.IsUpdate == true ) return;
 
-	const float specialAbilityMax = 10.0f;
 	proc( m_SpecialAbilityValue, m_ItemSPRecoveryTimer.Time );
 
-	if( m_SpecialAbility >= specialAbilityMax ) return;
+	if( m_SpecialAbility >= SPECIAL_ABILITY_MAX ) return;
 	m_ItemSPRecoveryTimer.Set();
 }
 

@@ -46,8 +46,11 @@ private:
 	bool ColliderSetting();
 
 private:
-	SExplosionParam	m_Param;		// 爆発パラメーター.
-	float	m_CollSphereRadius;		// 当たり判定の半径.
+	SExplosionParam	m_Param;	// 爆発パラメーター.
+	float m_CollSphereRadius;	// 当たり判定の半径.
+#if _DEBUG
+	float m_ResizeCollTime;		// 当たり判定の半径のリサイズする時間(デバッグ用).
+#endif	// #if _DEBUG.
 };
 
 #endif	// #ifndef EXPLOSION_H.

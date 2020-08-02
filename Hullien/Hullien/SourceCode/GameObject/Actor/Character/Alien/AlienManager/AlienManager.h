@@ -23,7 +23,7 @@ public:
 	// 初期化関数.
 	bool Init();
 	// 更新関数.
-	void Update( CActor* pPlayer, CActor* pGirl, std::function<void(CActor*)> collProc );
+	void Update( std::function<void(CActor*)> updateProc );
 	// 描画関数.
 	void Render();
 	// 落とすアイテムリストの取得.

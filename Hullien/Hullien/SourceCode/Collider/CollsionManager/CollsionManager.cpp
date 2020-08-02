@@ -180,6 +180,8 @@ bool CCollisionManager::IsShereToShere( CCollisionManager* pManager )
 	const D3DXVECTOR3 vLength = pManager->GetSphere()->GetPosition() - m_pSphere->GetPosition();
 	// ’·‚³‚É•ÏŠ·‚·‚é.
 	const float length = D3DXVec3Length( &vLength );
+	if( pManager->GetSphere()->GetRadius() <= 0.0f ) return false;
+	if( m_pSphere->GetRadius() <= 0.0f ) return false;
 	// 2‚Â‚Ì”¼Œa‚Ì‡Œv.
 	float twoRadiusTotal = m_pSphere->GetRadius() + pManager->GetSphere()->GetRadius();
 	

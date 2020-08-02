@@ -13,6 +13,8 @@ class CPlayer : public CCharacter
 	const char*	MODEL_NAME	= "Sayaka_s";		// モデル名.
 	const char* MODEL_TEMP_NAME = "kaitosize";	// 仮モデル名.
 
+	const float SPECIAL_ABILITY_MAX = 10.0f;
+
 	// アニメーション番号.
 	enum class enAnimNo
 	{
@@ -113,6 +115,9 @@ public:
 	// 相手座標の設定関数.
 	virtual void SetTargetPos( CActor& actor ) override;
 
+	// 特殊能力を使っているか.
+	bool IsSpecialAbility();
+
 private:
 	// 操作関数.
 	void Controller();
@@ -120,6 +125,8 @@ private:
 	void CameraController();
 	// 攻撃操作関数.
 	void AttackController();
+	// 特殊能力操作関数.
+	void SPController();
 	// 回避操作関数.
 	void AvoidController();
 

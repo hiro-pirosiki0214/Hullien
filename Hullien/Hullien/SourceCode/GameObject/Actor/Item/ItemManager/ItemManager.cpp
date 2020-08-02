@@ -68,13 +68,10 @@ void CItemManager::Drop( const DropItemList& dropItemList )
 }
 
 // 更新関数.
-void CItemManager::Update( CActor* pActor )
+void CItemManager::Update( std::function<void(CActor*)> updateProc )
 {
 	// 各アイテムの更新、当たり判定.
-	for( auto& i : m_ItemList ){
-		i->Update();
-		i->Collision( pActor );
-	}
+	for( auto& i : m_ItemList ) updateProc( i.get() );
 }
 
 // 描画関数.
