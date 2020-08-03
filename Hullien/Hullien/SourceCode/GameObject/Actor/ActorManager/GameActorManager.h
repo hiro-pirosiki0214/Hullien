@@ -8,11 +8,11 @@
 
 class CActor;
 class CGroundStage;		// 地面クラス.
-class CPlayer;			// プレイヤークラス.
-class CGirl;			// 女の子クラス.
-class CAlienManager;	// 宇宙人管理クラス.
+class CPlayer;					// プレイヤークラス.
+class CGirl;						// 女の子クラス.
+class CAlienManager;		// 宇宙人管理クラス.
 class CItemManager;		// アイテム管理クラス.
-class CBarrier;			// バリアクラス.
+class CBarrier;				// バリアクラス.
 
 class CGameActorManager
 {
