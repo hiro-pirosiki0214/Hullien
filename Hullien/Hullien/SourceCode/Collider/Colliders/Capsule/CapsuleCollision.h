@@ -14,6 +14,7 @@ public:
 
 	// ƒ‚ƒfƒ‹‚Ì”¼Œa‚Ìì¬.
 	HRESULT InitModelCapsule( LPD3DXMESH pMesh );
+	HRESULT InitModelCapsule( const float& height, const float& radius );
 	// “–‚½‚è”»’è‚Ì•\¦.
 	virtual void DebugRender() override;
 

@@ -8,48 +8,49 @@ class CSpriteShader : public CShaderBase
 	const char* SHADER_NAME = "Data\\Shader\\Sprite.hlsl";
 
 public:
-	// ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚ÌƒAƒvƒŠ‘¤‚Ì’è‹`.
-	//¦ƒVƒF[ƒ_[“à‚ÌƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚Æˆê’v‚µ‚Ä‚¢‚é•K—v‚ ‚è.
+	// ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã®ã‚¢ãƒ—ãƒªå´ã®å®šç¾©.
+	//â€»ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼å†…ã®ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã¨ä¸€è‡´ã—ã¦ã„ã‚‹å¿…è¦ã‚ã‚Š.
 	struct C_BUFFER
 	{
-		D3DXMATRIX	mW;				// ƒ[ƒ‹ƒhs—ñ.
-		D3DXMATRIX	mWVP;
-		D3DXVECTOR4 vColor;			// ƒJƒ‰[(RGBA‚ÌŒ^‚É‡‚í‚¹‚é).
-		D3DXVECTOR4 vUV_ViewPort;
+		ALIGN16 D3DXMATRIX	mW;				// ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—.
+		ALIGN16 D3DXMATRIX	mWVP;
+		ALIGN16 D3DXVECTOR4 vColor;			// ã‚«ãƒ©ãƒ¼(RGBAã®å‹ã«åˆã‚ã›ã‚‹).
+		ALIGN16 D3DXVECTOR2 vUV;			// UVåº§æ¨™.
+		ALIGN16 D3DXVECTOR2 vViewPort;
 	};
-	// ’¸“_‚Ì\‘¢‘Ì.
+	// é ‚ç‚¹ã®æ§‹é€ ä½“.
 	struct VERTEX
 	{
-		D3DXVECTOR3 Pos;	// ’¸“_À•W.
-		D3DXVECTOR2	Tex;	// ƒeƒNƒXƒ`ƒƒÀ•W.
+		D3DXVECTOR3 Pos;	// é ‚ç‚¹åº§æ¨™.
+		D3DXVECTOR2	Tex;	// ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™.
 	};
 
 public:
 	CSpriteShader();
 	virtual ~CSpriteShader();
 
-	// ‰Šú‰».
+	// åˆæœŸåŒ–.
 	virtual HRESULT Init(ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11) override;
-	// ‰ğ•ú.
+	// è§£æ”¾.
 	virtual HRESULT Release() override;
 
-	// ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚Éƒf[ƒ^‚ğ“n‚·.
-	void SetConstantBufferData(
-		const D3DXMATRIX& mWVP,
-		const float& fAlpha,
-		const D3DXVECTOR2& texPos);
+	// ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã™.
+	void SetConstantBufferData( 
+		const D3DXMATRIX& mWVP, 
+		const D3DXVECTOR4& color, 
+		const D3DXVECTOR2& texPos );
 
-	// ŠeíƒVƒF[ƒ_‚Ìİ’è.
+	// å„ç¨®ã‚·ã‚§ãƒ¼ãƒ€ã®è¨­å®š.
 	void ShaderSet(ID3D11Buffer* pVertexBuffer);
-	// ŠeíUI—p‚ÌƒVƒF[ƒ_‚Ìİ’è.
+	// å„ç¨®UIç”¨ã®ã‚·ã‚§ãƒ¼ãƒ€ã®è¨­å®š.
 	void ShaderUISet(ID3D11Buffer* pVertexBuffer);
 
 private:
-	// ƒVƒF[ƒ_[ì¬.
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ä½œæˆ.
 	virtual HRESULT InitShader() override;
 
 private:
-	ID3D11VertexShader*		m_pVertexShaderUI;	// ’¸“_ƒVƒF[ƒ_[ UI—p‚Ég—p.
+	ID3D11VertexShader*		m_pVertexShaderUI;	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ UIç”¨ã«ä½¿ç”¨.
 };
 
 #endif	// #ifndef SPRITE_SHADER_H.

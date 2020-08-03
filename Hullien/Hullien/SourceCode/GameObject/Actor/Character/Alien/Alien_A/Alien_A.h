@@ -5,8 +5,8 @@
 
 class CAlienA : public CAlien
 {
-	const char* PARAMETER_FILE_PATH	= "Data\\GamePram\\Alien\\Alien_A\\Alien_A.bin";
 	const char* MODEL_NAME = "GhostB_s";
+	const char* MODEL_TEMP_NAME = "a_b_csize";	// ‰¼ƒ‚ƒfƒ‹–¼.
 
 public:
 	CAlienA();
@@ -36,9 +36,6 @@ private:
 	virtual void Death() override;
 	// “¦‚°‚é.
 	virtual void Escape() override;
-
-	// —‚Ìq‚Æ‚Ì“–‚½‚è”»’è.
-	void GirlCollision( CActor* pActor );
 
 	// “–‚½‚è”»’è‚Ìİ’è.
 	bool ColliderSetting();

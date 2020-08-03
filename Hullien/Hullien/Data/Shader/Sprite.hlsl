@@ -1,19 +1,20 @@
-//¸ŞÛ°ÊŞÙ•Ï”.
-//Ã¸½Á¬‚ÍAÚ¼Ş½À t(n).
+//ï½¸ï¾ï¾›ï½°ï¾Šï¾ï¾™å¤‰æ•°.
+//ï¾ƒï½¸ï½½ï¾ï½¬ã¯ã€ï¾šï½¼ï¾ï½½ï¾€ t(n).
 Texture2D g_Texture : register(t0);
-//»İÌß×‚ÍAÚ¼Ş½À s(n).
+//ï½»ï¾ï¾Œï¾Ÿï¾—ã¯ã€ï¾šï½¼ï¾ï½½ï¾€ s(n).
 SamplerState g_samLinear : register(s0);
 
-//ºİ½ÀİÄÊŞ¯Ì§.
+//ï½ºï¾ï½½ï¾€ï¾ï¾„ï¾Šï¾ï½¯ï¾Œï½§.
 cbuffer global : register(b0)
 {
-	matrix g_mW; // Ü°ÙÄŞs—ñ.
-	matrix g_mWVP; // Ü°ÙÄŞs—ñ.
-	float4 g_Color; // ƒJƒ‰[.
-	float4 g_vUV_ViewPort;
+    matrix g_mW			: packoffset( c0 ); // ï¾œï½°ï¾™ï¾„ï¾è¡Œåˆ—.
+    matrix g_mWVP		: packoffset( c4 ); // ï¾œï½°ï¾™ï¾„ï¾è¡Œåˆ—.
+    float4 g_Color		: packoffset( c8 ); // ã‚«ãƒ©ãƒ¼.
+    float2 g_vUV		: packoffset( c9 ); // UVåº§æ¨™.
+	float2 g_fViewPort	: packoffset( c10 ); // UVåº§æ¨™.
 };
 
-//\‘¢‘Ì.
+//æ§‹é€ ä½“.
 struct VS_OUTPUT
 {
 	float4 Pos : SV_Position;
@@ -28,7 +29,7 @@ VS_OUTPUT VS_Main(
 	VS_OUTPUT output = (VS_OUTPUT)0;
 	output.Pos = mul(Pos, g_mWVP);
 	output.Tex = Tex;
-	// UVÀ•W‚ğ‚¸‚ç‚·.
+	// UVåº§æ¨™ã‚’ãšã‚‰ã™.
 	output.Tex.x += g_vUV_ViewPort.x;
 	output.Tex.y += g_vUV_ViewPort.y;
 
@@ -36,7 +37,7 @@ VS_OUTPUT VS_Main(
 }
 
 
-// ’¸“_ƒVƒF[ƒ_.
+// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€.
 VS_OUTPUT VS_MainUI(
 	float4 Pos : POSITION,
 	float2 Tex : TEXCOORD)
@@ -44,23 +45,23 @@ VS_OUTPUT VS_MainUI(
 	VS_OUTPUT output = (VS_OUTPUT)0;
 	output.Pos = mul(Pos, g_mW);
 
-	// ƒXƒNƒŠ[ƒ“À•W‚É‡‚í‚¹‚éŒvZ,
+	// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³åº§æ¨™ã«åˆã‚ã›ã‚‹è¨ˆç®—,
 	output.Pos.x = (output.Pos.x / g_vUV_ViewPort.z) * 2.0f - 1.0f;
 	output.Pos.y = 1.0f - (output.Pos.y / g_vUV_ViewPort.w) * 2.0f;
 
 	output.Tex = Tex;
 
-	// UVÀ•W‚ğ‚¸‚ç‚·.
+	// UVåº§æ¨™ã‚’ãšã‚‰ã™.
 	output.Tex.x += g_vUV_ViewPort.x;
 	output.Tex.y += g_vUV_ViewPort.y;
 
 	return output;
 }
 
-// ƒsƒNƒZƒ‹ƒVƒF[ƒ_.
+// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€.
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
-	float4 color = g_Texture.Sample(g_samLinear, input.Tex);
-	color.a *= g_Color.a;
-	return color;
+    float4 color = g_Texture.Sample(g_samLinear, input.Tex);
+    color *= g_Color;
+    return color;
 }

@@ -256,6 +256,55 @@
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp">
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Explosion\Explosion.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemBase.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\Editor\ItemEdit\ItemEdit.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\Barrier\Barrier.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -528,6 +577,58 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h">
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\Girl.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Explosion\Explosion.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemBase.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EachItemEffectStruct.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\Editor\ItemEdit\ItemEdit.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\Barrier\Barrier.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

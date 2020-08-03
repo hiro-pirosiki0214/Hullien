@@ -2,17 +2,22 @@
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 
+#include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+
 CAlien::CAlien()
-	: m_TargetPosition		( 0.0f, 0.0f, 0.0f )
-	, m_TargetRotation		( 0.0f, 0.0f, 0.0f )
-	, m_pAbductUFOPosition	( nullptr )
-	, m_Parameter			()
-	, m_NowState			( EAlienState::None )
-	, m_NowMoveState		( EMoveState::None )
-	, m_ModelAlpha			( 0.0f )
-	, m_WaitCount			( 0 )
-	, m_pIsAlienOtherAbduct	( nullptr )
-	, m_IsDelete			( false )
+	: m_TargetPosition			( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
+	, m_pAbductUFOPosition		( nullptr )
+	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
+	, m_Parameter				()
+	, m_NowState				( EAlienState::None )
+	, m_NowMoveState			( EMoveState::None )
+	, m_HasAnyItem				( EItemList::SPEffectTime )
+	, m_ModelAlpha				( 0.0f )
+	, m_WaitCount				( 0 )
+	, m_pIsAlienOtherAbduct		( nullptr )
+	, m_IsExplosion				( false )
+	, m_IsDelete				( false )
 {
 }
 
@@ -27,8 +32,7 @@ void CAlien::SetTargetPos( CActor& actor )
 	if( *m_pIsAlienOtherAbduct == true ) return;
 
 	// 女の子じゃなければ終了.
-	// 今は女の子がいないのでplyaerで対処.
-	if( actor.GetObjectTag() != EObjectTag::Player ) return;
+	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
 	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
 }
 
@@ -114,6 +118,7 @@ void CAlien::TargetRotation()
 		// 移動用ベクトルを取得.
 		m_MoveVector.x = sinf( m_vRotation.y );
 		m_MoveVector.z = cosf( m_vRotation.y );
+		m_BeforeMoveingPosition = m_vPosition;
 		m_NowMoveState = EMoveState::Move;
 	}
 }
@@ -128,7 +133,138 @@ void CAlien::VectorMove( const float& moveSpeed )
 	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 
+	float researchLengh = D3DXVec3Length( &D3DXVECTOR3(m_BeforeMoveingPosition - m_vPosition) );
+	if( researchLengh >= m_Parameter.ResearchLenght ) m_NowMoveState = EMoveState::Rotation;
+
 	if( lenght >= 1.0f ) return;
 
 	m_NowMoveState = EMoveState::Wait;
+}
+
+// 待機関数.
+void CAlien::WaitMove()
+{
+	if( m_NowMoveState != EMoveState::Wait ) return;
+	m_WaitCount++;	// 待機カウント加算.
+	if( m_WaitCount < m_Parameter.WaitTime*FPS ) return;
+	m_NowMoveState = EMoveState::Rotation;	// 移動状態を回転する.
+	m_WaitCount = 0;	// 待機カウントの初期化.
+}
+
+// スポーン中.
+void CAlien::Spawning()
+{
+	// モデルのアルファ値を足していく.
+	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
+	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 移動.
+void CAlien::Move()
+{
+	TargetRotation();			// 回転.
+	CAlien::VectorMove( m_Parameter.MoveSpeed );	// 移動.
+	CAlien::WaitMove();			// 待機.
+
+	if( *m_pIsAlienOtherAbduct == false ) return;
+	if( m_NowState == EAlienState::Abduct ) return;
+	m_NowState		= EAlienState::Escape;
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
+}
+
+// 拐う.
+void CAlien::Abduct()
+{
+	if( m_IsBarrierHit == true ) return;
+
+	SetMoveVector( *m_pAbductUFOPosition );
+	m_TargetPosition = *m_pAbductUFOPosition;
+
+	TargetRotation();
+	CAlien::VectorMove( m_Parameter.MoveSpeed );
+
+	if( *m_pIsAlienOtherAbduct == true ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 怯み.
+void CAlien::Fright()
+{
+	m_InvincibleCount++;
+	if( IsInvincibleTime( m_Parameter.InvincibleTime+5 ) == false ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 死亡.
+void CAlien::Death()
+{
+	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
+	if( m_ModelAlpha > 0.0f ) return;
+	m_IsDelete = true;
+}
+
+// 逃げる.
+void CAlien::Escape()
+{
+	if( m_IsBarrierHit == true ) return;
+
+	SetMoveVector( *m_pAbductUFOPosition );
+	m_TargetPosition = *m_pAbductUFOPosition;
+	TargetRotation();
+	CAlien::VectorMove( m_Parameter.MoveSpeed );
+	if( *m_pIsAlienOtherAbduct == true ) return;
+	m_NowState = EAlienState::Move;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// 女の子との当たり判定.
+void CAlien::GirlCollision( CActor* pActor )
+{
+	// オブジェクトのタグが女の子じゃなければ終了.
+	if( pActor->GetObjectTag() != EObjectTag::Girl ) return;
+	if( m_IsBarrierHit == true ) return;
+	if( m_NowMoveState == EMoveState::Attack ) return;	// 攻撃状態は終了.
+	if( m_NowState == EAlienState::Spawn ) return;	// スポーン状態なら終了.
+	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
+	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
+
+	bool isAbduct = false;
+	if( m_NowState == EAlienState::Abduct ){
+		isAbduct = true;
+	} else {
+		if( *m_pIsAlienOtherAbduct == true ) return;
+		isAbduct = true;
+	}
+
+	if( isAbduct == false ) return;
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	pActor->SetTargetPos( *this );
+
+	if( m_NowState == EAlienState::Abduct ) return;
+	m_NowState = EAlienState::Abduct;
+	m_NowMoveState = EMoveState::Rotation;
+}
+
+// バリアとの当たり判定.
+void CAlien::BarrierCollision( CActor* pActor )
+{
+	// オブジェクトのタグが女の子じゃなければ終了.
+	if( pActor->GetObjectTag() != EObjectTag::Bariier ) return;
+	const float moveSpeed = -2.0f;
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ){
+		m_Parameter.MoveSpeed = 0.02f;
+		m_IsBarrierHit = false;
+	} else {
+		m_Parameter.MoveSpeed = moveSpeed;
+		m_IsBarrierHit = true;
+		*m_pIsAlienOtherAbduct = false;
+		m_NowState = EAlienState::Move;
+		m_NowMoveState = EMoveState::Move;
+	}
 }

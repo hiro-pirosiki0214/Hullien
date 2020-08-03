@@ -1,4 +1,5 @@
 #include "..\SceneList.h"
+
 #include "..\..\..\GameObject\GroundStage\GroundStage.h"
 #include "..\..\..\GameObject\Actor\Character\Player\Player.h"
 #include "..\..\..\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h"
@@ -11,17 +12,13 @@
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 
-	, m_pGroundStage	( nullptr )
-	, m_pPlayer			( nullptr )
-	, m_pAlienManager	( nullptr )
 	, m_pLimitTime		( nullptr )
 	, m_pMiniMap		( nullptr )
+  , m_GameObjManager	( nullptr )
 {
-	m_pGroundStage = std::make_shared<CGroundStage>();
-	m_pPlayer = std::make_shared<CPlayer>();
-	m_pAlienManager = std::make_shared<CAlienManager>();
 	m_pLimitTime = std::make_unique<CLimitTime>();
 	m_pMiniMap = std::make_unique<CMiniMap>();
+  m_GameObjManager = std::make_unique<CGameActorManager>();
 }
 
 CGame::~CGame()
@@ -29,36 +26,28 @@ CGame::~CGame()
 }
 
 //============================.
-//	“ÇžŠÖ”.
+//	èª­è¾¼é–¢æ•°.
 //============================.
 bool CGame::Load()
 {
-	if( m_pGroundStage->Init() == false ) return false;
-	if( m_pPlayer->Init() == false ) return false;
-	if( m_pAlienManager->Init() == false ) return false;
 	if( m_pLimitTime->Init() == false ) return false;
 	if( m_pMiniMap->Init() == false ) return false;
+
+	if( m_GameObjManager->Init() == false ) return false;
 
 	return true;
 }
 
 //============================.
-//	XVŠÖ”.
+//	æ›´æ–°é–¢æ•°.
 //============================.
 void CGame::Update()
 {
-	// ƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’èŠÖ”.
-	auto playerCollProc = [&]( CActor* pActor )
-	{
-		m_pPlayer->Collision( pActor );
-	};
-
-	m_pPlayer->Update();
-	m_pAlienManager->Update( m_pPlayer.get(), playerCollProc );
+	m_GameObjManager->Update();
 
 	m_pLimitTime->Update();
 
-#if 1	// ŽŸ‚ÌƒV[ƒ“‚ÖˆÚ“®.
+#if 1	// æ¬¡ã®ã‚·ãƒ¼ãƒ³ã¸ç§»å‹•.
 	//if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
 	if( m_pLimitTime->IsFinish() == true )
 	{
@@ -68,14 +57,13 @@ void CGame::Update()
 }
 
 //============================.
-//	•`‰æŠÖ”.
+//	æç”»é–¢æ•°.
 //============================.
 void CGame::Render()
 {
-	m_pGroundStage->Render();
-	m_pPlayer->Render();
-	m_pAlienManager->Render();
 	m_pLimitTime->Render();
 	m_pMiniMap->Render();
+
+	m_GameObjManager->Render();
 
 }

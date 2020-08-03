@@ -13,6 +13,7 @@ public: //------ 関数 -------.
 
 	// モデルのボックスの作成.
 	HRESULT InitModelBox( LPD3DXMESH pMesh );
+	HRESULT InitModelBox( const float& height, const float& widht );
 	// 当たり判定の表示.
 	virtual void DebugRender() override;
 

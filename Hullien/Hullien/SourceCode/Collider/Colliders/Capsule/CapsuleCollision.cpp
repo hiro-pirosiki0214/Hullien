@@ -20,7 +20,9 @@ CCapsuleCollision::~CCapsuleCollision()
 {
 }
 
+//----------------------------------.
 // ƒ‚ƒfƒ‹‚Ì”¼Œa‚Ìì¬.
+//----------------------------------.
 HRESULT CCapsuleCollision::InitModelCapsule( LPD3DXMESH pMesh )
 {
 	GetBoundingSphere( pMesh, m_Radius );
@@ -44,7 +46,29 @@ HRESULT CCapsuleCollision::InitModelCapsule( LPD3DXMESH pMesh )
 	return S_OK;
 }
 
+//----------------------------------.
+// ƒ‚ƒfƒ‹‚Ì”¼Œa‚Ìì¬.
+//----------------------------------.
+HRESULT CCapsuleCollision::InitModelCapsule( const float& height, const float& radius )
+{
+	m_Radius = radius;
+	m_Height = height;
+	m_Radius = m_Radius <= 0.0f ? 0.001f : m_Radius;
+	// ‚‚³‚æ‚è”¼Œa‚Ì‚Ù‚¤‚ª‘å‚«‚¢‚ÆƒJƒvƒZƒ‹‚ª‚Â‚Ô‚ê‚é‚Ì‚ÅA
+	// ‚‚³‚É”¼Œa+1.0f‚ğ“ü‚ê‚Ä’²®‚·‚é.
+	m_Height = m_Radius >= m_Height ? m_Radius + 0.001f : m_Height;
+#ifdef _DEBUG
+	if( FAILED( m_pDebugCapsule->Init( m_Radius, m_Height ))){
+		ERROR_MESSAGE("Model creation failed");
+		return E_FAIL;
+	}
+#endif	// #ifdef _DEBUG.
+	return S_OK;
+}
+
+//----------------------------------.
 // “–‚½‚è”»’è‚Ì•\¦.
+//----------------------------------.
 void CCapsuleCollision::DebugRender()
 {
 #ifdef _DEBUG
@@ -59,7 +83,9 @@ void CCapsuleCollision::DebugRender()
 #endif	// #ifdef _DEBUG.
 }
 
+//----------------------------------.
 // F‚ğ•Ï‚¦‚é‚©‚Ç‚¤‚©.
+//----------------------------------.
 void CCapsuleCollision::SetChangeColor( const bool& changed )
 {
 #ifdef _DEBUG
@@ -67,7 +93,9 @@ void CCapsuleCollision::SetChangeColor( const bool& changed )
 #endif	// #ifdef _DEBUG.
 }
 
+//----------------------------------.
 // “_‚Æ’¼ü‚ÌÅ’Z‹——£.
+//----------------------------------.
 float CCapsuleCollision::calcPointLineDist( const Point& p, const Line& l, Point& h, float& t )
 {
 	float lenSqV = l.v.lengthSq();
@@ -79,13 +107,17 @@ float CCapsuleCollision::calcPointLineDist( const Point& p, const Line& l, Point
 	return ( h - p ).length();
 }
 
+//----------------------------------.
 // Úp1p2p3‚Í‰sŠpH.
+//----------------------------------.
 bool CCapsuleCollision::isSharpAngle( const Point& p1, const Point& p2, const Point& p3 )
 {
 	return Vec3( p1 - p2 ).isSharpAngle( p3 - p2 );
 }
 
+//----------------------------------.
 // “_‚Æü•ª‚ÌÅ’Z‹——£.
+//----------------------------------.
 float CCapsuleCollision::calcPointSegmentDist( const Point& p, const Segment& seg, Point& h, float& t )
 {
 	const Point e = seg.getEndPoint();
@@ -107,7 +139,9 @@ float CCapsuleCollision::calcPointSegmentDist( const Point& p, const Segment& se
 	return len;
 }
 
+//----------------------------------.
 // 2’¼ü‚ÌÅ’Z‹——£.
+//----------------------------------.
 float CCapsuleCollision::calcLineLineDist( 
 	const Line& l1, const Line& l2, 
 	Point& p1, Point& p2, 

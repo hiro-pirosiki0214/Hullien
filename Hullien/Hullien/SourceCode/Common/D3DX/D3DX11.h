@@ -6,7 +6,7 @@
 class CDirectX11
 {
 private: //----- 定数 ------.
-	const float CLEAR_BACK_COLOR[4] = { 0.1f, 0.1f, 0.1f, 1.0f };	// バックカラー.
+	const float CLEAR_BACK_COLOR[4] = { 0.6f, 0.6f, 0.6f, 1.0f };	// バックカラー.
 
 public: //----- 関数 ------.
 	CDirectX11();

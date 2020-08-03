@@ -1,16 +1,25 @@
 #include "Editor.h"
+#include "..\..\SceneManager\SceneManager.h"
 #include "..\..\..\Editor\ControllerEdit\ControllerEdit.h"
 #include "..\..\..\Editor\SpawnEdit\SpawnEdit.h"
-#include "..\..\SceneManager\SceneManager.h"
+#include "..\..\..\Editor\AlienParamEdit\AlienParamEdit.h"
+#include "..\..\..\Editor\ExplosionEdit\ExplosionEdit.h"
+#include "..\..\..\Editor\ItemEdit\ItemEdit.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 
 	, m_pControllerEdit	( nullptr )
 	, m_pSpawnEdit		( nullptr )
+	, m_pAlienParamEdit	( nullptr )
+	, m_pExplosionEdit	( nullptr ) 
+	, m_pItemEdit		( nullptr )
 {
 	m_pControllerEdit = std::make_unique<CControllerEdit>();
 	m_pSpawnEdit = std::make_unique<CSpawnEdit>();
+	m_pAlienParamEdit = std::make_unique<CAlienParamEdit>();
+	m_pExplosionEdit = std::make_unique<CExplosionEdit>();
+	m_pItemEdit = std::make_unique<CItemEdit>();
 }
 
 CEditor::~CEditor()
@@ -21,13 +30,18 @@ CEditor::~CEditor()
 bool CEditor::Load()
 {
 	if( m_pSpawnEdit->Init() == false ) return false;
+	if( m_pAlienParamEdit->Init() == false ) return false;
+	if( m_pExplosionEdit->Init() == false ) return false;
+	if( m_pItemEdit->Init() == false ) return false;
 	return true;
 }
 
 // 更新関数.
 void CEditor::Update()
 {
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
+	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
+		( GetAsyncKeyState('D') & 0x8000 ) ){
+		if( !(GetAsyncKeyState('W') & 0x8000 ) ) return;
 		m_pSceneManager->NextSceneMove();
 	}
 }
@@ -41,6 +55,9 @@ void CEditor::Render()
 	// コントローラーエディットの描画.
 	m_pControllerEdit->Render();
 	m_pSpawnEdit->Render();
+	m_pAlienParamEdit->Render();
+	m_pExplosionEdit->Render();
+	m_pItemEdit->Render();
 
 	// ImGui最終描画.
 	CImGuiManager::Render();

@@ -3,14 +3,15 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
-class CGroundStage;		// 地面クラス.
-class CPlayer;			// プレイヤークラス.
-class CAlienManager;	// 宇宙人管理クラス.
-class CLimitTime;		// 制限時間クラス.
-class CMiniMap;			// ミニマップクラス.
+
+class CLimitTime;		// 蛻ｶ髯先凾髢薙け繝ｩ繧ｹ.
+class CMiniMap;			// 繝溘ル繝槭ャ繝励け繝ｩ繧ｹ.
+
+class CGameActorManager;	// 繧ｲ繝ｼ繝繧ｪ繝悶ず繧ｧ繧ｯ繝育ｮ｡逅�繧ｯ繝ｩ繧ｹ.
+
 
 /**********************************
-*	ゲームシーンクラス.
+*	繧ｲ繝ｼ繝繧ｷ繝ｼ繝ｳ繧ｯ繝ｩ繧ｹ.
 */
 class CGame : public CSceneBase
 {
@@ -18,19 +19,20 @@ public:
 	CGame( CSceneManager* pSceneManager );
 	virtual ~CGame();
 
-	// 読込関数.
+	// 隱ｭ霎ｼ髢｢謨ｰ.
 	virtual bool Load() override;
-	// 更新関数.
+	// 譖ｴ譁ｰ髢｢謨ｰ.
 	virtual void Update() override;
-	// 描画関数.
+	// 謠冗判髢｢謨ｰ.
 	virtual void Render() override;
 
 private:
-	std::shared_ptr<CGroundStage>	m_pGroundStage;
-	std::shared_ptr<CPlayer>		m_pPlayer;
-	std::shared_ptr<CAlienManager>	m_pAlienManager;
+
 	std::unique_ptr<CLimitTime>		m_pLimitTime;
 	std::unique_ptr<CMiniMap>		m_pMiniMap;
+
+	std::unique_ptr<CGameActorManager> m_GameObjManager;
+
 };
 
 #endif	// #ifndef GAME_H.

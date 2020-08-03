@@ -10,8 +10,8 @@ struct stSpawnUFOParam;
 class CSpawnEdit
 {
 	const ImVec2 WINDOW_SIZE		= { 450.0f, 350.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION	= { 300.0f, 20.0f };		// 描画座標.
-	const char* FILE_PATH = "Data\\GamePram\\Alien\\SpaenParam\\SpaenParam.bin";
+	const ImVec2 RENDER_POSITION	= { 260.0f, 20.0f };		// 描画座標.
+	const char* FILE_PATH = "Data\\GameParam\\Alien\\SpaenParam\\SpaenParam.bin";
 public:
 	CSpawnEdit();
 	~CSpawnEdit();
@@ -26,8 +26,6 @@ private:
 	bool FileReading();
 	// ファイルの書き込み.
 	bool FileWriting();
-	// 各タグの描画.
-	void TagRender();
 	// インデックスの描画.
 	void IndexRender();
 	// スポーン情報の描画.
