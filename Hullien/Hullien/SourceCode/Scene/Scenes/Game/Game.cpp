@@ -1,11 +1,24 @@
 #include "..\SceneList.h"
-#include "..\..\..\GameObject\Actor\ActorManager\GameActorManager.h"
+
+#include "..\..\..\GameObject\GroundStage\GroundStage.h"
+#include "..\..\..\GameObject\Actor\Character\Player\Player.h"
+#include "..\..\..\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h"
+
+#include "..\..\..\Common\Sprite\CSprite.h"
+#include "..\..\..\Resource\SpriteResource\SpriteResource.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
-	, m_GameObjManager	( nullptr )
+
+	, m_pLimitTime		( nullptr )
+	, m_pMiniMap		( nullptr )
+  , m_GameObjManager	( nullptr )
 {
-	m_GameObjManager = std::make_unique<CGameActorManager>();
+	m_pLimitTime = std::make_unique<CLimitTime>();
+	m_pMiniMap = std::make_unique<CMiniMap>();
+  m_GameObjManager = std::make_unique<CGameActorManager>();
 }
 
 CGame::~CGame()
@@ -13,32 +26,44 @@ CGame::~CGame()
 }
 
 //============================.
-//	“ÇžŠÖ”.
+//	èª­è¾¼é–¢æ•°.
 //============================.
 bool CGame::Load()
 {
+	if( m_pLimitTime->Init() == false ) return false;
+	if( m_pMiniMap->Init() == false ) return false;
+
 	if( m_GameObjManager->Init() == false ) return false;
+
 	return true;
 }
 
 //============================.
-//	XVŠÖ”.
+//	æ›´æ–°é–¢æ•°.
 //============================.
 void CGame::Update()
 {
 	m_GameObjManager->Update();
 
-#if 0	// ŽŸ‚ÌƒV[ƒ“‚ÖˆÚ“®.
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
+	m_pLimitTime->Update();
+
+#if 1	// æ¬¡ã®ã‚·ãƒ¼ãƒ³ã¸ç§»å‹•.
+	//if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
+	if( m_pLimitTime->IsFinish() == true )
+	{
 		m_pSceneManager->NextSceneMove();
 	}
 #endif	// #if 0.
 }
 
 //============================.
-//	•`‰æŠÖ”.
+//	æç”»é–¢æ•°.
 //============================.
 void CGame::Render()
 {
+	m_pLimitTime->Render();
+	m_pMiniMap->Render();
+
 	m_GameObjManager->Render();
+
 }

@@ -5,10 +5,13 @@
 #include "..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\DebugText\DebugText.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h"
 
-CTitle::CTitle( CSceneManager* pSceneManager )
-	: CSceneBase	( pSceneManager )
+CTitle::CTitle(CSceneManager* pSceneManager)
+	: CSceneBase(pSceneManager)
+	, m_pWidget(nullptr)
 {
+	m_pWidget = std::make_unique< CTitleWidget >();
 }
 
 CTitle::~CTitle()
@@ -16,26 +19,39 @@ CTitle::~CTitle()
 }
 
 //============================.
-//	�Ǎ��֐�.
+//	“ÇžŠÖ”.
 //============================.
 bool CTitle::Load()
 {
+	if (m_pWidget->Init() == false) return false;
+
 	return true;
 }
 
 //============================.
-//	�X�V�֐�.
+//	XVŠÖ”.
 //============================.
 void CTitle::Update()
 {
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
-		m_pSceneManager->NextSceneMove();
+	m_pWidget->Update();
+
+	switch ( m_pWidget->GetSelectState() )
+	{
+	case CTitleWidget::ESelectState::Start:
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001) {
+			m_pSceneManager->NextSceneMove();
+		}
+		break;
+	default:
+		break;
 	}
 }
 
 //============================.
-//	�`��֐�.
+//	•`‰æŠÖ”.
 //============================.
 void CTitle::Render()
 {
+	if ( m_pWidget == nullptr ) return;
+	m_pWidget->Render();
 }

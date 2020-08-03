@@ -8,21 +8,30 @@
 #include "..\..\..\Collider\Colliders\Capsule\CapsuleModel.h"
 #include "..\..\..\Collider\Colliders\Capsule\CapsuleCollision.h"
 
+
+class CRotLookAtCenter;
+class CTitleWidget;
+
 /**********************************
-*	タイトルシーンクラス.
+*	繧ｿ繧､繝医Ν繧ｷ繝ｼ繝ｳ繧ｯ繝ｩ繧ｹ.
 */
 class CTitle : public CSceneBase
 {
 public:
-	CTitle( CSceneManager* pSceneManager );
+	CTitle(CSceneManager* pSceneManager);
 	virtual ~CTitle();
 
-	// 読込関数.
+	// 隱ｭ霎ｼ髢｢謨ｰ.
 	virtual bool Load() override;
-	// 更新関数.
+	// 譖ｴ譁ｰ髢｢謨ｰ.
 	virtual void Update() override;
-	// 描画関数.
+	// 謠冗判髢｢謨ｰ.
 	virtual void Render() override;
+
+
+private:
+	std::unique_ptr<CTitleWidget>	m_pWidget;		//UI繧ｯ繝ｩ繧ｹ.
+
 };
 
 #endif	// #ifndef TITLE_H.

@@ -1,7 +1,7 @@
 #include "SpriteShader.h"
 
 CSpriteShader::CSpriteShader()
-	: m_pVertexShaderUI	( nullptr )
+	: m_pVertexShaderUI(nullptr)
 {
 }
 
@@ -10,28 +10,28 @@ CSpriteShader::~CSpriteShader()
 }
 
 //-------------------.
-// ‰Šú‰».
+// åˆæœŸåŒ–.
 //-------------------.
-HRESULT CSpriteShader::Init( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
+HRESULT CSpriteShader::Init(ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11)
 {
 	m_pDevice11 = pDevice11;
 	m_pContext11 = pContext11;
 
-	if( FAILED( InitShader())) return E_FAIL;
+	if (FAILED(InitShader())) return E_FAIL;
 
 	return S_OK;
 }
 
 //-------------------.
-// ‰ğ•ú.
+// è§£æ”¾.
 //-------------------.
 HRESULT CSpriteShader::Release()
 {
-	SAFE_RELEASE( m_pVertexShader );
-	SAFE_RELEASE( m_pVertexShaderUI );
-	SAFE_RELEASE( m_pPixelShader );
-	SAFE_RELEASE( m_pVertexLayout );
-	SAFE_RELEASE( m_pConstantBuffer );
+	SAFE_RELEASE(m_pVertexShader);
+	SAFE_RELEASE(m_pVertexShaderUI);
+	SAFE_RELEASE(m_pPixelShader);
+	SAFE_RELEASE(m_pVertexLayout);
+	SAFE_RELEASE(m_pConstantBuffer);
 
 	m_pDevice11 = nullptr;
 	m_pContext11 = nullptr;
@@ -40,94 +40,94 @@ HRESULT CSpriteShader::Release()
 }
 
 //--------------------------------.
-// ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚Éƒf[ƒ^‚ğ“n‚·.
+// ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã«ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã™.
 //--------------------------------.
 void CSpriteShader::SetConstantBufferData( const D3DXMATRIX& mWVP, const D3DXVECTOR4& color, const D3DXVECTOR2& texPos )
 {
-	// ƒVƒF[ƒ_[‚ÌƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚ÉŠeíƒf[ƒ^‚ğ“n‚·.
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã«å„ç¨®ãƒ‡ãƒ¼ã‚¿ã‚’æ¸¡ã™.
 	D3D11_MAPPED_SUBRESOURCE pData;
-	C_BUFFER cb;	// ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@.
+	C_BUFFER cb;	// ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡.
 
-					// ƒoƒbƒtƒ@“à‚Ìƒf[ƒ^‚Ì‘‚«Š·‚¦ŠJn‚ÉMap.
-	if( SUCCEEDED( m_pContext11->Map( 
-		m_pConstantBuffer, 
-		0, 
-		D3D11_MAP_WRITE_DISCARD, 
-		0, 
-		&pData ))){
+					// ãƒãƒƒãƒ•ã‚¡å†…ã®ãƒ‡ãƒ¼ã‚¿ã®æ›¸ãæ›ãˆé–‹å§‹æ™‚ã«Map.
+	if (SUCCEEDED(m_pContext11->Map(
+		m_pConstantBuffer,
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&pData))) {
 
-		//Ü°ÙÄŞs—ñ‚ğ“n‚·.
+		//ï¾œï½°ï¾™ï¾„ï¾è¡Œåˆ—ã‚’æ¸¡ã™.
 		cb.mWVP = mWVP;
 		cb.mW = mWVP;
-		D3DXMatrixTranspose( &cb.mWVP, &cb.mWVP );//s—ñ‚ğ“]’u‚·‚é.
-		D3DXMatrixTranspose( &cb.mW, &cb.mW );//s—ñ‚ğ“]’u‚·‚é.
-											  // ƒrƒ…[ƒ|[ƒg‚Ì•,‚‚³‚ğ“n‚·.
+		D3DXMatrixTranspose(&cb.mWVP, &cb.mWVP);//è¡Œåˆ—ã‚’è»¢ç½®ã™ã‚‹.
+		D3DXMatrixTranspose(&cb.mW, &cb.mW);//è¡Œåˆ—ã‚’è»¢ç½®ã™ã‚‹.
+											  // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®å¹…,é«˜ã•ã‚’æ¸¡ã™.
 		cb.vViewPort.x	= static_cast<float>(WND_W);
 		cb.vViewPort.y	= static_cast<float>(WND_H);
 
-		// ƒAƒ‹ƒtƒ@’l‚ğ“n‚·.
+		// ã‚¢ãƒ«ãƒ•ã‚¡å€¤ã‚’æ¸¡ã™.
 		cb.vColor = color;
 
-		// ƒeƒNƒXƒ`ƒƒÀ•W.
-		cb.vUV.x = texPos.x;
-		cb.vUV.y = texPos.y;
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™.
+		cb.vUV_ViewPort.x = texPos.x;
+		cb.vUV_ViewPort.y = texPos.y;
 
-		memcpy_s( 
-			pData.pData, 
+		memcpy_s(
+			pData.pData,
 			pData.RowPitch,
 			(void*)(&cb),
-			sizeof(cb) );
+			sizeof(cb));
 
-		m_pContext11->Unmap( m_pConstantBuffer, 0 );
+		m_pContext11->Unmap(m_pConstantBuffer, 0);
 	}
 }
 
 //--------------------------------.
-// ŠeíƒVƒF[ƒ_‚Ìİ’è.
+// å„ç¨®ã‚·ã‚§ãƒ¼ãƒ€ã®è¨­å®š.
 //--------------------------------.
-void CSpriteShader::ShaderSet( ID3D11Buffer* pVertexBuffer )
+void CSpriteShader::ShaderSet(ID3D11Buffer* pVertexBuffer)
 {
-	// g—p‚·‚éƒVƒF[ƒ_‚ÌƒZƒbƒg.
-	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );	// ’¸“_ƒVƒF[ƒ_.
-	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_.
+	// ä½¿ç”¨ã™ã‚‹ã‚·ã‚§ãƒ¼ãƒ€ã®ã‚»ãƒƒãƒˆ.
+	m_pContext11->VSSetShader(m_pVertexShader, nullptr, 0);	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€.
+	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€.
 
-																// ‚±‚ÌƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚ğ‚Ç‚ÌƒVƒF[ƒ_‚Åg—p‚·‚é‚©H.
-	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// ’¸“_ƒVƒF[ƒ_.
-	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[.
+																// ã“ã®ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã‚’ã©ã®ã‚·ã‚§ãƒ¼ãƒ€ã§ä½¿ç”¨ã™ã‚‹ã‹ï¼Ÿ.
+	m_pContext11->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€.
+	m_pContext11->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼.
 
-																	// ’¸“_ƒoƒbƒtƒ@‚ğƒZƒbƒg.
-	UINT stride = sizeof(VERTEX); // ƒf[ƒ^‚ÌŠÔŠu.
+																	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ã‚»ãƒƒãƒˆ.
+	UINT stride = sizeof(VERTEX); // ãƒ‡ãƒ¼ã‚¿ã®é–“éš”.
 	UINT offset = 0;
-	m_pContext11->IASetVertexBuffers( 0, 1, &pVertexBuffer, &stride, &offset );
+	m_pContext11->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
-	// ’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg‚ğƒZƒbƒg.
-	m_pContext11->IASetInputLayout( m_pVertexLayout );
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ã‚»ãƒƒãƒˆ.
+	m_pContext11->IASetInputLayout(m_pVertexLayout);
 }
 
 //--------------------------------.
-// ŠeíUI—p‚ÌƒVƒF[ƒ_‚Ìİ’è.
+// å„ç¨®UIç”¨ã®ã‚·ã‚§ãƒ¼ãƒ€ã®è¨­å®š.
 //--------------------------------.
-void CSpriteShader::ShaderUISet( ID3D11Buffer* pVertexBuffer )
+void CSpriteShader::ShaderUISet(ID3D11Buffer* pVertexBuffer)
 {
-	// g—p‚·‚éƒVƒF[ƒ_‚ÌƒZƒbƒg.
-	m_pContext11->VSSetShader( m_pVertexShaderUI, nullptr, 0 );	// ’¸“_ƒVƒF[ƒ_.
-	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_.
+	// ä½¿ç”¨ã™ã‚‹ã‚·ã‚§ãƒ¼ãƒ€ã®ã‚»ãƒƒãƒˆ.
+	m_pContext11->VSSetShader(m_pVertexShaderUI, nullptr, 0);	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€.
+	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€.
 
-																// ‚±‚ÌƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚ğ‚Ç‚ÌƒVƒF[ƒ_‚Åg—p‚·‚é‚©H.
-	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// ’¸“_ƒVƒF[ƒ_.
-	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// ƒsƒNƒZƒ‹ƒVƒF[ƒ_[.
+																// ã“ã®ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã‚’ã©ã®ã‚·ã‚§ãƒ¼ãƒ€ã§ä½¿ç”¨ã™ã‚‹ã‹ï¼Ÿ.
+	m_pContext11->VSSetConstantBuffers(0, 1, &m_pConstantBuffer);	// é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€.
+	m_pContext11->PSSetConstantBuffers(0, 1, &m_pConstantBuffer);	// ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼.
 
-																	// ’¸“_ƒoƒbƒtƒ@‚ğƒZƒbƒg.
-	UINT stride = sizeof(VERTEX); // ƒf[ƒ^‚ÌŠÔŠu.
+																	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ã‚»ãƒƒãƒˆ.
+	UINT stride = sizeof(VERTEX); // ãƒ‡ãƒ¼ã‚¿ã®é–“éš”.
 	UINT offset = 0;
-	m_pContext11->IASetVertexBuffers( 0, 1, &pVertexBuffer, &stride, &offset );
+	m_pContext11->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
-	// ’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg‚ğƒZƒbƒg.
-	m_pContext11->IASetInputLayout( m_pVertexLayout );
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ã‚»ãƒƒãƒˆ.
+	m_pContext11->IASetInputLayout(m_pVertexLayout);
 }
 
 //--------------------------------.
-// ƒVƒF[ƒ_[ì¬.
+// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ä½œæˆ.
 //--------------------------------.
 HRESULT CSpriteShader::InitShader()
 {
@@ -139,100 +139,100 @@ HRESULT CSpriteShader::InitShader()
 		D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
 #endif	// #ifdef _DEBUG
 
-	// HLSL‚©‚çƒo[ƒeƒbƒNƒXƒVƒF[ƒ_[‚Ìƒuƒƒu‚ğì¬.
-	if( FAILED(
+	// HLSLã‹ã‚‰ãƒãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ãƒ–ãƒ­ãƒ–ã‚’ä½œæˆ.
+	if (FAILED(
 		CShaderBase::InitShader(
-			SHADER_NAME,		// ƒVƒF[ƒ_[ƒtƒ@ƒCƒ‹–¼.
-			"VS_Main",			// ƒVƒF[ƒ_[ƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒg.
-			"vs_5_0",			// ƒVƒF[ƒ_[ƒ‚ƒfƒ‹.
-			uCompileFlag,		// ƒVƒF[ƒ_[ƒRƒ“ƒpƒCƒ‹ƒtƒ‰ƒO.
-			&pCompiledShader,	// ƒuƒƒu‚ğŠi”[‚·‚éƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^.
-			&pErrors ))){		// ƒGƒ‰[‚ÆŒxˆê——‚ğŠi”[‚·‚éƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^.
-		ERROR_MESSAGE( "hlsl read failure" );
+			SHADER_NAME,		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒ•ã‚¡ã‚¤ãƒ«å.
+			"VS_Main",			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆ.
+			"vs_5_0",			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒ¢ãƒ‡ãƒ«.
+			uCompileFlag,		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãƒ•ãƒ©ã‚°.
+			&pCompiledShader,	// ãƒ–ãƒ­ãƒ–ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿.
+			&pErrors))) {		// ã‚¨ãƒ©ãƒ¼ã¨è­¦å‘Šä¸€è¦§ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿.
+		ERROR_MESSAGE("hlsl read failure");
 		return E_FAIL;
 	}
-	SAFE_RELEASE( pErrors );
+	SAFE_RELEASE(pErrors);
 
-	// ã‹L‚Åì¬‚µ‚½ÌŞÛÌŞ‚©‚çuÊŞ°Ã¯¸½¼ª°ÀŞv‚ğì¬.
-	if( FAILED( CShaderBase::CreateVertexShader( pCompiledShader, &m_pVertexShader ))){
-		ERROR_MESSAGE( "VertexShader creation failed" );
+	// ä¸Šè¨˜ã§ä½œæˆã—ãŸï¾Œï¾ï¾›ï¾Œï¾ã‹ã‚‰ã€Œï¾Šï¾ï½°ï¾ƒï½¯ï½¸ï½½ï½¼ï½ªï½°ï¾€ï¾ã€ã‚’ä½œæˆ.
+	if (FAILED(CShaderBase::CreateVertexShader(pCompiledShader, &m_pVertexShader))) {
+		ERROR_MESSAGE("VertexShader creation failed");
 		return E_FAIL;
 	}
 
 
 
-	// HLSL‚©‚çƒo[ƒeƒbƒNƒXƒVƒF[ƒ_[‚Ìƒuƒƒu‚ğì¬.
-	if( FAILED(
+	// HLSLã‹ã‚‰ãƒãƒ¼ãƒ†ãƒƒã‚¯ã‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®ãƒ–ãƒ­ãƒ–ã‚’ä½œæˆ.
+	if (FAILED(
 		CShaderBase::InitShader(
-			SHADER_NAME,		// ƒVƒF[ƒ_[ƒtƒ@ƒCƒ‹–¼.
-			"VS_MainUI",		// ƒVƒF[ƒ_[ƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒg.
-			"vs_5_0",			// ƒVƒF[ƒ_[ƒ‚ƒfƒ‹.
-			uCompileFlag,		// ƒVƒF[ƒ_[ƒRƒ“ƒpƒCƒ‹ƒtƒ‰ƒO.
-			&pCompiledShader,	// ƒuƒƒu‚ğŠi”[‚·‚éƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^.
-			&pErrors ))){		// ƒGƒ‰[‚ÆŒxˆê——‚ğŠi”[‚·‚éƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^.
-		ERROR_MESSAGE( "hlsl read failure" );
+			SHADER_NAME,		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒ•ã‚¡ã‚¤ãƒ«å.
+			"VS_MainUI",		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆ.
+			"vs_5_0",			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒ¢ãƒ‡ãƒ«.
+			uCompileFlag,		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãƒ•ãƒ©ã‚°.
+			&pCompiledShader,	// ãƒ–ãƒ­ãƒ–ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿.
+			&pErrors))) {		// ã‚¨ãƒ©ãƒ¼ã¨è­¦å‘Šä¸€è¦§ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿.
+		ERROR_MESSAGE("hlsl read failure");
 		return E_FAIL;
 	}
-	SAFE_RELEASE( pErrors );
+	SAFE_RELEASE(pErrors);
 
-	// ã‹L‚Åì¬‚µ‚½ÌŞÛÌŞ‚©‚çuÊŞ°Ã¯¸½¼ª°ÀŞv‚ğì¬.
-	if( FAILED( CShaderBase::CreateVertexShader( pCompiledShader, &m_pVertexShaderUI ))){
-		ERROR_MESSAGE( "VertexShader creation failed" );
+	// ä¸Šè¨˜ã§ä½œæˆã—ãŸï¾Œï¾ï¾›ï¾Œï¾ã‹ã‚‰ã€Œï¾Šï¾ï½°ï¾ƒï½¯ï½¸ï½½ï½¼ï½ªï½°ï¾€ï¾ã€ã‚’ä½œæˆ.
+	if (FAILED(CShaderBase::CreateVertexShader(pCompiledShader, &m_pVertexShaderUI))) {
+		ERROR_MESSAGE("VertexShader creation failed");
 		return E_FAIL;
 	}
 
 
 
-	// ’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg‚ğ’è‹`.
-	D3D11_INPUT_ELEMENT_DESC layout[] = 
-	{  
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’å®šç¾©.
+	D3D11_INPUT_ELEMENT_DESC layout[] =
+	{
 		CShaderBase::GetPositionInputElement(),
 		CShaderBase::GetTexcoordInputElement(),
 	};
 
-	// ’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg‚Ì”z—ñ—v‘f”‚ğZo.
-	UINT numElements = sizeof( layout ) / sizeof( layout[0] );
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®é…åˆ—è¦ç´ æ•°ã‚’ç®—å‡º.
+	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
-	// ’¸“_ƒCƒ“ƒvƒbƒgƒŒƒCƒAƒEƒg‚ğì¬.
-	if( FAILED(
+	// é ‚ç‚¹ã‚¤ãƒ³ãƒ—ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ä½œæˆ.
+	if (FAILED(
 		CShaderBase::CreateInputLayout(
 			layout,
 			numElements,
 			pCompiledShader,
-			&m_pVertexLayout ))){
-		ERROR_MESSAGE( "Vertex input layout creation failed" );
+			&m_pVertexLayout))) {
+		ERROR_MESSAGE("Vertex input layout creation failed");
 		return E_FAIL;
 	}
-	SAFE_RELEASE( pCompiledShader );
+	SAFE_RELEASE(pCompiledShader);
 
 
 
-	//HLSL‚©‚çËß¸¾Ù¼ª°ÀŞ‚ÌÌŞÛÌŞ‚ğì¬.
-	if( FAILED(
+	//HLSLã‹ã‚‰ï¾‹ï¾Ÿï½¸ï½¾ï¾™ï½¼ï½ªï½°ï¾€ï¾ã®ï¾Œï¾ï¾›ï¾Œï¾ã‚’ä½œæˆ.
+	if (FAILED(
 		CShaderBase::InitShader(
-			SHADER_NAME,		// ƒVƒF[ƒ_[ƒtƒ@ƒCƒ‹–¼.
-			"PS_Main",			// ƒVƒF[ƒ_[ƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒg.
-			"ps_5_0",			// ƒVƒF[ƒ_[ƒ‚ƒfƒ‹.
-			uCompileFlag,		// ƒVƒF[ƒ_[ƒRƒ“ƒpƒCƒ‹ƒtƒ‰ƒO.
-			&pCompiledShader,	// ƒuƒƒu‚ğŠi”[‚·‚éƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^.
-			&pErrors ))){		// ƒGƒ‰[‚ÆŒxˆê——‚ğŠi”[‚·‚éƒƒ‚ƒŠ‚Ö‚Ìƒ|ƒCƒ“ƒ^.
-		ERROR_MESSAGE( "hlsl read failure" );
+			SHADER_NAME,		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒ•ã‚¡ã‚¤ãƒ«å.
+			"PS_Main",			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆ.
+			"ps_5_0",			// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ãƒ¢ãƒ‡ãƒ«.
+			uCompileFlag,		// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãƒ•ãƒ©ã‚°.
+			&pCompiledShader,	// ãƒ–ãƒ­ãƒ–ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿.
+			&pErrors))) {		// ã‚¨ãƒ©ãƒ¼ã¨è­¦å‘Šä¸€è¦§ã‚’æ ¼ç´ã™ã‚‹ãƒ¡ãƒ¢ãƒªã¸ã®ãƒã‚¤ãƒ³ã‚¿.
+		ERROR_MESSAGE("hlsl read failure");
 		return E_FAIL;
 	}
-	SAFE_RELEASE( pErrors );
+	SAFE_RELEASE(pErrors);
 
-	//ã‹L‚Åì¬‚µ‚½ÌŞÛÌŞ‚©‚çuËß¸¾Ù¼ª°ÀŞv‚ğì¬.
-	if( FAILED( CShaderBase::CreatePixelShader( pCompiledShader, &m_pPixelShader ))){
-		ERROR_MESSAGE( "VertexShader creation failed" );
+	//ä¸Šè¨˜ã§ä½œæˆã—ãŸï¾Œï¾ï¾›ï¾Œï¾ã‹ã‚‰ã€Œï¾‹ï¾Ÿï½¸ï½¾ï¾™ï½¼ï½ªï½°ï¾€ï¾ã€ã‚’ä½œæˆ.
+	if (FAILED(CShaderBase::CreatePixelShader(pCompiledShader, &m_pPixelShader))) {
+		ERROR_MESSAGE("VertexShader creation failed");
 		return E_FAIL;
 	}
-	SAFE_RELEASE( pCompiledShader );
+	SAFE_RELEASE(pCompiledShader);
 
-	// ƒVƒF[ƒ_[‚É“Á’è‚Ì”’l‚ğ‘—‚éƒoƒbƒtƒ@.
-	// ƒRƒ“ƒXƒ^ƒ“ƒgƒoƒbƒtƒ@‚Ìì¬.
-	if( FAILED(
-		CShaderBase::CreateConstantBuffer( &m_pConstantBuffer, sizeof(C_BUFFER) ))){
-		ERROR_MESSAGE( "Instant buffer creation failed" );
+	// ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã«ç‰¹å®šã®æ•°å€¤ã‚’é€ã‚‹ãƒãƒƒãƒ•ã‚¡.
+	// ã‚³ãƒ³ã‚¹ã‚¿ãƒ³ãƒˆãƒãƒƒãƒ•ã‚¡ã®ä½œæˆ.
+	if (FAILED(
+		CShaderBase::CreateConstantBuffer(&m_pConstantBuffer, sizeof(C_BUFFER)))) {
+		ERROR_MESSAGE("Instant buffer creation failed");
 		return E_FAIL;
 	}
 

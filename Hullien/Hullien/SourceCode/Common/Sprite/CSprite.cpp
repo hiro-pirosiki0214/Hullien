@@ -5,140 +5,149 @@
 
 #define STR(ver) #ver
 
-// ÉRÉìÉXÉgÉâÉNÉ^.
+// „Ç≥„É≥„Çπ„Éà„É©„ÇØ„Çø.
 CSprite::CSprite()
-	: m_pSpriteShader	( std::make_unique<CSpriteShader>() )
-	, m_pVertexLayout	( nullptr )
-	, m_pVertexBuffer	( nullptr )
-	, m_pVertexBufferUI	( nullptr )
-	, m_pSampleLinear	( nullptr )
-	, m_pTexture		( nullptr )
-	, m_SState			()
-	, m_PatternNo		{ 1, 1 }
-	, m_PatternMax		{ 1, 1 }
-	, m_UV				( 1.0f, 1.0f )
-	, m_AnimNumber		( 0 )
-	, m_FrameCount		( 0 )
-	, m_FrameTime		( 20 )
-	, m_IsAnimation		( true )
-	, m_enLocalPosition	( enLocalPosition::None )
-	, m_VerticesUI		()
+	: m_pSpriteShader(std::make_unique<CSpriteShader>())
+	, m_pVertexLayout(nullptr)
+	, m_pVertexBuffer(nullptr)
+	, m_pVertexBufferUI(nullptr)
+	, m_pSampleLinear(nullptr)
+	, m_pTexture(nullptr)
+	, m_SState()
+	, m_PatternNo{ 1, 1 }
+	, m_PatternMax{ 1, 1 }
+	, m_UV(1.0f, 1.0f)
+	, m_AnimNumber(0)
+	, m_FrameCount(0)
+	, m_FrameTime(20)
+	, m_IsAnimation(true)
+	, m_enLocalPosition(enLocalPosition::None)
+	, m_VerticesUI()
 {
 }
 
-CSprite::CSprite( ID3D11Device* pDevice11,
+CSprite::CSprite(ID3D11Device* pDevice11,
 	ID3D11DeviceContext* pContext11,
-	const char* fileName, const SPRITE_STATE& pSs )
+	const char* fileName, const SPRITE_STATE& pSs)
 	: CSprite()
 {
-	Init(  pDevice11, pContext11, fileName,  pSs );
+	Init(pDevice11, pContext11, fileName, pSs);
 }
 
-// ÉfÉXÉgÉâÉNÉ^.
+// „Éá„Çπ„Éà„É©„ÇØ„Çø.
 CSprite::~CSprite()
 {
 	Release();
 }
 
-// èâä˙âª.
-HRESULT CSprite::Init( ID3D11Device* pDevice11,
+// ÂàùÊúüÂåñ.
+HRESULT CSprite::Init(ID3D11Device* pDevice11,
 	ID3D11DeviceContext* pContext11,
-	const char* fileName, const SPRITE_STATE& pSs )
+	const char* fileName, const SPRITE_STATE& pSs)
 {
 	m_SState = pSs;
 	m_vPos = m_SState.vPos;
 	m_enLocalPosition = static_cast<enLocalPosition>(m_SState.LocalPosNum);
-	if( FAILED( InitPram( pDevice11, pContext11 )) ){
+	if (FAILED(InitPram(pDevice11, pContext11))) {
 		return E_FAIL;
 	}
-	// ÉVÉFÅ[É_Å[ÇÃçÏê¨.
-	if( FAILED( m_pSpriteShader->Init( m_pDevice11, m_pContext11 ))) return E_FAIL;
-	// î¬É|ÉäÉSÉìçÏê¨.
-	if( FAILED( InitModel() ) ){
+	// „Ç∑„Çß„Éº„ÉÄ„Éº„ÅÆ‰ΩúÊàê.
+	if (FAILED(m_pSpriteShader->Init(m_pDevice11, m_pContext11))) return E_FAIL;
+	// Êùø„Éù„É™„Ç¥„É≥‰ΩúÊàê.
+	if (FAILED(InitModel())) {
 		return E_FAIL;
 	}
-	// ÉeÉNÉXÉ`ÉÉçÏê¨.
-	if( FAILED( CreateTexture( fileName, &m_pTexture ))){
+	// „ÉÜ„ÇØ„Çπ„ÉÅ„É£‰ΩúÊàê.
+	if (FAILED(CreateTexture(fileName, &m_pTexture))) {
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-// âï˙.
+// Ëß£Êîæ.
 void CSprite::Release()
 {
-	SAFE_RELEASE( m_pSampleLinear );
-	SAFE_RELEASE( m_pTexture );
-	SAFE_RELEASE( m_pVertexBufferUI );
-	SAFE_RELEASE( m_pVertexBuffer );
-	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE(m_pSampleLinear);
+	SAFE_RELEASE(m_pTexture);
+	SAFE_RELEASE(m_pVertexBufferUI);
+	SAFE_RELEASE(m_pVertexBuffer);
+	SAFE_RELEASE(m_pVertexLayout);
 }
 
-// ÉÇÉfÉãçÏê¨.
+// „É¢„Éá„É´‰ΩúÊàê.
 HRESULT CSprite::InitModel()
 {
-	float w = m_SState.Disp.w;	// ï\é¶ÉXÉvÉâÉCÉgïù,
-	float h = m_SState.Disp.h;	// ï\é¶ÉXÉvÉâÉCÉgçÇÇ≥,
-	float u = m_SState.Stride.w / m_SState.Base.w;	// 1ÉRÉ}ìñÇΩÇËÇÃïù,
-	float v = m_SState.Stride.h / m_SState.Base.h;	// 1ÉRÉ}ìñÇΩÇËÇÃçÇÇ≥.
+	float w = m_SState.Disp.w;	// Ë°®Á§∫„Çπ„Éó„É©„Ç§„ÉàÂπÖ,
+	float h = m_SState.Disp.h;	// Ë°®Á§∫„Çπ„Éó„É©„Ç§„ÉàÈ´ò„Åï,
+	float u = m_SState.Stride.w / m_SState.Base.w;	// 1„Ç≥„ÉûÂΩì„Åü„Çä„ÅÆÂπÖ,
+	float v = m_SState.Stride.h / m_SState.Base.h;	// 1„Ç≥„ÉûÂΩì„Åü„Çä„ÅÆÈ´ò„Åï.
+
 	m_PatternMax.x = 
-		static_cast<LONG>( m_SState.Base.w / m_SState.Stride.w );// xÇÃç≈ëÂÉ}ÉXêî.
+		static_cast<LONG>( m_SState.Base.w / m_SState.Stride.w );// x„ÅÆÊúÄÂ§ß„Éû„ÇπÊï∞.
 	m_PatternMax.y = 
-		static_cast<LONG>( m_SState.Base.h / m_SState.Stride.h );// yÇÃç≈ëÂÉ}ÉXêî.
+		static_cast<LONG>( m_SState.Base.h / m_SState.Stride.h );// y„ÅÆÊúÄÂ§ß„Éû„ÇπÊï∞.
 	//-------------------------------.
-	// UIóp.
+	// UIÁî®.
 	//-------------------------------.
-	// ÉoÉbÉtÉ@ç\ë¢ëÃ.
+	// „Éê„ÉÉ„Éï„Ç°ÊßãÈÄ†‰Ωì.
 	D3D11_BUFFER_DESC bd;
-	bd.Usage				= D3D11_USAGE_DEFAULT;				// égópï˚ñ@(ÉfÉtÉHÉãÉg).
-	bd.ByteWidth			= sizeof(CSpriteShader::VERTEX)*4;	// í∏ì_ÇÃÉTÉCÉY.
-	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			// í∏ì_ÉoÉbÉtÉ@Ç∆ÇµÇƒàµÇ§.
-	bd.CPUAccessFlags		= 0;								// CPUÇ©ÇÁÇÕÉAÉNÉZÉXÇµÇ»Ç¢.
-	bd.MiscFlags			= 0;								// ÇªÇÃëºÇÃÉtÉâÉO(ñ¢égóp).
-	bd.StructureByteStride	= 0;								// ç\ë¢ëÃÇÃÉTÉCÉY(ñ¢égóp).
+	bd.Usage = D3D11_USAGE_DEFAULT;				// ‰ΩøÁî®ÊñπÊ≥ï(„Éá„Éï„Ç©„É´„Éà).
+	bd.ByteWidth = sizeof(CSpriteShader::VERTEX) * 4;	// È†ÇÁÇπ„ÅÆ„Çµ„Ç§„Ç∫.
+	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;			// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„Å®„Åó„Å¶Êâ±„ÅÜ.
+	bd.CPUAccessFlags = 0;								// CPU„Åã„Çâ„ÅØ„Ç¢„ÇØ„Çª„Çπ„Åó„Å™„ÅÑ.
+	bd.MiscFlags = 0;								// „Åù„ÅÆ‰ªñ„ÅÆ„Éï„É©„Ç∞(Êú™‰ΩøÁî®).
+	bd.StructureByteStride = 0;								// ÊßãÈÄ†‰Ωì„ÅÆ„Çµ„Ç§„Ç∫(Êú™‰ΩøÁî®).
 
-																// ÉTÉuÉäÉ\Å[ÉXç\ë¢ëÃ.
+																// „Çµ„Éñ„É™„ÇΩ„Éº„ÇπÊßãÈÄ†‰Ωì.
 	D3D11_SUBRESOURCE_DATA InitData;
-	CreateVERTEX( w, h, u, v );
-	InitData.pSysMem = m_VerticesUI;	// î¬É|ÉäÇÃí∏ì_ÇÉZÉbÉg.
+	CreateVERTEX(w, h, u, v);
+	InitData.pSysMem = m_VerticesUI;	// Êùø„Éù„É™„ÅÆÈ†ÇÁÇπ„Çí„Çª„ÉÉ„Éà.
 
-										// í∏ì_ÉoÉbÉtÉ@ÇÃçÏê¨.
-	if( FAILED( m_pDevice11->CreateBuffer(
-		&bd, &InitData, &m_pVertexBufferUI ) ) ){
-		_ASSERT_EXPR( false, L"í∏ì_ ﬁØÃßçÏê¨é∏îs" );
+										// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÅÆ‰ΩúÊàê.
+	if (FAILED(m_pDevice11->CreateBuffer(
+		&bd, &InitData, &m_pVertexBufferUI))) {
+		_ASSERT_EXPR(false, L"È†ÇÁÇπÔæäÔæûÔΩØÔæåÔΩß‰ΩúÊàêÂ§±Êïó");
 		return E_FAIL;
 	}
 
+	// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÇíÔΩæÔΩØÔæÑ.
+	UINT stride = sizeof(CSpriteShader::VERTEX);	// „Éá„Éº„ÇøÈñìÈöî.
+	UINT offset = 0;
+	m_pContext11->IASetVertexBuffers(0, 1, &m_pVertexBufferUI, &stride, &offset);
+
 	//-------------------------------.
-	// 3Dóp.
+	// 3DÁî®.
 	//-------------------------------.
-	// âÊëúÇÃî‰ó¶ÇãÅÇﬂÇÈ.
-	int as = myGcd( (int)m_SState.Disp.w, (int)m_SState.Disp.h );
+	// ÁîªÂÉè„ÅÆÊØîÁéá„ÇíÊ±Ç„ÇÅ„Çã.
+	int as = myGcd((int)m_SState.Disp.w, (int)m_SState.Disp.h);
 	w = m_SState.Disp.w / as;
 	h = m_SState.Disp.h / as;
 	w *= 0.1f;
 	h *= 0.1f;
-	// î¬É|Éä(éläpå`)ÇÃí∏ì_ÇçÏê¨.
+	// Êùø„Éù„É™(ÂõõËßíÂΩ¢)„ÅÆÈ†ÇÁÇπ„Çí‰ΩúÊàê.
 	CSpriteShader::VERTEX vertices[] =
 	{
-		// É|ÉäÉSÉìÇÃíÜêSÇí∏ì_Ç∆Ç∑ÇÈ.
-		// í∏ì_ç¿ïW(x,y,z)				 UVç¿ïW(u,v)
-		D3DXVECTOR3( -w / 2, -h / 2, 0.0f ), D3DXVECTOR2( 0.0f,    v ),	//í∏ì_ÇP(ç∂â∫).
-		D3DXVECTOR3( -w / 2,  h / 2, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ),	//í∏ì_ÇQ(ç∂è„).
-		D3DXVECTOR3(  w / 2, -h / 2, 0.0f ), D3DXVECTOR2(    u,    v ),	//í∏ì_ÇR(âEâ∫).
-		D3DXVECTOR3(  w / 2,  h / 2, 0.0f ), D3DXVECTOR2(    u, 0.0f )	//í∏ì_ÇS(âEè„).
+		// „Éù„É™„Ç¥„É≥„ÅÆ‰∏≠ÂøÉ„ÇíÈ†ÇÁÇπ„Å®„Åô„Çã.
+		// È†ÇÁÇπÂ∫ßÊ®ô(x,y,z)				 UVÂ∫ßÊ®ô(u,v)
+		D3DXVECTOR3(-w / 2, -h / 2, 0.0f), D3DXVECTOR2(0.0f,    v),	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
+		D3DXVECTOR3(-w / 2,  h / 2, 0.0f), D3DXVECTOR2(0.0f, 0.0f),	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
+		D3DXVECTOR3(w / 2, -h / 2, 0.0f), D3DXVECTOR2(u,    v),	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
+		D3DXVECTOR3(w / 2,  h / 2, 0.0f), D3DXVECTOR2(u, 0.0f)	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 	};
 
-	// ÉTÉuÉäÉ\Å[ÉXç\ë¢ëÃ.
-	InitData.pSysMem = vertices;	// î¬É|ÉäÇÃí∏ì_ÇÉZÉbÉg.
+	// „Çµ„Éñ„É™„ÇΩ„Éº„ÇπÊßãÈÄ†‰Ωì.
+	InitData.pSysMem = vertices;	// Êùø„Éù„É™„ÅÆÈ†ÇÁÇπ„Çí„Çª„ÉÉ„Éà.
 
-									// í∏ì_ÉoÉbÉtÉ@ÇÃçÏê¨.
-	if( FAILED( m_pDevice11->CreateBuffer(
-		&bd, &InitData, &m_pVertexBuffer ) ) ){
-		_ASSERT_EXPR( false, L"í∏ì_ ﬁØÃßçÏê¨é∏îs" );
+									// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„ÅÆ‰ΩúÊàê.
+	if (FAILED(m_pDevice11->CreateBuffer(
+		&bd, &InitData, &m_pVertexBuffer))) {
+		_ASSERT_EXPR(false, L"È†ÇÁÇπÔæäÔæûÔΩØÔæåÔΩß‰ΩúÊàêÂ§±Êïó");
 		return E_FAIL;
 	}
+
+	// È†ÇÁÇπ„Éê„ÉÉ„Éï„Ç°„Çí„Çª„ÉÉ„Éà.
+	m_pContext11->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
 
 	InitSample();
 
@@ -147,256 +156,264 @@ HRESULT CSprite::InitModel()
 
 HRESULT CSprite::InitSample()
 {
-	// ÉeÉNÉXÉ`ÉÉópÇÃÉTÉìÉvÉâç\ë¢ëÃ.
+	// „ÉÜ„ÇØ„Çπ„ÉÅ„É£Áî®„ÅÆ„Çµ„É≥„Éó„É©ÊßãÈÄ†‰Ωì.
 	D3D11_SAMPLER_DESC samDesc;
-	ZeroMemory( &samDesc, sizeof( samDesc ) );
-	samDesc.Filter		= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samDesc.AddressU	= D3D11_TEXTURE_ADDRESS_WRAP;
-	samDesc.AddressV	= D3D11_TEXTURE_ADDRESS_WRAP;
-	samDesc.AddressW	= D3D11_TEXTURE_ADDRESS_WRAP;
-	// ÉTÉìÉvÉâçÏê¨.
-	if( FAILED( m_pDevice11->CreateSamplerState(
-		&samDesc, &m_pSampleLinear ) ) )
+	ZeroMemory(&samDesc, sizeof(samDesc));
+	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	// „Çµ„É≥„Éó„É©‰ΩúÊàê.
+	if (FAILED(m_pDevice11->CreateSamplerState(
+		&samDesc, &m_pSampleLinear)))
 	{
-		ERROR_MESSAGE( "SamplerState creation failed" );
+		ERROR_MESSAGE("SamplerState creation failed");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-// ÉeÉNÉXÉ`ÉÉçÏê¨.
-HRESULT CSprite::CreateTexture( const char* fileName,
-	ID3D11ShaderResourceView** pTexture )
+// „ÉÜ„ÇØ„Çπ„ÉÅ„É£‰ΩúÊàê.
+HRESULT CSprite::CreateTexture(const char* fileName,
+	ID3D11ShaderResourceView** pTexture)
 {
-	//√∏Ω¡¨çÏê¨.
-	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
-		m_pDevice11,	//ÿø∞ΩÇégópÇ∑ÇÈ√ﬁ ﬁ≤ΩÇÃŒﬂ≤›¿.
-		fileName,		//Ãß≤Ÿñº.
+	//ÔæÉÔΩ∏ÔΩΩÔæÅÔΩ¨‰ΩúÊàê.
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11,	//ÔæòÔΩøÔΩ∞ÔΩΩ„Çí‰ΩøÁî®„Åô„ÇãÔæÉÔæûÔæäÔæûÔΩ≤ÔΩΩ„ÅÆÔæéÔæüÔΩ≤ÔæùÔæÄ.
+		fileName,		//ÔæåÔΩßÔΩ≤ÔæôÂêç.
 		nullptr, nullptr,
-		pTexture,		//(out)√∏Ω¡¨.
-		nullptr ) ) ){
-		_ASSERT_EXPR( false, L"√∏Ω¡¨çÏê¨é∏îs" );
+		pTexture,		//(out)ÔæÉÔΩ∏ÔΩΩÔæÅÔΩ¨.
+		nullptr))) {
+		_ASSERT_EXPR(false, L"ÔæÉÔΩ∏ÔΩΩÔæÅÔΩ¨‰ΩúÊàêÂ§±Êïó");
 		return E_FAIL;
 	}
 
 	return S_OK;
 }
 
-//⁄›¿ﬁÿ›∏ﬁóp.
-void CSprite::Render( const bool& isBillboard )
+//ÔæöÔæùÔæÄÔæûÔæòÔæùÔΩ∏ÔæûÁî®.
+void CSprite::Render(const bool& isBillboard)
 {
-	//Å@ÉèÅ[ÉãÉhçsóÒ.
+	//„ÄÄ„ÉØ„Éº„É´„ÉâË°åÂàó.
 	D3DXMATRIX mWorld;
 
-	// ÉèÅ[ÉãÉhçsóÒçÏê¨.
+	// „ÉØ„Éº„É´„ÉâË°åÂàó‰ΩúÊàê.
 	mWorld = CreateWorldMatrix();
-	if( isBillboard == true ){
-		// ÉrÉãÉ{Å[Éhóp.
+	if (isBillboard == true) {
+		// „Éì„É´„Éú„Éº„ÉâÁî®.
 		D3DXMATRIX CancelRotation = CCameraManager::GetViewMatrix();
-		CancelRotation._41 = CancelRotation._42 = CancelRotation._43 = 0.0f; // xyzÇ0Ç…Ç∑ÇÈ.
-																			 // CancelRotationÇÃãtçsóÒÇãÅÇﬂÇÈ.
-		D3DXMatrixInverse( &CancelRotation, nullptr, &CancelRotation );
+		CancelRotation._41 = CancelRotation._42 = CancelRotation._43 = 0.0f; // xyz„Çí0„Å´„Åô„Çã.
+																			 // CancelRotation„ÅÆÈÄÜË°åÂàó„ÇíÊ±Ç„ÇÅ„Çã.
+		D3DXMatrixInverse(&CancelRotation, nullptr, &CancelRotation);
 		mWorld = CancelRotation * mWorld;
 	}
-	// WVPÇÃçÏê¨.
+	// WVP„ÅÆ‰ΩúÊàê.
 	D3DXMATRIX mWVP = mWorld * CCameraManager::GetViewMatrix() * CCameraManager::GetProjMatrix();
 
 	AnimUpdate();
-	// ÉRÉìÉXÉ^ÉìÉgÉoÉbÉtÉ@ÇÃê›íË.
+	// „Ç≥„É≥„Çπ„Çø„É≥„Éà„Éê„ÉÉ„Éï„Ç°„ÅÆË®≠ÂÆö.
 	m_pSpriteShader->SetConstantBufferData( mWVP, m_vColor, { m_UV.x, m_UV.y } );
 
-	// 3DópÇÃÉVÉFÅ[É_Å[Çê›íË.
-	m_pSpriteShader->ShaderSet( m_pVertexBuffer );
+	// 3DÁî®„ÅÆ„Ç∑„Çß„Éº„ÉÄ„Éº„ÇíË®≠ÂÆö.
+	m_pSpriteShader->ShaderSet(m_pVertexBuffer);
 
-	//Ãﬂÿ–√®ÃﬁÅEƒŒﬂ€ºﬁ∞ÇæØƒ.
-	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+	//È†ÇÁÇπÔΩ≤ÔæùÔæåÔæüÔΩØÔæÑÔæöÔΩ≤ÔΩ±ÔΩ≥ÔæÑ„ÇíÔΩæÔΩØÔæÑ.
+//	m_pContext11->IASetInputLayout( m_pVertexLayout );
 
-	//√∏Ω¡¨Çº™∞¿ﬁÇ…ìnÇ∑.
-	m_pContext11->PSSetSamplers( 0, 1, &m_pSampleLinear );
-	m_pContext11->PSSetShaderResources( 0, 1, &m_pTexture );
+	//ÔæåÔæüÔæòÔæêÔæÉÔΩ®ÔæåÔæû„ÉªÔæÑÔæéÔæüÔæõÔΩºÔæûÔΩ∞„ÇíÔΩæÔΩØÔæÑ.
+	m_pContext11->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	//Ãﬂÿ–√®ÃﬁÇ⁄›¿ﬁÿ›∏ﬁ.
-	m_pContext11->Draw( 4, 0 );//î¬Œﬂÿ(í∏ì_4Ç¬ï™).
+	//ÔæÉÔΩ∏ÔΩΩÔæÅÔΩ¨„ÇíÔΩºÔΩ™ÔΩ∞ÔæÄÔæû„Å´Ê∏°„Åô.
+	m_pContext11->PSSetSamplers(0, 1, &m_pSampleLinear);
+	m_pContext11->PSSetShaderResources(0, 1, &m_pTexture);
+
+	//ÔæåÔæüÔæòÔæêÔæÉÔΩ®ÔæåÔæû„ÇíÔæöÔæùÔæÄÔæûÔæòÔæùÔΩ∏Ôæû.
+	m_pContext11->Draw(4, 0);//ÊùøÔæéÔæüÔæò(È†ÇÁÇπ4„Å§ÂàÜ).
 }
 
 void CSprite::RenderUI()
 {
-	// ç¿ïWÇÃzílÇèâä˙âª.
+	// Â∫ßÊ®ô„ÅÆzÂÄ§„ÇíÂàùÊúüÂåñ.
 	m_vPos.z = 0.0f;
 	AnimUpdate();
-	// ÉRÉìÉXÉ^ÉìÉgÉoÉbÉtÉ@ÇÃê›íË.
+	// „Ç≥„É≥„Çπ„Çø„É≥„Éà„Éê„ÉÉ„Éï„Ç°„ÅÆË®≠ÂÆö.
+
 	m_pSpriteShader->SetConstantBufferData( 
 		CreateWorldMatrix(), m_vColor, { m_UV.x, m_UV.y } );
 
-	// UIópÇÃÉVÉFÅ[É_Å[Çê›íË.
-	m_pSpriteShader->ShaderUISet( m_pVertexBufferUI );
 
-	//Ãﬂÿ–√®ÃﬁÅEƒŒﬂ€ºﬁ∞ÇæØƒ.
-	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+	// UIÁî®„ÅÆ„Ç∑„Çß„Éº„ÉÄ„Éº„ÇíË®≠ÂÆö.
+	m_pSpriteShader->ShaderUISet(m_pVertexBufferUI);
 
-	//√∏Ω¡¨Çº™∞¿ﬁÇ…ìnÇ∑.
-	m_pContext11->PSSetSamplers( 0, 1, &m_pSampleLinear );
-	m_pContext11->PSSetShaderResources( 0, 1, &m_pTexture );
+	//È†ÇÁÇπÔΩ≤ÔæùÔæåÔæüÔΩØÔæÑÔæöÔΩ≤ÔΩ±ÔΩ≥ÔæÑ„ÇíÔΩæÔΩØÔæÑ.
+//	m_pContext11->IASetInputLayout( m_pVertexLayout );
 
-	//Ãﬂÿ–√®ÃﬁÇ⁄›¿ﬁÿ›∏ﬁ.
-	m_pContext11->Draw( 4, 0 );//î¬Œﬂÿ(í∏ì_4Ç¬ï™).
+	//ÔæåÔæüÔæòÔæêÔæÉÔΩ®ÔæåÔæû„ÉªÔæÑÔæéÔæüÔæõÔΩºÔæûÔΩ∞„ÇíÔΩæÔΩØÔæÑ.
+	m_pContext11->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
+	//ÔæÉÔΩ∏ÔΩΩÔæÅÔΩ¨„ÇíÔΩºÔΩ™ÔΩ∞ÔæÄÔæû„Å´Ê∏°„Åô.
+	m_pContext11->PSSetSamplers(0, 1, &m_pSampleLinear);
+	m_pContext11->PSSetShaderResources(0, 1, &m_pTexture);
+
+	//ÔæåÔæüÔæòÔæêÔæÉÔΩ®ÔæåÔæû„ÇíÔæöÔæùÔæÄÔæûÔæòÔæùÔΩ∏Ôæû.
+	m_pContext11->Draw(4, 0);//ÊùøÔæéÔæüÔæò(È†ÇÁÇπ4„Å§ÂàÜ).
 }
 
 D3DXMATRIX CSprite::CreateWorldMatrix()
 {
-	//Å@ÉèÅ[ÉãÉhçsóÒ, ÉXÉPÅ[ÉãçsóÒ, âÒì]çsóÒ, ïΩçsà⁄ìÆçsóÒ.
+	//„ÄÄ„ÉØ„Éº„É´„ÉâË°åÂàó, „Çπ„Ç±„Éº„É´Ë°åÂàó, ÂõûËª¢Ë°åÂàó, Âπ≥Ë°åÁßªÂãïË°åÂàó.
 	D3DXMATRIX mScale, mRot, mTran;
 
-	// ägëÂèkè¨çsóÒçÏê¨.
+	// Êã°Â§ßÁ∏ÆÂ∞èË°åÂàó‰ΩúÊàê.
 	D3DXMatrixScaling( &mScale, m_vScale.x, m_vScale.y, 1.0f );
-	// âÒì]çsóÒÇçÏê¨.
+	// ÂõûËª¢Ë°åÂàó„Çí‰ΩúÊàê.
 	D3DXMatrixRotationYawPitchRoll( &mRot, m_vRot.y, m_vRot.x, m_vRot.z );
-	// ïΩçsà⁄ìÆçsóÒ.
-	D3DXMatrixTranslation( &mTran, m_vPos.x, m_vPos.y, m_vPos.z );
+	// Âπ≥Ë°åÁßªÂãïË°åÂàó.
+	D3DXMatrixTranslation(&mTran, m_vPos.x, m_vPos.y, m_vPos.z);
 
-	// ÉèÅ[ÉãÉhçsóÒçÏê¨.
+	// „ÉØ„Éº„É´„ÉâË°åÂàó‰ΩúÊàê.
 	return mScale * mRot * mTran;
 }
 
-// ÉAÉjÉÅÅ[ÉVÉáÉìî‘çÜÇÃê›íË.
-void CSprite::SetAnimNumber( const int& animNumber )
+// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥Áï™Âè∑„ÅÆË®≠ÂÆö.
+void CSprite::SetAnimNumber(const int& animNumber)
 {
-	if( m_AnimNumber >= m_SState.AnimNum ) return;
-	m_IsAnimation = false;	// ÉAÉjÉÅÅ[ÉVÉáÉìÇÇµÇ»Ç¢.
-							// ÉAÉjÉÅÅ[ÉVÉáÉìî‘çÜÇéZèo.
+	if (m_AnimNumber >= m_SState.AnimNum) return;
+	m_IsAnimation = false;	// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥„Çí„Åó„Å™„ÅÑ.
+							// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥Áï™Âè∑„ÇíÁÆóÂá∫.
 	m_PatternNo.x = animNumber % m_PatternMax.x;
 	m_PatternNo.y = animNumber / m_PatternMax.x;
-	// UVç¿ïWÇ…ïœä∑.
+	// UVÂ∫ßÊ®ô„Å´Â§âÊèõ.
 	m_UV = ConvertIntoUV();
 }
 
-// UVç¿ïWÇ…ïœä∑.
+// UVÂ∫ßÊ®ô„Å´Â§âÊèõ.
 D3DXVECTOR2 CSprite::ConvertIntoUV()
 {
 	return {
-		// xç¿ïW.
-		static_cast<float>(m_PatternNo.x) / static_cast<float>( m_PatternMax.x ),
-		// yç¿ïW.
-		static_cast<float>(m_PatternNo.y) / static_cast<float>( m_PatternMax.y )
+		// xÂ∫ßÊ®ô.
+		static_cast<float>(m_PatternNo.x) / static_cast<float>(m_PatternMax.x),
+		// yÂ∫ßÊ®ô.
+		static_cast<float>(m_PatternNo.y) / static_cast<float>(m_PatternMax.y)
 	};
 }
 
-// ÉAÉjÉÅÅ[ÉVÉáÉìÇÃçXêV.
+// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥„ÅÆÊõ¥Êñ∞.
 void CSprite::AnimUpdate()
 {
-	if( m_IsAnimation == false ) return;
+	if (m_IsAnimation == false) return;
 
-	if( m_FrameCount % m_FrameTime == 0 ){
-		// ÉAÉjÉÅÅ[ÉVÉáÉìî‘çÜÇéZèo.
+	if (m_FrameCount % m_FrameTime == 0) {
+		// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥Áï™Âè∑„ÇíÁÆóÂá∫.
 		m_PatternNo.x = m_AnimNumber % m_PatternMax.x;
 		m_PatternNo.y = m_AnimNumber / m_PatternMax.x;
-		m_AnimNumber++;	// ÉAÉjÉÅÅ[ÉVÉáÉìî‘çÜÇâ¡éZ.
-		if( m_AnimNumber >= m_SState.AnimNum ){
-			// ÉAÉjÉÅÅ[ÉVÉáÉìî‘çÜÇ™ç≈ëÂÉAÉjÉÅÅ[ÉVÉáÉìêîÇÊÇËëΩÇØÇÍÇŒ.
-			// èâä˙âªÇ∑ÇÈ.
+		m_AnimNumber++;	// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥Áï™Âè∑„ÇíÂä†ÁÆó.
+		if (m_AnimNumber >= m_SState.AnimNum) {
+			// „Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥Áï™Âè∑„ÅåÊúÄÂ§ß„Ç¢„Éã„É°„Éº„Ç∑„Éß„É≥Êï∞„Çà„ÇäÂ§ö„Åë„Çå„Å∞.
+			// ÂàùÊúüÂåñ„Åô„Çã.
 			m_FrameCount = 0;
 			m_AnimNumber = 0;
 		}
 	}
 	m_FrameCount++;
-	// UVç¿ïWÇ…ïœä∑.
+	// UVÂ∫ßÊ®ô„Å´Â§âÊèõ.
 	m_UV = ConvertIntoUV();
 }
 
-void CSprite::CreateVERTEX( const float& w, const float& h, const float& u, const float& v )
+void CSprite::CreateVERTEX(const float& w, const float& h, const float& u, const float& v)
 {
-	switch( m_enLocalPosition )
+	switch (m_enLocalPosition)
 	{
 	case CSprite::enLocalPosition::LeftUp:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3(  0.0f,    h, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(0.0f,    h, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3(  0.0f, 0.0f, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(     w,    h, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(w,    h, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(     w, 0.0f, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(w, 0.0f, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::Left:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3(  0.0f, -h/2, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(0.0f, -h / 2, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3(  0.0f,  h/2, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(0.0f,  h / 2, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(     w, -h/2, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(w, -h / 2, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(     w,  h/2, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(w,  h / 2, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::LeftDown:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3(  0.0f,    -h, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(0.0f,    -h, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3(  0.0f,  0.0f, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(0.0f,  0.0f, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(     w,    -h, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(w,    -h, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(     w,  0.0f, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(w,  0.0f, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::Down:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3( -w / 2,    -h, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(-w / 2,    -h, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3( -w / 2,  0.0f, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(-w / 2,  0.0f, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(  w / 2,    -h, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(w / 2,    -h, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(  w / 2,  0.0f, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(w / 2,  0.0f, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::RightDown:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3(   -w,   -h, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(-w,   -h, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3(   -w, 0.0f, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(-w, 0.0f, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3( 0.0f,   -h, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(0.0f,   -h, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3( 0.0f, 0.0f, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::Right:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3(    -w, -h / 2, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(-w, -h / 2, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3(    -w,  h / 2, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(-w,  h / 2, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(  0.0f, -h / 2, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(0.0f, -h / 2, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(  0.0f,  h / 2, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(0.0f,  h / 2, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::RightUp:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3(    -w,    h, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(-w,    h, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3(    -w, 0.0f, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(-w, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(  0.0f,    h, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(0.0f,    h, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(  0.0f, 0.0f, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::Up:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3( -w / 2,    h, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(-w / 2,    h, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3( -w / 2, 0.0f, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(-w / 2, 0.0f, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(  w / 2,    h, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(w / 2,    h, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(  w / 2, 0.0f, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(w / 2, 0.0f, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	case CSprite::enLocalPosition::Center:
 		m_VerticesUI[0] =
-		{ D3DXVECTOR3( -w / 2, -h / 2, 0.0f ), D3DXVECTOR2( 0.0f, 0.0f ) };	//í∏ì_ÇP(ç∂â∫).
+		{ D3DXVECTOR3(-w / 2, -h / 2, 0.0f), D3DXVECTOR2(0.0f, 0.0f) };	//È†ÇÁÇπÔºë(Â∑¶‰∏ã).
 		m_VerticesUI[1] =
-		{ D3DXVECTOR3( -w / 2,  h / 2, 0.0f ), D3DXVECTOR2( 0.0f,    v ) };	//í∏ì_ÇQ(ç∂è„).
+		{ D3DXVECTOR3(-w / 2,  h / 2, 0.0f), D3DXVECTOR2(0.0f,    v) };	//È†ÇÁÇπÔºí(Â∑¶‰∏ä).
 		m_VerticesUI[2] =
-		{ D3DXVECTOR3(  w / 2, -h / 2, 0.0f ), D3DXVECTOR2(    u, 0.0f ) };	//í∏ì_ÇR(âEâ∫).
+		{ D3DXVECTOR3(w / 2, -h / 2, 0.0f), D3DXVECTOR2(u, 0.0f) };	//È†ÇÁÇπÔºì(Âè≥‰∏ã).
 		m_VerticesUI[3] =
-		{ D3DXVECTOR3(  w / 2,  h / 2, 0.0f ), D3DXVECTOR2(    u,    v ) };	//í∏ì_ÇS(âEè„).
+		{ D3DXVECTOR3(w / 2,  h / 2, 0.0f), D3DXVECTOR2(u,    v) };	//È†ÇÁÇπÔºî(Âè≥‰∏ä).
 		break;
 	default:
 		break;

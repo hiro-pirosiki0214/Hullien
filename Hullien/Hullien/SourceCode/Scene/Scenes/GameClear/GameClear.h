@@ -3,6 +3,8 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
+class CClearWidget;	// クリアUIクラス.
+
 /**********************************
 *	ゲームクリアクラス.
 */
@@ -18,6 +20,9 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+
+private:
+	std::unique_ptr<CClearWidget> m_pClearWidget;	// クリアUIクラス.
 };
 
 #endif	// #ifndef GAME_CLEAR_H.
