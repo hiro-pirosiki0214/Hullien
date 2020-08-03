@@ -20,6 +20,8 @@ public:
 	virtual void Render() override;
 
 private:
+	// カウントダウン関数.
+	void CountDown();
 
 
 };

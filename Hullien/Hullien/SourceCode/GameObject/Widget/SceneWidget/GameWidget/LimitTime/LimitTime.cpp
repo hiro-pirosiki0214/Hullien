@@ -26,3 +26,8 @@ void CLimitTime::Update()
 void CLimitTime::Render()
 {
 }
+
+// カウントダウン関数.
+void CLimitTime::CountDown()
+{
+}

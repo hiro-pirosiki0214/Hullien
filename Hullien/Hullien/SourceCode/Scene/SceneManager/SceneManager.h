@@ -9,7 +9,7 @@ enum class enSceneNo
 	None,
 
 	Title,		// タイトル.
-	GameMain,	// ゲームメイン.S
+	GameMain,	// ゲームメイン.
 	GameClear,	// ゲームクリア.
 	GameOver,	// ゲームオーバー.
 
@@ -17,8 +17,8 @@ enum class enSceneNo
 
 	Max,
 
-	ResultCheck,	// ゲームクリアかゲームオーバーの確認.
-	Start = GameClear,	// 初めのシーン.
+	ResultCheck,			// ゲームクリアかゲームオーバーの確認.
+	Start = GameOver,	// 初めのシーン.
 
 } typedef EScene;
 
