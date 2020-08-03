@@ -143,7 +143,4 @@ void CLimitTime::FramesToSeconds()
 	}
 }
 
-// カウントダウン関数.
-void CLimitTime::CountDown()
-{
-}
+
