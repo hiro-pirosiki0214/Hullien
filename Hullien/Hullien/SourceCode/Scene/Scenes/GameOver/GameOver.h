@@ -3,6 +3,8 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
+class CGameOverWidget;
+
 /**********************************
 *	ゲームオーバークラス.
 */
@@ -18,6 +20,9 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+
+private:
+	std::unique_ptr<CGameOverWidget> m_pGameOverWidget;
 };
 
 #endif	// #ifndef GAME_OVER_H.

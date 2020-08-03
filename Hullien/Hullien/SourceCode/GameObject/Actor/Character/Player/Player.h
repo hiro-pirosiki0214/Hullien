@@ -5,6 +5,7 @@
 #include <queue>
 
 class CRotLookAtCenter;
+class CCharacterWidget;
 
 class CPlayer : public CCharacter
 {
@@ -116,8 +117,12 @@ private:
 	// デバッグ用の描画.
 	void DebugRender();
 
+	// ウィジェット設定.
+	bool WidgetSetting();
+
 private:
-	std::shared_ptr<CRotLookAtCenter>	m_pCamera;		// カメラクラス.
+	std::shared_ptr<CRotLookAtCenter>				m_pCamera;		// カメラクラス.
+	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;		// Widgetクラス.
 	D3DXVECTOR3	m_OldPosition;			// 前回の座標.
 	enAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
 	enAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
