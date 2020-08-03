@@ -30,8 +30,8 @@ VS_OUTPUT VS_Main(
 	output.Pos = mul(Pos, g_mWVP);
 	output.Tex = Tex;
 	// UV座標をずらす.
-	output.Tex.x += g_vUV_ViewPort.x;
-	output.Tex.y += g_vUV_ViewPort.y;
+	output.Tex.x += g_vUV.x;
+	output.Tex.y += g_vUV.y;
 
 	return output;
 }
@@ -46,14 +46,14 @@ VS_OUTPUT VS_MainUI(
 	output.Pos = mul(Pos, g_mW);
 
 	// スクリーン座標に合わせる計算,
-	output.Pos.x = (output.Pos.x / g_vUV_ViewPort.z) * 2.0f - 1.0f;
-	output.Pos.y = 1.0f - (output.Pos.y / g_vUV_ViewPort.w) * 2.0f;
+	output.Pos.x = (output.Pos.x / g_fViewPort.x) * 2.0f - 1.0f;
+	output.Pos.y = 1.0f - (output.Pos.y / g_fViewPort.y) * 2.0f;
 
 	output.Tex = Tex;
 
 	// UV座標をずらす.
-	output.Tex.x += g_vUV_ViewPort.x;
-	output.Tex.y += g_vUV_ViewPort.y;
+	output.Tex.x += g_vUV.x;
+	output.Tex.y += g_vUV.y;
 
 	return output;
 }
