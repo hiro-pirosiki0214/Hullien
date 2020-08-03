@@ -17,8 +17,8 @@ enum class enSceneNo
 
 	Max,
 
-	ResultCheck,			// ゲームクリアかゲームオーバーの確認.
-	Start = GameOver,	// 初めのシーン.
+	ResultCheck,	// ゲームクリアかゲームオーバーの確認.
+	Start = Title,	// 初めのシーン.
 
 } typedef EScene;
 

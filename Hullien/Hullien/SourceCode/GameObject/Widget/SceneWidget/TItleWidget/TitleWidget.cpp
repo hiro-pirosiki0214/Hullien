@@ -1,4 +1,5 @@
 #include "TitleWidget.h"
+
 #include "..\..\Cursor\Cursor.h"
 #include "..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\Resource\SpriteResource\SpriteResource.h"
@@ -9,7 +10,7 @@
 CTitleWidget::CTitleWidget()
 	: m_pSprites		()
 	, m_pCursor			( nullptr )
-	, m_SelectState	( CTitleWidget::ESelectState::Start )
+	, m_SelectState		( CTitleWidget::ESelectState::Start )
 {
 	m_pCursor = std::make_unique<CCursor>();
 }
@@ -22,24 +23,10 @@ CTitleWidget::~CTitleWidget()
 bool CTitleWidget::Init()
 {
 	// スプライトの読み込み.
-	const char* SpriteName[] =
-	{	
-		SPRITE_NAME_BG,
-		SPRITE_NAME_SS,
-		SPRITE_NAME_SE,
-		SPRITE_NAME_T,
-	};
-	int SpriteMax = sizeof(SpriteName) / sizeof(SpriteName[0]);
-	// メモリの最大値設定.
-	m_pSprites.reserve(SpriteMax);
-	for (int sprite = 0; sprite < SpriteMax; sprite++)
-	{
-		m_pSprites.emplace_back(CSpriteResource::GetSprite(SpriteName[sprite]));
-		if (m_pSprites[sprite] == nullptr) return false;
-	}
+	if( SpriteSetting() == false ) return false;
 
 	// カーソルの読み込み.
-	if(m_pCursor->Init() == false) return false;
+	if( m_pCursor->Init() == false ) return false;
 
 	return true;
 }
@@ -49,7 +36,7 @@ void CTitleWidget::Update()
 {
 	// カーソルの設定.
 	if (m_pCursor == nullptr) return;
-	SettingCursor();
+	CursorSetting();
 }
 
 // 描画関数.
@@ -68,15 +55,45 @@ void CTitleWidget::Render()
 	// 文字.
 	for (size_t sprite = START; sprite < m_pSprites.size(); sprite++)
 	{
-		m_pSprites[sprite]->SetBlend(true);
+		if (sprite == START)
+		{
+			m_pSprites[sprite]->SetPosition(D3DXVECTOR3(600.0f, 500.0f, 0.0f));
+		}
+		else if(sprite == END)
+		{
+			m_pSprites[sprite]->SetPosition(D3DXVECTOR3(600.0f, 600.0f, 0.0f));
+		}
 		m_pSprites[sprite]->SetDeprh(false);
 		m_pSprites[sprite]->RenderUI();
 		m_pSprites[sprite]->SetDeprh(true);
 	}
 }
 
+// スプライト読み込み関数.
+bool CTitleWidget::SpriteSetting()
+{
+	const char* spriteName[] =
+	{
+		SPRITE_BACKGROUND,	//背景.
+		SPRITE_SELECTSTART, //開始.
+		SPRITE_SELECTEXIT,  //終了.
+		SPRITE_TITLE,	    //タイトル.
+	};
+	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
+
+	// メモリの最大値設定.
+	m_pSprites.reserve(SpriteMax);
+	for (int sprite = 0; sprite < SpriteMax; sprite++)
+	{
+		m_pSprites.emplace_back(CSpriteResource::GetSprite(spriteName[sprite]));
+		if (m_pSprites[sprite] == nullptr) return false;
+	}
+
+	return true;
+}
+
 // カーソル設定関数.
-void CTitleWidget::SettingCursor()
+void CTitleWidget::CursorSetting()
 {
 	if (GetAsyncKeyState( VK_UP ) & 0x8000)
 	{
@@ -90,10 +107,10 @@ void CTitleWidget::SettingCursor()
 	switch (m_SelectState)
 	{
 	case CTitleWidget::ESelectState::Start:
-		m_pCursor->SetPosition(m_pSprites[START]->GetRenderPos());
+		m_pCursor->SetPosition(D3DXVECTOR3(600.0f, 500.0f, 0.0f));
 		break;
 	case CTitleWidget::ESelectState::End:
-		m_pCursor->SetPosition(m_pSprites[END]->GetRenderPos());
+		m_pCursor->SetPosition(D3DXVECTOR3(600.0f, 600.0f, 0.0f));
 		break;
 	default:
 		break;

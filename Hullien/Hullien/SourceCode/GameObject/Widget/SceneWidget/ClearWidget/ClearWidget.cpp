@@ -47,5 +47,5 @@ void CClearWidget::Render()
 	m_pSprite->SetDeprh( true );
 
 	//タイトルに戻るボタン.
-	m_pReturTitle->Render();
+	//m_pReturTitle->Render();
 }
