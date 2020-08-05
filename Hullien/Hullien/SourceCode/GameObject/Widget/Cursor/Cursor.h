@@ -9,9 +9,9 @@
 class CCursor : public CWidget
 {
 private:
-	const char* SPRITE_NAME = "yesnosize";		//スプライトのファイル名.
+	const char* SPRITE_NAME = "yesnosize";	//スプライトのファイル名.
 	const float SCALE_MAX	= 1.0f;				//拡大最大値.
-	const float SCALE_SPEED = 0.05f;			//拡大速度.
+	const float SCALE_SPEED = 0.05f;				//拡大速度.
 	const float ACC_SPEED   = 0.0011f;			//加速度.
 
 public:

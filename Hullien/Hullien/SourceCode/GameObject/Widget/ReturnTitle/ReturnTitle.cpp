@@ -55,7 +55,10 @@ void CReturnTitle::Update()
 void CReturnTitle::Render()
 {
 	if ( m_pSprite == nullptr ) return;
+
+	m_pSprite->SetCoverage( true );
 	m_pSprite->SetAlpha( m_Alpha );
 	m_pSprite->RenderUI();
+	m_pSprite->SetCoverage(false);
 
 }
