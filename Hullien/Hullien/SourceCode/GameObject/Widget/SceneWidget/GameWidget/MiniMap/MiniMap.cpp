@@ -8,9 +8,7 @@
 *	ミニマップクラス.
 **/
 CMiniMap::CMiniMap()
-	: m_mView					()
-	, m_mProj					()
-	, m_pSprite					()
+	: m_pSprite					()
 	, m_ObjPosListCount	( 0 )
 
 {
@@ -34,28 +32,20 @@ void CMiniMap::Update()
 {
 }
 
-void CMiniMap::SetPosition(CGameActorManager* pObj)
+// オブジェクト位置設定関数.
+void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 {
-	SpriteSetting( pObj );
+	// スプライトの設定.
+	OBJLIST List = pObj->GetObjPositionList();
+	SpriteSetting( List );
 
+	// アイコン位置の更新.
+	int objCount = 0;
 	for (const auto& obj : pObj->GetObjPositionList())
 	{
-		switch (obj.first)
-		{
-		case EObjectTag::Player:
-			m_vPosition[1].x = m_pSprite[0]->GetRenderPos().x - obj.second.x;
-			m_vPosition[1].y = m_pSprite[0]->GetRenderPos().y + obj.second.z;
-			break;
-		case EObjectTag::Girl:
-			m_vPosition[2].x = m_pSprite[0]->GetRenderPos().x - obj.second.x;
-			m_vPosition[2].y = m_pSprite[0]->GetRenderPos().y + obj.second.z;
-			break;
-		case EObjectTag::Alien_B:
-		case EObjectTag::Alien_A:
-			break;
-		default:
-			break;
-		}
+		objCount++;
+		m_vPosition[objCount].x = m_pSprite[MAP_BACK]->GetRenderPos().x - obj.second.x;
+		m_vPosition[objCount].y = m_pSprite[MAP_BACK]->GetRenderPos().y + obj.second.z;
 	}
 }
 
@@ -71,66 +61,37 @@ void CMiniMap::Render()
 	}
 }
 
-// 描画関数.
-void CMiniMap::Render(const D3DXMATRIX& view, const D3DXMATRIX& proj)
-{
-	m_mView = view;
-	m_mProj = proj;
-
-	Render();
-}
-
 // スプライト設定関数.
 bool CMiniMap::InitSpriteSetting()
 {
 	if ( m_pSprite.size() != 0 ) return true;
 
-	const char* spriteName[] = 
-	{
-		"minimapsize",
-	};
-	const int spriteMax = sizeof( spriteName ) / sizeof( spriteName[0] );
-
-	for (int sprite = 0; sprite < spriteMax; sprite++)
-	{
-		m_pSprite.emplace_back( CSpriteResource::GetSprite( spriteName[sprite] ) );
-		m_vPosition.emplace_back( m_pSprite[sprite]->GetRenderPos() );
-		if( m_pSprite[sprite] == nullptr ) return false;
-	}
+	// マップ背景の読み込み.
+	m_pSprite.emplace_back( CSpriteResource::GetSprite(SPRITE_MAP_BACK) );
+	m_vPosition.emplace_back( m_pSprite[MAP_BACK]->GetRenderPos() );
+	if( m_pSprite[MAP_BACK] == nullptr ) return false;
 
 	return true;
 }
 
 // スプライト設定関数.
-void CMiniMap::SpriteSetting(CGameActorManager * pObj)
+void CMiniMap::SpriteSetting(OBJLIST objList)
 {
-	std::vector<std::pair<EObjectTag, D3DXVECTOR3>> v = pObj->GetObjPositionList();
+	if (m_ObjPosListCount > objList.size()) return;
 
-	if (m_ObjPosListCount > pObj->GetObjPositionList().size()) return;
-
-	for (std::vector<std::pair<EObjectTag, D3DXVECTOR3>>::const_iterator obj = v.begin() + m_ObjPosListCount; obj < v.end(); obj++)
+	for (OBJLIST::const_iterator obj = objList.begin() + m_ObjPosListCount; obj < objList.end(); obj++)
 	{
 		m_ObjPosListCount++;
+
 		switch (obj->first)
 		{
 		case EObjectTag::Player:
-			m_pSprite.emplace_back(CSpriteResource::GetSprite("mapiconsize"));
-			m_vPosition.emplace_back(D3DXVECTOR3(
-				m_pSprite[0]->GetRenderPos().x - obj->second.x,
-				m_pSprite[0]->GetRenderPos().y + obj->second.z,
-				0.0f
-			));
-			break;
 		case EObjectTag::Girl:
-			m_pSprite.emplace_back(CSpriteResource::GetSprite("mapiconsize"));
-			m_vPosition.emplace_back(D3DXVECTOR3(
-				m_pSprite[0]->GetRenderPos().x - obj->second.x,
-				m_pSprite[0]->GetRenderPos().y + obj->second.z,
-				0.0f
-			));
-			break;
 		case EObjectTag::Alien_B:
 		case EObjectTag::Alien_A:
+		case EObjectTag::Alien_C:
+		case EObjectTag::Alien_D:
+			ObjSpriteSetting( SPRITE_DEFAULT_ICON );
 			break;
 
 		default:
@@ -138,3 +99,13 @@ void CMiniMap::SpriteSetting(CGameActorManager * pObj)
 		}
 	}
 }
+
+// オブジェクトのスプライト設定関数.
+void CMiniMap::ObjSpriteSetting(const char* spriteName)
+{
+	// 読み込むスプライトの設定.
+	m_pSprite.emplace_back(CSpriteResource::GetSprite( spriteName ));
+	// 初期位置の設定.
+	m_vPosition.emplace_back( m_pSprite[MAP_BACK]->GetRenderPos() );
+}
+
