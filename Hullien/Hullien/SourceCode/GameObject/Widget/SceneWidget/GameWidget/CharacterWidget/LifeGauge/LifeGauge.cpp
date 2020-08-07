@@ -2,6 +2,7 @@
 
 #include "..\..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
+#include "..\..\..\..\..\Actor\Character\Character.h"
 
 /*************************************
 *	ライフゲージクラス.
@@ -44,6 +45,11 @@ void CLifeGauge::Render()
 		s->SetDeprh( true );
 	}
 
+}
+
+// パラメータ設定関数.
+void CLifeGauge::SetParameter(CCharacter& pChara)
+{
 }
 
 // スプライト読み込み関数.

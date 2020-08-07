@@ -2,6 +2,7 @@
 #define CHARACTERWIDGET_H
 
 #include "..\GameWidget.h"
+class CCharacter;
 
 /*****************************************
 *	キャラクタUIクラス.
@@ -20,7 +21,7 @@ public:
 	virtual ~CCharacterWidget();
 
 	// パラメータ設定関数.
-	void SetParameter(const CCharacterWidget::SCharacterParam& param) { m_Parameter = param; }
+	virtual void SetParameter(CCharacter& pChara) = 0;
 
 protected:
 	SCharacterParam m_Parameter;	//パラメータ.

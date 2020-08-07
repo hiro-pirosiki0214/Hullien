@@ -23,6 +23,9 @@ public:
 	virtual void Update() override;
 	//描画関数.
 	virtual void Render() override;
+	// パラメータ設定関数.
+	virtual void SetParameter(CCharacter& pChara) override;
+
 private:
 	// スプライト読み込み関数.
 	bool SpriteSetting();

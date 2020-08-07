@@ -202,7 +202,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\Warning\Warning.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Widget.cpp" />
@@ -309,7 +309,7 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h" />
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\Warning\Warning.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Widget.h" />
