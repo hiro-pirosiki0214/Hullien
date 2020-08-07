@@ -42,8 +42,8 @@ public:
 	ESelectState GetSelectState() const { return m_SelectState; }
 
 private:
-	// スプライト読み込み関数.
-	bool SpriteSetting();
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
 	// カーソル設定関数.
 	void CursorSetting();
 

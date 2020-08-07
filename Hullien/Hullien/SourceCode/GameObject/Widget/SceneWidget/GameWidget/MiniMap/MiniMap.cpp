@@ -22,7 +22,7 @@ CMiniMap::~CMiniMap()
 bool CMiniMap::Init()
 {
 	// 初期スプライト読み込み.
-	if (InitSpriteSetting() == false ) return false;
+	if (SpriteSetting() == false ) return false;
 
 	return true;
 }
@@ -62,7 +62,7 @@ void CMiniMap::Render()
 }
 
 // スプライト設定関数.
-bool CMiniMap::InitSpriteSetting()
+bool CMiniMap::SpriteSetting()
 {
 	if ( m_pSprite.size() != 0 ) return true;
 

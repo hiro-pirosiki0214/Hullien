@@ -49,3 +49,8 @@ void CClearWidget::Render()
 	//タイトルに戻るボタン.
 	m_pReturTitle->Render();
 }
+
+bool CClearWidget::SpriteSetting()
+{
+	return false;
+}

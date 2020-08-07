@@ -13,6 +13,7 @@ class CGirl;						// 女の子クラス.
 class CAlienManager;		// 宇宙人管理クラス.
 class CItemManager;		// アイテム管理クラス.
 class CBarrier;				// バリアクラス.
+class CWarning;				//警告クラス.
 
 class CGameActorManager
 {
@@ -40,6 +41,7 @@ private:
 	std::shared_ptr<CAlienManager>	m_pAlienManager;
 	std::shared_ptr<CItemManager>	m_pItemManager;
 	std::shared_ptr<CBarrier>		m_pBarrier;
+	std::shared_ptr<CWarning>		m_pWarning;
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;
 };

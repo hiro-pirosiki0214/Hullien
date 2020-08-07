@@ -20,6 +20,10 @@ public:
 	//描画関数.
 	virtual void Render() override;
 
+private:
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
+
 };
 
 #endif	//#ifndef FADE_H.

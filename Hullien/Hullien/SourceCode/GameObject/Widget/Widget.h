@@ -31,6 +31,8 @@ public:
 	void SetPosition(const D3DXVECTOR3& vPos) { m_vPosition = vPos; }
 
 protected:
+	// スプライト設定関数.
+	virtual bool SpriteSetting() = 0;
 	// フェードイン.
 	void FadeIn(float& alpha, const float& alphaSpeed);
 	// フェードアウト.

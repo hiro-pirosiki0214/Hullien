@@ -34,7 +34,7 @@ public:
 
 private:
 	// スプライト設定関数.
-	bool SpriteSetting();
+	virtual bool SpriteSetting() override;
 	// 位置設定関数.
 	bool PositionSetting();
 	// アニメーション番号設定関数.

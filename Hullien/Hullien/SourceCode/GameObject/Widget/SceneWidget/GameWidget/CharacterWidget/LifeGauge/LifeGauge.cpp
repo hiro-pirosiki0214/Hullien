@@ -61,7 +61,7 @@ bool CLifeGauge::SpriteSetting()
 	const char* spriteName[] =
 	{
 		SPRITE_GAGEBACK,	//ÉQÅ[ÉWîwåi.
-		SPRITE_GAGE,		//ÉQÅ[ÉW.
+		SPRITE_GAGE,		    //ÉQÅ[ÉW.
 	};
 	const int spriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 

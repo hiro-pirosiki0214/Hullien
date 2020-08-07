@@ -26,7 +26,7 @@ public:
 
 private:
 	// スプライト設定関数.
-	bool SpriteSetting();
+	virtual bool SpriteSetting() override;
 
 private:
 	std::vector<std::shared_ptr<CSprite>> m_pSprite;	// スプライトクラス.

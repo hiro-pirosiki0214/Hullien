@@ -27,8 +27,8 @@ public:
 	virtual void SetParameter(CCharacter& pChara) override;
 
 private:
-	// スプライト読み込み関数.
-	bool SpriteSetting();
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
 
 private:
 	std::vector<std::shared_ptr<CSprite>> m_pSprite;	//スプライトクラス.

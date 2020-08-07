@@ -34,9 +34,9 @@ public:
 	virtual void Render() override;
 
 private:
-	// 初期スプライト設定関数.
-	bool InitSpriteSetting();
 	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
+	//スプライト設定関数.
 	void SpriteSetting(OBJLIST objList);
 	// オブジェクトのスプライト設定関数.
 	void ObjSpriteSetting(const char* spriteName);

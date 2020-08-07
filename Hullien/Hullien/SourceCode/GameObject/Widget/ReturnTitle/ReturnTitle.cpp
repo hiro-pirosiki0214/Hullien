@@ -18,9 +18,7 @@ CReturnTitle::~CReturnTitle()
 // ‰Šú‰»ŠÖ”.
 bool CReturnTitle::Init()
 {
-	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite(SPRITE_NAME);
-	if (m_pSprite == nullptr) return false;
+	if ( SpriteSetting() == false ) return false;
 	return true;
 }
 
@@ -61,4 +59,13 @@ void CReturnTitle::Render()
 	m_pSprite->RenderUI();
 	m_pSprite->SetCoverage(false);
 
+}
+
+bool CReturnTitle::SpriteSetting()
+{
+	if (m_pSprite != nullptr) return true;
+	m_pSprite = CSpriteResource::GetSprite(SPRITE_NAME);
+	if (m_pSprite == nullptr) return false;
+
+	return true;
 }

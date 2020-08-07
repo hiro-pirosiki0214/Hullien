@@ -26,6 +26,8 @@ public:
 	virtual void Render() override;
 
 private:
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
 	// スケール動き関数.
 	void MoveScale();
 	// 拡大関数.

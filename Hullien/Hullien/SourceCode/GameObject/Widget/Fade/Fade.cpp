@@ -26,3 +26,9 @@ void CFade::Update()
 void CFade::Render()
 {
 }
+
+// スプライト設定関数.
+bool CFade::SpriteSetting()
+{
+	return false;
+}

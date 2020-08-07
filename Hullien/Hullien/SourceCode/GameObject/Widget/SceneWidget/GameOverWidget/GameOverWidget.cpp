@@ -44,3 +44,8 @@ void CGameOverWidget::Render()
 
 	m_pReturnTitle->Render();
 }
+
+bool CGameOverWidget::SpriteSetting()
+{
+	return false;
+}
