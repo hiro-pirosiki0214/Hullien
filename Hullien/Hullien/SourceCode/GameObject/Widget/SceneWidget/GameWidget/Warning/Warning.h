@@ -2,6 +2,7 @@
 #define WARNING_H
 
 #include "..\GameWidget.h"
+class CActor;
 class CGirl;
 
 /*************************************
@@ -24,13 +25,20 @@ public:
 	virtual void Render() override;
 	// 女の子の状態設定関数.
 	void SetGirlState(CGirl* pGirl);
+	// プレイヤー位置取得.
+	void SetPlayerPos(CActor* pActor);
 
 private:
 	// スプライト設定関数.
 	virtual bool SpriteSetting() override;
 
 private:
-	bool m_IsDisp;
+	D3DXVECTOR3 m_vPlayePos;	//プレイヤー位置.
+	D3DXVECTOR3 m_vPlayeRot;	//プレイヤー位置.
+	D3DXVECTOR3 m_vTargetPos;	//ターゲット位置.
+	D3DXVECTOR3 m_vTargetRot;	//ターゲット回転置.
+	bool m_IsDisp;							//表示するか.
+	bool m_IsUI;								//UIかそうでないか.
 };
 
 

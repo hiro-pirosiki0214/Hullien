@@ -39,6 +39,7 @@ bool CGameActorManager::Init()
 	if( m_pGirl->Init()			== false ) return false;	// 女の子の初期化.
 	if( m_pAlienManager->Init()	== false ) return false;	// 宇宙人管理の初期化.
 	if( m_pItemManager->Init()	== false ) return false;	// アイテム管理の初期化.
+	if (m_pWarning->Init() == false) return false;
 
 	return true;
 }
@@ -61,7 +62,7 @@ void CGameActorManager::Update()
 	m_pBarrier->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 
 	// 女の子が捕まったか.
-	if ( m_pGirl->IsDanger() == true ) m_pWarning->Init();	// 警告の初期化.
+//	if ( m_pGirl->IsDanger() == true ) m_pWarning->Init();	// 警告の初期化.
 
 	// バリアの更新.
 	m_pBarrier->Update();
@@ -99,7 +100,9 @@ void CGameActorManager::Update()
 		} );
 
 	// 警告の更新.
-	m_pWarning->SetGirlState( m_pGirl.get() );	// 女の子の情報設定.
+	m_pWarning->SetGirlState( m_pGirl.get() );		// 女の子の情報設定.
+	m_pWarning->SetPlayerPos( m_pPlayer.get() );	// 女の子の情報設定.
+	m_pWarning->Update();								// 女の子の情報設定.
 }
 
 // 描画関数.
