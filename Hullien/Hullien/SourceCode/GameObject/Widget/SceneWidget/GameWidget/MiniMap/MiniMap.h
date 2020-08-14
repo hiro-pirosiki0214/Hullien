@@ -16,7 +16,21 @@ private:
 
 	const char* SPRITE_MAP_BACK = "minimapsize";		//ミニマップ背景スプライト名.
 	const char* SPRITE_DEFAULT_ICON = "mapiconsize";	//標準アイコンスプライト名.
-	const int	 MAP_BACK = 0;										//ミニマップ背景配列番号.
+	const int	MAP_BACK = 0;							//ミニマップ背景配列番号.
+
+	// アイコン情報.
+	struct stIconInfo
+	{
+		std::shared_ptr<CSprite> pSprite;	// スプライト.
+		D3DXVECTOR3 Pos;					// 位置.
+		EObjectTag EObjTag;					// タグ.
+
+		stIconInfo()
+			: pSprite	( nullptr )
+			, Pos		(D3DXVECTOR3(0.0f,0.0f,0.0f))
+			, EObjTag	(EObjectTag::Max)
+		{}
+	}typedef SIconInfo;
 
 public:
 	CMiniMap();
@@ -39,12 +53,11 @@ private:
 	//スプライト設定関数.
 	void SpriteSetting(OBJLIST objList);
 	// オブジェクトのスプライト設定関数.
-	void ObjSpriteSetting(const char* spriteName);
+	void ObjSpriteSetting(const char* spriteName, const EObjectTag& tag);
 
 private:
-	std::vector<std::shared_ptr<CSprite>> m_pSprite;
-	std::vector<D3DXVECTOR3>	m_vPosition;
-	size_t m_ObjPosListCount;
+	std::vector<SIconInfo>	m_IconList;			//アイコンリスト,
+	size_t					m_ObjPosListCount;	//オブジェクトのカウント.
 
 };
 

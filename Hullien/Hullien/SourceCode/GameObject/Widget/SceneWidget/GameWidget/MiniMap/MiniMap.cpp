@@ -8,7 +8,7 @@
 *	ミニマップクラス.
 **/
 CMiniMap::CMiniMap()
-	: m_pSprite					()
+	: m_IconList		()
 	, m_ObjPosListCount	( 0 )
 
 {
@@ -40,36 +40,46 @@ void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 	SpriteSetting( List );
 
 	// アイコン位置の更新.
-	int objCount = 0;
+	int objCount = 1;	// マップ下地は含めないので配列番号は1から.
 	for (const auto& obj : pObj->GetObjPositionList())
 	{
+		// タグ情報の更新.
+		if (obj.first != m_IconList[objCount].EObjTag) m_IconList[objCount].EObjTag = obj.first;
+
+		// Noneならば処理しない.
+		if (obj.first == EObjectTag::None) continue;
+		// 位置情報の更新.
+		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - obj.second.x;
+		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + obj.second.z;
 		objCount++;
-		m_vPosition[objCount].x = m_pSprite[MAP_BACK]->GetRenderPos().x - obj.second.x;
-		m_vPosition[objCount].y = m_pSprite[MAP_BACK]->GetRenderPos().y + obj.second.z;
 	}
 }
 
 // 描画関数.
 void CMiniMap::Render()
 {
-	for ( size_t sprite = 0; sprite < m_pSprite.size(); sprite++ )
+	if (m_IconList.size() == 0) return;
+	for (const auto& l : m_IconList)
 	{
-		m_pSprite[sprite]->SetPosition( m_vPosition[sprite] );
-		m_pSprite[sprite]->SetDeprh( false );
-		m_pSprite[sprite]->RenderUI();
-		m_pSprite[sprite]->SetDeprh( true );
+		// タグがNoneならば非表示.
+		if (l.EObjTag == EObjectTag::None) continue;
+		l.pSprite->SetPosition(l.Pos );
+		l.pSprite->SetDeprh( false );
+		l.pSprite->RenderUI();
+		l.pSprite->SetDeprh( true );
 	}
 }
 
 // スプライト設定関数.
 bool CMiniMap::SpriteSetting()
 {
-	if ( m_pSprite.size() != 0 ) return true;
+	if ( m_IconList.size() != 0 ) return true;
 
 	// マップ背景の読み込み.
-	m_pSprite.emplace_back( CSpriteResource::GetSprite(SPRITE_MAP_BACK) );
-	m_vPosition.emplace_back( m_pSprite[MAP_BACK]->GetRenderPos() );
-	if( m_pSprite[MAP_BACK] == nullptr ) return false;
+	m_IconList.emplace_back();
+	m_IconList[MAP_BACK].pSprite = CSpriteResource::GetSprite(SPRITE_MAP_BACK);
+	m_IconList[MAP_BACK].Pos = m_IconList[MAP_BACK].pSprite->GetRenderPos();
+	if(m_IconList[MAP_BACK].pSprite == nullptr ) return false;
 
 	return true;
 }
@@ -91,21 +101,34 @@ void CMiniMap::SpriteSetting(OBJLIST objList)
 		case EObjectTag::Alien_A:
 		case EObjectTag::Alien_C:
 		case EObjectTag::Alien_D:
-			ObjSpriteSetting( SPRITE_DEFAULT_ICON );
+		case EObjectTag::SPEffectTimeItem:
+		case EObjectTag::AttackUpItem:
+		case EObjectTag::LifeRecoveryItem:
+		case EObjectTag::MoveSpeedUpItem:
+		case EObjectTag::None:
+			ObjSpriteSetting(SPRITE_DEFAULT_ICON, obj->first);
 			break;
 
 		default:
+			// タグがNoneならオブジェクトが存在しないのでリストを減らす.
+			//m_IconList[m_ObjPosListCount] = m_IconList.back();
+			//m_IconList.pop_back();
 			break;
 		}
 	}
 }
 
 // オブジェクトのスプライト設定関数.
-void CMiniMap::ObjSpriteSetting(const char* spriteName)
+void CMiniMap::ObjSpriteSetting(const char* spriteName, const EObjectTag& tag)
 {
+	SIconInfo info;
 	// 読み込むスプライトの設定.
-	m_pSprite.emplace_back(CSpriteResource::GetSprite( spriteName ));
+	info.pSprite = CSpriteResource::GetSprite(spriteName);
 	// 初期位置の設定.
-	m_vPosition.emplace_back( m_pSprite[MAP_BACK]->GetRenderPos() );
+	info.Pos = m_IconList[MAP_BACK].pSprite->GetRenderPos();
+	// タグの設定.
+	info.EObjTag = tag;
+	// リストを増やす.
+	m_IconList.emplace_back(info);
 }
 
