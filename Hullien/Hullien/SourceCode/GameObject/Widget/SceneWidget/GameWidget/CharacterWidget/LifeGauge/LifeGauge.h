@@ -10,22 +10,11 @@
 class CLifeGauge : public CCharacterWidget
 {
 private:
-	const char* SPRITE_GAGEBACK = "gage";	//ゲージ背景.
-	const char* SPRITE_GAGE		= "gage";	//ゲージ.		
+	const char* SPRITE_GAUGEBACK = "gage";	//ゲージ背景.
+	const char* SPRITE_GAUGE			= "gage";	//ゲージ.		
+	const int     GAUGE_NUM = 1;						//ゲージの配列番号.
+	const int     ONE = 1;									//一.
 
-	// ゲージの情報.
-	struct stGaugeState
-	{
-		D3DXVECTOR3 vPosition;	//位置.
-		D3DXVECTOR3	vScale;		//大きさ.
-		int						AnimNum;	//アニメーション番号.
-
-		stGaugeState()
-			: vPosition	(D3DXVECTOR3(0.0f,0.0f,0.0f))
-			, vScale		(D3DXVECTOR3(1.0f,1.0f,1.0f))
-			, AnimNum (0)
-		{}
-	}typedef SGaugeState;
 public:
 	CLifeGauge();
 	virtual ~CLifeGauge();
@@ -37,7 +26,7 @@ public:
 	//描画関数.
 	virtual void Render() override;
 	// パラメータ設定関数.
-	virtual void SetParameter(CCharacter& pChara) override;
+//	virtual void SetParameter(CCharacter& pChara) override;
 
 private:
 	// スプライト設定関数.

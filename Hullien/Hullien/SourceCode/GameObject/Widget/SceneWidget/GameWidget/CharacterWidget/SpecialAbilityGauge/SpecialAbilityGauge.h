@@ -10,8 +10,10 @@
 class CSpecialAbilityGauge : public CCharacterWidget
 {
 private:
-	const char* SPRITE_GAGEBACK = "gagesize";	//ゲージ背景.
-	const char* SPRITE_GAGE		= "gagesize";	//ゲージ.		
+	const char* SPRITE_GAUGEBACK = "gage";	//ゲージ背景.
+	const char* SPRITE_GAUGE = "gage";			//ゲージ.		
+	const int     GAUGE_NUM = 1;						//ゲージの配列番号.
+	const int     ONE = 1;									//一.
 
 public:
 	CSpecialAbilityGauge();
@@ -30,6 +32,7 @@ private:
 
 private:
 	std::vector<std::shared_ptr<CSprite>> m_pSprite;	// スプライトクラス.
+	std::vector<SGaugeState> m_GaugeState;			//ゲージの情報.
 
 };
 
