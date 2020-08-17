@@ -5,7 +5,6 @@
 
 class CGirl;
 class CCameraManager;
-class CRotLookAtCenter;
 
 /*************************************
 *	警告クラス.
@@ -39,7 +38,6 @@ private:
 	bool m_IsUI;				//UIかそうでないか.
 
 	std::shared_ptr<CCameraManager>		m_pCamera;			// カメラ.
-	std::shared_ptr<CRotLookAtCenter>	m_pCenterCamera;	// カメラ.
 
 };
 

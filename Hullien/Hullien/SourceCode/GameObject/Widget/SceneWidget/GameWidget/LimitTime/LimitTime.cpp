@@ -126,10 +126,7 @@ void CLimitTime::CountDown()
 	}
 
 	// §ŒÀŠÔ‚ª0‚É‚È‚Á‚½ê‡.
-	if( m_Seconds == 0 )
-	{
-		m_IsFinish = true;
-	}
+	if( m_Seconds == 0 ) m_IsFinish = true;
 }
 
 // ƒtƒŒ[ƒ€‚©‚ç•b‚É•ÏŠ·ŠÖ”.

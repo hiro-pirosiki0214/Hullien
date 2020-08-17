@@ -3,7 +3,6 @@
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\Actor\Character\Girl\Girl.h"
 #include "..\..\..\..\..\Camera\CameraManager\CameraManager.h"
-#include "..\..\..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
 
 /*************************************
 *	警告クラス.
@@ -16,7 +15,6 @@ CWarning::CWarning()
 	, m_pCamera		( nullptr )
 {
 	m_pCamera = std::make_shared<CCameraManager>();
-	m_pCenterCamera = std::make_shared<CRotLookAtCenter>();
 }
 
 CWarning::~CWarning()
@@ -33,8 +31,6 @@ bool CWarning::Init()
 // 更新関数.
 void CWarning::Update()
 {
-	m_pCenterCamera->GetRadianX();
-
 	m_vPosition = m_vTargetPos;
 	m_vPosition.y = m_vTargetPos.y + 5.0f; // 女の子の頭上に設定.
 }
@@ -47,16 +43,16 @@ void CWarning::Render()
 //	if (m_IsDisp != true) return;
 	m_pSprite->SetPosition( m_vPosition );
 	m_pSprite->SetColor(D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f));
-	m_pSprite->SetDeprh( false );
-	if (m_IsUI == false)
+	//if (m_IsUI == false)
+	//{
+	//	m_pSprite->Render(true);	// ビルボードにする.
+	//}
+	//else
 	{
-		m_pSprite->Render(true);	// ビルボードにする.
-	}
-	else
-	{
+		m_pSprite->SetDeprh(false);
 		m_pSprite->RenderUI();
+		m_pSprite->SetDeprh(true);
 	}
-	m_pSprite->SetDeprh( true );
 }
 
 // 女の子の状態設定関数.

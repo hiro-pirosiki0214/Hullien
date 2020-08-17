@@ -8,7 +8,8 @@
 *	ライフゲージクラス.
 **/
 CLifeGauge::CLifeGauge()
-	: m_pSprite ()
+	: m_pSprite			()
+	, m_GaugeState	()
 {
 }
 
@@ -29,7 +30,7 @@ bool CLifeGauge::Init()
 void CLifeGauge::Update()
 {
 	if ( m_pSprite.size() == 0 ) return;
-	m_vSclae.x = m_Parameter.Life / 10.0f;
+	m_GaugeState[1].vScale.x = m_Parameter.Life / 10.0f;
 }
 
 // 描画関数.
@@ -37,14 +38,16 @@ void CLifeGauge::Render()
 {
 	if (m_pSprite.size() == 0) return;
 
-	m_vPosition = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	int sprite = 0;
 	for (const auto& s : m_pSprite)
 	{
-		s->SetDeprh( false );
-		s->SetPosition( m_vPosition );
-		s->SetScale(m_vSclae);
+		s->SetPosition( m_GaugeState[sprite].vPosition );
+		s->SetScale(m_GaugeState[sprite].vScale );
+		s->SetAnimNumber(m_GaugeState[sprite].AnimNum);
+		s->SetDeprh(false);
 		s->RenderUI();
 		s->SetDeprh( true );
+		sprite++;
 	}
 
 }
@@ -71,6 +74,8 @@ bool CLifeGauge::SpriteSetting()
 	{
 		m_pSprite.emplace_back();
 		m_pSprite[sprite] = CSpriteResource::GetSprite( spriteName[sprite] );
+		m_GaugeState.emplace_back();
+		m_GaugeState[sprite].AnimNum = 1- sprite;
 		if ( m_pSprite[sprite] == nullptr ) return false;
 	}
 
