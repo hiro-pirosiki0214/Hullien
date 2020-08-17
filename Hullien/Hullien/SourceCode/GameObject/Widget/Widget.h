@@ -16,7 +16,7 @@ protected:
 	{
 		In,			//フェードイン.
 		Out,		//フェードアウト.
-		Finish,	//フェード終了.
+		Finish,		//フェード終了.
 	} typedef EFadeState;
 
 public:

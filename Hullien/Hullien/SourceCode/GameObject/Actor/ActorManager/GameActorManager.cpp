@@ -101,8 +101,7 @@ void CGameActorManager::Update()
 
 	// 警告の更新.
 	m_pWarning->SetGirlState( m_pGirl.get() );		// 女の子の情報設定.
-	m_pWarning->SetPlayerPos( m_pPlayer.get() );	// 女の子の情報設定.
-	m_pWarning->Update();								// 女の子の情報設定.
+	m_pWarning->Update();							// 女の子の情報設定.
 }
 
 // 描画関数.

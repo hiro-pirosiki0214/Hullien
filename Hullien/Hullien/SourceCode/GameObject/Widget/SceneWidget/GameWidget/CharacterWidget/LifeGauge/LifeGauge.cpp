@@ -29,6 +29,7 @@ bool CLifeGauge::Init()
 void CLifeGauge::Update()
 {
 	if ( m_pSprite.size() == 0 ) return;
+	m_vSclae.x = m_Parameter.Life / 10.0f;
 }
 
 // •`‰æŠÖ”.
@@ -41,6 +42,7 @@ void CLifeGauge::Render()
 	{
 		s->SetDeprh( false );
 		s->SetPosition( m_vPosition );
+		s->SetScale(m_vSclae);
 		s->RenderUI();
 		s->SetDeprh( true );
 	}

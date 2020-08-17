@@ -31,7 +31,7 @@ void CWidget::SetFadeOut()
 }
 
 // フェードイン関数.
-void CWidget::FadeIn(float& alpha, const float & alphaSpeed)
+void CWidget::FadeIn(float& alpha, const float& alphaSpeed)
 {
 	if (m_FadeState != m_OldFadeState)
 	{
@@ -43,7 +43,7 @@ void CWidget::FadeIn(float& alpha, const float & alphaSpeed)
 }
 
 // フェードアウト関数.
-void CWidget::FadeOut(float & alpha, const float & alphaSpeed)
+void CWidget::FadeOut(float& alpha, const float& alphaSpeed)
 {
 	if (m_FadeState != m_OldFadeState)
 	{

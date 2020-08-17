@@ -22,6 +22,12 @@ public:
 
 	// パラメータ設定関数.
 	virtual void SetParameter(CCharacter& pChara) = 0;
+	// パラメータ設定関数.
+	virtual void SetParameter(SCharacterParam& pChara)
+	{
+		m_Parameter.Life = pChara.Life;
+		m_Parameter.SpecialAbilityGauge = pChara.SpecialAbilityGauge;
+	}
 
 protected:
 	SCharacterParam m_Parameter;	//パラメータ.

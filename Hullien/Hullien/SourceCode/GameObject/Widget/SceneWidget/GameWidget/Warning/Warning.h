@@ -2,8 +2,10 @@
 #define WARNING_H
 
 #include "..\GameWidget.h"
-class CActor;
+
 class CGirl;
+class CCameraManager;
+class CRotLookAtCenter;
 
 /*************************************
 *	警告クラス.
@@ -25,20 +27,20 @@ public:
 	virtual void Render() override;
 	// 女の子の状態設定関数.
 	void SetGirlState(CGirl* pGirl);
-	// プレイヤー位置取得.
-	void SetPlayerPos(CActor* pActor);
 
 private:
 	// スプライト設定関数.
 	virtual bool SpriteSetting() override;
 
 private:
-	D3DXVECTOR3 m_vPlayePos;	//プレイヤー位置.
-	D3DXVECTOR3 m_vPlayeRot;	//プレイヤー位置.
 	D3DXVECTOR3 m_vTargetPos;	//ターゲット位置.
 	D3DXVECTOR3 m_vTargetRot;	//ターゲット回転置.
-	bool m_IsDisp;							//表示するか.
-	bool m_IsUI;								//UIかそうでないか.
+	bool m_IsDisp;				//表示するか.
+	bool m_IsUI;				//UIかそうでないか.
+
+	std::shared_ptr<CCameraManager>		m_pCamera;			// カメラ.
+	std::shared_ptr<CRotLookAtCenter>	m_pCenterCamera;	// カメラ.
+
 };
 
 

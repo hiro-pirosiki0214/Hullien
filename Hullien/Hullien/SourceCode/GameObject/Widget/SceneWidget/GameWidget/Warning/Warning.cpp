@@ -1,20 +1,22 @@
 #include "Warning.h"
 #include "..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
-#include "..\..\..\..\Actor\Actor.h"
 #include "..\..\..\..\Actor\Character\Girl\Girl.h"
+#include "..\..\..\..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\..\..\..\Camera\RotLookAtCenter\RotLookAtCenter.h"
 
 /*************************************
 *	警告クラス.
 **/
 CWarning::CWarning()
-	: m_vPlayePos		(D3DXVECTOR3(0.0f,0.0f,0.0f))
-	, m_vPlayeRot		(D3DXVECTOR3(0.0f,0.0f,0.0f))
-	, m_vTargetPos	(D3DXVECTOR3(0.0f,0.0f,0.0f))
+	: m_vTargetPos	(D3DXVECTOR3(0.0f,0.0f,0.0f))
 	, m_vTargetRot	(D3DXVECTOR3(0.0f,0.0f,0.0f))
-	, m_IsDisp			( false )
-	, m_IsUI				( false )
+	, m_IsDisp		( false )
+	, m_IsUI		( false )
+	, m_pCamera		( nullptr )
 {
+	m_pCamera = std::make_shared<CCameraManager>();
+	m_pCenterCamera = std::make_shared<CRotLookAtCenter>();
 }
 
 CWarning::~CWarning()
@@ -31,30 +33,10 @@ bool CWarning::Init()
 // 更新関数.
 void CWarning::Update()
 {
-	m_vTargetRot.y = atan2f(
-		m_vTargetPos.x - m_vPlayePos.x,
-		m_vTargetPos.z - m_vPlayePos.z );
+	m_pCenterCamera->GetRadianX();
 
-	if (m_vTargetRot.y > D3DX_PI)
-	{
-		m_vTargetRot.y = 0.0f;
-	}
-	else if (m_vTargetRot.y < 0.0f)
-	{
-		m_vTargetRot.y = D3DX_PI;
-	}
-
-	if (m_vTargetRot.y <=  m_vPlayeRot.y
-		&& m_vTargetRot.y >=  m_vPlayeRot.y)
-	{
-		m_vPosition = m_vTargetPos;	
-		m_IsUI = false;
-	}
-	else
-	{
-		m_vPosition = D3DXVECTOR3(100.0f, 450.0f, 0.0f);
-		m_IsUI = true;
-	}
+	m_vPosition = m_vTargetPos;
+	m_vPosition.y = m_vTargetPos.y + 5.0f; // 女の子の頭上に設定.
 }
 
 // 描画関数.
@@ -87,19 +69,11 @@ void CWarning::SetGirlState(CGirl* pGirl)
 	if (pGirl->IsDanger() == true)
 	{
 		m_IsDisp = true;					//描画フラグを立てる.
-	}
-	else
+	} 
+	else 
 	{
 		m_IsDisp = false;
 	}
-}
-
-// プレイヤー位置取得.
-void CWarning::SetPlayerPos(CActor * pActor)
-{
-	// プレイヤーでなければ処理しない.
-	if ( pActor->GetObjectTag() != EObjectTag::Player ) return;
-	m_vPlayePos = pActor->GetPosition();
 }
 
 // スプライトの設定関数.
