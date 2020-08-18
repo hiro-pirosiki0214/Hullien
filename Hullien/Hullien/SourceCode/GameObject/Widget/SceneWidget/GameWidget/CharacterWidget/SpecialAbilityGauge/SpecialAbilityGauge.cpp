@@ -27,7 +27,11 @@ bool CSpecialAbilityGauge::Init()
 void CSpecialAbilityGauge::Update()
 {
 	if (m_pSprite.size() == 0) return;
-	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.SpecialAbilityGauge / 10.0f; // プレイヤー側からライフ最大数を受け取れるようにしたい.
+	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.SpecialAbilityGauge / 10.0f; 
+
+	// 特殊能力ゲージがたまっていなければ処理しない.
+	if (m_GaugeState[GAUGE_NUM].vScale.x != 1.0f) return;
+	// 光らせる処理↓.
 }
 
 // 描画関数.
@@ -65,6 +69,7 @@ bool CSpecialAbilityGauge::SpriteSetting()
 		m_pSprite.emplace_back();
 		m_pSprite[sprite] = CSpriteResource::GetSprite(spriteName[sprite]);
 		m_GaugeState.emplace_back();
+		m_GaugeState[sprite].vPosition.y = POS_Y;
 		m_GaugeState[sprite].AnimNum = (spriteMax - ONE) - sprite;
 		if (m_pSprite[sprite] == nullptr) return false;
 	}

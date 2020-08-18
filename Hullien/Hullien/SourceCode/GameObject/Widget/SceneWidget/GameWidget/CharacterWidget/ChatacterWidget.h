@@ -1,13 +1,13 @@
 #ifndef CHARACTERWIDGET_H
 #define CHARACTERWIDGET_H
 
-#include "..\GameWidget.h"
+#include "..\..\SceneWidget.h"
 class CCharacter;
 
 /*****************************************
 *	キャラクタUIクラス.
 **/
-class CCharacterWidget : public CGameWidget
+class CCharacterWidget : public CSceneWidget
 {
 public:
 	// キャラクタのパラメータ.

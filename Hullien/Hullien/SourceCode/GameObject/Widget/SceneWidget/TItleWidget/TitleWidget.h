@@ -10,10 +10,10 @@
 class CTitleWidget : public CSceneWidget
 {
 private:
-	const char* SPRITE_BACKGROUND	= "BackGround";		//背景スプライト名.
-	const char* SPRITE_SELECTSTART	= "selectsize";		//開始スプライト名.
-	const char* SPRITE_SELECTEXIT	= "selectsize";	  	//終了スプライト名.
-	const char* SPRITE_TITLE		= "titlesize";		//タイトルスプライト名.
+	const char* SPRITE_BACKGROUND	= "BackGround";	//背景スプライト名.
+	const char* SPRITE_SELECTSTART	= "yessize";		//開始スプライト名.
+	const char* SPRITE_SELECTEXIT	= "nosize";	  			//終了スプライト名.
+	const char* SPRITE_TITLE		= "titlesize";				//タイトルスプライト名.
 
 	const int BACKGROUND	= 0;	//背景配列番号.
 	const int START			= 1;	//開始配列番号.

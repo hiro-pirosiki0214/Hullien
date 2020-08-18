@@ -20,7 +20,7 @@ CGameOverWidget::~CGameOverWidget()
 bool CGameOverWidget::Init()
 {
 	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite( "pokemon" );
+	m_pSprite = CSpriteResource::GetSprite( "oversize" );
 	if (m_pSprite == nullptr) return false;
 
 	if (m_pReturnTitle->Init() == false) return false;

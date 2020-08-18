@@ -76,7 +76,6 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.cpp" />
@@ -106,6 +105,8 @@
     <ClCompile Include="SourceCode\Utility\XInput\XInput.cpp" />
     <ClCompile Include="SourceCode\Utility\XInput\XinputConfig.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\UltemateSign\UltemateSign.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -183,7 +184,6 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h" />
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h" />
@@ -216,5 +216,7 @@
     <ClInclude Include="SourceCode\Utility\XInput\XInput.h" />
     <ClInclude Include="SourceCode\Utility\XInput\XinputConfig.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\UltemateSign\UltemateSign.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.h" />
   </ItemGroup>
 </Project>

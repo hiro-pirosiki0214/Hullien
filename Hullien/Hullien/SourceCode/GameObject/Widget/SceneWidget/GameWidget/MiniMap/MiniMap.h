@@ -1,7 +1,7 @@
 #ifndef MINIMAP_H
 #define MINIMAP_H
 
-#include "..\GameWidget.h"
+#include "..\..\SceneWidget.h"
 #include <vector>
 
 class CGameActorManager;	//アクタ管理クラス.
@@ -9,7 +9,7 @@ class CGameActorManager;	//アクタ管理クラス.
 /**********************************
 *	ミニマップクラス.
 **/
-class CMiniMap : public CGameWidget
+class CMiniMap : public CSceneWidget
 {
 private:
 	typedef std::vector<std::pair<EObjectTag, D3DXVECTOR3>> OBJLIST;
@@ -24,11 +24,13 @@ private:
 		std::shared_ptr<CSprite> pSprite;	// スプライト.
 		D3DXVECTOR3 Pos;					// 位置.
 		EObjectTag EObjTag;					// タグ.
+		int AnimNumber;							// アニメーション番号.
 
 		stIconInfo()
-			: pSprite	( nullptr )
-			, Pos		(D3DXVECTOR3(0.0f,0.0f,0.0f))
-			, EObjTag	(EObjectTag::Max)
+			: pSprite			( nullptr )
+			, Pos				(D3DXVECTOR3(0.0f,0.0f,0.0f))
+			, EObjTag		(EObjectTag::Max)
+			, AnimNumber (0)
 		{}
 	}typedef SIconInfo;
 

@@ -1,7 +1,7 @@
 #ifndef WARNING_H
 #define WARNING_H
 
-#include "..\GameWidget.h"
+#include "..\..\SceneWidget.h"
 
 class CGirl;
 class CCameraManager;
@@ -9,7 +9,7 @@ class CCameraManager;
 /*************************************
 *	åxçêÉNÉâÉX.
 **/
-class CWarning : public CGameWidget
+class CWarning : public CSceneWidget
 {
 private:
 	const char* SPRITE_NAME = "dangersignsize";

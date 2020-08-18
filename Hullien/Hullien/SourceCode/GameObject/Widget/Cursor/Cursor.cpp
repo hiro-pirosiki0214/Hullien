@@ -34,6 +34,9 @@ void CCursor::Update()
 void CCursor::Render()
 {
 	if (m_pSprite == nullptr) return;
+
+	m_vPosition.x -= 150.0f;
+	m_vPosition.y -= 20.0f;
 	m_pSprite->SetPosition( m_vPosition );
 	m_pSprite->SetScale( m_vSclae );
 

@@ -1,13 +1,13 @@
 #ifndef LIMITTIME_H
 #define LIMITTIME_H
 
-#include "..\\GameWidget.h"
+#include "..\..\SceneWidget.h"
 #include <vector>
 
 /*****************************************
 *	制限時間クラス.
 **/
-class CLimitTime : public CGameWidget
+class CLimitTime : public CSceneWidget
 {
 private:
 	const char* SPRITE_TIME				= "timeNumber";	//時間のスプライト名.

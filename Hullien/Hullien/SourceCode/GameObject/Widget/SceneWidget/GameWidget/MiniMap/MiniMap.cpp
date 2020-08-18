@@ -64,6 +64,7 @@ void CMiniMap::Render()
 		// タグがNoneならば非表示.
 		if (l.EObjTag == EObjectTag::None) continue;
 		l.pSprite->SetPosition(l.Pos );
+		l.pSprite->SetAnimNumber(l.AnimNumber );
 		l.pSprite->SetDeprh( false );
 		l.pSprite->RenderUI();
 		l.pSprite->SetDeprh( true );
@@ -92,29 +93,7 @@ void CMiniMap::SpriteSetting(OBJLIST objList)
 	for (OBJLIST::const_iterator obj = objList.begin() + m_ObjPosListCount; obj < objList.end(); obj++)
 	{
 		m_ObjPosListCount++;
-
-		switch (obj->first)
-		{
-		case EObjectTag::Player:
-		case EObjectTag::Girl:
-		case EObjectTag::Alien_B:
-		case EObjectTag::Alien_A:
-		case EObjectTag::Alien_C:
-		case EObjectTag::Alien_D:
-		case EObjectTag::SPEffectTimeItem:
-		case EObjectTag::AttackUpItem:
-		case EObjectTag::LifeRecoveryItem:
-		case EObjectTag::MoveSpeedUpItem:
-		case EObjectTag::None:
-			ObjSpriteSetting(SPRITE_DEFAULT_ICON, obj->first);
-			break;
-
-		default:
-			// タグがNoneならオブジェクトが存在しないのでリストを減らす.
-			//m_IconList[m_ObjPosListCount] = m_IconList.back();
-			//m_IconList.pop_back();
-			break;
-		}
+		ObjSpriteSetting(SPRITE_DEFAULT_ICON, obj->first);
 	}
 }
 
@@ -128,6 +107,36 @@ void CMiniMap::ObjSpriteSetting(const char* spriteName, const EObjectTag& tag)
 	info.Pos = m_IconList[MAP_BACK].pSprite->GetRenderPos();
 	// タグの設定.
 	info.EObjTag = tag;
+	// アニメーション番号の設定.
+	switch (tag)
+	{
+	case EObjectTag::Player:
+		info.AnimNumber = 0;
+		break;
+	case EObjectTag::Girl:
+		info.AnimNumber = 1;
+		break;
+	case EObjectTag::Alien_A:
+	case EObjectTag::Alien_B:
+	case EObjectTag::Alien_C:
+		info.AnimNumber = 2;
+		break;
+	case EObjectTag::Alien_D:
+		info.AnimNumber = 3;
+		break;
+	case EObjectTag::SPEffectTimeItem:
+	case EObjectTag::AttackUpItem:
+	case EObjectTag::LifeRecoveryItem:
+	case EObjectTag::MoveSpeedUpItem:
+		break;
+
+	default:
+		// タグがNoneならオブジェクトが存在しないのでリストを減らす.
+		//m_IconList[m_ObjPosListCount] = m_IconList.back();
+		//m_IconList.pop_back();
+		break;
+	}
+
 	// リストを増やす.
 	m_IconList.emplace_back(info);
 }
