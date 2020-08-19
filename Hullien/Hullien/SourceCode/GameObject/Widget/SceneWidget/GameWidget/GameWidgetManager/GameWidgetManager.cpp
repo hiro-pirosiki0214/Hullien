@@ -34,10 +34,16 @@ bool CGameWidgetManager::Init()
 void CGameWidgetManager::Update(CGameActorManager* pActorManager)
 {
 	m_pLimitTime->Update();
+	m_pMiniMap->SetObjPosition( pActorManager );
 	m_pMiniMap->Update();
+	m_pUltemateSing->IsAppUltemate(pActorManager);
+	m_pUltemateSing->Update();
 }
 
 // •`‰æŠÖ”.
 void CGameWidgetManager::Render()
 {
+	m_pLimitTime->Render();
+	m_pMiniMap->Render();
+	m_pUltemateSing->Render();
 }

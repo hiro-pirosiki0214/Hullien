@@ -3,13 +3,18 @@
 
 #include "..\..\SceneWidget.h"
 
-class CActor;
+class CGameActorManager;
 
 /*************************************************
 *	アルティメット出現サインクラス.
 **/
 class CUltemateSing : public CSceneWidget
 {
+private:
+	const char* SPRITE_NAME = "ultemate signsize";	//スプライトの名前.
+	const float DISPTIME_MAX = 150.0f;						//最大表示時間.
+	const float ALPHA_SPEED = 0.03f;							//透過速度.
+
 public:
 	CUltemateSing();
 	virtual ~CUltemateSing();
@@ -24,14 +29,18 @@ public:
 	virtual void Render() override;
 
 	// アルティメットが出現しているか.
-	void IsAppUltemate(CActor* pActor);
+	void IsAppUltemate(CGameActorManager* pActor);
 
 private:
 	// スプライト設定関数.
 	virtual bool SpriteSetting() override;
+	// サイン表示関数.
+	void DispSign();
 
 private:
 	bool m_IsAppUltemate;	//アルティメットが出現しているか.
+	int m_ObjCount;			// オブジェクトのカウント.
+	float m_DispTime;			//表示時間.
 };
 
 

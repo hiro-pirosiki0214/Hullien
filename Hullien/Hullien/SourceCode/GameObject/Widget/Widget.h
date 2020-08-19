@@ -37,6 +37,8 @@ protected:
 	void FadeIn(float& alpha, const float& alphaSpeed);
 	// フェードアウト.
 	void FadeOut(float& alpha, const float& alphaSpeed);
+	// フェード更新関数.
+	void FadeUpdate(float& alpha, const float& alphaSpeed);
 
 protected:
 	std::shared_ptr<CSprite>	m_pSprite;		//スプライトクラス.

@@ -1,13 +1,14 @@
 #include "UltemateSign.h"
 #include "..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
-#include "..\..\..\..\Actor\Actor.h"
+#include "..\..\..\..\Actor\ActorManager\GameActorManager.h"
 
 /*************************************************
 *	アルティメット出現サインクラス.
 **/
 CUltemateSing::CUltemateSing()
 	: m_IsAppUltemate	( false )
+	, m_ObjCount			( 0 )
 {
 }
 
@@ -27,32 +28,70 @@ bool CUltemateSing::Init()
 void CUltemateSing::Update()
 {
 	if (m_IsAppUltemate == false) return;
+	// サイン表示.
+	DispSign();
 }
 
 // 描画関数.
 void CUltemateSing::Render()
 {
 	if (m_IsAppUltemate == false) return;
-	m_pSprite->SetDeprh(false);
+	m_pSprite->SetBlend( true );
+	m_pSprite->SetAlpha( m_Alpha );
+	m_pSprite->SetDeprh( false );
 	m_pSprite->RenderUI();
-	m_pSprite->SetDeprh(true);
+	m_pSprite->SetDeprh( true );
 }
 
 // アルティメットが出現しているか.
-void CUltemateSing::IsAppUltemate(CActor * pActor)
+void CUltemateSing::IsAppUltemate(CGameActorManager* pActor)
 {
-	// アルティメットでなければ処理しない.
-	if (pActor->GetObjectTag() != EObjectTag::Alien_D) return;
-	// 出現フラグを立てる.
-	m_IsAppUltemate = true;
+	auto l = pActor->GetObjPositionList();
+
+	// すでに処理したオブジェクト分は無視する.
+	if (m_ObjCount >= l.size()) return;
+	for (auto a = l.begin() + m_ObjCount; a < l.end(); a++)
+	{
+		m_ObjCount++;
+		// アルティメットでなければ処理しない.
+		if (a->first != EObjectTag::Alien_D) continue;
+		// 出現フラグを立てる.
+		m_IsAppUltemate = true;
+	}
 }
 
 // スプライト設定関数.
 bool CUltemateSing::SpriteSetting()
 {
 	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite("ultemate signsize");
+	m_pSprite = CSpriteResource::GetSprite( SPRITE_NAME );
 	if (m_pSprite == nullptr) return false;
 
 	return true;
+}
+
+// サイン表示関数.
+void CUltemateSing::DispSign()
+{
+	if (m_Alpha < ALPHA_MAX && m_DispTime == 0)
+	{
+		CWidget::SetFadeIn();
+	}
+	else
+	{
+		m_DispTime++;
+
+		// 最大表示時間を超えていなければ処理しない.
+		if (m_DispTime < DISPTIME_MAX) return;
+		CWidget::SetFadeOut();
+
+		// 透過値が0ならば非表示にする.
+		if (m_Alpha < 0.0f)
+		{
+			m_DispTime = 0;
+			m_IsAppUltemate = false;
+		}
+	}
+	// フェードの更新.
+	CWidget::FadeUpdate(m_Alpha, ALPHA_SPEED);
 }

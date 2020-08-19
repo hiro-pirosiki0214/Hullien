@@ -54,6 +54,15 @@ void CWidget::FadeOut(float& alpha, const float& alphaSpeed)
 	SetAlpha(alpha, -alphaSpeed);
 }
 
+// フェード更新関数.
+void CWidget::FadeUpdate(float & alpha, const float & alphaSpeed)
+{
+	if (m_FadeState == EFadeState::In) { FadeIn(alpha, alphaSpeed); }
+	if (m_FadeState == EFadeState::Out) { FadeOut(alpha, alphaSpeed); }
+}
+
+	
+
 //透過値設定関数.
 void CWidget::SetAlpha(float & alpha, const float & alphaSpeed)
 {
