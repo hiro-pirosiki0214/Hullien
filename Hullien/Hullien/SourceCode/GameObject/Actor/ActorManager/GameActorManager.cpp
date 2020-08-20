@@ -62,7 +62,7 @@ void CGameActorManager::Update()
 	m_pBarrier->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 
 	// 女の子が捕まったか.
-//	if ( m_pGirl->IsDanger() == true ) m_pWarning->Init();	// 警告の初期化.
+	if ( m_pGirl->IsDanger() == true ) m_pWarning->Init();	// 警告の初期化.
 
 	// バリアの更新.
 	m_pBarrier->Update();

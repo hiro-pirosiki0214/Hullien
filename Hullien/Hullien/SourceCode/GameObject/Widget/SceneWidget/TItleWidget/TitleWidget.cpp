@@ -8,11 +8,11 @@
 *	タイトルUI元クラス.
 **/
 CTitleWidget::CTitleWidget()
-	: m_pSprites		()
+	: m_pSprite		()
 	, m_pCursor			( nullptr )
 	, m_SelectState		( CTitleWidget::ESelectState::Start )
 {
-	m_pCursor = std::make_unique<CCursor>();
+	m_pCursor = std::make_shared<CCursor>();
 }
 
 CTitleWidget::~CTitleWidget()
@@ -42,30 +42,22 @@ void CTitleWidget::Update()
 // 描画関数.
 void CTitleWidget::Render()
 {
-	if (m_pSprites.size() == 0) return;
+	if (m_pSprite.size() == 0) return;
 
 	//背景.
-	m_pSprites[BACKGROUND]->SetDeprh(false);
-	m_pSprites[BACKGROUND]->RenderUI();
-	m_pSprites[BACKGROUND]->SetDeprh(true);
+	m_pSprite[BACKGROUND]->SetDeprh(false);
+	m_pSprite[BACKGROUND]->RenderUI();
+	m_pSprite[BACKGROUND]->SetDeprh(true);
 
 	// カーソル.
 	m_pCursor->Render();
 
 	// 文字.
-	for (size_t sprite = START; sprite < m_pSprites.size(); sprite++)
+	for (size_t sprite = START; sprite < m_pSprite.size(); sprite++)
 	{
-		if (sprite == START)
-		{
-			m_pSprites[sprite]->SetPosition(D3DXVECTOR3(600.0f, 500.0f, 0.0f));
-		}
-		else if(sprite == END)
-		{
-			m_pSprites[sprite]->SetPosition(D3DXVECTOR3(600.0f, 600.0f, 0.0f));
-		}
-		m_pSprites[sprite]->SetDeprh(false);
-		m_pSprites[sprite]->RenderUI();
-		m_pSprites[sprite]->SetDeprh(true);
+		m_pSprite[sprite]->SetDeprh(false);
+		m_pSprite[sprite]->RenderUI();
+		m_pSprite[sprite]->SetDeprh(true);
 	}
 }
 
@@ -74,19 +66,19 @@ bool CTitleWidget::SpriteSetting()
 {
 	const char* spriteName[] =
 	{
-		SPRITE_BACKGROUND,	//背景.
-		SPRITE_SELECTSTART, //開始.
-		SPRITE_SELECTEXIT,  //終了.
-		SPRITE_TITLE,	    //タイトル.
+		SPRITE_BACKGROUND,		//背景.
+		SPRITE_SELECTSTART,		//開始.
+		SPRITE_SELECTEXIT,			//終了.
+		SPRITE_TITLE,					//タイトル.
 	};
 	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 
 	// メモリの最大値設定.
-	m_pSprites.reserve(SpriteMax);
+	m_pSprite.reserve(SpriteMax);
 	for (int sprite = 0; sprite < SpriteMax; sprite++)
 	{
-		m_pSprites.emplace_back(CSpriteResource::GetSprite(spriteName[sprite]));
-		if (m_pSprites[sprite] == nullptr) return false;
+		m_pSprite.emplace_back(CSpriteResource::GetSprite(spriteName[sprite]));
+		if (m_pSprite[sprite] == nullptr) return false;
 	}
 
 	return true;
@@ -107,10 +99,10 @@ void CTitleWidget::CursorSetting()
 	switch (m_SelectState)
 	{
 	case CTitleWidget::ESelectState::Start:
-		m_pCursor->SetPosition(D3DXVECTOR3(600.0f, 500.0f, 0.0f));
+		m_pCursor->SetPosition( m_pSprite[START]->GetRenderPos() );
 		break;
 	case CTitleWidget::ESelectState::End:
-		m_pCursor->SetPosition(D3DXVECTOR3(600.0f, 600.0f, 0.0f));
+		m_pCursor->SetPosition( m_pSprite[END]->GetRenderPos() );
 		break;
 	default:
 		break;

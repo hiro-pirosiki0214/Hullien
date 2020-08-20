@@ -56,6 +56,8 @@ private:
 	void SpriteSetting(OBJLIST objList);
 	// オブジェクトのスプライト設定関数.
 	void ObjSpriteSetting(const char* spriteName, const EObjectTag& tag);
+	// アニメーション番号の設定関数.
+	int SetAnimNumber(const EObjectTag& tag);
 
 private:
 	std::vector<SIconInfo>	m_IconList;			//アイコンリスト,

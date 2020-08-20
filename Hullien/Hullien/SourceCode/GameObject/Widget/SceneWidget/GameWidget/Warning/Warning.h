@@ -12,7 +12,8 @@ class CCameraManager;
 class CWarning : public CSceneWidget
 {
 private:
-	const char* SPRITE_NAME = "dangersignsize";
+	const char* SPRITE_NAME = "dangersignsize";	//スプライト名.
+	const float ADJ_POS_Y = 6.0f;							//y座標調整.
 
 public:
 	CWarning();

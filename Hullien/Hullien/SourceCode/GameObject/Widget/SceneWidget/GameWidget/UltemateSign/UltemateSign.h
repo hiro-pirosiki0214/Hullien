@@ -12,7 +12,7 @@ class CUltemateSing : public CSceneWidget
 {
 private:
 	const char* SPRITE_NAME = "ultemate signsize";	//スプライトの名前.
-	const float DISPTIME_MAX = 150.0f;						//最大表示時間.
+	const float DISPTIME_MAX = 250.0f;						//最大表示時間.
 	const float ALPHA_SPEED = 0.03f;							//透過速度.
 
 public:

@@ -8,7 +8,7 @@
 *	ミニマップクラス.
 **/
 CMiniMap::CMiniMap()
-	: m_IconList		()
+	: m_IconList					()
 	, m_ObjPosListCount	( 0 )
 
 {
@@ -36,7 +36,7 @@ void CMiniMap::Update()
 void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 {
 	// スプライトの設定.
-	OBJLIST List = pObj->GetObjPositionList();
+	auto List = pObj->GetObjPositionList();
 	SpriteSetting( List );
 
 	// アイコン位置の更新.
@@ -44,7 +44,7 @@ void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 	for (const auto& obj : pObj->GetObjPositionList())
 	{
 		// タグ情報の更新.
-		if (obj.first != m_IconList[objCount].EObjTag) m_IconList[objCount].EObjTag = obj.first;
+		if (obj.first != m_IconList[objCount].EObjTag) { m_IconList[objCount].EObjTag = obj.first; }
 
 		// Noneならば処理しない.
 		if (obj.first == EObjectTag::None) continue;
@@ -90,7 +90,7 @@ void CMiniMap::SpriteSetting(OBJLIST objList)
 {
 	if (m_ObjPosListCount > objList.size()) return;
 
-	for (OBJLIST::const_iterator obj = objList.begin() + m_ObjPosListCount; obj < objList.end(); obj++)
+	for (auto obj = objList.begin() + m_ObjPosListCount; obj < objList.end(); obj++)
 	{
 		m_ObjPosListCount++;
 		ObjSpriteSetting(SPRITE_DEFAULT_ICON, obj->first);
@@ -102,27 +102,36 @@ void CMiniMap::ObjSpriteSetting(const char* spriteName, const EObjectTag& tag)
 {
 	SIconInfo info;
 	// 読み込むスプライトの設定.
-	info.pSprite = CSpriteResource::GetSprite(spriteName);
+	info.pSprite = CSpriteResource::GetSprite( spriteName );
 	// 初期位置の設定.
 	info.Pos = m_IconList[MAP_BACK].pSprite->GetRenderPos();
 	// タグの設定.
 	info.EObjTag = tag;
 	// アニメーション番号の設定.
+	info.AnimNumber = SetAnimNumber( tag );
+	// リストを増やす.
+	m_IconList.emplace_back( info );
+}
+
+// アニメーション番号の設定関数.
+int CMiniMap::SetAnimNumber(const EObjectTag& tag)
+{
+	int animNumber = 0;
 	switch (tag)
 	{
 	case EObjectTag::Player:
-		info.AnimNumber = 0;
+		animNumber = 0;
 		break;
 	case EObjectTag::Girl:
-		info.AnimNumber = 1;
+		animNumber = 1;
 		break;
 	case EObjectTag::Alien_A:
 	case EObjectTag::Alien_B:
 	case EObjectTag::Alien_C:
-		info.AnimNumber = 2;
+		animNumber = 2;
 		break;
 	case EObjectTag::Alien_D:
-		info.AnimNumber = 3;
+		animNumber = 3;
 		break;
 	case EObjectTag::SPEffectTimeItem:
 	case EObjectTag::AttackUpItem:
@@ -137,7 +146,6 @@ void CMiniMap::ObjSpriteSetting(const char* spriteName, const EObjectTag& tag)
 		break;
 	}
 
-	// リストを増やす.
-	m_IconList.emplace_back(info);
+	return animNumber;
 }
 
