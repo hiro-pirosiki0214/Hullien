@@ -35,8 +35,8 @@ private:
 private:
 	D3DXVECTOR3 m_vTargetPos;	//ターゲット位置.
 	D3DXVECTOR3 m_vTargetRot;	//ターゲット回転置.
-	bool m_IsDisp;				//表示するか.
-	bool m_IsUI;				//UIかそうでないか.
+	bool m_IsDisp;							//表示するか.
+	bool m_IsUI;								//UIかそうでないか.
 
 	std::shared_ptr<CCameraManager>		m_pCamera;			// カメラ.
 

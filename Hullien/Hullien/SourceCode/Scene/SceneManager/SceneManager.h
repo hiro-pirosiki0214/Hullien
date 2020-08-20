@@ -37,6 +37,8 @@ public:
 	void NextSceneMove();
 	// ゲームオーバーの設定.
 	void OnGameOver(){ m_IsGameOver = true; }
+	// ゲームリトライ.
+	void RetryGame();
 
 private:
 	// エディットシーンに変更.
