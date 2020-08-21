@@ -45,12 +45,12 @@ private:
 	void FramesToSeconds();
 
 private:
-	std::vector<std::shared_ptr<CSprite>> m_pSprite;	// スプライトクラス.
-	std::vector<D3DXVECTOR3>			  m_vPosition;	// 位置.
-	std::vector<int>					  m_Anim;		// アニメーション番号.
-	int									  m_FrameCount;	// フレームカウント.
-	int									  m_Seconds;	// 秒.
-	bool								  m_IsFinish;	// 終了したかどうか.
+	std::vector<std::shared_ptr<CSprite>> m_pSprite;			// スプライトクラス.
+	std::vector<D3DXVECTOR3>				m_vPosition;		// 位置.
+	std::vector<int>								m_Anim;				// アニメーション番号.
+	int													m_FrameCount;	// フレームカウント.
+	int													 m_Seconds;		// 秒.
+	bool												 m_IsFinish;			// 終了したかどうか.
 };
 
 #endif	//#ifndef LIMITTIME_H.
