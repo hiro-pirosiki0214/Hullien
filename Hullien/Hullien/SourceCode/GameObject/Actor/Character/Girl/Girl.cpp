@@ -7,15 +7,17 @@
 CGirl::CGirl()
 	: m_Parameter			()
 	, m_pSearchCollManager	( nullptr )
-	, m_OldPosition			( 0.0f, 0.0f, 0.0f )
-	, m_NowState			( ENowState::None )
-	, m_NowMoveState		( EMoveState::None )
-	, m_IsDanger			( false )
+	, m_pWarning					( nullptr )
+	, m_OldPosition				( 0.0f, 0.0f, 0.0f )
+	, m_NowState					( ENowState::None )
+	, m_NowMoveState			( EMoveState::None )
+	, m_IsDanger					( false )
 {
 	m_ObjectTag	= EObjectTag::Girl;
 	m_NowState	= ENowState::Protected;
 	m_NowMoveState = EMoveState::Wait;
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
+	m_pWarning = std::make_unique<CWarning>();
 }
 
 CGirl::~CGirl()
@@ -31,6 +33,7 @@ bool CGirl::Init()
 	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
+	if ( m_pWarning->Init() == false ) return false;
 
 	return true;
 }
@@ -61,6 +64,12 @@ void CGirl::Update()
 	if( GetAsyncKeyState(VK_DOWN) & 0x8000 ) m_vPosition.z += 0.04f;
 	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) m_vPosition.x -= 0.04f;
 	if( GetAsyncKeyState(VK_LEFT) & 0x8000 ) m_vPosition.x += 0.04f;
+
+	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
+	{
+		m_pWarning->Update();
+		m_pWarning->SetPosition(m_vPosition);
+	}
 }
 
 // ï`âÊä÷êî.
@@ -95,6 +104,11 @@ void CGirl::SetTargetPos( CActor& actor )
 // ÉXÉvÉâÉCÉgÇÃï`âÊ.
 void CGirl::SpriteRender()
 {
+	// èóÇÃéqÇ™òAÇÍãéÇÁÇÍÇƒÇ¢ÇÈèÛë‘Ç‹ÇΩÇÕäÎåØÇ»èÛë‘Ç»ÇÁÇŒåxçêÇï`âÊ.
+	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
+	{
+		m_pWarning->Render();
+	}
 }
 
 // à⁄ìÆä÷êî.

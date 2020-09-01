@@ -10,7 +10,6 @@
 CWarning::CWarning()
 	: m_vTargetPos	(D3DXVECTOR3(0.0f,0.0f,0.0f))
 	, m_vTargetRot	(D3DXVECTOR3(0.0f,0.0f,0.0f))
-	, m_IsDisp			( false )
 	, m_IsUI				( false )
 	, m_pCamera		( nullptr )
 {
@@ -40,28 +39,10 @@ void CWarning::Render()
 {
 	if ( m_pSprite == nullptr ) return;
 	// 表示フラグが立っていなければ描画しない.
-	if (m_IsDisp != true) return;
 	m_pSprite->SetPosition( m_vPosition );
 	if (m_IsUI == false)
 	{
 		m_pSprite->Render(true);	// ビルボードにする.
-	}
-}
-
-// 女の子の状態設定関数.
-void CWarning::SetGirlState(CGirl* pGirl)
-{
-	// 女の子の位置取得.
-	m_vTargetPos = pGirl->GetPosition();
-
-	// 女の子が危険な状態か.
-	if (pGirl->IsDanger() == true)
-	{
-		m_IsDisp = true;					//描画フラグを立てる.
-	} 
-	else 
-	{
-		m_IsDisp = false;
 	}
 }
 
