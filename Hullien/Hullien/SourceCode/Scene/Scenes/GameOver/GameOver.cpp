@@ -33,6 +33,8 @@ void CGameOver::Update()
 		&& CFade::GetInstance()->GetIsFade() == true) return;
 	m_pGameOverWidget->Update();
 
+
+	// ˆÈ‰ºƒV[ƒ“‘JˆÚ.
 	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
 		CFade::GetInstance()->SetFadeIn();
 	}

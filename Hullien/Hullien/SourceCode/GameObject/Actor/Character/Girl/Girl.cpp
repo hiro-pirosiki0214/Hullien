@@ -64,13 +64,6 @@ void CGirl::Update()
 	if( GetAsyncKeyState(VK_DOWN) & 0x8000 ) m_vPosition.z += 0.04f;
 	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) m_vPosition.x -= 0.04f;
 	if( GetAsyncKeyState(VK_LEFT) & 0x8000 ) m_vPosition.x += 0.04f;
-
-	// 警告.
-	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
-	{
-		m_pWarning->SetPosition(m_vPosition);
-		m_pWarning->Update();
-	}
 }
 
 // 描画関数.
@@ -108,9 +101,16 @@ void CGirl::SpriteRender()
 	// 女の子が連れ去られている状態または危険な状態ならば警告を描画.
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
+		m_pWarning->SetPosition(m_vPosition);
+		m_pWarning->Update();
 		m_pWarning->Render();
 	}
-	m_IsDanger = false;
+	// 女の子が連れ去られている状態出ないなら警告を非表示.
+	if(m_NowState != ENowState::Abduct)
+	{
+		m_IsDanger = false;
+	}
+
 }
 
 // 移動関数.

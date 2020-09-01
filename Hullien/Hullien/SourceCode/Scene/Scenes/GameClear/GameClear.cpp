@@ -33,9 +33,8 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-	m_pFade->Update();
 
-	if (m_pFade->GetFadeState() == CWidget::EFadeState::Out
+	if (CFade::GetFadeState() == CFade::EFadeState::Out
 		&& m_pFade->GetIsFade() == true) return;
 	m_pClearWidget->Update();
 	ChangeScene();
@@ -60,7 +59,7 @@ void CGameClear::ChangeScene()
 		m_pFade->SetFadeIn();
 	}
 	// フェードイン状態かつフェード中なら処理しない.
-	if (m_pFade->GetFadeState() != CWidget::EFadeState::In) return;
+	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (m_pFade->GetIsFade() == true) return;
 	m_pSceneManager->NextSceneMove();
 }

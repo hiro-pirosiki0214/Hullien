@@ -22,7 +22,7 @@ public:
 	virtual void Render() override;
 
 private:
-	std::unique_ptr<CGameOverWidget> m_pGameOverWidget;
+	std::unique_ptr<CGameOverWidget> m_pGameOverWidget;	//UIŠÇ—ƒNƒ‰ƒX.
 };
 
 #endif	// #ifndef GAME_OVER_H.

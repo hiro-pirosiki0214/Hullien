@@ -32,7 +32,7 @@ void CFade::Update()
 	if (GetInstance()->m_FadeState == EFadeState::In)
 	{
 		//透過値が最大値より小さければフェード中.
-		if (GetInstance()->m_Alpha < m_AlphaMax)
+		if (GetInstance()->m_Alpha < ALPHA_MAX)
 		{
 			GetInstance()->m_Alpha += m_AlphaSpeed;
 		}
@@ -62,6 +62,7 @@ void CFade::Render()
 	if (GetInstance()->m_pSprite == nullptr) return;
 	// フェードの処理中でなければ通さない.
 	if (GetInstance()->m_IsFade == false) return;
+	GetInstance()->Update();
 
 	GetInstance()->m_pSprite->SetAlpha(GetInstance()->m_Alpha);
 	GetInstance()->m_pSprite->SetBlend(true);
@@ -82,7 +83,7 @@ void CFade::SetFadeIn()
 // フェードアウト設定関数.
 void CFade::SetFadeOut()
 {
-	GetInstance()->m_Alpha = m_AlphaMax;
+	GetInstance()->m_Alpha = GetInstance()->ALPHA_MAX;
 	GetInstance()->m_IsFade = true;
 	GetInstance()->m_FadeState = EFadeState::Out;
 }

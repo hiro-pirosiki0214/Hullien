@@ -8,9 +8,9 @@
 *	タイトルUI元クラス.
 **/
 CTitleWidget::CTitleWidget()
-	: m_pSprite		()
+	: m_pSprite			()
 	, m_pCursor			( nullptr )
-	, m_SelectState		( CTitleWidget::ESelectState::Start )
+	, m_SelectState	( CTitleWidget::ESelectState::Start )
 {
 	m_pCursor = std::make_shared<CCursor>();
 }
