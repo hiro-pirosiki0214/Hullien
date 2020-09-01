@@ -13,12 +13,12 @@ protected:
 	// キャラクターパラメータ.
 	struct stParameter
 	{
-		float	Life;			// 体力.
+		float	LifeMax;		// 体力.
 		float	AttackPower;	// 攻撃力.
 		float	MoveSpeed;		// 移動速度.
 		int		InvincibleTime;	// 無敵時間.
 		stParameter()
-			: Life				( 1.0f )
+			: LifeMax			( 1.0f )
 			, AttackPower		( 0.5f )
 			, MoveSpeed			( 0.5f )
 			, InvincibleTime	( 0 )

@@ -96,7 +96,7 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 
 	//  各パラメータの設定.
 	ImGui::InputFloat( u8"移動速度", &s.MoveSpeed );
-	ImGui::InputFloat( u8"体力", &s.Life );
+	ImGui::InputFloat( u8"体力", &s.LifeMax );
 	ImGui::InputFloat( u8"攻撃力", &s.AttackPower );
 	ImGui::InputInt( u8"待機時間", &s.WaitTime );
 	ImGui::InputInt( u8"無敵時間", &s.InvincibleTime );
