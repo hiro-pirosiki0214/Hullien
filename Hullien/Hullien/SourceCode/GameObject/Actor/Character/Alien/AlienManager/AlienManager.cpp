@@ -208,7 +208,7 @@ void CAlienManager::DebugRender()
 		CDebugText::Render( "-- Alien A Param --" );
 
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*5, 0.0f } );
-		CDebugText::Render( "Life : ", m_AlienParamList[a_index].Life );
+		CDebugText::Render( "Life : ", m_AlienParamList[a_index].LifeMax );
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*6, 0.0f } );
 		CDebugText::Render( "MoveSpeed : ", m_AlienParamList[a_index].MoveSpeed );
 		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*7, 0.0f } );

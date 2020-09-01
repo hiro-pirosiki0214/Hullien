@@ -3,22 +3,22 @@
 
 #include "..\Actor.h"
 
-#define IS_TEMP_MODEL_RENDER	// ‰¼ƒ‚ƒfƒ‹•\¦.
+#define IS_TEMP_MODEL_RENDER	// ä»®ãƒ¢ãƒ‡ãƒ«è¡¨ç¤º.
 
 class CCharacter : public CActor
 {
 protected:
-	const float INIT_POSITION_ADJ_HEIGHT = 5.0f;	// ’²®—pÀ•W‚Ì‚‚³.
+	const float INIT_POSITION_ADJ_HEIGHT = 5.0f;	// èª¿æ•´ç”¨åº§æ¨™ã®é«˜ã•.
 
-	// ƒLƒƒƒ‰ƒNƒ^[ƒpƒ‰ƒ[ƒ^.
+	// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿.
 	struct stParameter
 	{
-		float	Life;			// ‘Ì—Í.
-		float	AttackPower;	// UŒ‚—Í.
-		float	MoveSpeed;		// ˆÚ“®‘¬“x.
-		int		InvincibleTime;	// –³“GŠÔ.
+		float	LifeMax;		// ä½“åŠ›.
+		float	AttackPower;	// æ”»æ’ƒåŠ›.
+		float	MoveSpeed;		// ç§»å‹•é€Ÿåº¦.
+		int		InvincibleTime;	// ç„¡æ•µæ™‚é–“.
 		stParameter()
-			: Life				( 1.0f )
+			: LifeMax			( 1.0f )
 			, AttackPower		( 0.5f )
 			, MoveSpeed			( 0.5f )
 			, InvincibleTime	( 0 )
@@ -29,28 +29,28 @@ public:
 	CCharacter();
 	virtual ~CCharacter();
 
-	// ˆÚ“®ŠÖ”.
+	// ç§»å‹•é–¢æ•°.
 	virtual void Move() = 0;
-	// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æ.
-	virtual void SpriteRender() {};
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”».
+	virtual void SpriteRender(){};
 
 protected:
-	// ƒƒbƒVƒ…‚Ì•\¦.
+	// ãƒ¡ãƒƒã‚·ãƒ¥ã®è¡¨ç¤º.
 	void MeshRender();
-	// –³“GŠÔ‚©‚Ç‚¤‚©.
+	// ç„¡æ•µæ™‚é–“ã‹ã©ã†ã‹.
 	bool IsInvincibleTime( const int& invincibleTime );
-	// ƒ‚ƒfƒ‹‚Ìæ“¾.
+	// ãƒ¢ãƒ‡ãƒ«ã®å–å¾—.
 	bool GetModel( const char* modelName );
-	// “–‚½‚è”»’è‚Ìİ’è.
+	// å½“ãŸã‚Šåˆ¤å®šã®è¨­å®š.
 	bool ColliderSetting();
-	// ƒpƒ‰ƒ[ƒ^‚Ìİ’è.
+	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è¨­å®š.
 	template<class inParam>
 	bool ParameterSetting( const char* fileName, inParam& param )
 	{
-		// Šù‚Éƒpƒ‰ƒ[ƒ^‚ªİ’èÏ‚İ‚È‚çI—¹.
+		// æ—¢ã«ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãŒè¨­å®šæ¸ˆã¿ãªã‚‰çµ‚äº†.
 		if( m_HasFinishedParamSetting == true ) return true;
 
-		// “Ç‚İ‚İ‚ª³í‚És‚¦‚Ä‚È‚¯‚ê‚ÎI—¹.
+		// èª­ã¿è¾¼ã¿ãŒæ­£å¸¸ã«è¡Œãˆã¦ãªã‘ã‚Œã°çµ‚äº†.
 		if( CFileManager::BinaryReading( fileName, param ) == false ) return false;
 
 		m_HasFinishedParamSetting = true;
@@ -58,15 +58,15 @@ protected:
 	}
 
 protected:
-	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// ƒXƒLƒ“ƒƒbƒVƒ….
+	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// ã‚¹ã‚­ãƒ³ãƒ¡ãƒƒã‚·ãƒ¥.
 #ifdef IS_TEMP_MODEL_RENDER
-	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;	// ‰¼‚Ìƒ‚ƒfƒ‹ƒf[ƒ^.
+	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;	// ä»®ã®ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿.
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
 
-	D3DXVECTOR3	m_MoveVector;	// ˆÚ“®ƒxƒNƒgƒ‹.
-	int	m_InvincibleCount;		// –³“GƒJƒEƒ“ƒg.
+	D3DXVECTOR3	m_MoveVector;	// ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«.
+	int	m_InvincibleCount;		// ç„¡æ•µã‚«ã‚¦ãƒ³ãƒˆ.
 
-	bool m_HasFinishedParamSetting;	// ƒpƒ‰ƒ[ƒ^[‚Ìİ’è‚ªI‚í‚Á‚½‚©.
+	bool m_HasFinishedParamSetting;	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ã®è¨­å®šãŒçµ‚ã‚ã£ãŸã‹.
 };
 
 #endif	// #ifndef CHARACTER_H.

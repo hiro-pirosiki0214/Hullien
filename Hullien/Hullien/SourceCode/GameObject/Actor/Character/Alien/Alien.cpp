@@ -13,6 +13,7 @@ CAlien::CAlien()
 	, m_NowState				( EAlienState::None )
 	, m_NowMoveState			( EMoveState::None )
 	, m_HasAnyItem				( EItemList::SPEffectTime )
+	, m_LifePoint				( 0.0f )
 	, m_ModelAlpha				( 0.0f )
 	, m_WaitCount				( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
@@ -43,9 +44,9 @@ void CAlien::LifeCalculation( const std::function<void(float&)>& proc )
 	if( m_NowState == EAlienState::Death ) return;
 	if( m_NowState == EAlienState::Fright ) return;
 
-	proc( m_Parameter.Life );
+	proc( m_LifePoint );
 	m_NowState = EAlienState::Fright;
-	if( m_Parameter.Life > 0.0f ) return;
+	if( m_LifePoint > 0.0f ) return;
 	m_NowState = EAlienState::Death;
 }
 
