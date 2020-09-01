@@ -48,7 +48,6 @@ void CAlienD::Render()
 {
 	m_pLaserBeam->Render();
 	ModelRender();
-	AttackRangeSpriteRender();
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -85,6 +84,12 @@ bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_pLaserBeam->SetParalysisTime( m_Parameter.ParalysisTime );
 
 	return true;
+}
+
+// スプライトの描画.
+void CAlienD::SpriteRender()
+{
+	AttackRangeSpriteRender();
 }
 
 // モデルの描画.

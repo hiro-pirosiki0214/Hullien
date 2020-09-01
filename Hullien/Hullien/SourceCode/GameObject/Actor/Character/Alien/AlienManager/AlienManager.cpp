@@ -87,6 +87,13 @@ void CAlienManager::Render()
 #endif	// #if _DEBUG.
 }
 
+// スプライト描画関数.
+void CAlienManager::SpriteRender()
+{
+	// 宇宙人達の描画.
+	for( auto& a : m_AilenList ) a->SpriteRender();
+}
+
 // スポーン.
 void CAlienManager::Spawn()
 {

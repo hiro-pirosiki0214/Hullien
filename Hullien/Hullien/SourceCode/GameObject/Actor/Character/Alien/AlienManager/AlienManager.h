@@ -26,6 +26,8 @@ public:
 	void Update( std::function<void(CActor*)> updateProc );
 	// 描画関数.
 	void Render();
+	// スプライト描画関数.
+	void SpriteRender();
 	// 落とすアイテムリストの取得.
 	DropItemList GetDropItemList(){ return m_DropItemList; }
 

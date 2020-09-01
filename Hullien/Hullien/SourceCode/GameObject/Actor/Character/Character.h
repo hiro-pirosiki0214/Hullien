@@ -3,7 +3,7 @@
 
 #include "..\Actor.h"
 
-#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
+//#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
 
 class CCharacter : public CActor
 {
@@ -31,6 +31,8 @@ public:
 
 	// 移動関数.
 	virtual void Move() = 0;
+	// スプライトの描画.
+	virtual void SpriteRender();
 
 protected:
 	// メッシュの表示.
