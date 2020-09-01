@@ -2,6 +2,7 @@
 #define GIRL_H
 
 #include "..\Character.h"
+#include "..\..\..\Widget\SceneWidget\GameWidget\Warning\Warning.h"
 
 class CGirl : public CCharacter
 {
@@ -82,6 +83,7 @@ private:
 private:
 	SGirlParam m_Parameter;	// 女の子のパラメーター.
 	std::shared_ptr<CCollisionManager>	m_pSearchCollManager;	// 索敵用の当たり判定.
+	std::unique_ptr<CWarning>					m_pWarning;						// 警告クラス.
 	D3DXVECTOR3	m_OldPosition;	// 前回の座標.
 	ENowState	m_NowState;		// 現在の状態.
 	EMoveState	m_NowMoveState;	// 現在の移動状態.

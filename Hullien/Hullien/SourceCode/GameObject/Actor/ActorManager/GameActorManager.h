@@ -27,6 +27,8 @@ public:
 	void Update();
 	// 描画関数.
 	void Render();
+	// スプライトの描画.
+	void SpriteRender();
 	// オブジェクト座標リストの取得.
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	GetObjPositionList() const { return m_ObjPositionList; }
 
@@ -41,7 +43,6 @@ private:
 	std::shared_ptr<CAlienManager>	m_pAlienManager;
 	std::shared_ptr<CItemManager>	m_pItemManager;
 	std::shared_ptr<CBarrier>		m_pBarrier;
-	std::shared_ptr<CWarning>		m_pWarning;
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;
 };
