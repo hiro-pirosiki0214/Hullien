@@ -35,6 +35,8 @@ public:
 	void Update();
 	// 次のシーンに移動.
 	void NextSceneMove();
+	// ゲーム終了.
+	void EndGameClose();
 	// ゲームオーバーの設定.
 	void OnGameOver(){ m_IsGameOver = true; }
 	// ゲームリトライ.

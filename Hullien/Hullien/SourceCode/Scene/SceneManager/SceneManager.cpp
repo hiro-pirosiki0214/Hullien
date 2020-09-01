@@ -86,7 +86,16 @@ void CSceneManager::NextSceneMove()
 	}
 }
 
+//=================================.
+// ゲーム終了.
+//=================================.
+void CSceneManager::EndGameClose()
+{
+}
+
+//=================================.
 // ゲームリトライ.
+//=================================.
 void CSceneManager::RetryGame()
 {
 	m_IsLoadEnd = false;
