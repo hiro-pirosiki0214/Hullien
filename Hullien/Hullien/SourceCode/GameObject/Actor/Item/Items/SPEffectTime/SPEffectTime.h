@@ -5,7 +5,7 @@
 
 class CSPEffectTimeItem : public CItemBase
 {
-	const char* MODEL_NAME = "GhostA";
+	const char* MODEL_NAME = "item ability";
 	const float* pSP_RECOVERY_VALUE;	// 特殊能力回復力(外部からポインタで取得する).
 	const float* pSP_RECOVERY_TIME;		// 特殊能力回復時間(外部からポインタで取得する).
 public:

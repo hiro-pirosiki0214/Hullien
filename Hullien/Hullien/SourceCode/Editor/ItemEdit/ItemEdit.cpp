@@ -87,6 +87,8 @@ void CItemEdit::ParamRender()
 	ImGui::InputInt(   u8"バウンド最大数",		&m_Prameter.BoundCountMax );
 	ImGui::InputFloat( u8"モデルサイズ最大",	&m_Prameter.ModelScaleMax );
 	ImGui::InputFloat( u8"モデルサイズ加算値",	&m_Prameter.ModelScaleAddValue );
+	ImGui::InputFloat( u8"最終的な描画の高さ",	&m_Prameter.FinalRenderHeight );
+	ImGui::InputFloat( u8"最終的な移動速度",	&m_Prameter.FinalMoveSpeed );
 	ImGui::InputFloat( u8"回転速度",			&m_Prameter.RotationSpeed );
 	ImGui::InputFloat( u8"アクティブ時間",		&m_Prameter.ActiveTime );
 	ImGui::InputFloat( u8"消える時間",			&m_Prameter.DisappearTime );

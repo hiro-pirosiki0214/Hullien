@@ -60,10 +60,7 @@ void CGirl::Update()
 	default:
 		break;
 	}
-	if( GetAsyncKeyState(VK_UP) & 0x8000 ) m_vPosition.z -= 0.04f;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 ) m_vPosition.z += 0.04f;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) m_vPosition.x -= 0.04f;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 ) m_vPosition.x += 0.04f;
+	
 
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
@@ -109,6 +106,7 @@ void CGirl::SpriteRender()
 	{
 		m_pWarning->Render();
 	}
+	m_IsDanger = false;
 }
 
 // ˆÚ“®ŠÖ”.
@@ -209,7 +207,6 @@ void CGirl::SearchCollision( CActor* pActor )
 		( pActor->GetObjectTag() != EObjectTag::Alien_C ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_D )) return;
 
-	m_IsDanger = false;
 	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pSearchCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	m_IsDanger = true;

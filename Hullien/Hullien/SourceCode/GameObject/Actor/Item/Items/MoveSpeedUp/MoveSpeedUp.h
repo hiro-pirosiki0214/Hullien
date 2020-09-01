@@ -5,7 +5,7 @@
 
 class CMoveSpeedUpItem : public CItemBase
 {
-	const char* MODEL_NAME = "GhostA";
+	const char* MODEL_NAME = "item speed";
 	const float* pMOVE_VALUE;	// 移動力(外部からポインタで取得する).
 	const float* pMOVE_UP_TIME;	// 移動力UP時間(外部からポインタで取得する).
 
