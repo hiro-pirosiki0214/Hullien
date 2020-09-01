@@ -31,6 +31,8 @@ public:
 
 	// 移動関数.
 	virtual void Move() = 0;
+	// スプライトの描画.
+	virtual void SpriteRender();
 
 protected:
 	// メッシュの表示.

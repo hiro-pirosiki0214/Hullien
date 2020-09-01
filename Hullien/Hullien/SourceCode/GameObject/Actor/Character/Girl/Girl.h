@@ -60,6 +60,8 @@ public:
 	virtual void Collision( CActor* pActor ) override;
 	// 相手座標の設定関数.
 	virtual void SetTargetPos( CActor& actor ) override;
+	// スプライトの描画.
+	virtual void SpriteRender() override;
 	// 危険な状態か.
 	bool IsDanger(){ return m_IsDanger; }
 

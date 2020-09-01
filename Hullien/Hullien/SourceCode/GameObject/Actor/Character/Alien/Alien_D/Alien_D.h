@@ -38,6 +38,8 @@ public:
 	virtual void Collision( CActor* pActor ) override;
 	// スポーン.
 	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
+	// スプライトの描画.
+	virtual void SpriteRender() override;
 
 private:
 	// モデルの描画.
