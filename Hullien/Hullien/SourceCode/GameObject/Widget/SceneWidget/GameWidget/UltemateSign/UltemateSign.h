@@ -38,9 +38,9 @@ private:
 	void DispSign();
 
 private:
-	bool m_IsAppUltemate;	//アルティメットが出現しているか.
-	int m_ObjCount;			// オブジェクトのカウント.
-	float m_DispTime;			//表示時間.
+	bool m_IsAppUltemate;			// アルティメットが出現しているか.
+	unsigned int m_ObjCount;		// オブジェクトのカウント.
+	float m_DispTime;					// 表示時間.
 };
 
 

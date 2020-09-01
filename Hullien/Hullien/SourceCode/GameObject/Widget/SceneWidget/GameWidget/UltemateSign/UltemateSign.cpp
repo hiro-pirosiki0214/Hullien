@@ -36,11 +36,13 @@ void CUltemateSing::Update()
 void CUltemateSing::Render()
 {
 	if (m_IsAppUltemate == false) return;
+	m_pSprite->SetAlpha(m_Alpha);
+
 	m_pSprite->SetBlend( true );
-	m_pSprite->SetAlpha( m_Alpha );
 	m_pSprite->SetDeprh( false );
 	m_pSprite->RenderUI();
 	m_pSprite->SetDeprh( true );
+	m_pSprite->SetBlend( false );
 }
 
 // アルティメットが出現しているか.
@@ -75,7 +77,8 @@ void CUltemateSing::DispSign()
 {
 	if (m_Alpha < ALPHA_MAX && m_DispTime == 0)
 	{
-		CWidget::SetFadeIn();
+		// フェードインの設定.
+		if ( m_FadeState != EFadeState::In ) { SetFadeIn(ALPHA_SPEED); }
 	}
 	else
 	{
@@ -83,7 +86,8 @@ void CUltemateSing::DispSign()
 
 		// 最大表示時間を超えていなければ処理しない.
 		if (m_DispTime < DISPTIME_MAX) return;
-		CWidget::SetFadeOut();
+		// フェードアウトの設定.
+		if (m_FadeState != EFadeState::Out) { SetFadeOut(ALPHA_SPEED); }
 
 		// 透過値が0ならば非表示にする.
 		if (m_Alpha < 0.0f)
@@ -92,6 +96,7 @@ void CUltemateSing::DispSign()
 			m_IsAppUltemate = false;
 		}
 	}
+
 	// フェードの更新.
-	CWidget::FadeUpdate(m_Alpha, ALPHA_SPEED);
+	FadeUpdate(m_Alpha);
 }

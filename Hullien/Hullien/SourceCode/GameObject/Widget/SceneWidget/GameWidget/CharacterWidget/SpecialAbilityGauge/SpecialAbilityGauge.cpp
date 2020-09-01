@@ -12,7 +12,7 @@ CSpecialAbilityGauge::CSpecialAbilityGauge()
 	, m_Alpha			()
 	, m_WaitTime		( 0 )
 {
-	m_FadeState = CWidget::EFadeState::In;
+	SetFadeIn(FADE_IN_SPEED);
 }
 
 CSpecialAbilityGauge::~CSpecialAbilityGauge()
@@ -52,6 +52,7 @@ void CSpecialAbilityGauge::Render()
 		m_pSprite[sprite]->SetScale(m_GaugeState[sprite].vScale);
 		m_pSprite[sprite]->SetAnimNumber(m_GaugeState[sprite].AnimNum);
 		m_pSprite[sprite]->SetAlpha(m_Alpha[sprite]);
+
 		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->SetDeprh( false );
 		m_pSprite[sprite]->RenderUI();
@@ -99,11 +100,9 @@ void CSpecialAbilityGauge::ShineBar()
 	switch (m_FadeState)
 	{
 	case CWidget::EFadeState::In:
-		CWidget::FadeIn(m_Alpha[2], FADE_IN_SPEED);
-		if (m_Alpha[2] >= ALPHA_MAX) { CWidget::SetFadeOut(); }
+		if (m_Alpha[2] >= ALPHA_MAX) { SetFadeOut(FADE_OUT_SPEED); }
 		break;
 	case CWidget::EFadeState::Out:
-		CWidget::FadeOut(m_Alpha[2], FADE_OUT_SPEED);
 		if (m_Alpha[2] <= 0.0f) { m_FadeState = CWidget::EFadeState::Finish; }
 		break;
 	case CWidget::EFadeState::Finish:
@@ -112,10 +111,13 @@ void CSpecialAbilityGauge::ShineBar()
 		if (m_WaitTime >= WAITTIME_MAX)
 		{
 			m_WaitTime = 0;
-			CWidget::SetFadeIn();
+			SetFadeIn(FADE_IN_SPEED);
 		}
 		break;
 	default:
 		break;
 	}
+
+	if (m_FadeState == CWidget::EFadeState::Finish) return;
+	FadeUpdate(m_Alpha[2]);
 }

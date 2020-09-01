@@ -8,7 +8,7 @@
 CReturnTitle::CReturnTitle()
 {
 	//フェードイン設定.
-	SetFadeIn();
+	SetFadeIn(ALPHA_SPEED);
 }
 
 CReturnTitle::~CReturnTitle()
@@ -28,25 +28,23 @@ void CReturnTitle::Update()
 	switch (m_FadeState)
 	{
 	case CWidget::enFadeState::In:
-		 FadeIn(m_Alpha, ALPHA_SPEED);
-
 		if ( m_Alpha >= m_AlphaMax )
 		{
-			SetFadeOut();
+			SetFadeOut(ALPHA_SPEED);
 		}
 		break;
 
 	case CWidget::enFadeState::Out:
-		FadeOut( m_Alpha, ALPHA_SPEED);
-
 		if (m_Alpha <= 0.0f)
 		{
-			SetFadeIn();
+			SetFadeIn(ALPHA_SPEED);
 		}
 		break;
 	default:
 		break;
 	}
+
+	FadeUpdate(m_Alpha);
 }
 
 // 描画関数.
@@ -54,10 +52,11 @@ void CReturnTitle::Render()
 {
 	if ( m_pSprite == nullptr ) return;
 
+	m_pSprite->SetAlpha(m_Alpha);
+
 	m_pSprite->SetBlend( true );
-	m_pSprite->SetAlpha( m_Alpha );
 	m_pSprite->RenderUI();
-	m_pSprite->SetBlend(false);
+	m_pSprite->SetBlend( false );
 
 }
 
