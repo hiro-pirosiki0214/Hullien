@@ -61,11 +61,15 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	Update();	// 更新関数.
 
 	if( m_SpawnCount != m_SpawnParameter.SpawnTime*FPS ) return;
-	std::shared_ptr<CAlien> tempAlien = AlienFactory();
-	if( tempAlien == nullptr ) return;
+//	std::shared_ptr<CAlien> tempAlien = AlienFactory();
+//	if( tempAlien == nullptr ) return;
 	if( m_pAbductUFOPosition == nullptr ) return;
 
-	alienList.emplace_back( tempAlien );	// 宇宙人の追加.
+	alienList.emplace_back( AlienFactory() );	// 宇宙人の追加.
+	if( alienList.back() == nullptr ){
+		alienList.pop_back();
+		return;
+	}
 	// 宇宙人のパラメータリストが空なら終了.
 	if( m_pAlienParamList->empty() == true ) return;
 	if( m_pAlienParamList->size() <= static_cast<size_t>(m_AlienIndex) ) return;
@@ -74,7 +78,7 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnParameter.Position );
 	// 連れ去るUFOの座標を設定.
 	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
-//	m_SpawnCount = 0;
+	m_SpawnCount = 0;
 }
 
 // 宇宙人のパラメータリストを設定する.

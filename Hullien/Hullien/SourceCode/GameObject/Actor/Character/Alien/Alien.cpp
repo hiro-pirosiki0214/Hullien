@@ -166,7 +166,7 @@ void CAlien::Spawning()
 void CAlien::Move()
 {
 	TargetRotation();			// ‰ñ“].
-	CAlien::VectorMove( m_Parameter.MoveSpeed );	// ˆÚ“®.
+	CAlien::VectorMove( m_MoveSpeed );	// ˆÚ“®.
 	CAlien::WaitMove();			// ‘Ò‹@.
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
@@ -184,7 +184,7 @@ void CAlien::Abduct()
 	m_TargetPosition = *m_pAbductUFOPosition;
 
 	TargetRotation();
-	CAlien::VectorMove( m_Parameter.MoveSpeed );
+	CAlien::VectorMove( m_MoveSpeed );
 
 	if( *m_pIsAlienOtherAbduct == true ) return;
 	m_NowState = EAlienState::Move;
@@ -216,7 +216,7 @@ void CAlien::Escape()
 	SetMoveVector( *m_pAbductUFOPosition );
 	m_TargetPosition = *m_pAbductUFOPosition;
 	TargetRotation();
-	CAlien::VectorMove( m_Parameter.MoveSpeed );
+	CAlien::VectorMove( m_MoveSpeed );
 	if( *m_pIsAlienOtherAbduct == true ) return;
 	m_NowState = EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;
@@ -259,10 +259,10 @@ void CAlien::BarrierCollision( CActor* pActor )
 	const float moveSpeed = -2.0f;
 	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ){
-		m_Parameter.MoveSpeed = 0.02f;
+		m_MoveSpeed = m_Parameter.MoveSpeed;
 		m_IsBarrierHit = false;
 	} else {
-		m_Parameter.MoveSpeed = moveSpeed;
+		m_MoveSpeed = moveSpeed;
 		m_IsBarrierHit = true;
 		*m_pIsAlienOtherAbduct = false;
 		m_NowState = EAlienState::Move;

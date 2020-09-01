@@ -162,7 +162,7 @@ void CAlienD::Spawning()
 void CAlienD::Move()
 {
 	TargetRotation();		// ‰ñ“].
-	CAlienD::VectorMove( m_Parameter.MoveSpeed );	// ˆÚ“®.
+	CAlienD::VectorMove( m_MoveSpeed );	// ˆÚ“®.
 	Attack();				// UŒ‚.
 	CAlien::WaitMove();		// ‘Ò‹@.
 

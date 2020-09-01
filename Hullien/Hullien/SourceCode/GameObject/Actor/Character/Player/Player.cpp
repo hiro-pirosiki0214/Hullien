@@ -487,7 +487,7 @@ void CPlayer::EditRender()
 	ImGui::Begin( u8"プレイヤーの設定", &isOpen );
 
 	// 各パラメータの設定.
-	ImGui::InputFloat( u8"移動速度", &m_Parameter.MoveSpeed );
+	ImGui::InputFloat( u8"移動速度", &m_MoveSpeed );
 	ImGui::InputFloat( u8"体力", &m_LifePoint );
 	ImGui::InputFloat( u8"攻撃力", &m_Parameter.AttackPower );
 	ImGui::InputInt( u8"無敵時間", &m_Parameter.InvincibleTime );
