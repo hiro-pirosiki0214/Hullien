@@ -92,6 +92,11 @@ void CGirl::SetTargetPos( CActor& actor )
 	m_NowState = ENowState::Abduct;
 }
 
+// スプライトの描画.
+void CGirl::SpriteRender()
+{
+}
+
 // 移動関数.
 void CGirl::Move()
 {

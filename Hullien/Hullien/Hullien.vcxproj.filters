@@ -1,642 +1,220 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="SourceCode\Main\Main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Main\WinMain.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Parser\CDX9SkinMeshParser.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Resource\MeshResource\MeshResource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Scene\SceneManager\SceneManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Scene\Scenes\Game\Game.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Camera\Camera.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\DebugText\DebugText.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Effect\Effect.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Resource\EffectResource\EffectResource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Scene\Scenes\Title\Title.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Common.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Shader\Toon\Toon.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\ColliderBase\ColliderBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\Colliders\Sphere\SphereCollision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\Colliders\Sphere\SphereModel.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Shader\SimpleShader\SimpleShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Shader\ShaderBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\CollsionManager\CollsionManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Resource\SpriteResource\SpriteResource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Resource\LoadManager\LoadManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Shader\DebugTextShader\DebugTextShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\Colliders\OBBox\OBBoxCollision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\Colliders\OBBox\BoxModel.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Utility\XInput\XInput.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Utility\FrameRate\FrameRate.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Utility\FileManager\FileManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\ImGui\imgui.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\ImGui\imgui_impl_dx11.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\ImGui\imgui_impl_win32.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\ImGui\imgui_draw.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\ImGui\imgui_widgets.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Utility\ImGuiManager\ImGuiManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Library\ImGui\imgui_demo.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Utility\XInput\XinputConfig.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Utility\Log\MyLog.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\GameObject.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Light\LightBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Light\LightManager\LightManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Camera\CameraManager\CameraManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\Colliders\Capsule\CapsuleModel.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Collider\Colliders\Capsule\CapsuleCollision.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Font\FontCreate.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\Font\Font.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Resource\FontResource\FontResource.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\D3DX\D3DX9.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Common\D3DX\D3DX11.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\Widget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Character.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Player\Player.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Editor\EditRenderer\EditRenderer.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp">
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Explosion\Explosion.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemBase.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\Editor\ItemEdit\ItemEdit.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\Barrier\Barrier.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="SourceCode\Global.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Main\Main.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Parser\CDX9SkinMeshParser.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Resource\MeshResource\MeshResource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\SceneBase\SceneBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\SceneManager\SceneManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\Scenes\SceneList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\Scenes\Game\Game.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Camera\Camera.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\DebugText\DebugText.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Effect\Effect.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Resource\EffectResource\EffectResource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\Scenes\Title\Title.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Common.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Sprite\CSprite.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Shader\Toon\Toon.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\ColliderBase\ColliderBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\Colliders\Sphere\SphereCollision.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\Colliders\Sphere\SphereModel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Shader\SimpleShader\SimpleShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Shader\ShaderBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\CollsionManager\CollsionManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Resource\SpriteResource\SpriteResource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Resource\LoadManager\LoadManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Shader\DebugTextShader\DebugTextShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\Colliders\OBBox\OBBoxCollision.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\Colliders\OBBox\BoxModel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\XInput\XInput.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\FrameRate\FrameRate.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\FileManager\FileManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\MyVector\MyVector.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Editor\ControllerEdit\ControllerEdit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imgui.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imgui_impl_dx11.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imgui_impl_win32.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\ImGuiManager\ImGuiManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imstb_rectpack.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imstb_textedit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imstb_truetype.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imconfig.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Library\ImGui\imgui_internal.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\XInput\XinputConfig.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\Scenes\Editor\Editor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Utility\Log\MyLog.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\GameObject.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Light\LightBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Light\LightManager\LightManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\Colliders\Capsule\CapsuleModel.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Collider\Colliders\Capsule\CapsuleCollision.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Font\FontCreate.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\Font\Font.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Resource\FontResource\FontResource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\ObjectList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\D3DX\D3DX9.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Common\D3DX\D3DX11.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Actor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\Widget.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Character.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Player\Player.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Editor\EditRenderer\EditRenderer.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFOParam.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h">
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\Girl.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Explosion\Explosion.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemBase.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\EachItemEffectStruct.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\Editor\ItemEdit\ItemEdit.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\Barrier\Barrier.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <FxCompile Include="Data\Shader\DebugText.hlsl" />
-    <FxCompile Include="Data\Shader\Sprite.hlsl" />
-    <FxCompile Include="Data\Shader\SimpleShader.hlsl" />
     <FxCompile Include="Data\Shader\Mesh.hlsl" />
+    <FxCompile Include="Data\Shader\SimpleShader.hlsl" />
     <FxCompile Include="Data\Shader\SkinMesh.hlsl" />
+    <FxCompile Include="Data\Shader\Sprite.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Library\ImGui\imgui.cpp" />
+    <ClCompile Include="Library\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="Library\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="Library\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Library\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Library\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="SourceCode\Camera\Camera.cpp" />
+    <ClCompile Include="SourceCode\Camera\CameraManager\CameraManager.cpp" />
+    <ClCompile Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.cpp" />
+    <ClCompile Include="SourceCode\Collider\ColliderBase\ColliderBase.cpp" />
+    <ClCompile Include="SourceCode\Collider\Colliders\Capsule\CapsuleCollision.cpp" />
+    <ClCompile Include="SourceCode\Collider\Colliders\Capsule\CapsuleModel.cpp" />
+    <ClCompile Include="SourceCode\Collider\Colliders\OBBox\BoxModel.cpp" />
+    <ClCompile Include="SourceCode\Collider\Colliders\OBBox\OBBoxCollision.cpp" />
+    <ClCompile Include="SourceCode\Collider\Colliders\Sphere\SphereCollision.cpp" />
+    <ClCompile Include="SourceCode\Collider\Colliders\Sphere\SphereModel.cpp" />
+    <ClCompile Include="SourceCode\Collider\CollsionManager\CollsionManager.cpp" />
+    <ClCompile Include="SourceCode\Common\Common.cpp" />
+    <ClCompile Include="SourceCode\Common\D3DX\D3DX11.cpp" />
+    <ClCompile Include="SourceCode\Common\D3DX\D3DX9.cpp" />
+    <ClCompile Include="SourceCode\Common\DebugText\DebugText.cpp" />
+    <ClCompile Include="SourceCode\Common\Effect\Effect.cpp" />
+    <ClCompile Include="SourceCode\Common\Font\Font.cpp" />
+    <ClCompile Include="SourceCode\Common\Font\FontCreate.cpp" />
+    <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.cpp" />
+    <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Parser\CDX9SkinMeshParser.cpp" />
+    <ClCompile Include="SourceCode\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\DebugTextShader\DebugTextShader.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\ShaderBase.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\SimpleShader\SimpleShader.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\Toon\Toon.cpp" />
+    <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp" />
+    <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\EditRenderer\EditRenderer.cpp" />
+    <ClCompile Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\ItemEdit\ItemEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Barrier\Barrier.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Character.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Player\Player.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Explosion\Explosion.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemBase.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp" />
+    <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
+    <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
+    <ClCompile Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Widget.cpp" />
+    <ClCompile Include="SourceCode\Light\LightBase.cpp" />
+    <ClCompile Include="SourceCode\Light\LightManager\LightManager.cpp" />
+    <ClCompile Include="SourceCode\Resource\FontResource\FontResource.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp" />
+    <ClCompile Include="SourceCode\Utility\FileManager\FileManager.cpp" />
+    <ClCompile Include="SourceCode\Utility\FrameRate\FrameRate.cpp" />
+    <ClCompile Include="SourceCode\Main\Main.cpp" />
+    <ClCompile Include="SourceCode\Main\WinMain.cpp" />
+    <ClCompile Include="SourceCode\Resource\EffectResource\EffectResource.cpp" />
+    <ClCompile Include="SourceCode\Resource\LoadManager\LoadManager.cpp" />
+    <ClCompile Include="SourceCode\Resource\MeshResource\MeshResource.cpp" />
+    <ClCompile Include="SourceCode\Resource\SpriteResource\SpriteResource.cpp" />
+    <ClCompile Include="SourceCode\Scene\SceneManager\SceneManager.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Game\Game.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Title\Title.cpp" />
+    <ClCompile Include="SourceCode\Utility\ImGuiManager\ImGuiManager.cpp" />
+    <ClCompile Include="SourceCode\Utility\Log\MyLog.cpp" />
+    <ClCompile Include="SourceCode\Utility\XInput\XInput.cpp" />
+    <ClCompile Include="SourceCode\Utility\XInput\XinputConfig.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Library\ImGui\imconfig.h" />
+    <ClInclude Include="Library\ImGui\imgui.h" />
+    <ClInclude Include="Library\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="Library\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="Library\ImGui\imgui_internal.h" />
+    <ClInclude Include="Library\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="Library\ImGui\imstb_textedit.h" />
+    <ClInclude Include="Library\ImGui\imstb_truetype.h" />
+    <ClInclude Include="SourceCode\Camera\Camera.h" />
+    <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h" />
+    <ClInclude Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.h" />
+    <ClInclude Include="SourceCode\Collider\ColliderBase\ColliderBase.h" />
+    <ClInclude Include="SourceCode\Collider\Colliders\Capsule\CapsuleCollision.h" />
+    <ClInclude Include="SourceCode\Collider\Colliders\Capsule\CapsuleModel.h" />
+    <ClInclude Include="SourceCode\Collider\Colliders\OBBox\BoxModel.h" />
+    <ClInclude Include="SourceCode\Collider\Colliders\OBBox\OBBoxCollision.h" />
+    <ClInclude Include="SourceCode\Collider\Colliders\Sphere\SphereCollision.h" />
+    <ClInclude Include="SourceCode\Collider\Colliders\Sphere\SphereModel.h" />
+    <ClInclude Include="SourceCode\Collider\CollsionManager\CollsionManager.h" />
+    <ClInclude Include="SourceCode\Common\Common.h" />
+    <ClInclude Include="SourceCode\Common\D3DX\D3DX11.h" />
+    <ClInclude Include="SourceCode\Common\D3DX\D3DX9.h" />
+    <ClInclude Include="SourceCode\Common\DebugText\DebugText.h" />
+    <ClInclude Include="SourceCode\Common\Effect\Effect.h" />
+    <ClInclude Include="SourceCode\Common\Font\Font.h" />
+    <ClInclude Include="SourceCode\Common\Font\FontCreate.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Parser\CDX9SkinMeshParser.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h" />
+    <ClInclude Include="SourceCode\Common\Shader\DebugTextShader\DebugTextShader.h" />
+    <ClInclude Include="SourceCode\Common\Shader\ShaderBase.h" />
+    <ClInclude Include="SourceCode\Common\Shader\SimpleShader\SimpleShader.h" />
+    <ClInclude Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.h" />
+    <ClInclude Include="SourceCode\Common\Shader\Toon\Toon.h" />
+    <ClInclude Include="SourceCode\Common\Sprite\CSprite.h" />
+    <ClInclude Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.h" />
+    <ClInclude Include="SourceCode\Editor\ControllerEdit\ControllerEdit.h" />
+    <ClInclude Include="SourceCode\Editor\EditRenderer\EditRenderer.h" />
+    <ClInclude Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.h" />
+    <ClInclude Include="SourceCode\Editor\ItemEdit\ItemEdit.h" />
+    <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Barrier\Barrier.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienList.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_A\Alien_A.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Character.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\Girl.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Player\Player.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Explosion\Explosion.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EachItemEffectStruct.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemBase.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemList.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\ItemManager\ItemManager.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\LifeRecovery\LifeRecovery.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h" />
+    <ClInclude Include="SourceCode\GameObject\GameObject.h" />
+    <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />
+    <ClInclude Include="SourceCode\GameObject\ObjectList.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Actor.h" />
+    <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.h" />
+    <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFOParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\LimitTime\LimitTime.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\MiniMap\MiniMap.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Widget.h" />
+    <ClInclude Include="SourceCode\Light\LightBase.h" />
+    <ClInclude Include="SourceCode\Light\LightManager\LightManager.h" />
+    <ClInclude Include="SourceCode\Resource\FontResource\FontResource.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Editor\Editor.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h" />
+    <ClInclude Include="SourceCode\Utility\FileManager\FileManager.h" />
+    <ClInclude Include="SourceCode\Utility\FrameRate\FrameRate.h" />
+    <ClInclude Include="SourceCode\Global.h" />
+    <ClInclude Include="SourceCode\Main\Main.h" />
+    <ClInclude Include="SourceCode\Utility\ImGuiManager\ImGuiManager.h" />
+    <ClInclude Include="SourceCode\Utility\Log\MyLog.h" />
+    <ClInclude Include="SourceCode\Utility\MyVector\MyVector.h" />
+    <ClInclude Include="SourceCode\Resource\EffectResource\EffectResource.h" />
+    <ClInclude Include="SourceCode\Resource\LoadManager\LoadManager.h" />
+    <ClInclude Include="SourceCode\Resource\MeshResource\MeshResource.h" />
+    <ClInclude Include="SourceCode\Resource\SpriteResource\SpriteResource.h" />
+    <ClInclude Include="SourceCode\Scene\SceneBase\SceneBase.h" />
+    <ClInclude Include="SourceCode\Scene\SceneManager\SceneManager.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Game\Game.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\SceneList.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Title\Title.h" />
+    <ClInclude Include="SourceCode\Utility\XInput\XInput.h" />
+    <ClInclude Include="SourceCode\Utility\XInput\XinputConfig.h" />
   </ItemGroup>
 </Project>
