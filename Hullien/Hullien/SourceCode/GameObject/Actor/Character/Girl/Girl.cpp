@@ -65,10 +65,11 @@ void CGirl::Update()
 	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) m_vPosition.x -= 0.04f;
 	if( GetAsyncKeyState(VK_LEFT) & 0x8000 ) m_vPosition.x += 0.04f;
 
+	// Œx.
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
-		m_pWarning->Update();
 		m_pWarning->SetPosition(m_vPosition);
+		m_pWarning->Update();
 	}
 }
 
@@ -109,6 +110,7 @@ void CGirl::SpriteRender()
 	{
 		m_pWarning->Render();
 	}
+	m_IsDanger = false;
 }
 
 // ˆÚ“®ŠÖ”.
@@ -209,7 +211,6 @@ void CGirl::SearchCollision( CActor* pActor )
 		( pActor->GetObjectTag() != EObjectTag::Alien_C ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_D )) return;
 
-	m_IsDanger = false;
 	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pSearchCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	m_IsDanger = true;

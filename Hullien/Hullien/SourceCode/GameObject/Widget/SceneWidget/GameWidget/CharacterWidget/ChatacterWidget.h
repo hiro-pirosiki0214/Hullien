@@ -13,8 +13,10 @@ public:
 	// キャラクタのパラメータ.
 	struct stCharacterParam
 	{
-		float Life;					//ライフ.
-		float SpecialAbilityGauge;	//特殊ゲージ.
+		float Life;						//ライフ.
+		float LifeMax;					//ライフ最大数.
+		float SpecialAbility;			//特殊ゲージ
+		float SpecialAbilityMax;		//特殊ゲージ最大数.
 	}typedef SCharacterParam;
 
 
@@ -37,13 +39,7 @@ public:
 	virtual ~CCharacterWidget();
 
 	// パラメータ設定関数.
-//	virtual void SetParameter(CCharacter& pChara) = 0;
-	// パラメータ設定関数.
-	virtual void SetParameter(SCharacterParam& pChara)
-	{
-		m_Parameter.Life = pChara.Life;
-		m_Parameter.SpecialAbilityGauge = pChara.SpecialAbilityGauge;
-	}
+	virtual void SetParameter( SCharacterParam& pChara ) {m_Parameter = pChara;}
 
 protected:
 	SCharacterParam m_Parameter;							//パラメータ.

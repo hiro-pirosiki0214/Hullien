@@ -30,7 +30,7 @@ bool CSpecialAbilityGauge::Init()
 void CSpecialAbilityGauge::Update()
 {
 	if (m_pSprite.size() == 0) return;
-	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.SpecialAbilityGauge / 10.0f; 
+	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.SpecialAbility / m_Parameter.SpecialAbilityMax;
 
 	// “Áê”\—ÍƒQ[ƒW‚ª‚½‚Ü‚Á‚Ä‚¢‚È‚¯‚ê‚Îˆ—‚µ‚È‚¢.
 	if (m_GaugeState[GAUGE_NUM].vScale.x != SCALE_MAX) return;

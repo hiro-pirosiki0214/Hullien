@@ -30,7 +30,7 @@ bool CLifeGauge::Init()
 void CLifeGauge::Update()
 {
 	if ( m_pSprite.size() == 0 ) return;
-	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.Life / 10.0f; // プレイヤー側からライフ最大数を受け取れるようにしたい.
+	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.Life / m_Parameter.LifeMax; 
 
 }
 
@@ -49,11 +49,6 @@ void CLifeGauge::Render()
 		m_pSprite[sprite]->SetDeprh( true );
 	}
 }
-
-//// パラメータ設定関数.
-//void CLifeGauge::SetParameter(CCharacter& pChara)
-//{
-//}
 
 // スプライト読み込み関数.
 bool CLifeGauge::SpriteSetting()

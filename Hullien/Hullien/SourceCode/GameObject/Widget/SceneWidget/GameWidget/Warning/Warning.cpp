@@ -40,10 +40,7 @@ void CWarning::Render()
 	if ( m_pSprite == nullptr ) return;
 	// 表示フラグが立っていなければ描画しない.
 	m_pSprite->SetPosition( m_vPosition );
-	if (m_IsUI == false)
-	{
-		m_pSprite->Render(true);	// ビルボードにする.
-	}
+	m_pSprite->Render(true);	// ビルボードにする.
 }
 
 // スプライトの設定関数.

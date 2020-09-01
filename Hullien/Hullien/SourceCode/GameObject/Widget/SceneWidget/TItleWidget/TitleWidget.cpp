@@ -44,20 +44,16 @@ void CTitleWidget::Render()
 {
 	if (m_pSprite.size() == 0) return;
 
-	//背景.
-	m_pSprite[BACKGROUND]->SetDeprh(false);
-	m_pSprite[BACKGROUND]->RenderUI();
-	m_pSprite[BACKGROUND]->SetDeprh(true);
-
-	// カーソル.
-	m_pCursor->Render();
-
-	// 文字.
-	for (size_t sprite = START; sprite < m_pSprite.size(); sprite++)
+	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
 		m_pSprite[sprite]->SetDeprh(false);
 		m_pSprite[sprite]->RenderUI();
 		m_pSprite[sprite]->SetDeprh(true);
+
+		if (sprite != BACKGROUND) continue;
+		// カーソル.
+		m_pCursor->SetPosition(m_vPosition);
+		m_pCursor->Render();
 	}
 }
 
@@ -99,10 +95,10 @@ void CTitleWidget::CursorSetting()
 	switch (m_SelectState)
 	{
 	case CTitleWidget::ESelectState::Start:
-		m_pCursor->SetPosition( m_pSprite[START]->GetRenderPos() );
+		m_vPosition = m_pSprite[START]->GetRenderPos();
 		break;
 	case CTitleWidget::ESelectState::End:
-		m_pCursor->SetPosition( m_pSprite[END]->GetRenderPos() );
+		m_vPosition = m_pSprite[END]->GetRenderPos();
 		break;
 	default:
 		break;
