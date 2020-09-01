@@ -19,10 +19,7 @@ CCursor::~CCursor()
 // 初期化関数.
 bool CCursor::Init()
 {
-	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite(SPRITE_NAME);
-	if (m_pSprite == nullptr) return false;
-
+	if ( SpriteSetting() == false ) return false;
 	return true;
 }
 
@@ -37,12 +34,25 @@ void CCursor::Update()
 void CCursor::Render()
 {
 	if (m_pSprite == nullptr) return;
+
+	m_vPosition.x -= 150.0f;
+	m_vPosition.y -= 20.0f;
 	m_pSprite->SetPosition( m_vPosition );
 	m_pSprite->SetScale( m_vSclae );
 
 	m_pSprite->SetDeprh( false );
 	m_pSprite->RenderUI();
 	m_pSprite->SetDeprh( true );
+}
+
+// スプライト設定関数.
+bool CCursor::SpriteSetting()
+{
+	if (m_pSprite != nullptr) return true;
+	m_pSprite = CSpriteResource::GetSprite(SPRITE_NAME);
+	if (m_pSprite == nullptr) return false;
+
+	return true;
 }
 
 // スケール動き関数.

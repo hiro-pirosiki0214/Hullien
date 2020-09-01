@@ -9,10 +9,10 @@
 class CCursor : public CWidget
 {
 private:
-	const char* SPRITE_NAME = "yesnosize";		//スプライトのファイル名.
-	const float SCALE_MAX	= 1.0f;				//拡大最大値.
-	const float SCALE_SPEED = 0.05f;			//拡大速度.
-	const float ACC_SPEED   = 0.0011f;			//加速度.
+	const char* SPRITE_NAME = "selectHoversize";	//スプライトのファイル名.
+	const float SCALE_MAX	= 1.0f;						//拡大最大値.
+	const float SCALE_SPEED = 0.05f;						//拡大速度.
+	const float ACC_SPEED   = 0.0011f;					//加速度.
 
 public:
 	CCursor();
@@ -26,6 +26,8 @@ public:
 	virtual void Render() override;
 
 private:
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
 	// スケール動き関数.
 	void MoveScale();
 	// 拡大関数.

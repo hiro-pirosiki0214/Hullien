@@ -103,7 +103,7 @@ CSprite::SPRITE_STATE CSpriteResource::SpriteStateRead( const std::string& path 
 
 	ss.LocalPosNum	= std::stoi(pramList[ss.enLocalPosNum]);
 	ss.Disp.w		= std::stof(pramList[ss.enDisp_w]);
-	ss.Disp.h		= std::stof(pramList[ss.enDisp_h]);
+	ss.Disp.h			= std::stof(pramList[ss.enDisp_h]);
 	ss.Base.w		= std::stof(pramList[ss.enBase_w]);
 	ss.Base.h		= std::stof(pramList[ss.enBase_h]);
 	ss.Stride.w		= std::stof(pramList[ss.enStride_w]);

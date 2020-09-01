@@ -10,10 +10,10 @@
 class CTitleWidget : public CSceneWidget
 {
 private:
-	const char* SPRITE_BACKGROUND	= "BackGround";		//背景スプライト名.
-	const char* SPRITE_SELECTSTART	= "selectsize";		//開始スプライト名.
-	const char* SPRITE_SELECTEXIT	= "selectsize";	  	//終了スプライト名.
-	const char* SPRITE_TITLE		= "titlesize";		//タイトルスプライト名.
+	const char* SPRITE_BACKGROUND	= "BackGround";	//背景スプライト名.
+	const char* SPRITE_SELECTSTART	= "yessize";		//開始スプライト名.
+	const char* SPRITE_SELECTEXIT	= "nosize";	  			//終了スプライト名.
+	const char* SPRITE_TITLE		= "titlesize";				//タイトルスプライト名.
 
 	const int BACKGROUND	= 0;	//背景配列番号.
 	const int START			= 1;	//開始配列番号.
@@ -42,15 +42,15 @@ public:
 	ESelectState GetSelectState() const { return m_SelectState; }
 
 private:
-	// スプライト読み込み関数.
-	bool SpriteSetting();
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
 	// カーソル設定関数.
 	void CursorSetting();
 
 private:
-	std::vector<std::shared_ptr<CSprite>>	m_pSprites;			//スプライトクラス.
-	std::unique_ptr<CCursor>				m_pCursor;			//カーソルクラス.
-	ESelectState							m_SelectState;		//選択状態.
+	std::vector<std::shared_ptr<CSprite>>	m_pSprite;			//スプライトクラス.
+	std::shared_ptr<CCursor>					m_pCursor;			//カーソルクラス.
+	ESelectState									m_SelectState;	//選択状態.
 
 };
 

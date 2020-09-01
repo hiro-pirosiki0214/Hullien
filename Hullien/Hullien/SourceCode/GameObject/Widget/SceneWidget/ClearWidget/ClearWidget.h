@@ -22,6 +22,10 @@ public:
 	virtual void Render() override;
 
 private:
+	// スプライト設定関数.
+	virtual bool SpriteSetting() override;
+
+private:
 	std::unique_ptr<CReturnTitle> m_pReturTitle;	//タイトルに戻るボタンクラス.
 };
 

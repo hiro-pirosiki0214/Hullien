@@ -21,7 +21,7 @@ bool CClearWidget::Init()
 {
 	//クリア文字の読み込み.
 	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite( "pokemon" );
+	m_pSprite = CSpriteResource::GetSprite( "clearsize" );
 	if ( m_pSprite == nullptr ) return false;
 
 	//タイトルに戻るボタンの読み込み.
@@ -47,5 +47,10 @@ void CClearWidget::Render()
 	m_pSprite->SetDeprh( true );
 
 	//タイトルに戻るボタン.
-	//m_pReturTitle->Render();
+	m_pReturTitle->Render();
+}
+
+bool CClearWidget::SpriteSetting()
+{
+	return false;
 }
