@@ -3,6 +3,7 @@
 #include "..\MeshResource\MeshResource.h"
 #include "..\SpriteResource\SpriteResource.h"
 #include "..\FontResource\FontResource.h"
+#include "..\..\XAudio2\SoundManager.h"
 
 CLoadManager::CLoadManager()
 	: m_isLoadEnd		( false )
@@ -32,7 +33,7 @@ void CLoadManager::LoadResource(
 		CSpriteResource::Load( pDevice11, pContext11 );
 		CMeshResorce::Load( hWnd, pDevice11, pContext11, pDevice9 );
 		CEffectResource::Load( pDevice11, pContext11 );
-
+		CSoundManager::CreateSoundData();
 		m_isLoadEnd = true;
 	};
 	m_Thread = std::thread( load, hWnd, pDevice11, pContext11, pDevice9 );

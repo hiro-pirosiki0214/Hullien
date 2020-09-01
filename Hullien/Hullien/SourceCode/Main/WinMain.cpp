@@ -68,7 +68,7 @@ LRESULT CALLBACK WndProc(
 	case WM_CLOSE:
 		// ウィンドウを破棄する.
 		DestroyWindow( hWnd );
-
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
