@@ -5,7 +5,9 @@
 
 class CLifeRecoveryItem : public CItemBase
 {
-	const char* MODEL_NAME = "item cure";
+	const char* MODEL_NAME	= "item cure";	// モデル名.
+	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "oji";	// エフェクト名.
+	const char* HIT_EFFECT_NAME				= "key";	// エフェクト名.
 	const float* pLIFE_RECOVERY_VALUE;	// 回復力(外部からポインタで取得する).
 public:
 	CLifeRecoveryItem();
@@ -28,6 +30,8 @@ public:
 private:
 	// 当たった際の効果を与える.
 	virtual void GiveEffect( CActor* pActor ) override;
+	// エフェクトの設定.
+	virtual bool EffectSetting() override;
 };
 
 #endif	// #ifndef LIFE_RECOVERY_H.

@@ -3,7 +3,7 @@
 
 #include "..\Actor.h"
 
-class CEffect;	// エフェクトクラス.
+class CEffectManager;	// エフェクトクラス.
 
 class CItemBase : public CActor
 {
@@ -27,6 +27,7 @@ public:
 		float	DisappearTime;			// 消える時間.
 		float	FlashingAddValue;		// 点滅加算値.
 		float	ModelAlphaMax;			// モデル透過値最大.
+		float	HitEffectTime;			// ヒット時のエフェクト時間.
 		stParameter()
 			: InitAccelerationValue	( 0.0f )
 			, InitGravity			( 0.0f )
@@ -40,6 +41,7 @@ public:
 			, DisappearTime			( 0.0f )
 			, FlashingAddValue		( 0.0f )
 			, ModelAlphaMax			( 0.0f )
+			, HitEffectTime			( 0.0f )
 		{}
 	} typedef SParameter;
 
@@ -60,6 +62,17 @@ protected:
 
 		Max,
 	} typedef ENowState;
+
+	// 使用するエフェクト番号.
+	enum class enEffectNumber
+	{
+		None = -1,
+
+		DropAndActive,	// ドロップ アクティブ時.
+		Hit,			// 当たった時.
+
+		Max,	// 最大.
+	} typedef EEffectNumber;
 
 public:
 	CItemBase();
@@ -93,13 +106,22 @@ protected:
 	// 回転関数.
 	void Rotate();
 
+	// エフェクトの設定.
+	virtual bool EffectSetting() = 0;
 	// モデルの取得.
 	bool GetModel( const char* modelName );
 	// 当たり判定の設定.
 	bool ColliderSetting();
 
+private:
+	// ドロップ　アクティブ時の描画.
+	void DropAndActiveRender();
+	// ヒット時の描画.
+	void HitRender();
+
 protected:
 	std::shared_ptr<CDX9StaticMesh> m_pStaticMesh;	// スタティックメッシュ.
+	std::vector<std::shared_ptr<CEffectManager>> m_pEffects; // エフェクト.
 	ENowState m_NowState;	// 現在の状態.
 	float m_Scale;
 	float m_ModelAlpha;
@@ -113,6 +135,8 @@ protected:
 	float m_FlashingCount;	// 点滅カウント.
 	float m_DisappearCount;	// 消える時間.
 	float m_FlashingAccValue;	// 点滅加速値.
+
+	float m_HitEffectCount;	// ヒット時のエフェクトカウント.
 };
 
 #endif	// #ifndef ITEM_BASE_H.

@@ -88,9 +88,9 @@ void CGameActorManager::Update()
 	m_pItemManager->Update( 
 		[&]( CActor* pActor )
 		{
-			pActor->Update();					// アイテムの更新.
-			SetPositionList( pActor );			// 座標リストの設定.
-			pActor->Collision( m_pGirl.get() );	// アイテムの当たり判定.
+			pActor->Update();						// アイテムの更新.
+			SetPositionList( pActor );				// 座標リストの設定.
+			pActor->Collision( m_pPlayer.get() );	// アイテムの当たり判定.
 		} );
 }
 

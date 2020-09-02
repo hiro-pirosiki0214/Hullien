@@ -1,4 +1,5 @@
 #include "AttackUp.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 CAttackUpItem::CAttackUpItem()
 	: CItemBase			( nullptr )
@@ -25,6 +26,7 @@ CAttackUpItem::~CAttackUpItem()
 bool CAttackUpItem::Init()
 {
 	if( GetModel( MODEL_NAME ) == false ) return false;
+	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	m_vSclae = { 0.0f, 0.0f, 0.0f };
 	return true;
@@ -68,4 +70,22 @@ void CAttackUpItem::GiveEffect( CActor* pActor )
 	};
 	// コールバック関数.
 	pActor->SetAttackEffectTime( attackUp );	// 対象の体力を回復する.
+}
+
+// エフェクトの設定.
+bool CAttackUpItem::EffectSetting()
+{
+	const char* effectNames[] =
+	{
+		DROP_AND_AVTIVE_EFFECT_NAME,
+		HIT_EFFECT_NAME,
+	};
+	int SpriteMax = sizeof(effectNames) / sizeof(effectNames[0]);
+
+	for( int i = 0; i < SpriteMax; i++ ){
+		m_pEffects[i]->SetEffect(effectNames[i]);
+		if (m_pEffects[i] == nullptr) return false;
+	}
+
+	return true;
 }

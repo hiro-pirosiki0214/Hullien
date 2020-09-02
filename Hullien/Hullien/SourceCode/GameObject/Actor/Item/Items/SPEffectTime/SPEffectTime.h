@@ -5,7 +5,9 @@
 
 class CSPEffectTimeItem : public CItemBase
 {
-	const char* MODEL_NAME = "item ability";
+	const char* MODEL_NAME	= "item ability";	// モデル名.
+	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "oji";	// エフェクト名.
+	const char* HIT_EFFECT_NAME				= "key";	// エフェクト名.
 	const float* pSP_RECOVERY_VALUE;	// 特殊能力回復力(外部からポインタで取得する).
 	const float* pSP_RECOVERY_TIME;		// 特殊能力回復時間(外部からポインタで取得する).
 public:
@@ -30,6 +32,8 @@ public:
 private:
 	// 当たった際の効果を与える.
 	virtual void GiveEffect( CActor* pActor ) override;
+	// エフェクトの設定.
+	virtual bool EffectSetting() override;
 };
 
 #endif	// #ifndef SP_EFFECT_TIME_H.
