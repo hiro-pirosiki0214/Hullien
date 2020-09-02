@@ -4,7 +4,6 @@
 #include "..\..\SceneBase\SceneBase.h"
 
 class CClearWidget;	// クリアUIクラス.
-class CFade;			// フェードクラス.
 
 /**********************************
 *	ゲームクリアクラス.
@@ -23,9 +22,11 @@ public:
 	virtual void Render() override;
 
 private:
+	// シーン切り替え関数.
+	void ChangeScene();
+
+private:
 	std::unique_ptr<CClearWidget> m_pClearWidget;	// クリアUIクラス.
-	std::unique_ptr<CFade>			  m_pFade;				// フェードクラス.
-	bool									  m_IsChangeScene;	//シーン切り替えが可能か.
 };
 
 #endif	// #ifndef GAME_CLEAR_H.

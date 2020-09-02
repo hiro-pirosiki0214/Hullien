@@ -146,11 +146,12 @@ void CPlayer::SpriteRender()
 {
 	// ゲージ.
 	CCharacterWidget::SCharacterParam param;
+	// ライフ.
 	param.Life = m_LifePoint;
-	// ↓ 体力最大値 変数.
-	// m_Parameter.LifeMax
-
-	param.SpecialAbilityGauge = m_SpecialAbility;
+	param.LifeMax = m_Parameter.LifeMax;
+	// 特殊能力.
+	param.SpecialAbility = m_SpecialAbility;
+	param.SpecialAbilityMax = SPECIAL_ABILITY_MAX;
 	// ↓ 特殊能力最大値 変数.
 	// m_Parameter.SpecialAbilityMax
 	for (const auto& s : m_pWidget)

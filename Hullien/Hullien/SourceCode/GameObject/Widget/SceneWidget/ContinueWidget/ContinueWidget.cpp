@@ -2,17 +2,18 @@
 #include "..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\Cursor\Cursor.h"
+#include "..\..\..\..\Utility\XInput\XInput.h"
 
 /********************************************
 *	コンテニューUIクラス.
 **/
 CContinueWidget::CContinueWidget()
-	: m_pSprite			()
-	, m_pCursor			( nullptr )
-	, m_TextAlpha		( 0.0f )
-	, m_IsDrawing		( true )
+	: m_pSprite		()
+	, m_pCursor		( nullptr )
+	, m_TextAlpha	( 0.0f )
+	, m_IsDrawing	( true )
 	, m_SelectState	( ESelectState::Yes )
-	, m_DrawTurn		( EDrawTurn::BackGround )
+	, m_DrawTurn	( EDrawTurn::BackGround )
 {
 	m_pCursor = std::make_shared<CCursor>();
 	m_vSclae = D3DXVECTOR3(0.9f, 0.9f, 0.9f);
@@ -114,11 +115,13 @@ void CContinueWidget::CursorSetting()
 	// スプライト描画中は処理しない.
 	if ( m_IsDrawing == true )return;
 
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	if (GetAsyncKeyState(VK_UP) & 0x8000
+		|| CXInput::LThumbY_Axis() > IDLE_THUMB_MAX)
 	{
 		m_SelectState = CContinueWidget::ESelectState::Yes;
 	}
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000
+		|| CXInput::LThumbY_Axis() < IDLE_THUMB_MIN)
 	{
 		m_SelectState = CContinueWidget::ESelectState::No;
 	}

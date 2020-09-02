@@ -3,14 +3,15 @@
 #include "..\..\Cursor\Cursor.h"
 #include "..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\Resource\SpriteResource\SpriteResource.h"
+#include "..\..\..\..\Utility\XInput\XInput.h"
 
 /************************************
 *	タイトルUI元クラス.
 **/
 CTitleWidget::CTitleWidget()
 	: m_pSprite		()
-	, m_pCursor			( nullptr )
-	, m_SelectState		( CTitleWidget::ESelectState::Start )
+	, m_pCursor		( nullptr )
+	, m_SelectState	( CTitleWidget::ESelectState::Start )
 {
 	m_pCursor = std::make_shared<CCursor>();
 }
@@ -44,20 +45,16 @@ void CTitleWidget::Render()
 {
 	if (m_pSprite.size() == 0) return;
 
-	//背景.
-	m_pSprite[BACKGROUND]->SetDeprh(false);
-	m_pSprite[BACKGROUND]->RenderUI();
-	m_pSprite[BACKGROUND]->SetDeprh(true);
-
-	// カーソル.
-	m_pCursor->Render();
-
-	// 文字.
-	for (size_t sprite = START; sprite < m_pSprite.size(); sprite++)
+	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
 		m_pSprite[sprite]->SetDeprh(false);
 		m_pSprite[sprite]->RenderUI();
 		m_pSprite[sprite]->SetDeprh(true);
+
+		if (sprite != BACKGROUND) continue;
+		// カーソル.
+		m_pCursor->SetPosition(m_vPosition);
+		m_pCursor->Render();
 	}
 }
 
@@ -68,8 +65,8 @@ bool CTitleWidget::SpriteSetting()
 	{
 		SPRITE_BACKGROUND,		//背景.
 		SPRITE_SELECTSTART,		//開始.
-		SPRITE_SELECTEXIT,			//終了.
-		SPRITE_TITLE,					//タイトル.
+		SPRITE_SELECTEXIT,		//終了.
+		SPRITE_TITLE,			//タイトル.
 	};
 	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 
@@ -87,11 +84,13 @@ bool CTitleWidget::SpriteSetting()
 // カーソル設定関数.
 void CTitleWidget::CursorSetting()
 {
-	if (GetAsyncKeyState( VK_UP ) & 0x8000)
+	if (GetAsyncKeyState( VK_UP ) & 0x8000
+		|| CXInput::LThumbY_Axis() > IDLE_THUMB_MAX)
 	{
 		m_SelectState = CTitleWidget::ESelectState::Start;
 	}
-	if (GetAsyncKeyState( VK_DOWN ) & 0x8000)
+	if (GetAsyncKeyState( VK_DOWN ) & 0x8000
+		|| CXInput::LThumbY_Axis() < IDLE_THUMB_MIN)
 	{
 		m_SelectState = CTitleWidget::ESelectState::End;
 	}
@@ -99,10 +98,10 @@ void CTitleWidget::CursorSetting()
 	switch (m_SelectState)
 	{
 	case CTitleWidget::ESelectState::Start:
-		m_pCursor->SetPosition( m_pSprite[START]->GetRenderPos() );
+		m_vPosition = m_pSprite[START]->GetRenderPos();
 		break;
 	case CTitleWidget::ESelectState::End:
-		m_pCursor->SetPosition( m_pSprite[END]->GetRenderPos() );
+		m_vPosition = m_pSprite[END]->GetRenderPos();
 		break;
 	default:
 		break;
