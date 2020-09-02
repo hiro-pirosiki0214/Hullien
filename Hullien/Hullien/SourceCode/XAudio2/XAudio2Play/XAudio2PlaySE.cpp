@@ -16,7 +16,9 @@ CXAudio2PlaySE::CXAudio2PlaySE()
 	, m_fSEVolume(1.0f)
 	, m_fAnotherVolume(0.2f)
 {
-	m_pSourceVoice[0] = nullptr;
+	for (int Array = 1; Array < SE_VOICE_SIZE; Array++) {
+		m_pSourceVoice[Array] = nullptr;
+	}
 	InitSEFlag();
 }
 
@@ -223,7 +225,8 @@ bool CXAudio2PlaySE::AllSeStop()
 {
 	if (m_pSourceVoice[0] == nullptr) return true;
 
-	for (size_t Array = 0; Array < SE_VOICE_SIZE; Array++) {
+	for (int Array = 0; Array < SE_VOICE_SIZE; Array++) {
+		if (m_pSourceVoice[Array] == nullptr) continue;
 		m_pSourceVoice[Array]->Stop(0);
 		m_pSourceVoice[Array]->FlushSourceBuffers();
 		m_isSePlayVoice[Array] = false;
@@ -281,7 +284,7 @@ bool CXAudio2PlaySE::SetSEVolume(float value, size_t Array)
 void CXAudio2PlaySE::DestoroySource()
 {
 	if (m_pSourceVoice[0] != nullptr) {
-		for (size_t Array = 0; Array < SE_VOICE_SIZE; Array++) {
+		for (int Array = 0; Array < SE_VOICE_SIZE; Array++) {
 			m_pSourceVoice[Array]->DestroyVoice();
 			m_pSourceVoice[Array] = nullptr;
 		}

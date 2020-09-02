@@ -114,9 +114,6 @@ void CMain::Update()
 
 	CCameraManager::Update();
 	m_pSceneManager->Update();
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000) {
-		CSoundManager::PlaySE("End");
-	}
 	// FPS‚Ì•\Ž¦.
 	CDebugText::SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	CDebugText::Render( "FPS:", (int)m_pFrameRate->GetFrameTime() );

@@ -71,6 +71,7 @@ bool CPlayer::Init()
 // 更新関数.
 void CPlayer::Update()
 {
+	// 麻痺タイマーが動作してなければ.
 	if( m_ParalysisTimer.IsUpdate == false ){
 		Controller();			// 操作.
 		AttackController();		// 攻撃操作.
@@ -328,7 +329,7 @@ void CPlayer::AttackAnimation()
 	if( m_AttackDataQueue.empty() == true ) return;
 	if( m_AttackDataQueue.front().Frame >= m_AttackDataQueue.front().EndFrame ){
 		m_AttackDataQueue.pop();	// キューの先頭を取り出す.
-									// キューが空なら終了.
+		// キューが空なら終了.
 		if( m_AttackDataQueue.empty() == true ){
 			// これが最後の攻撃なので、攻撃カウントを0にする.
 			m_AttackComboCount = 0;	

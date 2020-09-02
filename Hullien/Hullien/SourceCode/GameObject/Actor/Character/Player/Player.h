@@ -121,6 +121,8 @@ public:
 
 	// “ÁŽê”\—Í‚ðŽg‚Á‚Ä‚¢‚é‚©.
 	bool IsSpecialAbility();
+	// Ž€–S‚µ‚½‚©.
+	bool IsDead(){ return m_LifePoint <= 0.0f; }
 
 private:
 	// ‘€ìŠÖ”.
