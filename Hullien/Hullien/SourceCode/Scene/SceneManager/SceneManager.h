@@ -49,7 +49,7 @@ private:
 	
 private:
 	std::shared_ptr<CSceneBase> m_pScene;
-	std::shared_ptr<CFade>			 m_pFade;
+	std::shared_ptr<CFade>		m_pFade;
 	EScene	m_NowScene;		// 現在のシーン.
 	EScene	m_NextScene;	// 次のシーン.
 	bool	m_IsLoadEnd;	// ロードが終了したか.
