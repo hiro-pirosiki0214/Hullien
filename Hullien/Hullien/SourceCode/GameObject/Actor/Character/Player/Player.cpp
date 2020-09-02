@@ -151,7 +151,7 @@ void CPlayer::SpriteRender()
 	param.LifeMax = m_Parameter.LifeMax;
 	// “Áê”\—Í.
 	param.SpecialAbility = m_SpecialAbility;
-	param.SpecialAbilityMax = SPECIAL_ABILITY_MAX;
+	param.SpecialAbilityMax = m_Parameter.SpecialAbilityMax;
 	// « “Áê”\—ÍÅ‘å’l •Ï”.
 	// m_Parameter.SpecialAbilityMax
 	for (const auto& s : m_pWidget)
