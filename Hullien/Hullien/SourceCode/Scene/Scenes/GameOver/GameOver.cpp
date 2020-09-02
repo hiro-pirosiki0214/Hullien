@@ -6,7 +6,7 @@ CGameOver::CGameOver( CSceneManager* pSceneManager )
 	, m_pGameOverWidget	( nullptr )
 {
 	m_pGameOverWidget = std::make_unique<CGameOverWidget>();
-	CFade::GetInstance()->SetFadeOut();
+	CFade::SetFadeOut();
 }
 
 CGameOver::~CGameOver()
@@ -27,9 +27,7 @@ bool CGameOver::Load()
 //============================.
 void CGameOver::Update()
 {
-	CFade::GetInstance()->Update();
-
-	if (CFade::GetInstance()->GetFadeState() == CFade::EFadeState::Out
+	if (CFade::GetFadeState() == CFade::EFadeState::Out
 		&& CFade::GetInstance()->GetIsFade() == true) return;
 	m_pGameOverWidget->Update();
 
@@ -39,8 +37,8 @@ void CGameOver::Update()
 		CFade::GetInstance()->SetFadeIn();
 	}
 
-	if (CFade::GetInstance()->GetFadeState() != CFade::EFadeState::In) return;
-	if (CFade::GetInstance()->GetIsFade() == true) return;
+	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
+	if (CFade::GetIsFade() == true) return;
 	m_pSceneManager->NextSceneMove();
 
 }

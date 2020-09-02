@@ -5,12 +5,9 @@
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase		   ( pSceneManager )
 	, m_pClearWidget	   ( nullptr )
-	, m_pFade			   ( nullptr )
-	, m_IsChangeScene ( false )
 {
 	m_pClearWidget = std::make_unique<CClearWidget>();
-	m_pFade = std::make_shared<CFade>();
-	m_pFade->SetFadeOut();
+	CFade::SetFadeOut();
 }
 
 CGameClear::~CGameClear()
@@ -35,7 +32,7 @@ void CGameClear::Update()
 {
 
 	if (CFade::GetFadeState() == CFade::EFadeState::Out
-		&& m_pFade->GetIsFade() == true) return;
+		&& CFade::GetIsFade() == true) return;
 	m_pClearWidget->Update();
 	ChangeScene();
 }
@@ -55,11 +52,10 @@ void CGameClear::Render()
 void CGameClear::ChangeScene()
 {
 	if (GetAsyncKeyState(VK_RETURN) & 0x0001) {
-		m_IsChangeScene = true;
-		m_pFade->SetFadeIn();
+		CFade::SetFadeIn();
 	}
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
-	if (m_pFade->GetIsFade() == true) return;
+	if (CFade::GetIsFade() == true) return;
 	m_pSceneManager->NextSceneMove();
 }

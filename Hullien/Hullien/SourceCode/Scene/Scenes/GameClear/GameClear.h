@@ -4,7 +4,6 @@
 #include "..\..\SceneBase\SceneBase.h"
 
 class CClearWidget;	// クリアUIクラス.
-class CFade;			// フェードクラス.
 
 /**********************************
 *	ゲームクリアクラス.
@@ -28,8 +27,6 @@ private:
 
 private:
 	std::unique_ptr<CClearWidget> m_pClearWidget;	// クリアUIクラス.
-	std::shared_ptr<CFade>			  m_pFade;				// フェードクラス.
-	bool									  m_IsChangeScene;	//シーン切り替えが可能か.
 };
 
 #endif	// #ifndef GAME_CLEAR_H.
