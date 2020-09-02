@@ -1,6 +1,7 @@
 #include "..\SceneList.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
+#include "..\..\..\Utility\XInput\XInput.h"
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase		   ( pSceneManager )
@@ -19,7 +20,6 @@ CGameClear::~CGameClear()
 //============================.
 bool CGameClear::Load()
 {
-
 	if ( m_pClearWidget->Init() == false ) return false;
 
 	return true;
@@ -30,7 +30,6 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-
 	if (CFade::GetFadeState() == CFade::EFadeState::Out
 		&& CFade::GetIsFade() == true) return;
 	m_pClearWidget->Update();
@@ -51,7 +50,10 @@ void CGameClear::Render()
 //============================.
 void CGameClear::ChangeScene()
 {
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001) {
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+	{
+		if (CFade::GetIsFade() == true) return;
 		CFade::SetFadeIn();
 	}
 	// フェードイン状態かつフェード中なら処理しない.

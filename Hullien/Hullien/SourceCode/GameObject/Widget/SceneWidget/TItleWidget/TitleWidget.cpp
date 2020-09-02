@@ -3,13 +3,14 @@
 #include "..\..\Cursor\Cursor.h"
 #include "..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\Resource\SpriteResource\SpriteResource.h"
+#include "..\..\..\..\Utility\XInput\XInput.h"
 
 /************************************
 *	タイトルUI元クラス.
 **/
 CTitleWidget::CTitleWidget()
-	: m_pSprite			()
-	, m_pCursor			( nullptr )
+	: m_pSprite		()
+	, m_pCursor		( nullptr )
 	, m_SelectState	( CTitleWidget::ESelectState::Start )
 {
 	m_pCursor = std::make_shared<CCursor>();
@@ -64,8 +65,8 @@ bool CTitleWidget::SpriteSetting()
 	{
 		SPRITE_BACKGROUND,		//背景.
 		SPRITE_SELECTSTART,		//開始.
-		SPRITE_SELECTEXIT,			//終了.
-		SPRITE_TITLE,					//タイトル.
+		SPRITE_SELECTEXIT,		//終了.
+		SPRITE_TITLE,			//タイトル.
 	};
 	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 
@@ -83,11 +84,13 @@ bool CTitleWidget::SpriteSetting()
 // カーソル設定関数.
 void CTitleWidget::CursorSetting()
 {
-	if (GetAsyncKeyState( VK_UP ) & 0x8000)
+	if (GetAsyncKeyState( VK_UP ) & 0x8000
+		|| CXInput::LThumbY_Axis() > IDLE_THUMB_MAX)
 	{
 		m_SelectState = CTitleWidget::ESelectState::Start;
 	}
-	if (GetAsyncKeyState( VK_DOWN ) & 0x8000)
+	if (GetAsyncKeyState( VK_DOWN ) & 0x8000
+		|| CXInput::LThumbY_Axis() < IDLE_THUMB_MIN)
 	{
 		m_SelectState = CTitleWidget::ESelectState::End;
 	}

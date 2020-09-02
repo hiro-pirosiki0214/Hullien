@@ -1,5 +1,6 @@
 #include "..\SceneList.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h"
+#include "..\..\..\Utility\XInput\XInput.h"
 
 CGameOver::CGameOver( CSceneManager* pSceneManager )
 	: CSceneBase				( pSceneManager )
@@ -33,7 +34,10 @@ void CGameOver::Update()
 
 
 	// ˆÈ‰ºƒV[ƒ“‘JˆÚ.
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001 ){
+	if( GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+	{
+		if (CFade::GetIsFade() == true) return;
 		CFade::GetInstance()->SetFadeIn();
 	}
 
