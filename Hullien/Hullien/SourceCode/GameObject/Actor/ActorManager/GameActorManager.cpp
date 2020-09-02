@@ -115,6 +115,12 @@ void CGameActorManager::SpriteRender()
 	m_pPlayer->SpriteRender();	//プレイヤーのスプライト描画.
 }
 
+// ゲームオーバーかどうか.
+bool CGameActorManager::IsGameOver()
+{
+	return m_pPlayer->IsDead();
+}
+
 // 座標リストの設定.
 void CGameActorManager::SetPositionList( CActor* pActor )
 {

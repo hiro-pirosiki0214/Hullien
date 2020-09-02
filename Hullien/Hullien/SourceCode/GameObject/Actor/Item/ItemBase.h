@@ -3,6 +3,8 @@
 
 #include "..\Actor.h"
 
+class CEffect;	// エフェクトクラス.
+
 class CItemBase : public CActor
 {
 	const float INIT_MODEL_ALPHA			= 1.0f;		// 初期モデル透過値.

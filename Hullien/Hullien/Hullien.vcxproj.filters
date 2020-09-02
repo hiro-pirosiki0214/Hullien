@@ -114,6 +114,7 @@
     <ClCompile Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlayBGM.cpp" />
     <ClCompile Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlaySE.cpp" />
     <ClCompile Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.cpp" />
+    <ClCompile Include="SourceCode\Common\Effect\EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -234,5 +235,6 @@
     <ClInclude Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlayBGM.h" />
     <ClInclude Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlaySE.h" />
     <ClInclude Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.h" />
+    <ClInclude Include="SourceCode\Common\Effect\EffectManager.h" />
   </ItemGroup>
 </Project>

@@ -31,6 +31,8 @@ public:
 	void SpriteRender();
 	// オブジェクト座標リストの取得.
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	GetObjPositionList() const { return m_ObjPositionList; }
+	// ゲームオーバーかどうか.
+	bool IsGameOver();
 
 private:
 	// 座標リストの設定.
