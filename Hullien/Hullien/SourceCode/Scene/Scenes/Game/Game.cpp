@@ -15,9 +15,8 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_GameObjManager	( nullptr )
 	, m_WidgetManager	( nullptr )
 	, m_ContinueWidget	( nullptr )
-	, m_ChangeSceneState ( EChangeSceneState::Clear )
+	, m_ChangeSceneState( EChangeSceneState::Clear )
 	, m_IsChangeScene	( false )
-	, m_DispContinue	(0)
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
@@ -47,27 +46,18 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
-	if (GetAsyncKeyState(VK_F1) & 0x0001)
-	{
-		m_DispContinue++;
-		if (m_DispContinue >= 2)
-		{
-			m_DispContinue = 0;
-		}
-	}
-
-	if (m_DispContinue != 1)
+	if (m_GameObjManager->IsGameOver() == false)
 	{
 		m_GameObjManager->Update();
 		m_WidgetManager->Update(m_GameObjManager.get());
+
 	}
 	else
 	{
 		UpdateContinue();
 	}
-	ChangeScene();	
 
-#if 1	// 次のシーンへ移動.
+#if 0	// 次のシーンへ移動.
 	if( GetAsyncKeyState(VK_RETURN) & 0x0001
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 	{
@@ -75,11 +65,17 @@ void CGame::Update()
 		SetChangeScene(EChangeSceneState::Clear);
 	}
 #else 
-	if( m_pLimitTime->IsFinish() == true )
+	if(m_WidgetManager->IsGameFinish() == true )
 	{
-		m_pSceneManager->NextSceneMove();
+		if (m_IsChangeScene == false)
+		{
+			SetChangeScene(EChangeSceneState::Clear);
+		}
 	}
 #endif	// #if 0.
+
+	ChangeScene();
+
 }
 
 //============================.
@@ -91,7 +87,7 @@ void CGame::Render()
 	m_GameObjManager->SpriteRender();
 	m_WidgetManager->Render();
 
-	if (m_DispContinue == 1)
+	if (m_GameObjManager->IsGameOver() == true)
 	{
 		//プレイヤーの体力が0になったか取得.
 		// コンテニュー.
@@ -113,7 +109,7 @@ void CGame::UpdateContinue()
 		if (GetAsyncKeyState(VK_RETURN) & 0x0001 
 			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 		{
-			if (CFade::GetIsFade() == true) return;
+			if (m_IsChangeScene == true) return;
 			SetChangeScene(EChangeSceneState::Game);
 		}
 		break;
@@ -121,7 +117,7 @@ void CGame::UpdateContinue()
 		if (GetAsyncKeyState(VK_RETURN) & 0x0001
 			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 		{
-			if (CFade::GetIsFade() == true) return;
+			if (m_IsChangeScene == true) return;
 			SetChangeScene( EChangeSceneState::GameOver );
 		}
 		break;

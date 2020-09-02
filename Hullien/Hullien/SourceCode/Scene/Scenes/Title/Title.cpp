@@ -76,7 +76,8 @@ void CTitle::ChangeScene()
 		m_pSceneManager->NextSceneMove();
 		break;
 	case CTitleWidget::ESelectState::End:
-			// ウィンドウを閉じる処理を追加する.
+		// ウィンドウを閉じる.
+		PostMessage(m_pSceneManager->m_hWnd, WM_CLOSE, 0, 0);
 		break;
 	default:
 		break;

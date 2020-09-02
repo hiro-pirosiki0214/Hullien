@@ -71,6 +71,8 @@ HRESULT CMain::Init()
 		m_pDirectX11->GetDevice(), 
 		m_pDirectX11->GetContext() );
 
+	m_pSceneManager->SethWnd(m_hWnd);
+
 	return S_OK;
 }
 

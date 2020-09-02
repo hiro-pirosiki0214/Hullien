@@ -23,6 +23,8 @@ public:
 	void Update(CGameActorManager* pActorManager);
 	// •`‰æŠÖ”.
 	void Render();
+	// ƒQ[ƒ€‚ªI—¹‚µ‚½‚©.
+	bool IsGameFinish();
 
 private:
 	std::unique_ptr<CLimitTime> m_pLimitTime;

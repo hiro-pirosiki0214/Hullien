@@ -47,3 +47,10 @@ void CGameWidgetManager::Render()
 	m_pMiniMap->Render();
 	m_pUltemateSing->Render();
 }
+
+// ƒQ[ƒ€‚ªI—¹‚µ‚½‚©.
+bool CGameWidgetManager::IsGameFinish()
+{
+
+	return m_pLimitTime->IsFinish();
+}
