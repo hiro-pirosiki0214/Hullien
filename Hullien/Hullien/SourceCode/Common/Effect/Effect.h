@@ -156,6 +156,7 @@ private:
 	// ÌßÛ¼Şª¸¼®İs—ñ‚ğİ’è.
 	void SetProjectionMatrix(D3DXMATRIX& mProj);
 
+private:
 	// ´Ìª¸Ä‚ğ“®ì‚³‚¹‚é‚½‚ß‚É•K—v.
 	Effekseer::Manager*				m_pManager;
 	EffekseerRenderer::Renderer*	m_pRenderer;

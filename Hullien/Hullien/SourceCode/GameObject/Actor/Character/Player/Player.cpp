@@ -31,6 +31,7 @@ CPlayer::CPlayer()
 	, m_SpecialAbility				( 0.0f )
 	, m_HasUsableSP					( false )
 	, m_SpecialAbilityValue			( 0.0f )
+	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
 	, m_ItemSPRecoveryTimer			()
@@ -58,9 +59,10 @@ bool CPlayer::Init()
 	if( ColliderSetting() == false ) return false;
 	if( WidgetSetting() == false ) return false;
 
-	m_MoveSpeed = m_Parameter.MoveSpeed;
-	m_AttackPower = m_Parameter.AttackPower;
-	m_LifePoint = m_Parameter.LifeMax;
+	m_MoveSpeed		= m_Parameter.MoveSpeed;	// 移動速度の設定.
+	m_AttackPower	= m_Parameter.AttackPower;	// 攻撃力の設定.
+	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
+	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
 
 	SetAttackFrameList();
 	return true;
@@ -69,6 +71,7 @@ bool CPlayer::Init()
 // 更新関数.
 void CPlayer::Update()
 {
+	// 麻痺タイマーが動作してなければ.
 	if( m_ParalysisTimer.IsUpdate == false ){
 		Controller();			// 操作.
 		AttackController();		// 攻撃操作.
@@ -173,6 +176,11 @@ void CPlayer::Controller()
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
+
+	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_vPosition.z -= m_MoveSpeed;
+	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_vPosition.z += m_MoveSpeed;
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_vPosition.x -= m_MoveSpeed;
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_vPosition.x += m_MoveSpeed;
 }
 
 // カメラ操作.
@@ -204,7 +212,7 @@ void CPlayer::AttackController()
 // 特殊能力操作関数.
 void CPlayer::SPController()
 {
-	if( m_SpecialAbility < SPECIAL_ABILITY_MAX ) return;
+	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
 	// Yボタンが押された瞬間じゃなければ終了.
 	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
 
@@ -227,8 +235,8 @@ void CPlayer::AvoidController()
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
 	m_OldPosition = m_vPosition;	// 現在の座標を設定.
 
-									// 回避アニメーションを設定するなら ここ.
-									//
+	// 回避アニメーションを設定するなら ここ.
+	//
 
 }
 
@@ -281,23 +289,18 @@ void CPlayer::AvoidMove()
 
 // 特殊能力回復更新関数.
 void CPlayer::SpecialAbilityUpdate()
-{
-	const float specialAbilityValue = 0.01f;	// 特殊能力回復力.
-
-												// アイテムでの回復状態なら.
+{							
+	// アイテムでの回復状態なら.
 	if( m_ItemAttackTimer.Update() == true ){
-		m_SpecialAbilityValue = specialAbilityValue;	// 回復値をもとに戻す.
-	} else {
-		// あとで消す.
-		m_SpecialAbilityValue = specialAbilityValue;
+		m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 回復値をもとに戻す.
 	}
 
 	// 特殊能力値が最大以上なら終了.
-	if( m_SpecialAbility >= SPECIAL_ABILITY_MAX ) return;
+	if( m_SpecialAbility >= m_Parameter.SpecialAbilityMax ) return;
 	m_SpecialAbility += m_SpecialAbilityValue;	// 特殊能力値を加算.
 
-	if( m_SpecialAbility < SPECIAL_ABILITY_MAX ) return;
-	m_SpecialAbility = SPECIAL_ABILITY_MAX;	// 最大値を超えないようにする.
+	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
+	m_SpecialAbility = m_Parameter.SpecialAbilityMax;	// 最大値を超えないようにする.
 }
 
 // 攻撃力UP更新関数.
@@ -327,7 +330,7 @@ void CPlayer::AttackAnimation()
 	if( m_AttackDataQueue.empty() == true ) return;
 	if( m_AttackDataQueue.front().Frame >= m_AttackDataQueue.front().EndFrame ){
 		m_AttackDataQueue.pop();	// キューの先頭を取り出す.
-									// キューが空なら終了.
+		// キューが空なら終了.
 		if( m_AttackDataQueue.empty() == true ){
 			// これが最後の攻撃なので、攻撃カウントを0にする.
 			m_AttackComboCount = 0;	
@@ -411,9 +414,9 @@ void CPlayer::SetSPEffectTime( const std::function<void(float&,float&)>& proc )
 {
 	if( m_ItemSPRecoveryTimer.IsUpdate == true ) return;
 
-	proc( m_SpecialAbilityValue, m_ItemSPRecoveryTimer.Time );
+	proc( m_ItemSpecialAbilityValue, m_ItemSPRecoveryTimer.Time );
 
-	if( m_SpecialAbility >= SPECIAL_ABILITY_MAX ) return;
+	if( m_SpecialAbility >= m_Parameter.SpecialAbilityMax ) return;
 	m_ItemSPRecoveryTimer.Set();
 }
 
@@ -486,10 +489,12 @@ void CPlayer::EditRender()
 	ImGui::Begin( u8"プレイヤーの設定", &isOpen );
 
 	// 各パラメータの設定.
-	ImGui::InputFloat( u8"移動速度", &m_Parameter.MoveSpeed );
+	ImGui::InputFloat( u8"移動速度", &m_MoveSpeed );
 	ImGui::InputFloat( u8"体力", &m_LifePoint );
 	ImGui::InputFloat( u8"攻撃力", &m_Parameter.AttackPower );
 	ImGui::InputInt( u8"無敵時間", &m_Parameter.InvincibleTime );
+	ImGui::InputFloat( u8"特殊能力最大値", &m_Parameter.SpecialAbilityMax );
+	ImGui::InputFloat( u8"特殊能力回復値", &m_Parameter.SpecialAbilityValue );
 	ImGui::InputInt( u8"攻撃コンボ最大数", &m_Parameter.AttackComboMax );
 	ImGui::InputInt( u8"攻撃キュー追加最大数", &m_Parameter.AttackQueueMax );
 	ImGui::InputFloat( u8"回避の移動距離", &m_Parameter.AvoidMoveDistance );

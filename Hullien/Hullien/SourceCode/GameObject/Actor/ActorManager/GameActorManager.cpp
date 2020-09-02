@@ -103,6 +103,9 @@ void CGameActorManager::Render()
 	m_pAlienManager->Render();	// 宇宙人達の描画.
 	m_pItemManager->Render();	// アイテムの描画.
 	m_pBarrier->Render();		// バリアの描画.
+
+	// 仮　後で移動.
+	m_pAlienManager->SpriteRender();	// スプライトの描画.
 }
 
 // スプライトの描画.
@@ -110,6 +113,12 @@ void CGameActorManager::SpriteRender()
 {
 	m_pGirl->SpriteRender();		//女の子のスプライト描画.
 	m_pPlayer->SpriteRender();	//プレイヤーのスプライト描画.
+}
+
+// ゲームオーバーかどうか.
+bool CGameActorManager::IsGameOver()
+{
+	return m_pPlayer->IsDead();
 }
 
 // 座標リストの設定.

@@ -3,6 +3,8 @@
 
 #include "..\Actor.h"
 
+class CEffect;	// エフェクトクラス.
+
 class CItemBase : public CActor
 {
 	const float INIT_MODEL_ALPHA			= 1.0f;		// 初期モデル透過値.
@@ -16,6 +18,8 @@ public:
 		float	InitGravity;			// 初期重力.
 
 		int		BoundCountMax;			// バウンド最大数.
+		float	FinalRenderHeight;		// 最終的な描画の高さ.
+		float	FinalMoveSpeed;			// 最終的な移動速度.
 		float	ModelScaleMax;			// モデルサイズ最大.
 		float	ModelScaleAddValue;		// モデルサイズ加算値.
 		float	RotationSpeed;			// 回転速度.
@@ -27,6 +31,8 @@ public:
 			: InitAccelerationValue	( 0.0f )
 			, InitGravity			( 0.0f )
 			, BoundCountMax			( 0 )
+			, FinalRenderHeight		( 0.0f )
+			, FinalMoveSpeed		( 0.0f )
 			, ModelScaleMax			( 0.0f )
 			, ModelScaleAddValue	( 0.0f )
 			, RotationSpeed			( 0.0f )

@@ -181,6 +181,7 @@ protected:
 	EMoveState		m_NowMoveState;				// 現在の移動状態.
 	EItemList		m_HasAnyItem;				// どのアイテムを持っているか.
 	float			m_LifePoint;				// 体力.
+	float			m_MoveSpeed;				// 移動速度.
 	float			m_ModelAlpha;				// モデルのアルファ値.
 	int				m_WaitCount;				// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.

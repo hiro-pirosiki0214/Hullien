@@ -122,6 +122,7 @@ void CItemBase::Drop()
 	// モデルサイズを大きくする.
 	if( m_Scale <= pPRAMETER->ModelScaleMax ){
 		m_Scale += pPRAMETER->ModelScaleAddValue;
+		if( m_Scale >= 1.0f ) m_Scale = 1.0f;
 		m_vSclae = { m_Scale, m_Scale, m_Scale };
 	}
 
@@ -129,7 +130,7 @@ void CItemBase::Drop()
 	m_vPosition.y -= m_AccelerationValue;	// 座標を加算値で引く.
 
 	// 高さが0.0fより低くなった場合.
-	if( m_vPosition.y <= 0.0f ){
+	if( m_vPosition.y <= 1.0f ){
 		m_AccelerationValue = -m_AccelerationValue;	// 加算値を反転する.
 		m_Gravity += m_Gravity;	// 重力を加算する.
 		m_BoundCount++;		// バウンドの回数を加算する.
@@ -143,6 +144,9 @@ void CItemBase::Drop()
 // アクティブ.
 void CItemBase::Active()
 {
+	if( m_vPosition.y <= pPRAMETER->FinalRenderHeight ){
+		m_vPosition.y += pPRAMETER->FinalMoveSpeed;
+	}
 	// 回転処理.
 	Rotate();
 

@@ -11,10 +11,8 @@ class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
-	const char*	MODEL_NAME	= "kaito_s";		// モデル名.
+	const char*	MODEL_NAME	= "kaito_s";	// モデル名.
 	const char* MODEL_TEMP_NAME = "kaito";	// 仮モデル名.
-
-	const float SPECIAL_ABILITY_MAX = 10.0f;
 
 	// アニメーション番号.
 	enum class enAnimNo
@@ -34,6 +32,7 @@ class CPlayer : public CCharacter
 	struct stPlayerParam : public stParameter
 	{
 		float		SpecialAbilityMax;	// 特殊能力最大値.
+		float		SpecialAbilityValue;// 特殊能力回復値.
 		int			AttackComboMax;		// 攻撃の最大数.
 		int			AttackQueueMax;		// 攻撃キューの最大数.
 		float		AvoidMoveDistance;	// 回避の移動距離.
@@ -122,6 +121,8 @@ public:
 
 	// 特殊能力を使っているか.
 	bool IsSpecialAbility();
+	// 死亡したか.
+	bool IsDead(){ return m_LifePoint <= 0.0f; }
 
 private:
 	// 操作関数.
@@ -198,9 +199,10 @@ private:
 	float			m_SpecialAbility;		// 特殊能力.
 	bool			m_HasUsableSP;			// 特殊能力を使えるか.
 
-	float			m_SpecialAbilityValue;	// 特殊能力回復力.
-	float			m_AttackPower;			// 攻撃力.
-	float			m_MoveSpeed;			// 移動速度.
+	float			m_SpecialAbilityValue;		// 特殊能力回復力.
+	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
+	float			m_AttackPower;				// 攻撃力.
+	float			m_MoveSpeed;				// 移動速度.
 
 	SEffectTimer	m_ItemSPRecoveryTimer;	// アイテムでの特殊能力回復タイマー.
 	SEffectTimer	m_ItemAttackTimer;		// アイテムでの攻撃力UPタイマー.

@@ -3,6 +3,7 @@
 #include "..\MeshResource\MeshResource.h"
 #include "..\SpriteResource\SpriteResource.h"
 #include "..\FontResource\FontResource.h"
+#include "..\..\XAudio2\SoundManager.h"
 
 CLoadManager::CLoadManager()
 	: m_isLoadEnd		( false )
@@ -23,6 +24,7 @@ void CLoadManager::LoadResource(
 	ID3D11DeviceContext* pContext11, 
 	LPDIRECT3DDEVICE9 pDevice9 )
 {
+	CSoundManager::CreateSoundData();
 	auto load = [&]( HWND hWnd, 
 		ID3D11Device* pDevice11, 
 		ID3D11DeviceContext* pContext11, 
@@ -32,7 +34,6 @@ void CLoadManager::LoadResource(
 		CSpriteResource::Load( pDevice11, pContext11 );
 		CMeshResorce::Load( hWnd, pDevice11, pContext11, pDevice9 );
 		CEffectResource::Load( pDevice11, pContext11 );
-
 		m_isLoadEnd = true;
 	};
 	m_Thread = std::thread( load, hWnd, pDevice11, pContext11, pDevice9 );

@@ -15,6 +15,7 @@
 #include "..\Resource\LoadManager\LoadManager.h"
 #include "..\Utility\FileManager\FileManager.h"
 #include "..\Utility\ImGuiManager\ImGuiManager.h"
+#include "..\XAudio2\SoundManager.h"
 
 #include "..\Common\Font\FontCreate.h"
 #include "..\Common\Font\Font.h"
@@ -112,7 +113,6 @@ void CMain::Update()
 
 	CCameraManager::Update();
 	m_pSceneManager->Update();
-
 	// FPS‚Ì•\Ž¦.
 	CDebugText::SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	CDebugText::Render( "FPS:", (int)m_pFrameRate->GetFrameTime() );

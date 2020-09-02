@@ -5,7 +5,7 @@
 
 class CAttackUpItem : public CItemBase
 {
-	const char* MODEL_NAME = "GhostA";
+	const char* MODEL_NAME = "item attack";
 	const float* pATTACK_UP_POWER;	// 攻撃力(外部からポインタで取得する).
 	const float* pATTACK_UP_TIME;	// 攻撃力(外部からポインタで取得する).
 

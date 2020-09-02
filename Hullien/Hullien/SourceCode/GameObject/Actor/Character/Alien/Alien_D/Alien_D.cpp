@@ -141,7 +141,7 @@ void CAlienD::AttackRangeSpriteRender()
 		color.w = m_AttackCount;
 	}
 
-	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_TargetPosition.y+m_Parameter.AttackRangeSpritePosY, m_TargetPosition.z } );
+	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_Parameter.AttackRangeSpritePosY, m_TargetPosition.z } );
 	m_pAttackRangeSprite->SetRotation( { static_cast<float>(D3DXToRadian(90)), 0.0f, 0.0f } );
 	m_pAttackRangeSprite->SetScale( m_Parameter.AttackRangeSpriteScale );	
 	m_pAttackRangeSprite->SetColor( color );
@@ -162,7 +162,7 @@ void CAlienD::Spawning()
 void CAlienD::Move()
 {
 	TargetRotation();		// ‰ñ“].
-	CAlienD::VectorMove( m_Parameter.MoveSpeed );	// ˆÚ“®.
+	CAlienD::VectorMove( m_MoveSpeed );	// ˆÚ“®.
 	Attack();				// UŒ‚.
 	CAlien::WaitMove();		// ‘Ò‹@.
 

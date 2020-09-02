@@ -5,7 +5,7 @@
 
 class CLifeRecoveryItem : public CItemBase
 {
-	const char* MODEL_NAME = "GhostA";
+	const char* MODEL_NAME = "item cure";
 	const float* pLIFE_RECOVERY_VALUE;	// 回復力(外部からポインタで取得する).
 public:
 	CLifeRecoveryItem();

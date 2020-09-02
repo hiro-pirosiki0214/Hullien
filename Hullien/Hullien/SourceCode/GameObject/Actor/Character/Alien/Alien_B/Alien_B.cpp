@@ -124,11 +124,11 @@ void CAlienB::Move()
 	AimPlayerDecision();	// プレイヤーを狙うか判定.
 	TargetRotation();		// 回転.
 	if( m_HasAimPlayer == true ){
-		CAlienB::VectorMove( m_Parameter.MoveSpeed );	// 移動.
+		CAlienB::VectorMove( m_MoveSpeed );	// 移動.
 		Attack();				// 攻撃.
 		CAlien::WaitMove();		// 待機.
 	} else {
-		CAlien::VectorMove( m_Parameter.MoveSpeed );		// 移動.
+		CAlien::VectorMove( m_MoveSpeed );		// 移動.
 		CAlien::WaitMove();		// 待機.
 	}
 

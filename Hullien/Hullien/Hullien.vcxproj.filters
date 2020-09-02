@@ -108,6 +108,13 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\UltemateSign\UltemateSign.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.cpp" />
+    <ClCompile Include="SourceCode\XAudio2\SoundManager.cpp" />
+    <ClCompile Include="SourceCode\XAudio2\OggLoad\OggLoad.cpp" />
+    <ClCompile Include="SourceCode\XAudio2\XAudio2Master\XAudio2MasterVoice.cpp" />
+    <ClCompile Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlayBGM.cpp" />
+    <ClCompile Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlaySE.cpp" />
+    <ClCompile Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.cpp" />
+    <ClCompile Include="SourceCode\Common\Effect\EffectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -220,5 +227,14 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\UltemateSign\UltemateSign.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.h" />
+    <ClInclude Include="SourceCode\XAudio2\SoundManager.h" />
+    <ClInclude Include="SourceCode\XAudio2\XAudio2.h" />
+    <ClInclude Include="SourceCode\XAudio2\OggLoad\OggLoad.h" />
+    <ClInclude Include="SourceCode\XAudio2\XAudio2CallBack\VoiceCallBack.h" />
+    <ClInclude Include="SourceCode\XAudio2\XAudio2Master\XAudio2MasterVoice.h" />
+    <ClInclude Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlayBGM.h" />
+    <ClInclude Include="SourceCode\XAudio2\XAudio2Play\XAudio2PlaySE.h" />
+    <ClInclude Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.h" />
+    <ClInclude Include="SourceCode\Common\Effect\EffectManager.h" />
   </ItemGroup>
 </Project>

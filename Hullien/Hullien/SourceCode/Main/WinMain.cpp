@@ -3,9 +3,12 @@
 
 #include "..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\Utility\Log\MyLog.h"
+#include "..\XAudio2\SoundManager.h"
 
 // ImGuiで使用.
 extern LRESULT ImGui_ImplWin32_WndProcHandler( HWND, UINT, WPARAM, LPARAM );
+
+std::unique_ptr<CMain> pMain = std::make_unique<CMain>();
 
 int WINAPI WinMain( 
 	HINSTANCE hInstance, 
@@ -19,7 +22,7 @@ int WINAPI WinMain(
 #endif	// #ifdef _DEBUG.
 
 	CLog::OpenLogTextFile();
-	std::unique_ptr<CMain> pMain = std::make_unique<CMain>();
+	
 
 	if( pMain == nullptr ) return 0;
 
@@ -33,7 +36,7 @@ int WINAPI WinMain(
 
 	// メイン解放処理.
 	pMain->Release();
-
+	
 	CLog::CloseLogTextFile();
 
 	return 0;
@@ -67,8 +70,9 @@ LRESULT CALLBACK WndProc(
 		break;
 	case WM_CLOSE:
 		// ウィンドウを破棄する.
+		CSoundManager::Release();
 		DestroyWindow( hWnd );
-
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;

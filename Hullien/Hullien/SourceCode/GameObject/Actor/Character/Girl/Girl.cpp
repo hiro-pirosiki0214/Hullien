@@ -24,7 +24,7 @@ CGirl::~CGirl()
 {
 }
 
-// ‰Šú‰»ŠÖ”.
+// åˆæœŸåŒ–é–¢æ•°.
 bool CGirl::Init()
 {
 #ifndef IS_TEMP_MODEL_RENDER
@@ -38,7 +38,7 @@ bool CGirl::Init()
 	return true;
 }
 
-// XVŠÖ”.
+// æ›´æ–°é–¢æ•°.
 void CGirl::Update()
 {
 	switch( m_NowState )
@@ -60,16 +60,17 @@ void CGirl::Update()
 	default:
 		break;
 	}
-	if( GetAsyncKeyState(VK_UP) & 0x8000 ) m_vPosition.z -= 0.04f;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 ) m_vPosition.z += 0.04f;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) m_vPosition.x -= 0.04f;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 ) m_vPosition.x += 0.04f;
+	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
+	{
+		m_pWarning->Update();
+		m_pWarning->SetPosition(m_vPosition);
+	}
 }
 
-// •`‰æŠÖ”.
+// æç”»é–¢æ•°.
 void CGirl::Render()
 {
-	MeshRender();	// ƒƒbƒVƒ…‚Ì•`‰æ.
+	MeshRender();	// ãƒ¡ãƒƒã‚·ãƒ¥ã®æç”».
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -79,7 +80,7 @@ void CGirl::Render()
 #endif	// #if _DEBUG.
 }
 
-// “–‚½‚è”»’èŠÖ”.
+// å½“ãŸã‚Šåˆ¤å®šé–¢æ•°.
 void CGirl::Collision( CActor* pActor )
 {
 	if( pActor == nullptr ) return;
@@ -88,32 +89,31 @@ void CGirl::Collision( CActor* pActor )
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 }
 
-// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
+// ç›¸æ‰‹åº§æ¨™ã®è¨­å®šé–¢æ•°.
 void CGirl::SetTargetPos( CActor& actor )
 {
 	m_vPosition = actor.GetPosition();
 	m_NowState = ENowState::Abduct;
 }
 
-// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æ.
+// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”».
 void CGirl::SpriteRender()
 {
-	// —‚Ìq‚ª˜A‚ê‹‚ç‚ê‚Ä‚¢‚éó‘Ô‚Ü‚½‚ÍŠëŒ¯‚Èó‘Ô‚È‚ç‚ÎŒx‚ğ•`‰æ.
+	// å¥³ã®å­ãŒé€£ã‚Œå»ã‚‰ã‚Œã¦ã„ã‚‹çŠ¶æ…‹ã¾ãŸã¯å±é™ºãªçŠ¶æ…‹ãªã‚‰ã°è­¦å‘Šã‚’æç”».
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
 		m_pWarning->SetPosition(m_vPosition);
 		m_pWarning->Update();
 		m_pWarning->Render();
 	}
-	// —‚Ìq‚ª˜A‚ê‹‚ç‚ê‚Ä‚¢‚éó‘Ôo‚È‚¢‚È‚çŒx‚ğ”ñ•\¦.
+	// å¥³ã®å­ãŒé€£ã‚Œå»ã‚‰ã‚Œã¦ã„ã‚‹çŠ¶æ…‹å‡ºãªã„ãªã‚‰è­¦å‘Šã‚’éè¡¨ç¤º.
 	if(m_NowState != ENowState::Abduct)
 	{
 		m_IsDanger = false;
 	}
-
 }
 
-// ˆÚ“®ŠÖ”.
+// ç§»å‹•é–¢æ•°.
 void CGirl::Move()
 {
 	switch( m_NowMoveState )
@@ -133,13 +133,13 @@ void CGirl::Move()
 	}
 }
 
-// –Ú“I‚ÌêŠ‚ÉŒü‚¯‚Ä‰ñ“].
+// ç›®çš„ã®å ´æ‰€ã«å‘ã‘ã¦å›è»¢.
 void CGirl::TargetRotation()
 {
 	if( m_NowMoveState != EMoveState::Rotation ) return;
 
 	const D3DXVECTOR3 targetPosition = { 0.0f, 0.0f, 0.0f };
-	// –Ú“I‚Ì‰ñ“]²‚ğæ“¾.
+	// ç›®çš„ã®å›è»¢è»¸ã‚’å–å¾—.
 	D3DXVECTOR3 targetRotation = { 0.0f, 0.0f, 0.0f };
 	targetRotation.y = atan2f( 
 		targetPosition.x - m_vPosition.x,
@@ -147,42 +147,42 @@ void CGirl::TargetRotation()
 	m_MoveVector.x = sinf( targetRotation.y );
 	m_MoveVector.z = cosf( targetRotation.y );
 
-	// ©g‚ÌƒxƒNƒgƒ‹‚ğ—pˆÓ.
+	// è‡ªèº«ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’ç”¨æ„.
 	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
 	myVector.x = sinf( m_vRotation.y );
 	myVector.z = cosf( m_vRotation.y );
 
-	// ƒxƒNƒgƒ‹‚Ì’·‚³‚ğ‹‚ß‚é.
+	// ãƒ™ã‚¯ãƒˆãƒ«ã®é•·ã•ã‚’æ±‚ã‚ã‚‹.
 	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
 	float targetLenght = sqrtf(m_MoveVector.x*m_MoveVector.x + m_MoveVector.z*m_MoveVector.z);
 
-	// –Ú“I‚ÌƒxƒNƒgƒ‹‚ÆA©•ª‚ÌƒxƒNƒgƒ‹‚ÌŠOÏ‚ğ‹‚ß‚é.
+	// ç›®çš„ã®ãƒ™ã‚¯ãƒˆãƒ«ã¨ã€è‡ªåˆ†ã®ãƒ™ã‚¯ãƒˆãƒ«ã®å¤–ç©ã‚’æ±‚ã‚ã‚‹.
 	float cross = myVector.x * m_MoveVector.z-myVector.z * m_MoveVector.x;
 	float dot = myVector.x * m_MoveVector.x+myVector.z * m_MoveVector.z;
 	dot = acosf( dot / ( myLenght * targetLenght ));
 
-	const float ROTATIONAL_SPEED = 0.05f;	// ‰ñ“]‘¬“x.
-	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// ‰ñ“]‚Ì‹–—e”ÍˆÍ.
+	const float ROTATIONAL_SPEED = 0.05f;	// å›è»¢é€Ÿåº¦.
+	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// å›è»¢ã®è¨±å®¹ç¯„å›².
 
-																			// ŠOÏ‚ª0.0‚æ‚è­‚È‚¯‚ê‚Î Œv‰ñ‚è : ”½Œv‰ñ‚è ‚É‰ñ“]‚·‚é.
+																			// å¤–ç©ãŒ0.0ã‚ˆã‚Šå°‘ãªã‘ã‚Œã° æ™‚è¨ˆå›ã‚Š : åæ™‚è¨ˆå›ã‚Š ã«å›è»¢ã™ã‚‹.
 	m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
 
-	// “àÏ‚ª‹–—e”ÍˆÍ‚È‚ç.
+	// å†…ç©ãŒè¨±å®¹ç¯„å›²ãªã‚‰.
 	if( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ){
-		m_vRotation.y = targetRotation.y;	// ƒ^[ƒQƒbƒg‚Ö‚Ì‰ñ“]æ“¾.
-											// ˆÚ“®—pƒxƒNƒgƒ‹‚ğæ“¾.
+		m_vRotation.y = targetRotation.y;	// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¸ã®å›è»¢å–å¾—.
+											// ç§»å‹•ç”¨ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—.
 		m_MoveVector.x = sinf( m_vRotation.y );
 		m_MoveVector.z = cosf( m_vRotation.y );
 		m_NowMoveState = EMoveState::Move;
 	}
 }
 
-// –Ú“I‚ÌêŠ‚ÉŒü‚¯‚ÄˆÚ“®.
+// ç›®çš„ã®å ´æ‰€ã«å‘ã‘ã¦ç§»å‹•.
 void CGirl::TargetMove()
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
 
-	// –Ú“I‚ÌêŠ.
+	// ç›®çš„ã®å ´æ‰€.
 	D3DXVECTOR3 targetPosition = { 0.0f, 5.0f, 0.0f };
 
 	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * 0.01f;
@@ -195,28 +195,28 @@ void CGirl::TargetMove()
 	m_NowMoveState = EMoveState::Wait;
 }
 
-// õ“G‚Ì“–‚½‚è”»’è.
+// ç´¢æ•µã®å½“ãŸã‚Šåˆ¤å®š.
 void CGirl::SearchCollision( CActor* pActor )
 {
 	if( pActor == nullptr ) return;
 	if( m_pSearchCollManager == nullptr ) return;
 	if( m_pSearchCollManager->GetSphere() == nullptr ) return;
 
-	// Šù‚É˜A‚ê‹‚ç‚ê‚Ä‚¢‚½‚çI—¹.
+	// æ—¢ã«é€£ã‚Œå»ã‚‰ã‚Œã¦ã„ãŸã‚‰çµ‚äº†.
 	if( m_NowState == ENowState::Abduct ) return;
 
-	// ‘ÎÛƒIƒuƒWƒFƒNƒg‚¶‚á‚È‚¯‚ê‚ÎI—¹.
+	// å¯¾è±¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
 	if( ( pActor->GetObjectTag() != EObjectTag::Alien_A ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_B ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_C ) &&
 		( pActor->GetObjectTag() != EObjectTag::Alien_D )) return;
 
-	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
+	// çƒä½“ã®å½“ãŸã‚Šåˆ¤å®š.
 	if( m_pSearchCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	m_IsDanger = true;
 }
 
-// “–‚½‚è”»’è‚Ìì¬.
+// å½“ãŸã‚Šåˆ¤å®šã®ä½œæˆ.
 bool  CGirl::ColliderSetting()
 {
 #ifndef IS_TEMP_MODEL_RENDER
@@ -237,7 +237,7 @@ bool  CGirl::ColliderSetting()
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
-	// —‚Ìq‚Ì“–‚½‚è”»’è.
+	// å¥³ã®å­ã®å½“ãŸã‚Šåˆ¤å®š.
 	if( FAILED( m_pCollManager->InitSphere( 
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
@@ -245,7 +245,7 @@ bool  CGirl::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
-	// õ“G‚Ì“–‚½‚è”»’è.
+	// ç´¢æ•µã®å½“ãŸã‚Šåˆ¤å®š.
 	if( FAILED( m_pSearchCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
