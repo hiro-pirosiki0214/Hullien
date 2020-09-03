@@ -121,6 +121,12 @@ bool CGameActorManager::IsGameOver()
 	return m_pPlayer->IsDead();
 }
 
+// 女の子が危険な状態か.
+bool CGameActorManager::IsDanger()
+{
+	return m_pGirl->IsDanger();
+}
+
 // 座標リストの設定.
 void CGameActorManager::SetPositionList( CActor* pActor )
 {

@@ -9,6 +9,7 @@
 #include "..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -46,11 +47,21 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
+	if (m_GameObjManager->IsDanger() == false)
+	{
+		CSoundManager::ThreadPlayBGM("GameBGM");
+		CSoundManager::StopBGMThread("DangerBGM");
+	}
+	else
+	{
+		CSoundManager::ThreadPlayBGM("DangerBGM");
+		CSoundManager::StopBGMThread("GameBGM");
+	}
+
 	if (m_GameObjManager->IsGameOver() == false)
 	{
 		m_GameObjManager->Update();
 		m_WidgetManager->Update(m_GameObjManager.get());
-
 	}
 	else
 	{
@@ -140,6 +151,15 @@ void CGame::ChangeScene()
 // ƒV[ƒ“‚Ì‘I‘ð.
 void CGame::SelectScene()
 {
+	if (m_GameObjManager->IsDanger() == false)
+	{
+		CSoundManager::StopBGMThread("GameBGM");
+	}
+	else
+	{
+		CSoundManager::StopBGMThread("DangerBGM");
+	}
+
 	switch (m_ChangeSceneState)
 	{
 	case EChangeSceneState::Game:

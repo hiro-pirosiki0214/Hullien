@@ -2,6 +2,7 @@
 #include "..\..\..\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase		   ( pSceneManager )
@@ -30,6 +31,8 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
+	CSoundManager::ThreadPlayBGM("ClearBGM");
+
 	if (CFade::GetFadeState() == CFade::EFadeState::Out
 		&& CFade::GetIsFade() == true) return;
 	m_pClearWidget->Update();
@@ -59,5 +62,6 @@ void CGameClear::ChangeScene()
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (CFade::GetIsFade() == true) return;
+	CSoundManager::StopBGMThread("ClearBGM");
 	m_pSceneManager->NextSceneMove();
 }

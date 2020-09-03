@@ -33,6 +33,8 @@ public:
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	GetObjPositionList() const { return m_ObjPositionList; }
 	// ゲームオーバーかどうか.
 	bool IsGameOver();
+	// 女の子が危険な状態か.
+	bool IsDanger();
 
 private:
 	// 座標リストの設定.
