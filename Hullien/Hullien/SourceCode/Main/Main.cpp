@@ -53,6 +53,8 @@ CMain::CMain()
 
 	// サウンドデータの設定.
 	CSoundManager::CreateSoundData();
+	CSoundManager::GetInstance()->m_fMasterVolume = 0.4f;
+	CSoundManager::SetMasterVolume(CSoundManager::GetInstance()->m_fMasterVolume);
 }
 
 CMain::~CMain()
