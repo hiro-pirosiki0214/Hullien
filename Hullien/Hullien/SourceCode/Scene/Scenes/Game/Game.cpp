@@ -60,6 +60,8 @@ void CGame::Update()
 	//	CSoundManager::StopBGMThread("GameBGM");
 	//}
 
+	
+
 	if (m_GameObjManager->IsGameOver() == false)
 	{
 		m_GameObjManager->Update();
