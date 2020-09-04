@@ -2,6 +2,7 @@
 
 #include "..\..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
+#include "..\..\..\..\..\..\XAudio2\SoundManager.h"
 
 /*******************************************
 *	特殊能力ゲージクラス.
@@ -11,6 +12,7 @@ CSpecialAbilityGauge::CSpecialAbilityGauge()
 	, m_GaugeState	()
 	, m_Alpha			()
 	, m_WaitTime		( 0 )
+	, m_IsOnlyFirst		( false )
 {
 	SetFadeIn(FADE_IN_SPEED);
 }
@@ -31,9 +33,16 @@ void CSpecialAbilityGauge::Update()
 {
 	if (m_pSprite.size() == 0) return;
 	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.SpecialAbility / m_Parameter.SpecialAbilityMax;
+	if (m_GaugeState[GAUGE_NUM].vScale.x != SCALE_MAX) m_IsOnlyFirst = false;
 
 	// 特殊能力ゲージがたまっていなければ処理しない.
 	if (m_GaugeState[GAUGE_NUM].vScale.x != SCALE_MAX) return;
+	// SEを鳴らす..
+	if (m_IsOnlyFirst == false)
+	{
+		CSoundManager::NoMultipleSEPlay("SpecialAbilityMaxSE");
+		m_IsOnlyFirst = true;
+	}
 	// 光らせる処理.
 	ShineBar();
 
@@ -71,7 +80,7 @@ bool CSpecialAbilityGauge::SpriteSetting()
 	{
 		SPRITE_GAUGEBACK,	//ゲージ背景.
 		SPRITE_GAUGE,		    //ゲージ.
-		SPRITE_GAUGE,		    //ゲージ.
+		SPRITE_GAUGE,			//ゲージ.
 	};
 	const int spriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 

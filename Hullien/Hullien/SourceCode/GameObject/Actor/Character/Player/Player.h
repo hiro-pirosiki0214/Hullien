@@ -11,7 +11,7 @@ class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
-	const char*	MODEL_NAME	= "kaito_s";	// モデル名.
+	const char*	MODEL_NAME	= "Sayaka_s";	// モデル名.
 	const char* MODEL_TEMP_NAME = "kaito";	// 仮モデル名.
 
 	// アニメーション番号.
@@ -208,6 +208,8 @@ private:
 	SEffectTimer	m_ItemAttackTimer;		// アイテムでの攻撃力UPタイマー.
 	SEffectTimer	m_ItemMoveSpeedUpTimer;	// アイテムでの移動速度UPタイマー.
 	SEffectTimer	m_ParalysisTimer;		// 麻痺タイマー.
+
+	bool				m_IsAttackSE;				//攻撃SEを鳴らすか.
 };
 
 #endif	// #ifndef PLAYER_H.

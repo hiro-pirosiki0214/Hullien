@@ -42,6 +42,7 @@ void CGameOver::Update()
 	{
 		if (CFade::GetIsFade() == true) return;
 		CFade::GetInstance()->SetFadeIn();
+		CSoundManager::PlaySE("DeterminationSE");
 	}
 
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;

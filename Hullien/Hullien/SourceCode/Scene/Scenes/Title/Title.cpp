@@ -63,10 +63,11 @@ void CTitle::ChangeScene()
 {
 	// ボタンが押された.
 	if (GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+		|| CXInput::B_Button() == CXInput::enSEPARATED)
 	{
 		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
+		CSoundManager::PlaySE("DeterminationSE");
 		m_IsChangeScene = true;
 	}
 
@@ -81,6 +82,7 @@ void CTitle::ChangeScene()
 		m_pSceneManager->NextSceneMove();
 		break;
 	case CTitleWidget::ESelectState::End:
+		CSoundManager::StopBGMThread("TestBGM");
 		// ウィンドウを閉じる.
 		PostMessage(m_pSceneManager->m_hWnd, WM_CLOSE, 0, 0);
 		break;

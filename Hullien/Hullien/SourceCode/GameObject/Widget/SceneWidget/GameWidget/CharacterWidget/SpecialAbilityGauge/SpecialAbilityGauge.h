@@ -11,7 +11,7 @@ class CSpecialAbilityGauge : public CCharacterWidget
 {
 private:
 	const char* SPRITE_GAUGEBACK = "gage";	// ゲージ背景.
-	const char* SPRITE_GAUGE = "gage";			// ゲージ.		
+	const char* SPRITE_GAUGE = "SPgage";		// ゲージ.		
 	const int     GAUGE_NUM = 1;						// ゲージの配列番号.
 	const int     ONE = 1;									// 一.
 	const int	 WAITTIME_MAX = 100;				//最大待機時間.
@@ -43,6 +43,7 @@ private:
 	std::vector<SGaugeState>					m_GaugeState;	//ゲージの情報.
 	std::vector<float>								m_Alpha;				//透過値.
 	int													m_WaitTime;		//待機時間.
+	bool												m_IsOnlyFirst;		//一度だけ処理する.
 
 };
 

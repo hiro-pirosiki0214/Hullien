@@ -5,8 +5,8 @@
 
 class CAlienC : public CAlien
 {
-	const char* MODEL_NAME = "GhostB_s";	// モデル名.
-	const char* MODEL_TEMP_NAME = "a_b_csize";	// 仮モデル名.
+	const char* MODEL_NAME = "c_s";	// モデル名.
+	const char* MODEL_TEMP_NAME = "c";	// 仮モデル名.
 
 public:
 	CAlienC();

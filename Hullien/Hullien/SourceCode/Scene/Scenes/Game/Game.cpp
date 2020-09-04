@@ -47,16 +47,18 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
-	if (m_GameObjManager->IsDanger() == false)
-	{
-		CSoundManager::ThreadPlayBGM("GameBGM");
-		CSoundManager::StopBGMThread("DangerBGM");
-	}
-	else
-	{
-		CSoundManager::ThreadPlayBGM("DangerBGM");
-		CSoundManager::StopBGMThread("GameBGM");
-	}
+	if (CFade::GetIsFade() == true) return;
+
+	//if (m_GameObjManager->IsDanger() == false)
+	//{
+	//	CSoundManager::ThreadPlayBGM("GameBGM");
+	//	CSoundManager::StopBGMThread("DangerBGM");
+	//}
+	//else
+	//{
+	//	CSoundManager::ThreadPlayBGM("DangerBGM");
+	//	CSoundManager::StopBGMThread("GameBGM");
+	//}
 
 	if (m_GameObjManager->IsGameOver() == false)
 	{
@@ -118,17 +120,19 @@ void CGame::UpdateContinue()
 	{
 	case CContinueWidget::ESelectState::Yes:
 		if (GetAsyncKeyState(VK_RETURN) & 0x0001 
-			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+			|| CXInput::B_Button() == CXInput::enSEPARATED)
 		{
 			if (m_IsChangeScene == true) return;
+			CSoundManager::PlaySE("DeterminationSE");
 			SetChangeScene(EChangeSceneState::Game);
 		}
 		break;
 	case CContinueWidget::ESelectState::No:
 		if (GetAsyncKeyState(VK_RETURN) & 0x0001
-			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+			|| CXInput::B_Button() == CXInput::enSEPARATED)
 		{
 			if (m_IsChangeScene == true) return;
+			CSoundManager::PlaySE("End");
 			SetChangeScene( EChangeSceneState::GameOver );
 		}
 		break;

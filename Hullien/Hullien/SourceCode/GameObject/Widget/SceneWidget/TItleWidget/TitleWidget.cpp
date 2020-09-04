@@ -4,14 +4,16 @@
 #include "..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"
 
 /************************************
 *	タイトルUI元クラス.
 **/
 CTitleWidget::CTitleWidget()
-	: m_pSprite		()
-	, m_pCursor		( nullptr )
-	, m_SelectState	( CTitleWidget::ESelectState::Start )
+	: m_pSprite				()
+	, m_pCursor				( nullptr )
+	, m_SelectState		( CTitleWidget::ESelectState::Start )
+	, m_OldSelectState	( CTitleWidget::ESelectState::Start )
 {
 	m_pCursor = std::make_shared<CCursor>();
 }
@@ -106,6 +108,14 @@ void CTitleWidget::CursorSetting()
 	default:
 		break;
 	}
+
+	// SEを鳴らす.
+	if (m_SelectState != m_OldSelectState)
+	{
+		CSoundManager::PlaySE("MoveButtonSE");
+		m_OldSelectState = m_SelectState;
+	}
+
 	m_pCursor->Update();
 
 }

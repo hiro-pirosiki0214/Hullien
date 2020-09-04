@@ -14,6 +14,7 @@
 #include "..\..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\..\Utility\FileManager\FileManager.h"
 #include "..\..\..\..\Common\DebugText\DebugText.h"
+#include "..\...\..\..\..\..\XAudio2\SoundManager.h"
 
 CPlayer::CPlayer()
 	: m_pCamera						( nullptr )
@@ -38,6 +39,7 @@ CPlayer::CPlayer()
 	, m_ItemAttackTimer				()
 	, m_ItemMoveSpeedUpTimer		()
 	, m_ParalysisTimer				()
+	, m_IsAttackSE					( false )
 {
 	m_ObjectTag = EObjectTag::Player;
 	m_pCamera = std::make_shared<CRotLookAtCenter>();
@@ -95,19 +97,19 @@ void CPlayer::Update()
 
 	// カメラをマネージャーに設定.
 	CCameraManager::SetCamera( m_pCamera );
+
+	// 体力が1/3になったらSEを鳴らす.
+	if (m_LifePoint <= m_Parameter.LifeMax / 3)
+	{
+		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
+		CSoundManager::NoMultipleSEPlay("HP");
+	}
 }
 
 // 描画関数.
 void CPlayer::Render()
 {
 	MeshRender();	// メッシュの描画.
-
-					// Widget.
-	if ( m_pWidget.size() == 0 ) return;
-	for (const auto& s : m_pWidget)
-	{
-		s->Render();
-	}
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -131,8 +133,19 @@ void CPlayer::Collision( CActor* pActor )
 
 	// 攻撃関数.
 	auto attackProc = [&]( float& life ){ life -= 10.0f; };
-	if( GetAsyncKeyState('C') & 0x8000 )
-		pActor->LifeCalculation( attackProc );
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (m_IsAttackSE == false)
+		{
+			CSoundManager::NoMultipleSEPlay("PlayerAttackSE");
+			m_IsAttackSE = true;
+		}
+		pActor->LifeCalculation(attackProc);
+	}
+	else
+	{
+		m_IsAttackSE = false;
+	}
 }
 
 // 相手座標の設定関数.
@@ -158,6 +171,7 @@ void CPlayer::SpriteRender()
 	{
 		s->SetParameter(param);
 		s->Update();
+		s->Render();
 	}
 }
 
@@ -234,6 +248,7 @@ void CPlayer::AvoidController()
 	m_IsDuringAvoid = true;
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
 	m_OldPosition = m_vPosition;	// 現在の座標を設定.
+	CSoundManager::NoMultipleSEPlay("AvoidMove");
 
 	// 回避アニメーションを設定するなら ここ.
 	//
@@ -443,6 +458,8 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 {
 	proc( m_ParalysisTimer.Time );
 	m_ParalysisTimer.Set();
+	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
+
 }
 
 // 当たり判定の設定.

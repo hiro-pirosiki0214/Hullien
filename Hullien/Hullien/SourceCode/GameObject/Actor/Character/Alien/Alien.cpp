@@ -3,22 +3,23 @@
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"
 
 CAlien::CAlien()
-	: m_TargetPosition			( 0.0f, 0.0f, 0.0f )
-	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
+	: m_TargetPosition				( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation				( 0.0f, 0.0f, 0.0f )
 	, m_pAbductUFOPosition		( nullptr )
 	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
-	, m_Parameter				()
-	, m_NowState				( EAlienState::None )
-	, m_NowMoveState			( EMoveState::None )
-	, m_HasAnyItem				( EItemList::SPEffectTime )
-	, m_LifePoint				( 0.0f )
-	, m_ModelAlpha				( 0.0f )
-	, m_WaitCount				( 0 )
+	, m_Parameter						()
+	, m_NowState						( EAlienState::None )
+	, m_NowMoveState				( EMoveState::None )
+	, m_HasAnyItem					( EItemList::SPEffectTime )
+	, m_LifePoint						( 0.0f )
+	, m_ModelAlpha					( 0.0f )
+	, m_WaitCount						( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
-	, m_IsExplosion				( false )
-	, m_IsDelete				( false )
+	, m_IsExplosion					( false )
+	, m_IsDelete						( false )
 {
 }
 
@@ -158,6 +159,7 @@ void CAlien::Spawning()
 	// モデルのアルファ値を足していく.
 	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
 	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+	CSoundManager::NoMultipleSEPlay("AlienAppSE");
 	m_NowState = EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;
 }
@@ -261,7 +263,9 @@ void CAlien::BarrierCollision( CActor* pActor )
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ){
 		m_MoveSpeed = m_Parameter.MoveSpeed;
 		m_IsBarrierHit = false;
+		
 	} else {
+		CSoundManager::NoMultipleSEPlay("BarrierHitSE");
 		m_MoveSpeed = moveSpeed;
 		m_IsBarrierHit = true;
 		*m_pIsAlienOtherAbduct = false;

@@ -58,6 +58,7 @@ void CGameClear::ChangeScene()
 	{
 		if (CFade::GetIsFade() == true) return;
 		CFade::SetFadeIn();
+		CSoundManager::PlaySE("DeterminationSE");
 	}
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;

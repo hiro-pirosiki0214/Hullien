@@ -48,9 +48,10 @@ private:
 	void CursorSetting();
 
 private:
-	std::vector<std::shared_ptr<CSprite>>	m_pSprite;			//スプライトクラス.
-	std::shared_ptr<CCursor>					m_pCursor;			//カーソルクラス.
-	ESelectState									m_SelectState;	//選択状態.
+	std::vector<std::shared_ptr<CSprite>>	m_pSprite;				//スプライトクラス.
+	std::shared_ptr<CCursor>					m_pCursor;				//カーソルクラス.
+	ESelectState									m_SelectState;		//選択状態.
+	ESelectState									m_OldSelectState;	//選択状態.
 
 };
 

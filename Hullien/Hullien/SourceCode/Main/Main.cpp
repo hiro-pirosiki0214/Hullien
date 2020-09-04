@@ -57,7 +57,6 @@ CMain::CMain()
 
 CMain::~CMain()
 {
-	CSoundManager::Release();
 }
 
 //====================================.
@@ -85,6 +84,7 @@ HRESULT CMain::Init()
 //====================================.
 void CMain::Release()
 {
+	CSoundManager::Release();
 	CImGuiManager::Release();
 	m_pDirectX11->Release();
 	m_pDirectX9->Release();
