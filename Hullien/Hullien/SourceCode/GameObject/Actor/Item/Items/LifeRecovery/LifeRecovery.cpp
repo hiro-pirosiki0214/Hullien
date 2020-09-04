@@ -1,4 +1,5 @@
 #include "LifeRecovery.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 CLifeRecoveryItem::CLifeRecoveryItem()
 	: CItemBase				( nullptr )
@@ -23,6 +24,7 @@ CLifeRecoveryItem::~CLifeRecoveryItem()
 bool CLifeRecoveryItem::Init()
 {
 	if( GetModel( MODEL_NAME ) == false ) return false;
+	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	m_vSclae = { 0.0f, 0.0f, 0.0f };
 	return true;
@@ -63,4 +65,22 @@ void CLifeRecoveryItem::GiveEffect( CActor* pActor )
 	};
 	// コールバック関数.
 	pActor->LifeCalculation( lifeRecovery );	// 対象の体力を回復する.
+}
+
+// エフェクトの設定.
+bool CLifeRecoveryItem::EffectSetting()
+{
+	const char* effectNames[] =
+	{
+		DROP_AND_AVTIVE_EFFECT_NAME,
+		HIT_EFFECT_NAME,
+	};
+	int SpriteMax = sizeof(effectNames) / sizeof(effectNames[0]);
+
+	for( int i = 0; i < SpriteMax; i++ ){
+		m_pEffects[i]->SetEffect(effectNames[i]);
+		if (m_pEffects[i] == nullptr) return false;
+	}
+
+	return true;
 }

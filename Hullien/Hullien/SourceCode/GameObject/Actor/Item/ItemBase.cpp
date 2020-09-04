@@ -2,9 +2,11 @@
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
+#include "..\..\..\Common\Effect\EffectManager.h"
 
 CItemBase::CItemBase()
 	: m_pStaticMesh			( nullptr )
+	, m_pEffects			( static_cast<int>(EEffectNumber::Max) )
 	, m_NowState			( ENowState::None )
 	, m_Scale				( 0.0f )
 	, m_ModelAlpha			( INIT_MODEL_ALPHA )
@@ -15,6 +17,7 @@ CItemBase::CItemBase()
 	, m_FlashingCount		( 0.0f )
 	, m_DisappearCount		( 0.0f )
 	, m_FlashingAccValue	( 0.0f )
+	, m_HitEffectCount		( 0.0f )
 	, pPRAMETER				( nullptr )
 {
 	m_vSclae = { 1.0f, 1.0f, 1.0f };
@@ -22,6 +25,7 @@ CItemBase::CItemBase()
 
 CItemBase::CItemBase( const SParameter* pParam )
 	: m_pStaticMesh			( nullptr )
+	, m_pEffects			( static_cast<int>(EEffectNumber::Max) )
 	, m_NowState			( ENowState::None )
 	, m_Scale				( 0.0f )
 	, m_ModelAlpha			( INIT_MODEL_ALPHA )
@@ -32,9 +36,12 @@ CItemBase::CItemBase( const SParameter* pParam )
 	, m_FlashingCount		( 0.0f )
 	, m_DisappearCount		( 0.0f )
 	, m_FlashingAccValue	( 0.0f )
+	, m_HitEffectCount		( 0.0f )
 	, pPRAMETER				( pParam )
 {
 	m_vSclae = { pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax };
+
+	for( auto& e : m_pEffects ) e = std::make_shared<CEffectManager>();
 }
 
 CItemBase::~CItemBase()
@@ -68,25 +75,10 @@ void CItemBase::Update()
 // 描画関数.
 void CItemBase::Render()
 {
-	if( m_NowState == ENowState::Delete ) return;
-	if( m_NowState == ENowState::None ) return;
-	if( m_NowState == ENowState::Max ) return;
-	if( m_ModelAlpha < 1.0f ) return;
-
-	if( m_pStaticMesh == nullptr ) return;
-	m_pStaticMesh->SetPosition( m_vPosition );
-	m_pStaticMesh->SetRotation( m_vRotation );
-	m_pStaticMesh->SetScale( m_vSclae );
-	m_pStaticMesh->SetAlpha( m_ModelAlpha );
-	m_pStaticMesh->SetBlend( true );
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pStaticMesh->Render();
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pStaticMesh->SetBlend( false );
-
-#if _DEBUG
-	m_pCollManager->DebugRender();
-#endif	// #if _DEBUG.
+	// ドロップ　アクティブ時の描画.
+	DropAndActiveRender();
+	// ヒット時の描画.
+	HitRender();
 }
 
 // 当たり判定関数.
@@ -104,7 +96,7 @@ void CItemBase::Collision( CActor* pActor )
 
 	// 当たった際の効果を与える.
 	this->GiveEffect( pActor );
-
+	m_pEffects[static_cast<int>(EEffectNumber::Hit)]->Play( m_vPosition );
 	m_NowState = ENowState::HitDisappear;	// 現在の状態を当たった時に消す状態に変更.
 }
 
@@ -114,6 +106,7 @@ void CItemBase::Drop( const D3DXVECTOR3& vPos )
 	this->Init();
 	m_NowState = ENowState::Drop;
 	this->m_vPosition = vPos;
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( vPos );
 }
 
 // 出現.
@@ -158,6 +151,8 @@ void CItemBase::Active()
 // 当たった際に消える処理.
 void CItemBase::HitDisappear()
 {
+	m_HitEffectCount += 1.0f;
+	if( m_HitEffectCount < pPRAMETER->HitEffectTime*FPS ) return;
 	m_NowState = ENowState::Delete;	// 現在の状態を消す状態に変更.
 }
 
@@ -214,4 +209,43 @@ bool CItemBase::ColliderSetting()
 		{ 0.0f, 0.0f, 0.0f },
 		0.0f ) )) return false;
 	return true;
+}
+
+// ドロップ　アクティブ時の描画.
+void CItemBase::DropAndActiveRender()
+{
+	if( m_NowState == ENowState::HitDisappear ) return;
+	if( m_NowState == ENowState::Delete ) return;
+	if( m_NowState == ENowState::None ) return;
+	if( m_NowState == ENowState::Max ) return;
+	if( m_ModelAlpha < 1.0f ) return;
+
+	if( m_pStaticMesh == nullptr ) return;
+	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->SetRotation( m_vRotation );
+	m_pStaticMesh->SetScale( m_vSclae );
+	m_pStaticMesh->SetAlpha( m_ModelAlpha );
+	m_pStaticMesh->SetBlend( true );
+	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pStaticMesh->Render();
+	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pStaticMesh->SetBlend( false );
+
+	// エフェクトの描画.
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetLocation( m_vPosition );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
+
+#if _DEBUG
+	m_pCollManager->DebugRender();
+#endif	// #if _DEBUG.
+}
+
+// ヒット時の描画.
+void CItemBase::HitRender()
+{
+	if( m_NowState != ENowState::HitDisappear ) return;
+
+	// エフェクトの描画.
+	m_pEffects[static_cast<int>(EEffectNumber::Hit)]->SetLocation( m_vPosition );
+	m_pEffects[static_cast<int>(EEffectNumber::Hit)]->Render();
 }

@@ -5,7 +5,9 @@
 
 class CMoveSpeedUpItem : public CItemBase
 {
-	const char* MODEL_NAME = "item speed";
+	const char* MODEL_NAME	= "item speed";	// モデル名.
+	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "oji";	// エフェクト名.
+	const char* HIT_EFFECT_NAME				= "key";	// エフェクト名.
 	const float* pMOVE_VALUE;	// 移動力(外部からポインタで取得する).
 	const float* pMOVE_UP_TIME;	// 移動力UP時間(外部からポインタで取得する).
 
@@ -31,6 +33,8 @@ public:
 private:
 	// 当たった際の効果を与える.
 	virtual void GiveEffect( CActor* pActor ) override;
+	// エフェクトの設定.
+	virtual bool EffectSetting() override;
 };
 
 #endif	// #ifndef MOVE_SPEED_UP_H.

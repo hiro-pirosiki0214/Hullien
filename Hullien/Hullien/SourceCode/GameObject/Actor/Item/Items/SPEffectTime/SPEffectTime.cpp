@@ -1,4 +1,5 @@
 #include "SPEffectTime.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 CSPEffectTimeItem::CSPEffectTimeItem()
 	: CItemBase				( nullptr )
@@ -27,6 +28,7 @@ CSPEffectTimeItem::~CSPEffectTimeItem()
 bool CSPEffectTimeItem::Init()
 {
 	if( GetModel( MODEL_NAME ) == false ) return false;
+	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	m_vSclae = { 0.0f, 0.0f, 0.0f };
 	return true;
@@ -70,4 +72,22 @@ void CSPEffectTimeItem::GiveEffect( CActor* pActor )
 	};
 	// コールバック関数.
 	pActor->SetSPEffectTime( spEffectTime );	// 対象の体力を回復する.
+}
+
+// エフェクトの設定.
+bool CSPEffectTimeItem::EffectSetting()
+{
+	const char* effectNames[] =
+	{
+		DROP_AND_AVTIVE_EFFECT_NAME,
+		HIT_EFFECT_NAME,
+	};
+	int SpriteMax = sizeof(effectNames) / sizeof(effectNames[0]);
+
+	for( int i = 0; i < SpriteMax; i++ ){
+		m_pEffects[i]->SetEffect(effectNames[i]);
+		if (m_pEffects[i] == nullptr) return false;
+	}
+
+	return true;
 }

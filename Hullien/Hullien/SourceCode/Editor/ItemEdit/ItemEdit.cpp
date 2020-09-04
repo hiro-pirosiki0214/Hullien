@@ -82,18 +82,19 @@ void CItemEdit::TagRender( const int& index )
 // パラメータの描画.
 void CItemEdit::ParamRender()
 {
-	ImGui::InputFloat( u8"初期加速値",			&m_Prameter.InitAccelerationValue );
-	ImGui::InputFloat( u8"初期重力",			&m_Prameter.InitGravity );
-	ImGui::InputInt(   u8"バウンド最大数",		&m_Prameter.BoundCountMax );
-	ImGui::InputFloat( u8"モデルサイズ最大",	&m_Prameter.ModelScaleMax );
-	ImGui::InputFloat( u8"モデルサイズ加算値",	&m_Prameter.ModelScaleAddValue );
-	ImGui::InputFloat( u8"最終的な描画の高さ",	&m_Prameter.FinalRenderHeight );
-	ImGui::InputFloat( u8"最終的な移動速度",	&m_Prameter.FinalMoveSpeed );
-	ImGui::InputFloat( u8"回転速度",			&m_Prameter.RotationSpeed );
-	ImGui::InputFloat( u8"アクティブ時間",		&m_Prameter.ActiveTime );
-	ImGui::InputFloat( u8"消える時間",			&m_Prameter.DisappearTime );
-	ImGui::InputFloat( u8"点滅加算値",			&m_Prameter.FlashingAddValue );
-	ImGui::InputFloat( u8"モデル透過値最大",	&m_Prameter.ModelAlphaMax );
+	ImGui::InputFloat( u8"初期加速値",					&m_Prameter.InitAccelerationValue );
+	ImGui::InputFloat( u8"初期重力",					&m_Prameter.InitGravity );
+	ImGui::InputInt(   u8"バウンド最大数",				&m_Prameter.BoundCountMax );
+	ImGui::InputFloat( u8"モデルサイズ最大",			&m_Prameter.ModelScaleMax );
+	ImGui::InputFloat( u8"モデルサイズ加算値",			&m_Prameter.ModelScaleAddValue );
+	ImGui::InputFloat( u8"最終的な描画の高さ",			&m_Prameter.FinalRenderHeight );
+	ImGui::InputFloat( u8"最終的な移動速度",			&m_Prameter.FinalMoveSpeed );
+	ImGui::InputFloat( u8"回転速度",					&m_Prameter.RotationSpeed );
+	ImGui::InputFloat( u8"アクティブ時間",				&m_Prameter.ActiveTime );
+	ImGui::InputFloat( u8"消える時間",					&m_Prameter.DisappearTime );
+	ImGui::InputFloat( u8"点滅加算値",					&m_Prameter.FlashingAddValue );
+	ImGui::InputFloat( u8"モデル透過値最大",			&m_Prameter.ModelAlphaMax );
+	ImGui::InputFloat( u8"ヒット時のエフェクト時間",	&m_Prameter.HitEffectTime );
 
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"読込") ) 

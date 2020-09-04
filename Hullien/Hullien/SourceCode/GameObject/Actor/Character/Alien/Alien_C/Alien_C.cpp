@@ -29,8 +29,9 @@ void CAlienC::Update()
 {
 	SetMoveVector( m_TargetPosition );
 	CurrentStateUpdate();	// Œ»Ý‚Ìó‘Ô‚ÌXV.
+	if( m_ModelAlpha > 0.0f ) return;
 	// ‘Ì—Í‚ª0‚æ‚è‘½‚¯‚ê‚ÎI—¹.
-	if( m_LifePoint > 0.0f ) return;
+//	if( m_LifePoint > 0.0f ) return;
 	// ‘Ì—Í‚ª‚È‚¯‚ê‚Î”š”­‚³‚¹‚é.
 	m_IsExplosion = true;
 }
