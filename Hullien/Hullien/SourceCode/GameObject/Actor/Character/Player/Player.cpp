@@ -53,7 +53,7 @@ CPlayer::~CPlayer()
 {
 }
 
-// åˆæœŸåŒ–é–¢æ•°.
+// ‰Šú‰»ŠÖ”.
 bool CPlayer::Init()
 {
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
@@ -65,44 +65,44 @@ bool CPlayer::Init()
 	if( ColliderSetting() == false ) return false;
 	if( WidgetSetting() == false ) return false;
 	if( EffectSetting() == false ) return false;
-	m_MoveSpeed		= m_Parameter.MoveSpeed;	// ç§»å‹•é€Ÿåº¦ã®è¨­å®š.
-	m_AttackPower	= m_Parameter.AttackPower;	// æ”»æ’ƒåŠ›ã®è¨­å®š.
-	m_LifePoint		= m_Parameter.LifeMax;		// ä½“åŠ›ã®è¨­å®š.
-	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// ç‰¹æ®Šèƒ½åŠ›å›å¾©å€¤ã®è¨­å®š.
+	m_MoveSpeed		= m_Parameter.MoveSpeed;	// ˆÚ“®‘¬“x‚Ìİ’è.
+	m_AttackPower	= m_Parameter.AttackPower;	// UŒ‚—Í‚Ìİ’è.
+	m_LifePoint		= m_Parameter.LifeMax;		// ‘Ì—Í‚Ìİ’è.
+	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// “Áê”\—Í‰ñ•œ’l‚Ìİ’è.
 
 	SetAttackFrameList();
 	return true;
 }
 
-// æ›´æ–°é–¢æ•°.
+// XVŠÖ”.
 void CPlayer::Update()
 {
-	// éº»ç—ºã‚¿ã‚¤ãƒãƒ¼ãŒå‹•ä½œã—ã¦ãªã‘ã‚Œã°.
+	// –ƒáƒƒ^ƒCƒ}[‚ª“®ì‚µ‚Ä‚È‚¯‚ê‚Î.
 	if( m_ParalysisTimer.IsUpdate == false ){
-		Controller();			// æ“ä½œ.
-		AttackController();		// æ”»æ’ƒæ“ä½œ.
-		SPController();			// ç‰¹æ®Šèƒ½åŠ›æ“ä½œ.
-		AvoidController();		// å›é¿æ“ä½œ.
-		AttackAnimation();		// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³.
-		Move();					// ç§»å‹•.
-		AvoidMove();			// å›é¿å‹•ä½œ.
+		Controller();			// ‘€ì.
+		AttackController();		// UŒ‚‘€ì.
+		SPController();			// “Áê”\—Í‘€ì.
+		AvoidController();		// ‰ñ”ğ‘€ì.
+		AttackAnimation();		// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“.
+		Move();					// ˆÚ“®.
+		AvoidMove();			// ‰ñ”ğ“®ì.
 	} else {
-		ParalysisUpdate();	// éº»ç—ºæ™‚ã®æ›´æ–°.
+		ParalysisUpdate();	// –ƒáƒ‚ÌXV.
 	}
-	SpecialAbilityUpdate();	// ç‰¹æ®Šèƒ½åŠ›å›å¾©æ›´æ–°.
-	AttackUpUpdate();		// æ”»æ’ƒåŠ›UPæ›´æ–°.
-	MoveSpeedUpUpdate();	// ç§»å‹•é€Ÿåº¦UPæ›´æ–°.
+	SpecialAbilityUpdate();	// “Áê”\—Í‰ñ•œXV.
+	AttackUpUpdate();		// UŒ‚—ÍUPXV.
+	MoveSpeedUpUpdate();	// ˆÚ“®‘¬“xUPXV.
 
-	CameraController();	// ã‚«ãƒ¡ãƒ©æ“ä½œ.
-	m_pCamera->SetLength( m_Parameter.CameraDistance );	// ä¸­å¿ƒã¨ã®è·é›¢ã‚’è¨­å®š.
-	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// é«˜ã•ã®è¨­å®š.
-														// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’æ³¨è¦–ã—ã¦å›è»¢.
+	CameraController();	// ƒJƒƒ‰‘€ì.
+	m_pCamera->SetLength( m_Parameter.CameraDistance );	// ’†S‚Æ‚Ì‹——£‚ğİ’è.
+	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// ‚‚³‚Ìİ’è.
+														// ƒvƒŒƒCƒ„[‚ğ’‹‚µ‚Ä‰ñ“].
 	m_pCamera->RotationLookAtObject( m_vPosition );
 
-	// ã‚«ãƒ¡ãƒ©ã‚’ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã«è¨­å®š.
+	// ƒJƒƒ‰‚ğƒ}ƒl[ƒWƒƒ[‚Éİ’è.
 	CCameraManager::SetCamera( m_pCamera );
 
-	// ä½“åŠ›ãŒ1/3ã«ãªã£ãŸã‚‰SEã‚’é³´ã‚‰ã™.
+	// ‘Ì—Í‚ª1/3‚É‚È‚Á‚½‚çSE‚ğ–Â‚ç‚·.
 	if (m_LifePoint <= m_Parameter.LifeMax / 3)
 	{
 		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
@@ -110,10 +110,10 @@ void CPlayer::Update()
 	}
 }
 
-// æç”»é–¢æ•°.
+// •`‰æŠÖ”.
 void CPlayer::Render()
 {
-	MeshRender();	// ãƒ¡ãƒƒã‚·ãƒ¥ã®æç”».
+	MeshRender();	// ƒƒbƒVƒ…‚Ì•`‰æ.
 	EffectRender();
 
 #if _DEBUG
@@ -121,14 +121,14 @@ void CPlayer::Render()
 	m_pCollManager->DebugRender();
 	if( m_pAttackCollManager == nullptr ) return;
 	m_pAttackCollManager->DebugRender();
-	// ã‚¨ãƒ‡ã‚£ãƒƒãƒˆç”¨ã®æç”»é–¢æ•°ã‚’ã‚¨ãƒ‡ã‚£ãƒƒãƒˆãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼ã«è¿½åŠ .
+	// ƒGƒfƒBƒbƒg—p‚Ì•`‰æŠÖ”‚ğƒGƒfƒBƒbƒgƒŒƒ“ƒ_ƒ‰[‚É’Ç‰Á.
 	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
-	// ãƒ‡ãƒãƒƒã‚°æç”».
+	// ƒfƒoƒbƒO•`‰æ.
 	DebugRender();
 #endif	// #if _DEBUG.
 }
 
-// å½“ãŸã‚Šåˆ¤å®šé–¢æ•°.
+// “–‚½‚è”»’èŠÖ”.
 void CPlayer::Collision( CActor* pActor )
 {
 	if( pActor == nullptr ) return;
@@ -138,7 +138,7 @@ void CPlayer::Collision( CActor* pActor )
 	AttackCollision( pActor );
 
 
-	// æ”»æ’ƒé–¢æ•°.
+	// UŒ‚ŠÖ”.
 	auto attackProc = [&]( float& life ){ life -= 10.0f; };
 	if (GetAsyncKeyState('C') & 0x8000)
 	{
@@ -154,29 +154,29 @@ void CPlayer::Collision( CActor* pActor )
 		m_IsAttackSE = false;
 	}
 
-	// çƒä½“ã®å½“ãŸã‚Šåˆ¤å®š.
+	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 //	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
 }
 
-// ç›¸æ‰‹åº§æ¨™ã®è¨­å®šé–¢æ•°.
+// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
 void CPlayer::SetTargetPos( CActor& actor )
 {
 	//	m_vPosition = actor.GetPosition();
 }
 
-// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”».
+// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æ.
 void CPlayer::SpriteRender()
 {
-	// ã‚²ãƒ¼ã‚¸.
+	// ƒQ[ƒW.
 	CCharacterWidget::SCharacterParam param;
-	// ãƒ©ã‚¤ãƒ•.
+	// ƒ‰ƒCƒt.
 	param.Life = m_LifePoint;
 	param.LifeMax = m_Parameter.LifeMax;
-	// ç‰¹æ®Šèƒ½åŠ›.
+	// “Áê”\—Í.
 	param.SpecialAbility = m_SpecialAbility;
 	param.SpecialAbilityMax = m_Parameter.SpecialAbilityMax;
-	// â†“ ç‰¹æ®Šèƒ½åŠ›æœ€å¤§å€¤ å¤‰æ•°.
+	// « “Áê”\—ÍÅ‘å’l •Ï”.
 	// m_Parameter.SpecialAbilityMax
 	for (const auto& s : m_pWidget)
 	{
@@ -186,19 +186,19 @@ void CPlayer::SpriteRender()
 	}
 }
 
-// ç‰¹æ®Šèƒ½åŠ›ã‚’ä½¿ã£ã¦ã„ã‚‹ã‹.
+// “Áê”\—Í‚ğg‚Á‚Ä‚¢‚é‚©.
 bool CPlayer::IsSpecialAbility()
 {
 	if( m_HasUsableSP == false ) return false;
-	// ç‰¹æ®Šèƒ½åŠ›ãŒä½¿ãˆã‚‹ãªã‚‰.
-	m_HasUsableSP = false;	// åˆæœŸåŒ–ã—ã¦.
-	return true;			// trueã‚’è¿”ã™.
+	// “Áê”\—Í‚ªg‚¦‚é‚È‚ç.
+	m_HasUsableSP = false;	// ‰Šú‰»‚µ‚Ä.
+	return true;			// true‚ğ•Ô‚·.
 }
 
-// æ“ä½œé–¢æ•°.
+// ‘€ìŠÖ”.
 void CPlayer::Controller()
 {
-	// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ã®Lã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å‚¾ãã‚’å–å¾—.
+	// ƒRƒ“ƒgƒ[ƒ‰[‚ÌLƒXƒeƒBƒbƒN‚ÌŒX‚«‚ğæ“¾.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
 
@@ -208,112 +208,112 @@ void CPlayer::Controller()
 	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_vPosition.x += m_MoveSpeed;
 }
 
-// ã‚«ãƒ¡ãƒ©æ“ä½œ.
+// ƒJƒƒ‰‘€ì.
 void CPlayer::CameraController()
 {
-	// ã‚«ãƒ¡ãƒ©ã®å›è»¢ç§»å‹•.
-	// æ¨ªæ–¹å‘.
+	// ƒJƒƒ‰‚Ì‰ñ“]ˆÚ“®.
+	// ‰¡•ûŒü.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
-		m_pCamera->DegreeHorizontalMove(  m_Parameter.CameraMoveSpeed );	// å³æ–¹å‘.
+		m_pCamera->DegreeHorizontalMove(  m_Parameter.CameraMoveSpeed );	// ‰E•ûŒü.
 	if( CXInput::RThumbX_Axis() <= IDLE_THUMB_MIN ) 
-		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// å·¦æ–¹å‘.
+		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// ¶•ûŒü.
 }
 
-// æ”»æ’ƒæ“ä½œé–¢æ•°.
+// UŒ‚‘€ìŠÖ”.
 void CPlayer::AttackController()
 {
-	// å›é¿ä¸­ãªã‚‰çµ‚äº†.
+	// ‰ñ”ğ’†‚È‚çI—¹.
 	if( m_IsDuringAvoid == true ) return;
-	// Xãƒœã‚¿ãƒ³ã‚’æŠ¼ã—ãŸç¬é–“ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	// Xƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚½uŠÔ‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
-	// æ”»æ’ƒã‚«ã‚¦ãƒ³ãƒˆãŒæœ€å¤§ä»¥ä¸Šãªã‚‰çµ‚äº†.
+	// UŒ‚ƒJƒEƒ“ƒg‚ªÅ‘åˆÈã‚È‚çI—¹.
 	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
-	m_AttackComboCount++;	// æ”»æ’ƒã‚«ã‚¦ãƒ³ãƒˆã‚’åŠ ç®—.
-	// æ”»æ’ƒãƒ‡ãƒ¼ã‚¿ãŒã‚­ãƒ¥ãƒ¼ã«è¿½åŠ ã•ã‚ŒãŸã‚‰çµ‚äº†.
+	m_AttackComboCount++;	// UŒ‚ƒJƒEƒ“ƒg‚ğ‰ÁZ.
+	// UŒ‚ƒf[ƒ^‚ªƒLƒ…[‚É’Ç‰Á‚³‚ê‚½‚çI—¹.
 	if( IsPushAttack() == true ) return;
-	m_AttackComboCount--;	// æ”»æ’ƒã‚«ã‚¦ãƒ³ãƒˆã‚’æ¸›ç®—.
+	m_AttackComboCount--;	// UŒ‚ƒJƒEƒ“ƒg‚ğŒ¸Z.
 }
 
-// ç‰¹æ®Šèƒ½åŠ›æ“ä½œé–¢æ•°.
+// “Áê”\—Í‘€ìŠÖ”.
 void CPlayer::SPController()
 {
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
-	// Yãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸç¬é–“ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	// Yƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½uŠÔ‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
 
 	m_SpecialAbility = 0.0f;
 	m_HasUsableSP = true;
 }
 
-// å›é¿æ“ä½œé–¢æ•°.
+// ‰ñ”ğ‘€ìŠÖ”.
 void CPlayer::AvoidController()
 {
-	// å›é¿ä¸­ãªã‚‰çµ‚äº†.
+	// ‰ñ”ğ’†‚È‚çI—¹.
 	if( m_IsDuringAvoid == true ) return;
 
-	// å„å€¤ãŒæœ‰åŠ¹ç¯„å›²å¤–ãªã‚‰çµ‚äº†.
+	// Še’l‚ª—LŒø”ÍˆÍŠO‚È‚çI—¹.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
-	// Aãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸç¬é–“ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	// Aƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½uŠÔ‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( CXInput::A_Button() != CXInput::enPRESSED_MOMENT ) return;
 	m_IsDuringAvoid = true;
-	m_AvoidVector = m_MoveVector;	// ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«ã‚’è¨­å®š.
-	m_OldPosition = m_vPosition;	// ç¾åœ¨ã®åº§æ¨™ã‚’è¨­å®š.
+	m_AvoidVector = m_MoveVector;	// ˆÚ“®ƒxƒNƒgƒ‹‚ğİ’è.
+	m_OldPosition = m_vPosition;	// Œ»İ‚ÌÀ•W‚ğİ’è.
 	CSoundManager::NoMultipleSEPlay("AvoidMove");
 
-	// å›é¿ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹ãªã‚‰ ã“ã“.
+	// ‰ñ”ğƒAƒjƒ[ƒVƒ‡ƒ“‚ğİ’è‚·‚é‚È‚ç ‚±‚±.
 	//
 
 }
 
-// ç§»å‹•é–¢æ•°.
+// ˆÚ“®ŠÖ”.
 void CPlayer::Move()
 {
-	// å›é¿ä¸­ãªã‚‰çµ‚äº†.
+	// ‰ñ”ğ’†‚È‚çI—¹.
 	if( m_IsDuringAvoid == true ) return;
 
-	// å„å€¤ãŒæœ‰åŠ¹ç¯„å›²å¤–ãªã‚‰çµ‚äº†.
+	// Še’l‚ª—LŒø”ÍˆÍŠO‚È‚çI—¹.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
-	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å‚¾ã„ãŸæ–¹å‘ã«å‘ã.
+	// ƒXƒeƒBƒbƒN‚ÌŒX‚¢‚½•ûŒü‚ÉŒü‚­.
 	m_vRotation.y = atan2f( m_MoveVector.x, m_MoveVector.z );
-	// ã‚«ãƒ¡ãƒ©ã®è§’åº¦ã¨è¶³ã—åˆã‚ã›ã‚‹.
+	// ƒJƒƒ‰‚ÌŠp“x‚Æ‘«‚µ‡‚í‚¹‚é.
 	m_vRotation.y += m_pCamera->GetRadianX();
 
-	// å›è»¢è»¸ã§ç§»å‹•.
+	// ‰ñ“]²‚ÅˆÚ“®.
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_MoveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y ) * m_MoveSpeed;
 	m_OldPosition = m_vPosition;
 }
 
-// å›é¿å‹•ä½œé–¢æ•°.
+// ‰ñ”ğ“®ìŠÖ”.
 void CPlayer::AvoidMove()
 {
-	// å›é¿ä¸­ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	// ‰ñ”ğ’†‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( m_IsDuringAvoid == false ) return;
 
-	// ã‚¹ãƒ†ã‚£ãƒƒã‚¯ã®å‚¾ã„ãŸæ–¹å‘ã«å‘ã.
+	// ƒXƒeƒBƒbƒN‚ÌŒX‚¢‚½•ûŒü‚ÉŒü‚­.
 	m_vRotation.y = atan2f( m_AvoidVector.x, m_AvoidVector.z );
-	// ã‚«ãƒ¡ãƒ©ã®è§’åº¦ã¨è¶³ã—åˆã‚ã›ã‚‹.
+	// ƒJƒƒ‰‚ÌŠp“x‚Æ‘«‚µ‡‚í‚¹‚é.
 	m_vRotation.y += m_pCamera->GetRadianX();
 
-	// å›è»¢è»¸ã§ç§»å‹•.
+	// ‰ñ“]²‚ÅˆÚ“®.
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 
-	// å›è»¢ã€€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®šå¾Œæ¶ˆã™.
+	// ‰ñ“]@ƒAƒjƒ[ƒVƒ‡ƒ“İ’èŒãÁ‚·.
 	m_vRotation.z -= 0.1f;
 
 	D3DXVECTOR3 length = m_OldPosition - m_vPosition;
-	// ç§»å‹•è·é›¢ã‚’è¨ˆç®—.
+	// ˆÚ“®‹——£‚ğŒvZ.
 	float moveDistance = D3DXVec3Length( &length );
-	// ç§»å‹•è·é›¢ãŒä¸€å®šä»¥ä¸‹ãªã‚‰çµ‚äº†.
+	// ˆÚ“®‹——£‚ªˆê’èˆÈ‰º‚È‚çI—¹.
 	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
-	m_IsDuringAvoid = false;	// å›é¿ä¸­ã˜ã‚ƒãªãã™ã‚‹.
-	m_vRotation.z = 0.0f;	// å›è»¢ã€€ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®šå¾Œæ¶ˆã™.
+	m_IsDuringAvoid = false;	// ‰ñ”ğ’†‚¶‚á‚È‚­‚·‚é.
+	m_vRotation.z = 0.0f;	// ‰ñ“]@ƒAƒjƒ[ƒVƒ‡ƒ“İ’èŒãÁ‚·.
 }
 
-// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆæç”»é–¢æ•°.
+// ƒGƒtƒFƒNƒg•`‰æŠÖ”.
 void CPlayer::EffectRender()
 {
 	if( m_AttackComboCount <= EAttackNo_None ) return;
@@ -321,7 +321,7 @@ void CPlayer::EffectRender()
 	m_pEffects[m_AttackComboCount-1]->Render();
 }
 
-// æ”»æ’ƒã®å½“ãŸã‚Šåˆ¤å®š.
+// UŒ‚‚Ì“–‚½‚è”»’è.
 void CPlayer::AttackCollision( CActor* pActor )
 {
 	const float attackLength = 10.0f;
@@ -331,80 +331,80 @@ void CPlayer::AttackCollision( CActor* pActor )
 	}
 
 	//
-	//	ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãŒæ¥ã‚‹ã¾ã§ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç›®ã®å‰ã ã‘æ”»æ’ƒ.
+	//	ƒAƒjƒ[ƒVƒ‡ƒ“‚ª—ˆ‚é‚Ü‚ÅƒvƒŒƒCƒ„[‚Ì–Ú‚Ì‘O‚¾‚¯UŒ‚.
 	//
 
-	// å›è»¢è»¸ã§ç§»å‹•.
+	// ‰ñ“]²‚ÅˆÚ“®.
 	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
 	m_AttackPosition.y = 5.0f;
 	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
 
-	// çƒä½“ã®å½“ãŸã‚Šåˆ¤å®š.
+	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
-	// æ”»æ’ƒé–¢æ•°.
+	// UŒ‚ŠÖ”.
 	auto attackProc = [&]( float& life ){ life -= 10.0f; };
 	pActor->LifeCalculation( attackProc );
 }
 
-// ç‰¹æ®Šèƒ½åŠ›å›å¾©æ›´æ–°é–¢æ•°.
+// “Áê”\—Í‰ñ•œXVŠÖ”.
 void CPlayer::SpecialAbilityUpdate()
 {							
-	// ã‚¢ã‚¤ãƒ†ãƒ ã§ã®å›å¾©çŠ¶æ…‹ãªã‚‰.
+	// ƒAƒCƒeƒ€‚Å‚Ì‰ñ•œó‘Ô‚È‚ç.
 	if( m_ItemAttackTimer.Update() == true ){
-		m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// å›å¾©å€¤ã‚’ã‚‚ã¨ã«æˆ»ã™.
+		m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// ‰ñ•œ’l‚ğ‚à‚Æ‚É–ß‚·.
 	}
 
-	// ç‰¹æ®Šèƒ½åŠ›å€¤ãŒæœ€å¤§ä»¥ä¸Šãªã‚‰çµ‚äº†.
+	// “Áê”\—Í’l‚ªÅ‘åˆÈã‚È‚çI—¹.
 	if( m_SpecialAbility >= m_Parameter.SpecialAbilityMax ) return;
-	m_SpecialAbility += m_SpecialAbilityValue;	// ç‰¹æ®Šèƒ½åŠ›å€¤ã‚’åŠ ç®—.
+	m_SpecialAbility += m_SpecialAbilityValue;	// “Áê”\—Í’l‚ğ‰ÁZ.
 
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
-	m_SpecialAbility = m_Parameter.SpecialAbilityMax;	// æœ€å¤§å€¤ã‚’è¶…ãˆãªã„ã‚ˆã†ã«ã™ã‚‹.
+	m_SpecialAbility = m_Parameter.SpecialAbilityMax;	// Å‘å’l‚ğ’´‚¦‚È‚¢‚æ‚¤‚É‚·‚é.
 }
 
-// æ”»æ’ƒåŠ›UPæ›´æ–°é–¢æ•°.
+// UŒ‚—ÍUPXVŠÖ”.
 void CPlayer::AttackUpUpdate()
 {
 	if( m_ItemAttackTimer.Update() == false ) return;
 	m_AttackPower		= m_Parameter.AttackPower;
 }
 
-// ç§»å‹•é€Ÿåº¦UPæ›´æ–°é–¢æ•°.
+// ˆÚ“®‘¬“xUPXVŠÖ”.
 void CPlayer::MoveSpeedUpUpdate()
 {
 	if( m_ItemMoveSpeedUpTimer.Update() == false ) return;
 	m_MoveSpeed = m_Parameter.MoveSpeed;
 }
 
-// éº»ç—ºä¸­ã®æ›´æ–°é–¢æ•°.
+// –ƒáƒ’†‚ÌXVŠÖ”.
 void CPlayer::ParalysisUpdate()
 {
 	if( m_ParalysisTimer.Update() == false ) return;
 }
 
-// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³.
+// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“.
 void CPlayer::AttackAnimation()
 {
-	// ã‚­ãƒ¥ãƒ¼ãŒç©ºãªã‚‰çµ‚äº†.
+	// ƒLƒ…[‚ª‹ó‚È‚çI—¹.
 	if( m_AttackDataQueue.empty() == true ) return;
 	if( m_AttackDataQueue.front().Frame >= m_AttackDataQueue.front().EndFrame ){
-		m_AttackDataQueue.pop();	// ã‚­ãƒ¥ãƒ¼ã®å…ˆé ­ã‚’å–ã‚Šå‡ºã™.
-		// ã‚­ãƒ¥ãƒ¼ãŒç©ºãªã‚‰çµ‚äº†.
+		m_AttackDataQueue.pop();	// ƒLƒ…[‚Ìæ“ª‚ğæ‚èo‚·.
+		// ƒLƒ…[‚ª‹ó‚È‚çI—¹.
 		if( m_AttackDataQueue.empty() == true ){
-			// ã“ã‚ŒãŒæœ€å¾Œã®æ”»æ’ƒãªã®ã§ã€æ”»æ’ƒã‚«ã‚¦ãƒ³ãƒˆã‚’0ã«ã™ã‚‹.
+			// ‚±‚ê‚ªÅŒã‚ÌUŒ‚‚È‚Ì‚ÅAUŒ‚ƒJƒEƒ“ƒg‚ğ0‚É‚·‚é.
 			m_AttackComboCount = 0;	
-			// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å¾…æ©Ÿã«è¨­å®š.
+			// ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ‘Ò‹@‚Éİ’è.
 			SetAnimation( enAnimNo::Dead );
 			return;
 		}
-		// æ–°ã—ãã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ã‚»ãƒƒãƒˆã™ã‚‹.
+		// V‚µ‚­ƒAƒjƒ[ƒVƒ‡ƒ“‚ğƒZƒbƒg‚·‚é.
 		SetAnimation( m_AttackDataQueue.front().AnimNo );
 	}
-	m_AttackDataQueue.front().Frame += 0.01;	// ãƒ•ãƒ¬ãƒ¼ãƒ ã®æ›´æ–°.
+	m_AttackDataQueue.front().Frame += 0.01;	// ƒtƒŒ[ƒ€‚ÌXV.
 }
 
-// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³è¨­å®š.
+// ƒAƒjƒ[ƒVƒ‡ƒ“İ’è.
 void CPlayer::SetAnimation( const enAnimNo& animNo )
 {
 	if( m_pSkinMesh == nullptr ) return;
@@ -414,7 +414,7 @@ void CPlayer::SetAnimation( const enAnimNo& animNo )
 	m_pSkinMesh->ChangeAnimSet( static_cast<int>(animNo) );
 }
 
-// æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ã®è¨­å®š.
+// UŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“ƒtƒŒ[ƒ€‚Ìİ’è.
 void CPlayer::SetAttackFrameList()
 {
 	if( m_pSkinMesh == nullptr ) return;
@@ -423,32 +423,32 @@ void CPlayer::SetAttackFrameList()
 	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(1) );
 }
 
-// æ”»æ’ƒã®è¿½åŠ ãŒã§ããŸã‹.
+// UŒ‚‚Ì’Ç‰Á‚ª‚Å‚«‚½‚©.
 bool CPlayer::IsPushAttack()
 {
 	if( static_cast<int>(m_AttackDataQueue.size()) >= m_Parameter.AttackComboMax ) return false;
 	if( static_cast<int>(m_AttackDataQueue.size()) >= m_Parameter.AttackQueueMax ) return false;
 	if( m_AttackDataQueue.empty() == false ){
-		// ã‚­ãƒ¥ãƒ¼ã«ãƒ‡ãƒ¼ã‚¿ãŒå…¥ã£ã¦ã„ãŸã‚‰.
-		// çµŒéãƒ•ãƒ¬ãƒ¼ãƒ ãŒæ”»æ’ƒæœ‰åŠ¹ãƒ•ãƒ¬ãƒ¼ãƒ ã‚ˆã‚Šå¤§ãã‘ã‚Œã°çµ‚äº†.
+		// ƒLƒ…[‚Éƒf[ƒ^‚ª“ü‚Á‚Ä‚¢‚½‚ç.
+		// Œo‰ßƒtƒŒ[ƒ€‚ªUŒ‚—LŒøƒtƒŒ[ƒ€‚æ‚è‘å‚«‚¯‚ê‚ÎI—¹.
 		if( m_AttackDataQueue.front().Frame >= 
 			m_AttackDataQueue.front().EnabledEndFrame ) return false;
 	}
 
-	SAttackData tmpAttackData;	// ä»®ãƒ‡ãƒ¼ã‚¿ã‚’ç”¨æ„.
+	SAttackData tmpAttackData;	// ‰¼ƒf[ƒ^‚ğ—pˆÓ.
 	switch( m_AttackComboCount )
 	{
-	case 1:	// æ”»æ’ƒ1.
+	case 1:	// UŒ‚1.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait1;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_One-1];
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(0);
-		// æœ€åˆã¯ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’è¨­å®šã™ã‚‹.
+		// Å‰‚ÍƒAƒjƒ[ƒVƒ‡ƒ“‚ğİ’è‚·‚é.
 		SetAnimation( tmpAttackData.AnimNo );
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 		
 		break;
-	case 2:	// æ”»æ’ƒ2.
+	case 2:	// UŒ‚2.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Happy;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Two-1];
@@ -456,7 +456,7 @@ bool CPlayer::IsPushAttack()
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;
-	case 3:// æ”»æ’ƒ3.
+	case 3:// UŒ‚3.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Three-1];
@@ -467,20 +467,20 @@ bool CPlayer::IsPushAttack()
 	default:
 		break;
 	}
-	// ã‚­ãƒ¥ãƒ¼ã«ãƒ‡ãƒ¼ã‚¿ã‚’æŒ¿å…¥.
+	// ƒLƒ…[‚Éƒf[ƒ^‚ğ‘}“ü.
 	m_AttackDataQueue.push( tmpAttackData );
-	// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å†ç”Ÿ.
+	// ƒGƒtƒFƒNƒg‚ğÄ¶.
 	m_pEffects[m_AttackComboCount-1]->Play( m_vPosition );
 	return true;
 }
 
-// ãƒ©ã‚¤ãƒ•è¨ˆç®—é–¢æ•°.
+// ƒ‰ƒCƒtŒvZŠÖ”.
 void CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 {	
 	proc( m_LifePoint );
 }
 
-// ç‰¹æ®Šèƒ½åŠ›å›å¾©æ™‚é–“ã€åŠ¹åŠ›æ™‚é–“è¨­å®šé–¢æ•°.
+// “Áê”\—Í‰ñ•œŠÔAŒø—ÍŠÔİ’èŠÖ”.
 void CPlayer::SetSPEffectTime( const std::function<void(float&,float&)>& proc )
 {
 	if( m_ItemSPRecoveryTimer.IsUpdate == true ) return;
@@ -491,7 +491,7 @@ void CPlayer::SetSPEffectTime( const std::function<void(float&,float&)>& proc )
 	m_ItemSPRecoveryTimer.Set();
 }
 
-// æ”»æ’ƒåŠ›ã€åŠ¹åŠ›æ™‚é–“è¨­å®šé–¢æ•°.
+// UŒ‚—ÍAŒø—ÍŠÔİ’èŠÖ”.
 void CPlayer::SetAttackEffectTime( const std::function<void(float&,float&)>& proc )
 {
 	if( m_ItemAttackTimer.IsUpdate == true ) return;
@@ -500,7 +500,7 @@ void CPlayer::SetAttackEffectTime( const std::function<void(float&,float&)>& pro
 	m_ItemAttackTimer.Set();
 }
 
-// ç§»å‹•é€Ÿåº¦ã€åŠ¹åŠ›æ™‚é–“è¨­å®šé–¢æ•°.
+// ˆÚ“®‘¬“xAŒø—ÍŠÔİ’èŠÖ”.
 void CPlayer::SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& proc )
 {
 	if( m_ItemMoveSpeedUpTimer.IsUpdate == true ) return;
@@ -509,7 +509,7 @@ void CPlayer::SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& 
 	m_ItemMoveSpeedUpTimer.Set();
 }
 
-// éº»ç—ºã®è¨­å®š.
+// –ƒáƒ‚Ìİ’è.
 void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 {
 	proc( m_ParalysisTimer.Time );
@@ -518,7 +518,7 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 
 }
 
-// å½“ãŸã‚Šåˆ¤å®šã®è¨­å®š.
+// “–‚½‚è”»’è‚Ìİ’è.
 bool CPlayer::ColliderSetting()
 {
 #ifndef IS_TEMP_MODEL_RENDER
@@ -536,7 +536,7 @@ bool CPlayer::ColliderSetting()
 	return true;
 #else
 	if( m_pTempStaticMesh == nullptr ) return false;
-	// ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ä½¿ç”¨ã—ã¦ã®å½“ãŸã‚Šåˆ¤å®šåˆæœŸåŒ–.
+	// ƒƒbƒVƒ…‚ğg—p‚µ‚Ä‚Ì“–‚½‚è”»’è‰Šú‰».
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
@@ -548,7 +548,7 @@ bool CPlayer::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 
-	// æ”»æ’ƒç”¨ã®å½“ãŸã‚Šåˆ¤å®šåˆæœŸåŒ–.
+	// UŒ‚—p‚Ì“–‚½‚è”»’è‰Šú‰».
 	if( m_pAttackCollManager == nullptr ){
 		m_pAttackCollManager = std::make_shared<CCollisionManager>();
 	}
@@ -562,7 +562,7 @@ bool CPlayer::ColliderSetting()
 #endif	// #ifndef IS_MODEL_RENDER.
 }
 
-// ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã®è¨­å®š.
+// ƒGƒtƒFƒNƒg‚Ìİ’è.
 bool CPlayer::EffectSetting()
 {
 	const char* effectNames[] =
@@ -572,7 +572,7 @@ bool CPlayer::EffectSetting()
 		ATTACK_THREE_EFFECT_NAME,
 	};
 	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
-	// ãƒ¡ãƒ¢ãƒªã®æœ€å¤§å€¤è¨­å®š.
+	// ƒƒ‚ƒŠ‚ÌÅ‘å’lİ’è.
 	m_pEffects.reserve(effectNum);
 
 	for( int i = 0; i < effectNum; i++ ){
@@ -583,7 +583,7 @@ bool CPlayer::EffectSetting()
 	return true;
 }
 
-// ã‚¨ãƒ‡ã‚£ãƒƒãƒˆç”¨ã®æç”»é–¢æ•°.
+// ƒGƒfƒBƒbƒg—p‚Ì•`‰æŠÖ”.
 void CPlayer::EditRender()
 {
 #if _DEBUG
@@ -592,54 +592,54 @@ void CPlayer::EditRender()
 	ImGui::GetWindowSize();
 	bool isOpen = true;
 	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
-	ImGui::Begin( u8"ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®è¨­å®š", &isOpen );
+	ImGui::Begin( u8"ƒvƒŒƒCƒ„[‚Ìİ’è", &isOpen );
 
-	// å„ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®è¨­å®š.
-	ImGui::InputFloat( u8"ç§»å‹•é€Ÿåº¦", &m_MoveSpeed );
-	ImGui::InputFloat( u8"ä½“åŠ›", &m_LifePoint );
-	ImGui::InputFloat( u8"æ”»æ’ƒåŠ›", &m_Parameter.AttackPower );
-	ImGui::InputInt( u8"ç„¡æ•µæ™‚é–“", &m_Parameter.InvincibleTime );
-	ImGui::InputFloat( u8"ç‰¹æ®Šèƒ½åŠ›æœ€å¤§å€¤", &m_Parameter.SpecialAbilityMax );
-	ImGui::InputFloat( u8"ç‰¹æ®Šèƒ½åŠ›å›å¾©å€¤", &m_Parameter.SpecialAbilityValue );
-	ImGui::InputInt( u8"æ”»æ’ƒã‚³ãƒ³ãƒœæœ€å¤§æ•°", &m_Parameter.AttackComboMax );
-	ImGui::InputInt( u8"æ”»æ’ƒã‚­ãƒ¥ãƒ¼è¿½åŠ æœ€å¤§æ•°", &m_Parameter.AttackQueueMax );
-	ImGui::InputFloat( u8"å›é¿ã®ç§»å‹•è·é›¢", &m_Parameter.AvoidMoveDistance );
-	ImGui::InputFloat( u8"å›é¿ç”¨ã®ç§»å‹•é€Ÿåº¦", &m_Parameter.AvoidMoveSpeed );
-	ImGui::InputFloat( u8"ã‚«ãƒ¡ãƒ©ã®ç§»å‹•é€Ÿåº¦", &m_Parameter.CameraMoveSpeed );
-	ImGui::InputFloat( u8"ã‚«ãƒ¡ãƒ©ã®è·é›¢", &m_Parameter.CameraDistance );
-	ImGui::InputFloat( u8"ã‚«ãƒ¡ãƒ©ã®é«˜ã•", &m_Parameter.CameraHeight );
-	ImGui::InputFloat( u8"ã‚¹ãƒ•ã‚£ã‚¢ã®èª¿æ•´åº§æ¨™ X", &m_Parameter.SphereAdjPos.x );
-	ImGui::InputFloat( u8"ã‚¹ãƒ•ã‚£ã‚¢ã®èª¿æ•´åº§æ¨™ Y", &m_Parameter.SphereAdjPos.y );
-	ImGui::InputFloat( u8"ã‚¹ãƒ•ã‚£ã‚¢ã®èª¿æ•´åº§æ¨™ Z", &m_Parameter.SphereAdjPos.z );
-	ImGui::InputFloat( u8"ã‚¹ãƒ•ã‚£ã‚¢ã®èª¿æ•´åŠå¾„", &m_Parameter.SphereAdjRadius );
+	// Šeƒpƒ‰ƒ[ƒ^‚Ìİ’è.
+	ImGui::InputFloat( u8"ˆÚ“®‘¬“x", &m_MoveSpeed );
+	ImGui::InputFloat( u8"‘Ì—Í", &m_LifePoint );
+	ImGui::InputFloat( u8"UŒ‚—Í", &m_Parameter.AttackPower );
+	ImGui::InputInt( u8"–³“GŠÔ", &m_Parameter.InvincibleTime );
+	ImGui::InputFloat( u8"“Áê”\—ÍÅ‘å’l", &m_Parameter.SpecialAbilityMax );
+	ImGui::InputFloat( u8"“Áê”\—Í‰ñ•œ’l", &m_Parameter.SpecialAbilityValue );
+	ImGui::InputInt( u8"UŒ‚ƒRƒ“ƒ{Å‘å”", &m_Parameter.AttackComboMax );
+	ImGui::InputInt( u8"UŒ‚ƒLƒ…[’Ç‰ÁÅ‘å”", &m_Parameter.AttackQueueMax );
+	ImGui::InputFloat( u8"‰ñ”ğ‚ÌˆÚ“®‹——£", &m_Parameter.AvoidMoveDistance );
+	ImGui::InputFloat( u8"‰ñ”ğ—p‚ÌˆÚ“®‘¬“x", &m_Parameter.AvoidMoveSpeed );
+	ImGui::InputFloat( u8"ƒJƒƒ‰‚ÌˆÚ“®‘¬“x", &m_Parameter.CameraMoveSpeed );
+	ImGui::InputFloat( u8"ƒJƒƒ‰‚Ì‹——£", &m_Parameter.CameraDistance );
+	ImGui::InputFloat( u8"ƒJƒƒ‰‚Ì‚‚³", &m_Parameter.CameraHeight );
+	ImGui::InputFloat( u8"ƒXƒtƒBƒA‚Ì’²®À•W X", &m_Parameter.SphereAdjPos.x );
+	ImGui::InputFloat( u8"ƒXƒtƒBƒA‚Ì’²®À•W Y", &m_Parameter.SphereAdjPos.y );
+	ImGui::InputFloat( u8"ƒXƒtƒBƒA‚Ì’²®À•W Z", &m_Parameter.SphereAdjPos.z );
+	ImGui::InputFloat( u8"ƒXƒtƒBƒA‚Ì’²®”¼Œa", &m_Parameter.SphereAdjRadius );
 
 	static CImGuiManager::SSuccess s_Success;
-	if( ImGui::Button(u8"èª­è¾¼") == true ){
-		// ãƒ‡ãƒ¼ã‚¿ã®èª­ã¿è¾¼ã¿.
+	if( ImGui::Button(u8"“Ç") == true ){
+		// ƒf[ƒ^‚Ì“Ç‚İ‚İ.
 		s_Success.IsSucceeded = CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter );
 		if( s_Success.IsSucceeded == true ){
 			ColliderSetting();
 		}
 	}
 	ImGui::SameLine();
-	if( ImGui::Button(u8"ä¿å­˜") == true ){
-		// ãƒ‡ãƒ¼ã‚¿ã®æ›¸ãè¾¼ã¿.
+	if( ImGui::Button(u8"•Û‘¶") == true ){
+		// ƒf[ƒ^‚Ì‘‚«‚İ.
 		s_Success.IsSucceeded = CFileManager::BinaryWriting( PARAMETER_FILE_PATH, m_Parameter );
 	}
 	ImGui::SameLine();
-	s_Success.Render();	// æˆåŠŸã‹ã©ã†ã‹ã‚’æç”».
+	s_Success.Render();	// ¬Œ÷‚©‚Ç‚¤‚©‚ğ•`‰æ.
 
 	ImGui::End();
 #endif	// #if _DEBUG.
 }
 
-// ãƒ‡ãƒãƒƒã‚°ç”¨ã®æç”».
+// ƒfƒoƒbƒO—p‚Ì•`‰æ.
 void CPlayer::DebugRender()
 {
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*-1, 0.0f } );
 	CDebugText::Render( "- Player Parameter -" );
 
-	// åº§æ¨™ã®æç”».
+	// À•W‚Ì•`‰æ.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*0 ,0.0f } );
 	CDebugText::Render( "----- Position -----" );
 
@@ -653,7 +653,7 @@ void CPlayer::DebugRender()
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*5, 0.0f } );
 	CDebugText::Render( "----- Rotation -----" );
 
-	// å›è»¢ã®æç”».
+	// ‰ñ“]‚Ì•`‰æ.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*6, 0.0f } );
 	CDebugText::Render( "Rot_x : ", m_vRotation.x );				 
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*7, 0.0f } );
@@ -676,7 +676,7 @@ void CPlayer::DebugRender()
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*16, 0.0f } );
 	CDebugText::Render( "----- Animation ----" );
 
-	// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·ã®æç”».
+	// ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†‚Ì•`‰æ.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*17, 0.0f } );
 	CDebugText::Render( "Now_AnimationNo : ", (int)m_NowAnimNo );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*18, 0.0f } );
@@ -685,40 +685,40 @@ void CPlayer::DebugRender()
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*20, 0.0f } );
 	CDebugText::Render( "------ Other -------" );
 
-	// æ”»æ’ƒã‚«ã‚¦ãƒ³ãƒˆã®æç”».
+	// UŒ‚ƒJƒEƒ“ƒg‚Ì•`‰æ.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*21, 0.0f } );
 	CDebugText::Render( "AttackComboCount : ", m_AttackComboCount );
 
-	// å›é¿ä¸­ã‹.
+	// ‰ñ”ğ’†‚©.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*22, 0.0f } );
 	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
 
-	// ç‰¹æ®Šèƒ½åŠ›å›å¾©ä¸­ã‹.
+	// “Áê”\—Í‰ñ•œ’†‚©.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*28, 0.0f } );
 	CDebugText::Render( "IsParalysis : ", m_ItemSPRecoveryTimer.IsUpdate==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*29, 0.0f } );
 	CDebugText::Render( "ParalysisTime : ", m_ItemSPRecoveryTimer.Time/FPS );
 
-	// æ”»æ’ƒUPä¸­ã‹.
+	// UŒ‚UP’†‚©.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*23, 0.0f } );
 	CDebugText::Render( "IsItemAttackUp : ", m_ItemAttackTimer.IsUpdate==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*24, 0.0f } );
 	CDebugText::Render( "AttackUpTime : ", m_ItemAttackTimer.Time/FPS );
 
-	// ç§»å‹•é€Ÿåº¦UPä¸­ã‹.
+	// ˆÚ“®‘¬“xUP’†‚©.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*24, 0.0f } );
 	CDebugText::Render( "IsItemMoveSpeedUp : ", m_ItemMoveSpeedUpTimer.IsUpdate==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*25, 0.0f } );
 	CDebugText::Render( "MoveSpeedUpTime : ", m_ItemMoveSpeedUpTimer.Time/FPS );
 
-	// éº»ç—ºä¸­ã‹.
+	// –ƒáƒ’†‚©.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*26, 0.0f } );
 	CDebugText::Render( "IsParalysis : ", m_ParalysisTimer.IsUpdate==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*27, 0.0f } );
 	CDebugText::Render( "ParalysisTime : ", m_ParalysisTimer.Time/FPS );
 }
 
-// ã‚¦ã‚£ã‚¸ã‚§ãƒƒãƒˆè¨­å®š.
+// ƒEƒBƒWƒFƒbƒgİ’è.
 bool CPlayer::WidgetSetting()
 {
 	m_pWidget.emplace_back(std::make_shared<CLifeGauge>());
