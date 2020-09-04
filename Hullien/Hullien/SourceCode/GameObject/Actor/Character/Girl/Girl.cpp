@@ -3,6 +3,7 @@
 #include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"
 
 CGirl::CGirl()
 	: m_Parameter			()
@@ -12,6 +13,7 @@ CGirl::CGirl()
 	, m_NowState					( ENowState::None )
 	, m_NowMoveState			( EMoveState::None )
 	, m_IsDanger					( false )
+	, m_IsOnlyFirst					( false )
 {
 	m_ObjectTag	= EObjectTag::Girl;
 	m_NowState	= ENowState::Protected;
@@ -65,6 +67,9 @@ void CGirl::Update()
 		m_pWarning->Update();
 		m_pWarning->SetPosition(m_vPosition);
 	}
+
+	// サウンド.
+	Sound();
 }
 
 // 描画関数.
@@ -214,6 +219,7 @@ void CGirl::SearchCollision( CActor* pActor )
 	// 球体の当たり判定.
 	if( m_pSearchCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	m_IsDanger = true;
+
 }
 
 // 当たり判定の作成.
@@ -255,4 +261,20 @@ bool  CGirl::ColliderSetting()
 
 	return true;
 #endif	// #ifndef IS_MODEL_RENDER.
+}
+
+// サウンド.
+void CGirl::Sound()
+{
+	// 女の子が危険な状態ならばSEを鳴らす.
+	if (m_IsDanger == true && m_IsOnlyFirst == false)
+	{
+		CSoundManager::NoMultipleSEPlay("Warning");
+		m_IsOnlyFirst = true;
+	}
+	// 危険な状態を脱したらSEを再度鳴らせる状態にする.
+	if (m_IsDanger == false)
+	{
+		m_IsOnlyFirst = false;
+	}
 }

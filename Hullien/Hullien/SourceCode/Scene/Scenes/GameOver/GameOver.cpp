@@ -1,6 +1,7 @@
 #include "..\SceneList.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h"
 #include "..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CGameOver::CGameOver( CSceneManager* pSceneManager )
 	: CSceneBase				( pSceneManager )
@@ -28,6 +29,8 @@ bool CGameOver::Load()
 //============================.
 void CGameOver::Update()
 {
+	CSoundManager::ThreadPlayBGM("GameOverBGM");
+
 	if (CFade::GetFadeState() == CFade::EFadeState::Out
 		&& CFade::GetInstance()->GetIsFade() == true) return;
 	m_pGameOverWidget->Update();
@@ -39,10 +42,12 @@ void CGameOver::Update()
 	{
 		if (CFade::GetIsFade() == true) return;
 		CFade::GetInstance()->SetFadeIn();
+		CSoundManager::PlaySE("DeterminationSE");
 	}
 
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (CFade::GetIsFade() == true) return;
+	CSoundManager::StopBGMThread("GameOverBGM");
 	m_pSceneManager->NextSceneMove();
 
 }

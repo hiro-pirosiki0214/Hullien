@@ -3,17 +3,19 @@
 #include "..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\Cursor\Cursor.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"	
 
 /********************************************
 *	コンテニューUIクラス.
 **/
 CContinueWidget::CContinueWidget()
-	: m_pSprite		()
-	, m_pCursor		( nullptr )
-	, m_TextAlpha	( 0.0f )
-	, m_IsDrawing	( true )
-	, m_SelectState	( ESelectState::Yes )
-	, m_DrawTurn	( EDrawTurn::BackGround )
+	: m_pSprite				()
+	, m_pCursor				( nullptr )
+	, m_TextAlpha			( 0.0f )
+	, m_IsDrawing			( true )
+	, m_SelectState		( ESelectState::Yes )
+	, m_OldSelectState	( ESelectState::Yes )
+	, m_DrawTurn			( EDrawTurn::BackGround )
 {
 	m_pCursor = std::make_shared<CCursor>();
 	m_vSclae = D3DXVECTOR3(0.9f, 0.9f, 0.9f);
@@ -80,6 +82,7 @@ void CContinueWidget::Render()
 
 		if (sprite != 0) continue;
 		// カーソル.
+		m_pCursor->SetPosition(m_vPosition);
 		m_pCursor->Render();
 	}
 }
@@ -129,12 +132,19 @@ void CContinueWidget::CursorSetting()
 	switch (m_SelectState)
 	{
 	case CContinueWidget::ESelectState::Yes:
-		m_pCursor->SetPosition( m_pSprite[YES]->GetRenderPos() );
+		m_vPosition = m_pSprite[YES]->GetRenderPos();
 		break;
 	case CContinueWidget::ESelectState::No:
-		m_pCursor->SetPosition( m_pSprite[NO]->GetRenderPos() );
+		m_vPosition = m_pSprite[NO]->GetRenderPos();
 		break;
 	}
+
+	if (m_SelectState != m_OldSelectState)
+	{
+		CSoundManager::PlaySE("MoveButtonSE");
+		m_OldSelectState = m_SelectState;
+	}
+
 	m_pCursor->Update();
 }
 

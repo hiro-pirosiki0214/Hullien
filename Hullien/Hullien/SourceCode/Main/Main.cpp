@@ -50,6 +50,9 @@ CMain::CMain()
 	m_pLight->SetDirection( D3DXVECTOR3( 1.5f, 1.0f, -1.0f ) );
 	m_pLight->SetIntensity( 1.0f );
 	CLightManager::SetLgiht( m_pLight );
+
+	// サウンドデータの設定.
+	CSoundManager::CreateSoundData();
 }
 
 CMain::~CMain()
@@ -71,6 +74,8 @@ HRESULT CMain::Init()
 		m_pDirectX11->GetDevice(), 
 		m_pDirectX11->GetContext() );
 
+	m_pSceneManager->SethWnd(m_hWnd);
+
 	return S_OK;
 }
 
@@ -79,6 +84,7 @@ HRESULT CMain::Init()
 //====================================.
 void CMain::Release()
 {
+	CSoundManager::Release();
 	CImGuiManager::Release();
 	m_pDirectX11->Release();
 	m_pDirectX9->Release();

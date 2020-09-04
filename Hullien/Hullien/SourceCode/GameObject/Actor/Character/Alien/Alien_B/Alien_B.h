@@ -57,6 +57,7 @@ private:
 	bool	m_HasAimPlayer;		// プレイヤーを狙うかどうか.
 	bool	m_OldHasAimPlayer;	// 前回プレイヤーを狙っていたか.
 	float	m_RotAccValue;		// 回転加速値.
+	bool	m_IsAttackSE;			//攻撃SEを鳴らすか.
 };
 
 #endif	// #ifndef ALIEN_B_H.

@@ -80,6 +80,9 @@ private:
 	// 当たり判定の作成.
 	bool  ColliderSetting();
 
+	// サウンド.
+	void Sound();
+
 private:
 	SGirlParam m_Parameter;	// 女の子のパラメーター.
 	std::shared_ptr<CCollisionManager>	m_pSearchCollManager;	// 索敵用の当たり判定.
@@ -88,6 +91,7 @@ private:
 	ENowState	m_NowState;		// 現在の状態.
 	EMoveState	m_NowMoveState;	// 現在の移動状態.
 	bool		m_IsDanger;		// 危険かどうか.
+	bool		m_IsOnlyFirst;		//一度しか処理しない.
 };
 
 #endif	// #ifndef GIRL_H.

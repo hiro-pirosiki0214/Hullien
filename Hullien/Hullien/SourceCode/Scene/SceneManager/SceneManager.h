@@ -42,6 +42,11 @@ public:
 	void OnGameOver(){ m_IsGameOver = true; }
 	// ゲームリトライ.
 	void RetryGame();
+	// HWND設定.
+	void SethWnd(HWND hWnd) { m_hWnd = hWnd; }
+
+public:
+	HWND m_hWnd;
 
 private:
 	// エディットシーンに変更.

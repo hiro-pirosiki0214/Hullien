@@ -60,12 +60,13 @@ private:
 	void SpriteDrawing();
 
 private:
-	std::vector<std::shared_ptr<CSprite>>	m_pSprite;			//スプライトクラス.
-	std::shared_ptr<CCursor>					m_pCursor;			//カーソルクラス.
-	float												m_TextAlpha;		//文字の透過値.
-	bool												m_IsDrawing;		//描画中か.
-	ESelectState									m_SelectState;	//選択状態.
-	EDrawTurn										m_DrawTurn;		//描画順.
+	std::vector<std::shared_ptr<CSprite>>	m_pSprite;				//スプライトクラス.
+	std::shared_ptr<CCursor>					m_pCursor;				//カーソルクラス.
+	float												m_TextAlpha;			//文字の透過値.
+	bool												m_IsDrawing;			//描画中か.
+	ESelectState									m_SelectState;		//選択状態.
+	ESelectState									m_OldSelectState;	//選択前状態.
+	EDrawTurn										m_DrawTurn;			//描画順.
 };
 
 #endif	//#ifndef CONTINUEWIDGET_H

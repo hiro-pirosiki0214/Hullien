@@ -8,10 +8,12 @@
 #include "..\..\..\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CTitle::CTitle(CSceneManager* pSceneManager)
 	: CSceneBase(pSceneManager)
-	, m_pWidget				(nullptr)
+	, m_pWidget				( nullptr )
+	, m_IsChangeScene		( false )
 {
 	m_pWidget	= std::make_unique< CTitleWidget >();
 	CFade::SetFadeOut();
@@ -27,7 +29,6 @@ CTitle::~CTitle()
 bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
-
 	return true;
 }
 
@@ -36,6 +37,8 @@ bool CTitle::Load()
 //============================.
 void CTitle::Update()
 {
+	CSoundManager::ThreadPlayBGM("TestBGM");
+
 	if (CFade::GetIsFade() == true) return;
 
 	m_pWidget->Update();
@@ -60,10 +63,12 @@ void CTitle::ChangeScene()
 {
 	// ボタンが押された.
 	if (GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+		|| CXInput::B_Button() == CXInput::enSEPARATED)
 	{
-		if (CFade::GetIsFade() == true) return;
+		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
+		CSoundManager::PlaySE("DeterminationSE");
+		m_IsChangeScene = true;
 	}
 
 	// フェードイン状態かつフェード中なら処理しない.
@@ -73,10 +78,13 @@ void CTitle::ChangeScene()
 	switch (m_pWidget->GetSelectState())
 	{
 	case CTitleWidget::ESelectState::Start:
+		CSoundManager::StopBGMThread("TestBGM");
 		m_pSceneManager->NextSceneMove();
 		break;
 	case CTitleWidget::ESelectState::End:
-			// ウィンドウを閉じる処理を追加する.
+		CSoundManager::StopBGMThread("TestBGM");
+		// ウィンドウを閉じる.
+		PostMessage(m_pSceneManager->m_hWnd, WM_CLOSE, 0, 0);
 		break;
 	default:
 		break;

@@ -35,7 +35,8 @@ private:
 	void ChangeScene();
 
 private:
-	std::unique_ptr<CTitleWidget>	m_pWidget;		//UIクラス.
+	std::unique_ptr<CTitleWidget>	m_pWidget;			// UIクラス.
+	bool							m_IsChangeScene;	// シーンの切り替えが可能か.
 };
 
 #endif	// #ifndef TITLE_H.

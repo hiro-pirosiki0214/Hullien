@@ -6,12 +6,14 @@
 #include "..\..\..\..\..\Utility\FileManager\FileManager.h"
 #include "..\..\..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
+#include "..\..\..\..\..\XAudio2\SoundManager.h"	
 
 CAlienB::CAlienB()
 	: m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
 	, m_HasAimPlayer	( false )
 	, m_OldHasAimPlayer	( false )
 	, m_RotAccValue		( 0.0f )
+	, m_IsAttackSE		( false )
 {
 	m_ObjectTag = EObjectTag::Alien_B;
 }
@@ -192,9 +194,15 @@ void CAlienB::Attack()
 		m_vPosition.x += m_MoveVector.x * m_Parameter.AttackMoveSpeed;
 		m_vPosition.z += m_MoveVector.z * m_Parameter.AttackMoveSpeed;
 	}
+	if (m_IsAttackSE == false)
+	{
+		CSoundManager::NoMultipleSEPlay("AlienAttack");
+		m_IsAttackSE = true;
+	}
 
 	if( m_RotAccValue > -m_Parameter.AttackRotPower ) return;
 	m_NowMoveState = EMoveState::Wait;
+	m_IsAttackSE = false;
 }
 
 // プレイヤーとの当たり判定.
@@ -209,6 +217,7 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	// プレイヤーの体力を減らす.
 	pActor->LifeCalculation( [&]( float& life ){ life -= m_Parameter.AttackPower; });
+	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
 }
 
 // プレイヤーを狙うか判定.

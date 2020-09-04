@@ -3,6 +3,7 @@
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CBarrier::CBarrier()
 	: m_StaticMesh			( nullptr )
@@ -38,6 +39,7 @@ void CBarrier::Update()
 {
 	if( m_IsActive == false ) return;	// “®ì‚µ‚Ä‚È‚¯‚ê‚ÎI—¹.
 	if( m_CollSphereRadius <= COLLISION_SPHERE_RDIUS_MAX ){
+		CSoundManager::NoMultipleSEPlay("VolumeUp");
 		m_CollSphereRadius += COLLISION_SPHERE_RDIUS_ADD_VALUE;	// “–‚½‚è”¼Œa‚Ì‰ÁZ.
 		return;
 	}

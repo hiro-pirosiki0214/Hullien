@@ -53,7 +53,6 @@ private:
 	std::unique_ptr<CContinueWidget>	m_ContinueWidget;	// コンテニューUIクラス.
 	EChangeSceneState					m_ChangeSceneState;	// シーン切り替え状態.
 	bool								m_IsChangeScene;	// シーン切り替えが可能か.
-	int									m_DispContinue;		// 後で消す.
 
 };
 
