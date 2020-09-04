@@ -2,14 +2,19 @@
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\..\Common\Effect\EffectManager.h"
+#include "..\..\..\Resource\EffectResource\EffectResource.h"
 
 CExplosion::CExplosion()
-	: m_Param				()
+	: m_pEffect				( nullptr )
+	, m_Param				()
 	, m_CollSphereRadius	( 0.0f )
+	, m_IsEffectPlay		( false )
 #if _DEBUG
 	, m_ResizeCollTime		( 0.0f )
 #endif	// #if _DEBUG.
 {
+	m_pEffect = std::make_shared<CEffectManager>();
 }
 
 CExplosion::~CExplosion()
@@ -19,7 +24,10 @@ CExplosion::~CExplosion()
 // 初期化関数.
 bool CExplosion::Init()
 {
+	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
+	m_CollSphereRadius = 0.0f;
+	m_IsEffectPlay = false;
 	return true;
 }
 
@@ -31,9 +39,14 @@ void CExplosion::Update()
 // 描画関数.
 void CExplosion::Render()
 {
-	m_CollSphereRadius += m_Param.ExplosionSpeed;
+	m_CollSphereRadius += m_Param.ExplosionSpeed;	// 当たり判定を大きくする.
+	// 当たり判定が最大当たり判定より大きければ終了.
 	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
 	if( m_pCollManager == nullptr ) return;
+
+	// エフェクトを描画.
+	m_pEffect->SetScale( 2.0f );
+	m_pEffect->Render();
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -53,8 +66,6 @@ void CExplosion::Render()
 // 当たり判定関数.
 void CExplosion::Collision( CActor* pActor )
 {
-	// エフェクトの描画をする予定.
-	
 	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
 	if( pActor == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
@@ -77,7 +88,26 @@ void CExplosion::Collision( CActor* pActor )
 // 相手座標の設定関数.
 void CExplosion::SetTargetPos( CActor& pActor )
 {
-	m_vPosition = pActor.GetPosition();
+	m_vPosition = pActor.GetPosition();	// 座標を設定.
+	// すでにエフェクトを再生していれば終了.
+	if( m_IsEffectPlay == true ) return;
+	m_pEffect->Play( m_vPosition );	// エフェクトを再生.
+	m_IsEffectPlay = true;
+}
+
+// 止まっているかどうか.
+bool CExplosion::IsStop()
+{
+	if( m_CollSphereRadius < m_Param.SphereMaxRadius ) return false;
+	m_pEffect->Stop();	// エフェクトを止める.
+	return true;
+}
+
+// エフェクトの設定.
+bool CExplosion::EffectSetting()
+{
+	if( m_pEffect->SetEffect( EFFECT_NAME ) == false ) return false;
+	return true;
 }
 
 // 当たり判定の設定.

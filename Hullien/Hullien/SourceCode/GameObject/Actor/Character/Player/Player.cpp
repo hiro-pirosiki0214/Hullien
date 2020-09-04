@@ -9,6 +9,7 @@
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h"
+#include "..\..\..\..\Common\Effect\EffectManager.h"
 
 #include "..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\..\..\Editor\EditRenderer\EditRenderer.h"
@@ -18,12 +19,15 @@
 CPlayer::CPlayer()
 	: m_pCamera						( nullptr )
 	, m_pWidget						()
+	, m_pAttackCollManager			( nullptr )
 	, m_OldPosition					( 0.0f, 0.0f, 0.0f )
 	, m_NowAnimNo					( CPlayer::enAnimNo::Walk )
 	, m_OldAnimNo					( CPlayer::enAnimNo::None )
-	, m_AttackComboCount			( 0 )
+	, m_AttackComboCount			( EAttackNo_None )
 	, m_AttackEnabledFrameList		()
 	, m_AttackDataQueue				()
+	, m_AttackPosition				( 0.0f, 0.0f, 0.0f )
+	, m_pEffects					()
 	, m_IsDuringAvoid				( false )
 	, m_AvoidVector					( 0.0f, 0.0f, 0.0f )
 	, m_Parameter					()
@@ -58,7 +62,7 @@ bool CPlayer::Init()
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
 	if( WidgetSetting() == false ) return false;
-
+	if( EffectSetting() == false ) return false;
 	m_MoveSpeed		= m_Parameter.MoveSpeed;	// 移動速度の設定.
 	m_AttackPower	= m_Parameter.AttackPower;	// 攻撃力の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
@@ -80,12 +84,12 @@ void CPlayer::Update()
 		AttackAnimation();		// 攻撃アニメーション.
 		Move();					// 移動.
 		AvoidMove();			// 回避動作.
-		SpecialAbilityUpdate();	// 特殊能力回復更新.
-		AttackUpUpdate();		// 攻撃力UP更新.
-		MoveSpeedUpUpdate();	// 移動速度UP更新.
 	} else {
 		ParalysisUpdate();	// 麻痺時の更新.
 	}
+	SpecialAbilityUpdate();	// 特殊能力回復更新.
+	AttackUpUpdate();		// 攻撃力UP更新.
+	MoveSpeedUpUpdate();	// 移動速度UP更新.
 
 	CameraController();	// カメラ操作.
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
@@ -101,8 +105,9 @@ void CPlayer::Update()
 void CPlayer::Render()
 {
 	MeshRender();	// メッシュの描画.
+	EffectRender();
 
-					// Widget.
+	// Widget.
 	if ( m_pWidget.size() == 0 ) return;
 	for (const auto& s : m_pWidget)
 	{
@@ -112,6 +117,8 @@ void CPlayer::Render()
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
+	if( m_pAttackCollManager == nullptr ) return;
+	m_pAttackCollManager->DebugRender();
 	// エディット用の描画関数をエディットレンダラーに追加.
 	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
 	// デバッグ描画.
@@ -126,13 +133,10 @@ void CPlayer::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	// 球体の当たり判定.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	AttackCollision( pActor );
 
-	// 攻撃関数.
-	auto attackProc = [&]( float& life ){ life -= 10.0f; };
-	if( GetAsyncKeyState('C') & 0x8000 )
-		pActor->LifeCalculation( attackProc );
+	// 球体の当たり判定.
+//	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 }
 
 // 相手座標の設定関数.
@@ -204,7 +208,7 @@ void CPlayer::AttackController()
 	// 攻撃カウントが最大以上なら終了.
 	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
 	m_AttackComboCount++;	// 攻撃カウントを加算.
-							// 攻撃データがキューに追加されたら終了.
+	// 攻撃データがキューに追加されたら終了.
 	if( IsPushAttack() == true ) return;
 	m_AttackComboCount--;	// 攻撃カウントを減算.
 }
@@ -285,6 +289,40 @@ void CPlayer::AvoidMove()
 	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
 	m_vRotation.z = 0.0f;	// 回転　アニメーション設定後消す.
+}
+
+// エフェクト描画関数.
+void CPlayer::EffectRender()
+{
+	if( m_AttackComboCount <= EAttackNo_None ) return;
+	m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
+	m_pEffects[m_AttackComboCount-1]->Render();
+}
+
+// 攻撃の当たり判定.
+void CPlayer::AttackCollision( CActor* pActor )
+{
+	const float attackLength = 10.0f;
+	if( m_AttackComboCount <= EAttackNo_None ){
+		m_AttackPosition = { 0.0f, -1.0f, 0.0f };
+		return;
+	}
+
+	//
+	//	アニメーションが来るまでプレイヤーの目の前だけ攻撃.
+	//
+
+	// 回転軸で移動.
+	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
+	m_AttackPosition.y = 5.0f;
+	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
+
+	// 球体の当たり判定.
+	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+
+	// 攻撃関数.
+	auto attackProc = [&]( float& life ){ life -= 10.0f; };
+	pActor->LifeCalculation( attackProc );
 }
 
 // 特殊能力回復更新関数.
@@ -379,27 +417,38 @@ bool CPlayer::IsPushAttack()
 	switch( m_AttackComboCount )
 	{
 	case 1:	// 攻撃1.
+#ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait1;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[0];
+		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_One-1];
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(0);
 		// 最初はアニメーションを設定する.
-		SetAnimation( tmpAttackData.AnimNo );	
+		SetAnimation( tmpAttackData.AnimNo );
+#endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
+		
 		break;
 	case 2:	// 攻撃2.
+#ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Happy;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[1];
+		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Two-1];
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(4);
+#endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
+
 		break;
-	case 3:	// 攻撃3.
+	case 3:// 攻撃3.
+#ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[2];
+		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Three-1];
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(1);
+#endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
+
 		break;
 	default:
 		break;
 	}
 	// キューにデータを挿入.
 	m_AttackDataQueue.push( tmpAttackData );
+	// エフェクトを再生.
+	m_pEffects[m_AttackComboCount-1]->Play( m_vPosition );
 	return true;
 }
 
@@ -463,6 +512,7 @@ bool CPlayer::ColliderSetting()
 	return true;
 #else
 	if( m_pTempStaticMesh == nullptr ) return false;
+	// メッシュを使用しての当たり判定初期化.
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
@@ -473,8 +523,40 @@ bool CPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
+
+	// 攻撃用の当たり判定初期化.
+	if( m_pAttackCollManager == nullptr ){
+		m_pAttackCollManager = std::make_shared<CCollisionManager>();
+	}
+	if( FAILED( m_pAttackCollManager->InitSphere(
+		&m_AttackPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		1.0f ) )) return false;
 	return true;
 #endif	// #ifndef IS_MODEL_RENDER.
+}
+
+// エフェクトの設定.
+bool CPlayer::EffectSetting()
+{
+	const char* effectNames[] =
+	{
+		ATTACK_ONE_EFFECT_NAME,
+		ATTACK_TWO_EFFECT_NAME,
+		ATTACK_THREE_EFFECT_NAME,
+	};
+	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
+	// メモリの最大値設定.
+	m_pEffects.reserve(effectNum);
+
+	for( int i = 0; i < effectNum; i++ ){
+		m_pEffects.emplace_back( std::make_shared<CEffectManager>() );
+		if( m_pEffects[i]->SetEffect( effectNames[i] ) == false ) return false;
+	}
+
+	return true;
 }
 
 // エディット用の描画関数.

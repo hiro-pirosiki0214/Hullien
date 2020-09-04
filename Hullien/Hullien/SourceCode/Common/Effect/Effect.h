@@ -139,6 +139,12 @@ public:
 		if( handle == -1 ) return;
 		m_pManager->SetSpeed( handle, fSpeed );
 	}
+	// ˆêŽž’âŽ~‚µ‚Ä‚¢‚é‚©Šm”F.
+	bool IsPause( const Effekseer::Handle& handle )
+	{
+		if( handle == -1 ) return true;
+		return m_pManager->GetShown( handle );
+	}
 
 private:
 	//--------------------------------------

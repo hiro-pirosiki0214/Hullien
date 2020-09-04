@@ -28,6 +28,9 @@ bool CEffectManager::SetEffect( const char* effectName )
 void CEffectManager::Render()
 {
 	if( m_pEffect == nullptr ) return;
+	if( m_pEffect->IsPause( m_Handle ) == false ){
+		int i = 0;
+	}
 	m_pEffect->Render( m_Handle );
 }
 
@@ -37,7 +40,6 @@ void CEffectManager::Render()
 void CEffectManager::Play( const D3DXVECTOR3 vPos )
 {
 	if( m_pEffect == nullptr ) return;
-	if( m_Handle != -1 ) return;
 	m_Handle = m_pEffect->Play( vPos );
 }
 

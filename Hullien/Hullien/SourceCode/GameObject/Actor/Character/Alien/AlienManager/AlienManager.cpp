@@ -56,7 +56,10 @@ void CAlienManager::Update( std::function<void(CActor*)> updateProc )
 		// 爆発できるか確認.
 		ExplosionConfirming( m_AilenList[i] );
 		// 爆発と宇宙人の当たり判定.
-		for( auto& e : m_ExplosionList ) e.Collision( m_AilenList[i].get() );
+		for( auto& e : m_ExplosionList ){
+			if( e.IsStop() == true ) continue;
+			e.Collision( m_AilenList[i].get() );
+		}
 
 		// リストから指定の宇宙人を消すか.
 		if( m_AilenList[i]->IsDelete() == false ) continue;
@@ -109,7 +112,15 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 	if( ailen->GetObjectTag() != EObjectTag::Alien_C ) return;
 	// 爆発しなければ終了.
 	if( ailen->IsExplosion() == false ) return;
-
+	// 爆発と宇宙人の当たり判定.
+	for( auto& e : m_ExplosionList ){
+		if( e.IsStop() == false ) continue;
+		// 爆発が終了していれば使いまわす.
+		e.Init();
+		e.SetTargetPos( *ailen.get() );
+		return;
+	}
+	// 終了した爆発がなければ.
 	// 爆発を追加.
 	m_ExplosionList.emplace_back();
 	m_ExplosionList.back().Init();

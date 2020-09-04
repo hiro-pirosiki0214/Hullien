@@ -6,6 +6,9 @@
 
 class CRotLookAtCenter;
 class CCharacterWidget;
+class CEffectManager;
+
+#define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
 
 class CPlayer : public CCharacter
 {
@@ -13,6 +16,10 @@ class CPlayer : public CCharacter
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
 	const char*	MODEL_NAME	= "kaito_s";	// モデル名.
 	const char* MODEL_TEMP_NAME = "kaito";	// 仮モデル名.
+
+	const char* ATTACK_ONE_EFFECT_NAME = "uvtest";
+	const char* ATTACK_TWO_EFFECT_NAME = "uvtest";
+	const char* ATTACK_THREE_EFFECT_NAME = "uvtest";
 
 	// アニメーション番号.
 	enum class enAnimNo
@@ -26,7 +33,19 @@ class CPlayer : public CCharacter
 		Happy,
 
 		Max = Happy,
-	};
+	} typedef EAnimNo;
+
+	// 攻撃番号,
+	enum enAttackNo
+	{
+		EAttackNo_None,
+
+		EAttackNo_One,
+		EAttackNo_Two, 
+		EAttackNo_Three,
+
+		EAttackNo_Max = EAttackNo_Three,
+	} typedef EAttackNo;
 
 	// プレイヤーパラメータ.
 	struct stPlayerParam : public stParameter
@@ -60,15 +79,16 @@ class CPlayer : public CCharacter
 	// 攻撃用データ.
 	struct stAttackData
 	{
-		enAnimNo	AnimNo;				// アニメーション番号.
+		EAnimNo		AnimNo;				// アニメーション番号.
 		double		Frame;				// 経過フレーム.
 		double		EnabledEndFrame;	// 有効終了フレーム.
 		double		EndFrame;			// 終了フレーム.
+
 		stAttackData()
-			: AnimNo			( enAnimNo::None )
+			: AnimNo			( EAnimNo::None )
 			, Frame				( 0.0 )
-			, EnabledEndFrame	( 0.0 )
-			, EndFrame			( 0.0 )
+			, EnabledEndFrame	( 1.0 )
+			, EndFrame			( 2.0 )
 		{}
 	} typedef SAttackData;
 
@@ -141,6 +161,12 @@ private:
 	// 回避動作関数.
 	void AvoidMove();
 
+	// エフェクト描画関数.
+	void EffectRender();
+
+	// 攻撃の当たり判定.
+	void AttackCollision( CActor* pActor );
+
 	// 特殊能力回復更新関数.
 	void SpecialAbilityUpdate();
 	// 攻撃力UP更新関数.
@@ -153,7 +179,7 @@ private:
 	// 攻撃アニメーション.
 	void AttackAnimation();
 	// アニメーション設定.
-	void SetAnimation( const enAnimNo& animNo );
+	void SetAnimation( const EAnimNo& animNo );
 
 	// 攻撃アニメーションフレームリストの設定.
 	void SetAttackFrameList();
@@ -173,6 +199,8 @@ private:
 
 	// 当たり判定の設定.
 	bool ColliderSetting();
+	// エフェクトの設定.
+	bool EffectSetting();
 
 	// エディット用の描画関数.
 	void EditRender();
@@ -185,12 +213,15 @@ private:
 private:
 	std::shared_ptr<CRotLookAtCenter>				m_pCamera;		// カメラクラス.
 	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;		// Widgetクラス.
+	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
 	D3DXVECTOR3	m_OldPosition;			// 前回の座標.
-	enAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
-	enAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
+	EAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
+	EAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
 	int			m_AttackComboCount;					// 攻撃コンボカウント.
 	std::vector<double>	m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
 	std::queue<SAttackData>	m_AttackDataQueue;		// 攻撃データのキュー.
+	D3DXVECTOR3		m_AttackPosition;
+	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 
