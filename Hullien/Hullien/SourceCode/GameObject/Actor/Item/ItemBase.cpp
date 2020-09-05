@@ -3,6 +3,7 @@
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Common\Effect\EffectManager.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CItemBase::CItemBase()
 	: m_pStaticMesh			( nullptr )
@@ -107,6 +108,7 @@ void CItemBase::Drop( const D3DXVECTOR3& vPos )
 	m_NowState = ENowState::Drop;
 	this->m_vPosition = vPos;
 	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( vPos );
+	CSoundManager::PlaySE("DropItem");
 }
 
 // èoåª.
