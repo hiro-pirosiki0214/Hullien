@@ -15,6 +15,7 @@ CAlienD::CAlienD()
 	, m_IsAttackStart		( false )
 {
 	m_ObjectTag = EObjectTag::Alien_D;
+	m_HasAnyItem = EItemList::SPEffectTime;
 	m_pLaserBeam = std::make_unique<CLaserBeam>();
 }
 

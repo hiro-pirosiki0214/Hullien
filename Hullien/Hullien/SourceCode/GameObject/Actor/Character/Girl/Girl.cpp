@@ -75,7 +75,10 @@ void CGirl::Update()
 // ï`âÊä÷êî.
 void CGirl::Render()
 {
+	float rotY = m_vRotation.y;
+	m_vRotation.y += static_cast<float>(D3DX_PI);
 	MeshRender();	// ÉÅÉbÉVÉÖÇÃï`âÊ.
+	m_vRotation.y = rotY;
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -188,10 +191,10 @@ void CGirl::TargetMove()
 	if( m_NowMoveState != EMoveState::Move ) return;
 
 	// ñ⁄ìIÇÃèÍèä.
-	D3DXVECTOR3 targetPosition = { 0.0f, 5.0f, 0.0f };
-
-	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * 0.01f;
-	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * 0.01f;
+	const D3DXVECTOR3 targetPosition = { 0.0f, 5.0f, 0.0f };
+	const float moveSpeed = 0.05f;
+	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
 
 	float lenght = D3DXVec3Length( &D3DXVECTOR3(targetPosition - m_vPosition) );
 

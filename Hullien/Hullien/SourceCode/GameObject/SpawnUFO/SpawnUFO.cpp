@@ -1,11 +1,14 @@
 #include "SpawnUFO.h"
+#include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
+#include "..\..\Resource\MeshResource\MeshResource.h"
 #include "..\Actor\Character\Alien\Alien_A\Alien_A.h"
 #include "..\Actor\Character\Alien\Alien_B\Alien_B.h"
 #include "..\Actor\Character\Alien\Alien_C\Alien_C.h"
 #include "..\Actor\Character\Alien\Alien_D\Alien_D.h"
 
 CSpawnUFO::CSpawnUFO()
-	: m_SpawnParameter			()
+	: m_pStaticMesh				( nullptr )
+	, m_SpawnParameter			()
 	, m_pAbductUFOPosition		( nullptr )
 	, m_pAlienParamList			( nullptr )
 	, m_FrameCount				( 0 )
@@ -29,6 +32,7 @@ CSpawnUFO::~CSpawnUFO()
 // 初期化関数.
 bool CSpawnUFO::Init()
 {
+	if( GetModel() == false ) return false;
 	return true;
 }
 
@@ -50,6 +54,10 @@ void CSpawnUFO::Update()
 // 描画関数.
 void CSpawnUFO::Render()
 {
+	if( m_pStaticMesh == nullptr ) return;
+
+	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->Render();
 }
 
 // 宇宙人をスポーンさせる.
@@ -85,6 +93,14 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 void CSpawnUFO::SetAlienParameterList( std::vector<CAlien::SAlienParam>* alienParamList )
 {
 	m_pAlienParamList = alienParamList;
+}
+
+// スポーンパラメータの設定.
+void CSpawnUFO::SetSpawnParameter( const SSpawnUFOParam& param )
+{ 
+	m_SpawnParameter = param;
+	m_vPosition = m_SpawnParameter.Position;
+	m_vPosition.y = POS_HEIGHT;
 }
 
 // ウェーブカウントの更新.
@@ -178,4 +194,13 @@ int CSpawnUFO::CreateAlienNo( const int& min, const int& max, const int& outVal 
 		outAlienNo = CreateAlienNo( min, max, outVal );
 	}
 	return outAlienNo;
+}
+
+// モデルの取得.
+bool CSpawnUFO::GetModel()
+{
+	if( m_pStaticMesh != nullptr ) return false;
+	CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME );
+	if( m_pStaticMesh == nullptr ) return false;
+	return true;
 }

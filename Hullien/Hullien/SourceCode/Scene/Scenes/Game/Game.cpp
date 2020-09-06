@@ -5,6 +5,7 @@
 #include "..\..\..\GameObject\Actor\Character\Alien\AlienManager\AlienManager.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.h"
+#include "..\..\..\GameObject\SkyDome\SkyDome.h"
 #include "..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
@@ -16,12 +17,14 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_GameObjManager	( nullptr )
 	, m_WidgetManager	( nullptr )
 	, m_ContinueWidget	( nullptr )
+	, m_pSkyDome		( nullptr )
 	, m_ChangeSceneState( EChangeSceneState::Clear )
 	, m_IsChangeScene	( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
+	m_pSkyDome				= std::make_unique<CSkyDome>();
 	CFade::SetFadeOut();
 
 }
@@ -38,6 +41,7 @@ bool CGame::Load()
 	if( m_GameObjManager->Init() == false )	return false;
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
+	if( m_pSkyDome->Init() == false )		return false;
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
 	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
@@ -103,6 +107,7 @@ void CGame::Update()
 //============================.
 void CGame::Render()
 {
+//	m_pSkyDome->Render();
 	m_GameObjManager->Render();
 	m_GameObjManager->SpriteRender();
 	m_WidgetManager->Render();

@@ -12,6 +12,8 @@
 
 class CSpawnUFO : public CGameObject
 {
+	const char* MODEL_NAME = "ufo_mini";	// モデル名.
+	const float POS_HEIGHT = 10.0f;			// UFOの高さ.
 public:
 	CSpawnUFO();
 	virtual ~CSpawnUFO();
@@ -26,7 +28,7 @@ public:
 	// 宇宙人のパラメータリストを設定する.
 	void SetAlienParameterList( std::vector<CAlien::SAlienParam>* );
 	// スポーンパラメータの設定.
-	void SetSpawnParameter( const SSpawnUFOParam& param ){ m_SpawnParameter = param; }
+	void SetSpawnParameter( const SSpawnUFOParam& param );
 	// 連れ去るUFOの座標設定.
 	void SetAbductUFOPosition( D3DXVECTOR3* pPos ){ m_pAbductUFOPosition = pPos; }
 
@@ -45,7 +47,11 @@ private:
 	// 宇宙人番号の作成.
 	int CreateAlienNo( const int& min, const int& max, const int& outVal );
 
+	// モデルの取得.
+	bool GetModel();
+
 private:
+	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;	// メッシュ.
 	SSpawnUFOParam	m_SpawnParameter;		// スポーンパラメータ.
 	D3DXVECTOR3*	m_pAbductUFOPosition;	// 連れ去るUFOの座標.
 	std::vector<CAlien::SAlienParam>* m_pAlienParamList;	// 宇宙人パラメータリスト.

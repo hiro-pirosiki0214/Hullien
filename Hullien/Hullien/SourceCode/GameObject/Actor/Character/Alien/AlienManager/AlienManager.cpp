@@ -145,6 +145,7 @@ bool CAlienManager::SpawnUFOInit()
 	if( CFileManager::BinaryVectorReading( SPAWN_PARAM_FILE_PATH, spawnPramList ) == false ) return false;
 	for( const auto& s : spawnPramList ){
 		m_SpawnUFOList.emplace_back();
+		m_SpawnUFOList.back().Init();
 		m_SpawnUFOList.back().SetSpawnParameter( s );
 		m_SpawnUFOList.back().SetAbductUFOPosition( &m_AbductUFOPosition );
 	}

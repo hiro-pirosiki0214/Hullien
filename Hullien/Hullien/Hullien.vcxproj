@@ -197,6 +197,7 @@
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
     <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
+    <ClCompile Include="SourceCode\GameObject\SkyDome\SkyDome.cpp" />
     <ClCompile Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />
     <ClInclude Include="SourceCode\GameObject\ObjectList.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Actor.h" />
+    <ClInclude Include="SourceCode\GameObject\SkyDome\SkyDome.h" />
     <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.h" />
     <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFOParam.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h" />
