@@ -21,6 +21,9 @@ CGameOver::~CGameOver()
 bool CGameOver::Load()
 {
 	if (m_pGameOverWidget->Init() == false) return false;
+	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
+	CSoundManager::SetBGMVolume("GameOverBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
+
 	return true;
 }
 

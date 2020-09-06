@@ -38,6 +38,10 @@ bool CGame::Load()
 	if( m_GameObjManager->Init() == false )	return false;
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
+	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
+	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
+	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
+
 
 	return true;
 }
@@ -47,18 +51,20 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
-	if (CFade::GetIsFade() == true) return;
 
-	//if (m_GameObjManager->IsDanger() == false)
-	//{
-	//	CSoundManager::ThreadPlayBGM("GameBGM");
-	//	CSoundManager::StopBGMThread("DangerBGM");
-	//}
-	//else
-	//{
-	//	CSoundManager::ThreadPlayBGM("DangerBGM");
-	//	CSoundManager::StopBGMThread("GameBGM");
-	//}
+	if (m_GameObjManager->IsDanger() == false)
+	{
+		CSoundManager::ThreadPlayBGM("GameBGM");
+		CSoundManager::FadeInBGM("GameBGM");
+		CSoundManager::FadeOutBGM("DangerBGM");		
+	}
+	else
+	{
+		CSoundManager::ThreadPlayBGM("DangerBGM");
+		CSoundManager::FadeInBGM("DangerBGM");
+		CSoundManager::FadeOutBGM("GameBGM");
+	}
+
 
 	if (m_GameObjManager->IsGameOver() == false)
 	{
@@ -67,6 +73,7 @@ void CGame::Update()
 	}
 	else
 	{
+		if (CFade::GetIsFade() == true) return;
 		UpdateContinue();
 	}
 

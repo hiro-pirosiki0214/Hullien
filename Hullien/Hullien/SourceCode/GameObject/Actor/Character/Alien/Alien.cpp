@@ -207,6 +207,7 @@ void CAlien::Death()
 {
 	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
 	if( m_ModelAlpha > 0.0f ) return;
+	CSoundManager::PlaySE("AlienHit");
 	m_IsDelete = true;
 }
 

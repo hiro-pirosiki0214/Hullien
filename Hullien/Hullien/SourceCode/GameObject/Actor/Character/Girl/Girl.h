@@ -7,7 +7,7 @@
 class CGirl : public CCharacter
 {
 	const char* MODEL_NAME = "Towa_s";	// モデル名.
-	const char* MODEL_TEMP_NAME = "yuri-dysize";	// 仮モデル名.
+	const char* MODEL_TEMP_NAME = "yuri-dy";	// 仮モデル名.
 
 	// プレイヤーパラメータ.
 	struct stGirlParam : public stParameter

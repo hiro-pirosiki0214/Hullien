@@ -70,7 +70,12 @@ bool CPlayer::Init()
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
 	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
 
+#if 0
+	// アニメーション再生.
 	SetAttackFrameList();
+#endif	//#if 0
+
+
 	return true;
 }
 
@@ -141,18 +146,7 @@ void CPlayer::Collision( CActor* pActor )
 	// 攻撃関数.
 	auto attackProc = [&]( float& life ){ life -= 10.0f; };
 	if (GetAsyncKeyState('C') & 0x8000)
-	{
-		if (m_IsAttackSE == false)
-		{
-			CSoundManager::NoMultipleSEPlay("PlayerAttackSE");
-			m_IsAttackSE = true;
-		}
 		pActor->LifeCalculation(attackProc);
-	}
-	else
-	{
-		m_IsAttackSE = false;
-	}
 
 	// 球体の当たり判定.
 //	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
@@ -228,10 +222,12 @@ void CPlayer::AttackController()
 	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
 	// 攻撃カウントが最大以上なら終了.
 	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
+	CSoundManager::NoMultipleSEPlay("PlayerAttackSE");
 	m_AttackComboCount++;	// 攻撃カウントを加算.
 	// 攻撃データがキューに追加されたら終了.
 	if( IsPushAttack() == true ) return;
 	m_AttackComboCount--;	// 攻撃カウントを減算.
+
 }
 
 // 特殊能力操作関数.
