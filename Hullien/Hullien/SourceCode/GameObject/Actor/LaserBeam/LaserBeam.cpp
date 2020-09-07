@@ -1,8 +1,12 @@
 #include "LaserBeam.h"
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 
+#include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
+#include "..\..\..\Resource\MeshResource\MeshResource.h"
+
 CLaserBeam::CLaserBeam()
-	: m_MoveSpeed			( DEFAULT_MOVE_SPEED )
+	: m_pStaticMesh			( nullptr )
+	, m_MoveSpeed			( DEFAULT_MOVE_SPEED )
 	, m_ParalysisTime		( DEFAULT_PARALYSIS_TIME )
 	, m_TargetPosition		( 0.0f, 0.0f, 0.0f )
 	, m_IsInAttack			( false )
@@ -22,6 +26,7 @@ CLaserBeam::~CLaserBeam()
 // ‰Šú‰»ŠÖ”.
 bool CLaserBeam::Init()
 {
+	if( GetModel() == false ) return false;
 	if( CollisionSetting() == false ) return false; 
 	return true;
 }
@@ -59,6 +64,13 @@ void CLaserBeam::Update()
 void CLaserBeam::Render()
 {
 	if( m_IsInAttack == false ) return;
+	if( m_pStaticMesh == nullptr ) return;
+
+
+	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->SetScale( 1.0f );
+	m_pStaticMesh->SetColor( { 1.0f, 0.5f, 0.0f, 1.0f } );
+	m_pStaticMesh->Render();
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -175,6 +187,15 @@ void CLaserBeam::ThirdBezierCurve()
 	m_vPosition.z = b * p[0].z + a * p[1].z;
 
 	m_FrameCount += m_MoveSpeed;
+}
+
+// ƒ‚ƒfƒ‹‚Ìæ“¾.
+bool CLaserBeam::GetModel()
+{
+	if( m_pStaticMesh != nullptr ) return false;
+	CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME );
+	if( m_pStaticMesh == nullptr ) return false;
+	return true;
 }
 
 // “–‚½‚è”»’è‚Ìİ’è.

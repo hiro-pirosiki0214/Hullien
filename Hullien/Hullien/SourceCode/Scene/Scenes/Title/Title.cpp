@@ -87,7 +87,7 @@ void CTitle::ChangeScene()
 	case CTitleWidget::ESelectState::End:
 		CSoundManager::StopBGMThread("TestBGM");
 		// ウィンドウを閉じる.
-		PostMessage(m_pSceneManager->m_hWnd, WM_CLOSE, 0, 0);
+		m_pSceneManager->EndGameClose();
 		break;
 	default:
 		break;

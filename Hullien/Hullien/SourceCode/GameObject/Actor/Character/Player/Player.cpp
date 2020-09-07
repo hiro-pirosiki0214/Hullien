@@ -474,6 +474,8 @@ bool CPlayer::IsPushAttack()
 void CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 {	
 	proc( m_LifePoint );
+	if( m_LifePoint < m_Parameter.LifeMax ) return;
+	m_LifePoint = m_Parameter.LifeMax;
 }
 
 // “ÁŽê”\—Í‰ñ•œŽžŠÔAŒø—ÍŽžŠÔÝ’èŠÖ”.

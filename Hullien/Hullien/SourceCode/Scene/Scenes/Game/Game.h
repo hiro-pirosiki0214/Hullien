@@ -5,8 +5,8 @@
 
 class CGameActorManager;	// ゲームオブジェクト管理クラス.
 class CGameWidgetManager;	// UI管理クラス.
-class CContinueWidget;		//コンテニューUIクラス;
-
+class CContinueWidget;		// コンテニューUIクラス;
+class CSkyDome;				// 背景クラス.
 
 
 /**********************************
@@ -51,6 +51,7 @@ private:
 	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.
 	std::unique_ptr<CGameWidgetManager>	m_WidgetManager;	// ゲームUI管理クラス.
 	std::unique_ptr<CContinueWidget>	m_ContinueWidget;	// コンテニューUIクラス.
+	std::unique_ptr<CSkyDome>			m_pSkyDome;			// 背景.
 	EChangeSceneState					m_ChangeSceneState;	// シーン切り替え状態.
 	bool								m_IsChangeScene;	// シーン切り替えが可能か.
 

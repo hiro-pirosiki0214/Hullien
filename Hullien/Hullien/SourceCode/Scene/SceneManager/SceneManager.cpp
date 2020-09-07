@@ -7,12 +7,14 @@
 #include "..\..\XAudio2\SoundManager.h"
 
 CSceneManager::CSceneManager()
-	: m_pScene			( nullptr )
-	, m_pFade			( nullptr )
-	, m_NowScene		( EScene::Start )
+	: m_hWnd		( nullptr )
+	, m_pScene		( nullptr )
+	, m_pFade		( nullptr )
+	, m_NowScene	( EScene::Start )
 	, m_NextScene	( EScene::Start )
-	, m_IsLoadEnd		( false )
+	, m_IsLoadEnd	( false )
 	, m_IsGameOver	( false )
+	, m_IsGameEnd	( false )
 {
 	m_pFade = std::make_shared<CFade>();
 
@@ -39,8 +41,11 @@ void CSceneManager::Update()
 	} else {
 		// 読み込みが終了したら.
 		m_pScene->Update();	// シーンの更新.
-		m_pScene->Render();	// シーンの描画.
-		CEditRenderer::Render();
+		// ゲーム終了してなければ描画する.
+		if( m_IsGameEnd == false ){
+			m_pScene->Render();	// シーンの描画.
+			CEditRenderer::Render();
+		}
 	}
 
 	ChangeEditScene();	// エディットシーンに切り替える.
@@ -101,6 +106,8 @@ void CSceneManager::NextSceneMove()
 //=================================.
 void CSceneManager::EndGameClose()
 {
+	m_IsGameEnd = true;
+	PostMessage( m_hWnd, WM_CLOSE, 0, 0 );
 }
 
 //=================================.
