@@ -100,8 +100,25 @@ float4 PS_Main( VS_OUTPUT In ) : SV_Target
 	//ﾗｲﾄ強度を反映.
     Color *= g_fIntensity.x * g_Color;
     Color.a = g_Color.a;
+	
+	/*
+	//-----フォグ処理---- -.
+	//距離.
+	float d = In.Pos.z * In.Pos.w;
+	//フォグの密度.
+	float density = 0.04f;
+	//自然対数の底(ネイピア数).
+	float e = 2.71828f;
 
-    return Color;
+
+	//フォグファクター.
+	float f = pow(e, -d * density);
+	f *= 1.0f;
+	f = saturate(f);
+
+	float4 C = f * Color + (1.0f - f) * float4(0.3f, 0.3f, 0.3f, 1.0f);
+	*/
+	return Color;
 }
 
 //========= ﾃｸｽﾁｬ無し用 ========================================

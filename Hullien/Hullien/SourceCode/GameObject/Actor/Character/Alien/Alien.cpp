@@ -30,12 +30,7 @@ CAlien::~CAlien()
 // 相手座標の設定.
 void CAlien::SetTargetPos( CActor& actor )
 {
-	if( m_NowMoveState == EMoveState::Move ) return;
-	if( *m_pIsAlienOtherAbduct == true ) return;
-
-	// 女の子じゃなければ終了.
-	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
-	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+	SetGirlPos( actor );
 }
 
 // ライフ計算関数.
@@ -77,6 +72,24 @@ void CAlien::CurrentStateUpdate()
 	default:
 		break;
 	}
+}
+
+// 女の子の座標を設定.
+void CAlien::SetGirlPos( CActor& actor )
+{
+	if( m_NowMoveState == EMoveState::Move ) return;
+	if( *m_pIsAlienOtherAbduct == true ) return;
+
+	// 女の子じゃなければ終了.
+	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
+	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+}
+
+// 座標設定関数.
+void CAlien::SetPosition( const D3DXVECTOR3 vPos )
+{
+	if( *m_pIsAlienOtherAbduct == false ) return;
+	m_vPosition = vPos;
 }
 
 // 移動ベクトル設定関数.

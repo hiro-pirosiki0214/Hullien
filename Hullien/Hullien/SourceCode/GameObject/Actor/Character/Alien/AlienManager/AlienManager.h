@@ -8,8 +8,9 @@
 #include <memory>
 #include <functional>
 
-class CSpawnUFO;
-class CExplosion;
+class CMotherShipUFO;	// マザーシップUFO.
+class CSpawnUFO;		// スポーンUFO.
+class CExplosion;		// 爆発クラス.
 
 class CAlienManager
 {
@@ -53,6 +54,7 @@ private:
 	void DebugRender();
 
 private:
+	std::unique_ptr<CMotherShipUFO>			m_pMotherShipUFO;	// マザーシップUFO.
 	std::vector<std::shared_ptr<CAlien>>	m_AilenList;		// 宇宙人リスト.
 	std::vector<CSpawnUFO>					m_SpawnUFOList;		// スポーンUFOリスト.
 	std::vector<CAlien::SAlienParam>		m_AlienParamList;	// 宇宙人パラメータリスト.

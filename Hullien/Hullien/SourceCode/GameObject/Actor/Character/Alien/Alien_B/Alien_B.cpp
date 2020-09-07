@@ -109,7 +109,13 @@ void CAlienB::SetTargetPos( CActor& actor )
 {
 	// 女の子の座標を取得.
 	CAlien::SetTargetPos( actor );
+	// プレイヤーの座標を取得.
+	CAlienB::SetPlayerPos( actor );
+}
 
+// プレイヤー座標の設定.
+void CAlienB::SetPlayerPos( CActor& actor )
+{
 	// プレイヤーじゃなければ終了.
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;
 	m_vPlayerPos = actor.GetPosition();	// プレイヤーの座標を取得.

@@ -116,6 +116,7 @@
     <ClCompile Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.cpp" />
     <ClCompile Include="SourceCode\Common\Effect\EffectManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -238,5 +239,6 @@
     <ClInclude Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.h" />
     <ClInclude Include="SourceCode\Common\Effect\EffectManager.h" />
     <ClInclude Include="SourceCode\GameObject\SkyDome\SkyDome.h" />
+    <ClInclude Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.h" />
   </ItemGroup>
 </Project>

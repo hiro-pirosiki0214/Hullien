@@ -25,6 +25,8 @@ public:
 	EObjectTag GetObjectTag() const;
 	// 座標取得関数.
 	D3DXVECTOR3 GetPosition() const;
+	// 座標設定関数.
+	virtual void SetPosition( const D3DXVECTOR3 vPos );
 
 protected:
 	EObjectTag	m_ObjectTag;	// オブジェクトタグ.

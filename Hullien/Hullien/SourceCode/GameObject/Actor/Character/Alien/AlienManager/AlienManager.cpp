@@ -1,4 +1,5 @@
 #include "AlienManager.h"
+#include "..\..\..\..\MotherShipUFO\MotherShipUFO.h"
 #include "..\..\..\..\SpawnUFO\SpawnUFO.h"
 #include "..\AlienList.h"
 #include "..\..\..\Explosion\Explosion.h"
@@ -9,14 +10,16 @@
 #include <algorithm>
 
 CAlienManager::CAlienManager()
-	: m_AilenList			()
+	: m_pMotherShipUFO		( nullptr )
+	, m_AilenList			()
 	, m_SpawnUFOList		()
 	, m_AlienParamList		()
 	, m_DropItemList		()
-	, m_AbductUFOPosition	( 50.0f, 0.0f, 50.0f )
+	, m_AbductUFOPosition	( 0.0f, 0.0f, 0.0f )
 	, m_IsAlienAbduct		( false )
 	, m_SortCount			( 0 )
 {
+	m_pMotherShipUFO = std::make_unique<CMotherShipUFO>();
 }
 
 CAlienManager::~CAlienManager()
@@ -26,9 +29,12 @@ CAlienManager::~CAlienManager()
 // 初期化関数.
 bool CAlienManager::Init()
 {
-	if( SpawnUFOInit() == false ) return false;
-	if( ReadAlienParamList() == false ) return false;
-	if( ReadExplosionParam() == false ) return false;
+	if( m_pMotherShipUFO->Init() == false )	return false;
+	if( SpawnUFOInit() == false )			return false;
+	if( ReadAlienParamList() == false )		return false;
+	if( ReadExplosionParam() == false )		return false;
+
+	m_AbductUFOPosition = m_pMotherShipUFO->GetPosition();
 	return true;
 }
 
@@ -52,6 +58,9 @@ void CAlienManager::Update( std::function<void(CActor*)> updateProc )
 				isAbduct = m_IsAlienAbduct = true;
 			}
 		}
+
+		// マザーシップUFOとの当たり判定.
+		m_pMotherShipUFO->Collision( m_AilenList[i].get() );
 
 		// 爆発できるか確認.
 		ExplosionConfirming( m_AilenList[i] );
@@ -85,9 +94,8 @@ void CAlienManager::Render()
 	for( auto& s : m_SpawnUFOList ) s.Render();
 	// 爆発の描画.
 	for( auto& e : m_ExplosionList ) e.Render();
-#if _DEBUG
-	DebugRender();
-#endif	// #if _DEBUG.
+	// マザーシップUFOの描画.
+	m_pMotherShipUFO->Render();
 }
 
 // スプライト描画関数.
@@ -95,6 +103,9 @@ void CAlienManager::SpriteRender()
 {
 	// 宇宙人達の描画.
 	for( auto& a : m_AilenList ) a->SpriteRender();
+#if _DEBUG
+	DebugRender();
+#endif	// #if _DEBUG.
 }
 
 // スポーン.

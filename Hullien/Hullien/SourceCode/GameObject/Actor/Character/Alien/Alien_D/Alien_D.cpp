@@ -272,6 +272,12 @@ void CAlienD::VectorMove( const float& moveSpeed )
 // 相手座標の設定.
 void CAlienD::SetTargetPos( CActor& actor )
 {
+	SetPlayerPos( actor );	// プレイヤー座標の設定.
+}
+
+// プレイヤー座標の設定.
+void CAlienD::SetPlayerPos( CActor& actor )
+{
 	// プレイヤーじゃなければ終了.
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;
 	m_pLaserBeam->SetTargetPos( actor );	// プレイヤーの座標を取得.
