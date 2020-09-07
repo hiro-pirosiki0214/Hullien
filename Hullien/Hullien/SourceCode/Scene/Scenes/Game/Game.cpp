@@ -49,16 +49,16 @@ void CGame::Update()
 {
 	if (CFade::GetIsFade() == true) return;
 
-	//if (m_GameObjManager->IsDanger() == false)
-	//{
-	//	CSoundManager::ThreadPlayBGM("GameBGM");
-	//	CSoundManager::StopBGMThread("DangerBGM");
-	//}
-	//else
-	//{
-	//	CSoundManager::ThreadPlayBGM("DangerBGM");
-	//	CSoundManager::StopBGMThread("GameBGM");
-	//}
+	if (m_GameObjManager->IsDanger() == false)
+	{
+		CSoundManager::ThreadPlayBGM("GameBGM");
+		CSoundManager::StopBGMThread("DangerBGM");
+	}
+	else
+	{
+		CSoundManager::ThreadPlayBGM("DangerBGM");
+		CSoundManager::StopBGMThread("GameBGM");
+	}
 
 
 	if (m_GameObjManager->IsGameOver() == false)
