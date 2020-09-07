@@ -7,6 +7,7 @@
 **/
 CFade::CFade()
 	: m_IsFade(true)
+	, m_FadeState(EFadeState::Finish)
 {
 	m_AlphaSpeed = 0.01f;
 }
@@ -26,7 +27,7 @@ bool CFade::Init()
 void CFade::Update()
 {
 	if (GetInstance()->m_pSprite == nullptr) return;
-	if (GetInstance()->m_IsFade == false) return;
+	if (GetInstance()->m_FadeState == EFadeState::Finish) return;
 
 	//フェードイン状態の時.
 	if (GetInstance()->m_FadeState == EFadeState::In)
@@ -52,6 +53,7 @@ void CFade::Update()
 		else
 		{
 			GetInstance()->m_IsFade = false;
+			GetInstance()->m_FadeState == EFadeState::Finish;
 		}
 	}
 }
@@ -61,7 +63,7 @@ void CFade::Render()
 {
 	if (GetInstance()->m_pSprite == nullptr) return;
 	// フェードの処理中でなければ通さない.
-	if (GetInstance()->m_IsFade == false) return;
+	if (GetInstance()->m_FadeState == EFadeState::Finish) return;
 	GetInstance()->Update();
 
 	GetInstance()->m_pSprite->SetAlpha(GetInstance()->m_Alpha);

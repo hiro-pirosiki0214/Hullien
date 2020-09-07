@@ -13,7 +13,7 @@
 CTitle::CTitle(CSceneManager* pSceneManager)
 	: CSceneBase(pSceneManager)
 	, m_pWidget				( nullptr )
-	, m_IsChangeScene		( false )
+	, m_IsChangeScene	( false )
 {
 	m_pWidget	= std::make_unique< CTitleWidget >();
 	CFade::SetFadeOut();

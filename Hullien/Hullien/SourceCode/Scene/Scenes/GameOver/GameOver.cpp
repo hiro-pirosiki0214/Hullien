@@ -35,7 +35,7 @@ void CGameOver::Update()
 	CSoundManager::ThreadPlayBGM("GameOverBGM");
 
 	if (CFade::GetFadeState() == CFade::EFadeState::Out
-		&& CFade::GetInstance()->GetIsFade() == true) return;
+		&& CFade::GetIsFade() == true) return;
 	m_pGameOverWidget->Update();
 
 

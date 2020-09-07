@@ -35,7 +35,7 @@ public:
 	static bool Init();
 	//描画関数.
 	static void Render();
-	// フェード中か取得関数.
+	// フェード中か.
 	static bool GetIsFade() { return GetInstance()->m_IsFade; }
 	// フェード状態取得関数.
 	static EFadeState GetFadeState() { return GetInstance()->m_FadeState; }
