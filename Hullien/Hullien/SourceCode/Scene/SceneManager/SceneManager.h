@@ -45,20 +45,19 @@ public:
 	// HWND設定.
 	void SethWnd(HWND hWnd) { m_hWnd = hWnd; }
 
-public:
-	HWND m_hWnd;
-
 private:
 	// エディットシーンに変更.
 	void ChangeEditScene();
 	
 private:
+	HWND m_hWnd;
 	std::shared_ptr<CSceneBase> m_pScene;
 	std::shared_ptr<CFade>		m_pFade;
 	EScene	m_NowScene;		// 現在のシーン.
 	EScene	m_NextScene;	// 次のシーン.
 	bool	m_IsLoadEnd;	// ロードが終了したか.
 	bool	m_IsGameOver;	// ゲームオーバーか.
+	bool	m_IsGameEnd;	// ゲームを終了したか.
 };
 
 #endif // #ifndef SCENE_MANAGER_H.

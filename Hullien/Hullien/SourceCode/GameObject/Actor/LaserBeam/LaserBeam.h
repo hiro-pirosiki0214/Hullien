@@ -7,7 +7,7 @@ class CLaserBeam : public CActor
 {
 	const float DEFAULT_MOVE_SPEED		= 0.1f;	// 移動速度.
 	const float DEFAULT_PARALYSIS_TIME	= 3.0f;	// 麻痺の時間.
-
+	const char* MODEL_NAME = "Barrier";
 public:
 	CLaserBeam();
 	virtual ~CLaserBeam();
@@ -47,10 +47,13 @@ private:
 	// 三次ベジェ曲線.
 	void ThirdBezierCurve();
 
+	// モデルの取得.
+	bool GetModel();
 	// 当たり判定の設定.
 	bool CollisionSetting();
 
 private:
+	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;	// モデル.
 	float m_MoveSpeed;
 	float m_ParalysisTime;
 	D3DXVECTOR3	m_TargetPosition;	// 攻撃対象の座標.

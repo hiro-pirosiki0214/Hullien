@@ -122,9 +122,10 @@ void CMain::Update()
 	CCameraManager::Update();
 	m_pSceneManager->Update();
 	// FPS‚Ì•\Ž¦.
+#if _DEBUG
 	CDebugText::SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	CDebugText::Render( "FPS:", (int)m_pFrameRate->GetFrameTime() );
-
+#endif
 	m_pDirectX11->SwapChainPresent();
 }
 

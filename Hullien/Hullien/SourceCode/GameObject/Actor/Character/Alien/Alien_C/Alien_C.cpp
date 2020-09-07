@@ -7,6 +7,7 @@
 CAlienC::CAlienC()
 {
 	m_ObjectTag = EObjectTag::Alien_C;
+	m_HasAnyItem = EItemList::MoveSpeedUp;
 }
 
 CAlienC::~CAlienC()
