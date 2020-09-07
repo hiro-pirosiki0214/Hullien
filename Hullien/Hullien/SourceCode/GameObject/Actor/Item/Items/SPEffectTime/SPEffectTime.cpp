@@ -31,6 +31,7 @@ bool CSPEffectTimeItem::Init()
 	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_ObjectTag = EObjectTag::SPEffectTimeItem;
 	return true;
 }
 

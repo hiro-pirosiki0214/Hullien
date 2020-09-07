@@ -116,6 +116,11 @@
     <ClCompile Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.cpp" />
     <ClCompile Include="SourceCode\Common\Effect\EffectManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\SkyDome\SkyDome.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\EventBase\EventBase.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\EventManager\EventManager.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\ClearEvent\ClearEvent.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\StartEvent\StartEvent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -238,5 +243,11 @@
     <ClInclude Include="SourceCode\XAudio2\XAudio2WaveLoad\XAudio2WaveLoad.h" />
     <ClInclude Include="SourceCode\Common\Effect\EffectManager.h" />
     <ClInclude Include="SourceCode\GameObject\SkyDome\SkyDome.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\ClearEvent\ClearEvent.h" />
+    <ClInclude Include="SourceCode\SceneEvent\EventBase\EventBase.h" />
+    <ClInclude Include="SourceCode\SceneEvent\EventManager\EventManager.h" />
+    <ClInclude Include="SourceCode\SceneEvent\EventList.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\StartEvent\StartEvent.h" />
   </ItemGroup>
 </Project>
