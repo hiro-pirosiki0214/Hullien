@@ -29,6 +29,9 @@ CTitle::~CTitle()
 bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
+	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
+	CSoundManager::SetBGMVolume("TestBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
+
 	return true;
 }
 

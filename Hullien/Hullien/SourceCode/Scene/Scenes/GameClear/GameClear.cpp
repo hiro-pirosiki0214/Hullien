@@ -22,6 +22,8 @@ CGameClear::~CGameClear()
 bool CGameClear::Load()
 {
 	if ( m_pClearWidget->Init() == false ) return false;
+	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
+	CSoundManager::SetBGMVolume("ClearBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
 	return true;
 }

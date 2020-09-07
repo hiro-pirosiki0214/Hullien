@@ -2,6 +2,7 @@
 #include "..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\..\XAudio2\SoundManager.h"
 
 CAlienC::CAlienC()
 {
@@ -34,6 +35,7 @@ void CAlienC::Update()
 //	if( m_LifePoint > 0.0f ) return;
 	// ‘Ì—Í‚ª‚È‚¯‚ê‚Î”š”­‚³‚¹‚é.
 	m_IsExplosion = true;
+	CSoundManager::PlaySE("Bomb");
 }
 
 // •`‰æŠÖ”.

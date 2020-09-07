@@ -5,6 +5,7 @@
 #include "..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
+#include "..\..\..\..\..\XAudio2\SoundManager.h"
 
 CAlienD::CAlienD()
 	: m_pAttackRangeSprite	( nullptr )
@@ -84,6 +85,10 @@ bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	// レーザーの麻痺時間の設定.
 	m_pLaserBeam->SetParalysisTime( m_Parameter.ParalysisTime );
 
+	if (CSoundManager::GetIsPlaySE("AlienDApp", 0) == false)
+	{
+		CSoundManager::NoMultipleSEPlay("AlienDApp");
+	}
 	return true;
 }
 
@@ -232,6 +237,7 @@ void CAlienD::Attack()
 		m_pLaserBeam->SetControlPointList( m_ControlPositions );
 
 		m_pLaserBeam->Shot( m_vPosition );	// ビームを打つ.
+		CSoundManager::NoMultipleSEPlay("AlienDAttack");
 	}
 
 	if( m_AttackCount >= 0.0f ) return;

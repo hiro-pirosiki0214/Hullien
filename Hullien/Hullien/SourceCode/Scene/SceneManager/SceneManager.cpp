@@ -4,6 +4,7 @@
 #include "..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\GameObject\Widget\Fade\Fade.h"
+#include "..\..\XAudio2\SoundManager.h"
 
 CSceneManager::CSceneManager()
 	: m_pScene			( nullptr )
