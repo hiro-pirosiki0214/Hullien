@@ -107,7 +107,7 @@ void CGame::Update()
 //============================.
 void CGame::Render()
 {
-//	m_pSkyDome->Render();
+	m_pSkyDome->Render();
 	m_GameObjManager->Render();
 	m_GameObjManager->SpriteRender();
 	m_WidgetManager->Render();

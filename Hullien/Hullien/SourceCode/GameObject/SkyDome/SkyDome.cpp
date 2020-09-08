@@ -5,6 +5,7 @@
 CSkyDome::CSkyDome()
 	: m_StaticMesh	( nullptr )
 {
+	m_vPosition.y = -10.0f;
 }
 
 CSkyDome::~CSkyDome()
