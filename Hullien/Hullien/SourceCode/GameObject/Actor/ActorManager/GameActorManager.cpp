@@ -5,24 +5,27 @@
 #include "..\Barrier\Barrier.h"
 #include "..\Item\ItemManager\ItemManager.h"
 #include "..\..\GroundStage\GroundStage.h"
+#include "..\..\MotherShipUFO\MotherShipUFO.h"
 #include "..\..\Widget\SceneWidget\GameWidget\Warning\Warning.h"
 
 CGameActorManager::CGameActorManager()
 	: m_pGroundStage	( nullptr )
 	, m_pPlayer			( nullptr )
 	, m_pGirl			( nullptr )
+	, m_pMotherShipUFO	( nullptr )
 	, m_pAlienManager	( nullptr )
 	, m_pItemManager	( nullptr )
 	, m_pBarrier		( nullptr )
 	, m_ObjPositionList	()
 	, m_ObjPosListCount	( 0 )
 {
-	m_pGroundStage	= std::make_shared<CGroundStage>();
-	m_pPlayer		= std::make_shared<CPlayer>();
-	m_pGirl			= std::make_shared<CGirl>();
-	m_pAlienManager	= std::make_shared<CAlienManager>();
-	m_pItemManager	= std::make_shared<CItemManager>();
-	m_pBarrier		= std::make_shared<CBarrier>();
+	m_pGroundStage		= std::make_shared<CGroundStage>();
+	m_pPlayer			= std::make_shared<CPlayer>();
+	m_pGirl				= std::make_shared<CGirl>();
+	m_pMotherShipUFO	= std::make_unique<CMotherShipUFO>();
+	m_pAlienManager		= std::make_shared<CAlienManager>();
+	m_pItemManager		= std::make_shared<CItemManager>();
+	m_pBarrier			= std::make_shared<CBarrier>();
 }
 
 CGameActorManager::~CGameActorManager()
@@ -32,11 +35,15 @@ CGameActorManager::~CGameActorManager()
 // 初期化関数.
 bool CGameActorManager::Init()
 {
-	if( m_pGroundStage->Init()	== false ) return false;	// 地面の初期化.
-	if( m_pPlayer->Init()		== false ) return false;	// プレイヤーの初期化.
-	if( m_pGirl->Init()			== false ) return false;	// 女の子の初期化.
-	if( m_pAlienManager->Init()	== false ) return false;	// 宇宙人管理の初期化.
-	if( m_pItemManager->Init()	== false ) return false;	// アイテム管理の初期化.
+	if( m_pGroundStage->Init()		== false ) return false;	// 地面の初期化.
+	if( m_pPlayer->Init()			== false ) return false;	// プレイヤーの初期化.
+	if( m_pGirl->Init()				== false ) return false;	// 女の子の初期化.
+	if( m_pMotherShipUFO->Init()	== false ) return false;	// マザーシップの初期化.
+	if( m_pAlienManager->Init()		== false ) return false;	// 宇宙人管理の初期化.
+	if( m_pItemManager->Init()		== false ) return false;	// アイテム管理の初期化.
+
+	// マザーシップの座標取取得.
+	m_pAlienManager->SetMotherShipUFOPos( m_pMotherShipUFO->GetPosition() );
 
 	return true;
 }
@@ -81,7 +88,14 @@ void CGameActorManager::Update()
 			pActor->Collision( m_pPlayer.get() );
 			pActor->Collision( m_pGirl.get() );
 			pActor->Collision( m_pBarrier.get() );
+
+			// マザーシップの当たり判定.
+			m_pMotherShipUFO->Collision( pActor );
 		} );
+
+	// マザーシップの座標を設定.
+	SetPositionList( m_pMotherShipUFO.get() );
+
 	// アイテムリストがあればアイテムを落とす.
 	m_pItemManager->Drop( m_pAlienManager->GetDropItemList() );
 	// アイテムの更新.
@@ -101,6 +115,7 @@ void CGameActorManager::Render()
 	m_pPlayer->Render();		// プレイヤーの描画.
 	m_pGirl->Render();			// 女の子の描画.
 	m_pAlienManager->Render();	// 宇宙人達の描画.
+	m_pMotherShipUFO->Render();	// マザーシップの描画.
 	m_pItemManager->Render();	// アイテムの描画.
 	m_pBarrier->Render();		// バリアの描画.
 
@@ -134,14 +149,14 @@ bool CGameActorManager::IsDanger()
 }
 
 // 座標リストの設定.
-void CGameActorManager::SetPositionList( CActor* pActor )
+void CGameActorManager::SetPositionList( CGameObject* pObj )
 {
-	if( pActor == nullptr ) return;
+	if( pObj == nullptr ) return;
 	m_ObjPosListCount++;	// オブジェクト数の加算.
 	if( static_cast<int>(m_ObjPositionList.size()) < m_ObjPosListCount ){
 		// リスト数を追加.
-		m_ObjPositionList.emplace_back( pActor->GetObjectTag(), pActor->GetPosition() );
+		m_ObjPositionList.emplace_back( pObj->GetObjectTag(), pObj->GetPosition() );
 	} else {
-		m_ObjPositionList[m_ObjPosListCount-1] = { pActor->GetObjectTag(), pActor->GetPosition() };
+		m_ObjPositionList[m_ObjPosListCount-1] = { pObj->GetObjectTag(), pObj->GetPosition() };
 	}
 }

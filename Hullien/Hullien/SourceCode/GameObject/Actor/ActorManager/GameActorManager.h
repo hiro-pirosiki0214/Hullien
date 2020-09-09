@@ -6,14 +6,15 @@
 
 #include <vector>
 
-class CActor;
+class CGameObject;
 class CGroundStage;		// 地面クラス.
-class CPlayer;					// プレイヤークラス.
-class CGirl;						// 女の子クラス.
-class CAlienManager;		// 宇宙人管理クラス.
+class CPlayer;			// プレイヤークラス.
+class CGirl;			// 女の子クラス.
+class CMotherShipUFO;	// マザーシップUFO.
+class CAlienManager;	// 宇宙人管理クラス.
 class CItemManager;		// アイテム管理クラス.
-class CBarrier;				// バリアクラス.
-class CWarning;				//警告クラス.
+class CBarrier;			// バリアクラス.
+class CWarning;			// 警告クラス.
 
 class CGameActorManager
 {
@@ -40,12 +41,13 @@ public:
 
 private:
 	// 座標リストの設定.
-	void SetPositionList( CActor* pActor );
+	void SetPositionList( CGameObject* pObj );
 
 private:
 	std::shared_ptr<CGroundStage>	m_pGroundStage;
 	std::shared_ptr<CPlayer>		m_pPlayer;
 	std::shared_ptr<CGirl>			m_pGirl;
+	std::unique_ptr<CMotherShipUFO>	m_pMotherShipUFO;
 	std::shared_ptr<CAlienManager>	m_pAlienManager;
 	std::shared_ptr<CItemManager>	m_pItemManager;
 	std::shared_ptr<CBarrier>		m_pBarrier;
