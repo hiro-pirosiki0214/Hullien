@@ -38,6 +38,7 @@ struct VS_OUTPUT
 	float3	Normal		: TEXCOORD1;
 	float3	EyeVector	: TEXCOORD2;
 	float2	Tex			: TEXCOORD3;
+	float4	PosW		: TEXCOORD4;
 };
 
 //-------------------------------------------------
@@ -51,6 +52,7 @@ VS_OUTPUT VS_Main(float4 Pos : POSITION,
 
 	//ﾌﾟﾛｼﾞｪｸｼｮﾝ変換(ﾜｰﾙﾄﾞ→ﾋﾞｭｰ→ﾌﾟﾛｼﾞｪｸｼｮﾝ).
     Out.Pos = mul(Pos, g_mWVP);
+	Out.PosW = mul(Pos, g_mW);
 
 	//法線をﾓﾃﾞﾙの姿勢に合わせる.
 	// (ﾓﾃﾞﾙが回転すれば法線も回転させる必要があるため).
@@ -87,7 +89,7 @@ float4 PS_Main( VS_OUTPUT In ) : SV_Target
 	//拡散反射光 ②.
     float NL = saturate(dot(In.Normal, In.Light));
     float4 diffuse =
-		(g_vDiffuse / 2 + g_Texture.Sample(g_SamLinear, In.Tex) / 2) * NL;
+		(g_vDiffuse / 2 + g_Texture.Sample(g_SamLinear, In.Tex)) * NL;
 
 	//鏡面反射光 ③.
     float3 reflect = normalize(2 * NL * In.Normal - In.Light);
@@ -102,23 +104,17 @@ float4 PS_Main( VS_OUTPUT In ) : SV_Target
     Color.a = g_Color.a;
 	
 	
-	//-----フォグ処理---- -.
-	//距離.
-	float d = In.Pos.z * In.Pos.w;
-	//フォグの密度.
-	float density = 0.001f;
-	//自然対数の底(ネイピア数).
-	float e = 2.71828f;
+	//-----高さフォグ処理------.
+	const float4 fogColor = float4(0.7f, 0.7f, 0.7f, 0.7f);
+	const float4 fogTColor = float4(0.3f, 0.3f, 0.3f, 1.0f);
+	const float minHeight = 0.0f;
+	const float maxHeight = 30.0f;
+	float alpha = clamp((In.PosW.y - minHeight) / (maxHeight - minHeight), 0.0f, 1.0f );
+	alpha = 1.0f - ( 1.0f - alpha ) * fogTColor;
 
-
-	//フォグファクター.
-	float f = pow(e, -d * density);
-	f *= 0.9f;
-	f = saturate(f);
-
-	float4 C = f * Color + (1.0f - f) * float4(0.7f, 0.7f, 0.7f, 1.0f);
+	float4 Out = Color * alpha + fogColor * ( 1.0f - alpha );
 	
-	return C;
+	return Out;
 }
 
 //========= ﾃｸｽﾁｬ無し用 ========================================
