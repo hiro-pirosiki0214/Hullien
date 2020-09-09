@@ -121,6 +121,12 @@ bool CGameActorManager::IsGameOver()
 	return m_pPlayer->IsDead();
 }
 
+// —‚Ìq‚ğ˜A‚ê‹‚Á‚Ä‚¢‚é‚©.
+bool CGameActorManager::IsGirlAbduct()
+{
+	return m_pAlienManager->IsGirlAbduct();
+}
+
 // —‚Ìq‚ªŠëŒ¯‚Èó‘Ô‚©.
 bool CGameActorManager::IsDanger()
 {

@@ -18,6 +18,7 @@ CAlienManager::CAlienManager()
 	, m_AbductUFOPosition	( 0.0f, 0.0f, 0.0f )
 	, m_IsAlienAbduct		( false )
 	, m_SortCount			( 0 )
+	, m_IsRisingMotherShip	( false )
 {
 	m_pMotherShipUFO = std::make_unique<CMotherShipUFO>();
 }
@@ -63,18 +64,23 @@ void CAlienManager::Update( std::function<void(CActor*)> updateProc )
 		m_pMotherShipUFO->Collision( m_AilenList[i].get() );
 
 		// 爆発できるか確認.
-		ExplosionConfirming( m_AilenList[i] );
+		ExplosionConfirming( m_AilenList[i].get() );
 		// 爆発と宇宙人の当たり判定.
 		for( auto& e : m_ExplosionList ){
 			if( e.IsStop() == true ) continue;
 			e.Collision( m_AilenList[i].get() );
 		}
 
+		// マザーシップに昇っているか確認.
+		if( m_AilenList[i]->IsRisingMotherShip() == true ){
+			m_IsRisingMotherShip = true;
+		}
+
 		// リストから指定の宇宙人を消すか.
 		if( m_AilenList[i]->IsDelete() == false ) continue;
 
 		// アイテムリストの設定.
-		SetDropItemList( m_AilenList[i] );
+		SetDropItemList( m_AilenList[i].get() );
 
 		m_AilenList[i] = m_AilenList.back();
 		m_AilenList.pop_back();
@@ -108,6 +114,12 @@ void CAlienManager::SpriteRender()
 #endif	// #if _DEBUG.
 }
 
+// 女の子を連れ去っているか.
+bool CAlienManager::IsGirlAbduct()
+{
+	return m_IsRisingMotherShip;
+}
+
 // スポーン.
 void CAlienManager::Spawn()
 {
@@ -117,7 +129,7 @@ void CAlienManager::Spawn()
 }
 
 // 爆発できるかどうか確認.
-void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
+void CAlienManager::ExplosionConfirming( CAlien* ailen )
 {
 	// 宇宙人Cじゃなければ終了.
 	if( ailen->GetObjectTag() != EObjectTag::Alien_C ) return;
@@ -128,7 +140,7 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 		if( e.IsStop() == false ) continue;
 		// 爆発が終了していれば使いまわす.
 		e.Init();
-		e.SetTargetPos( *ailen.get() );
+		e.SetTargetPos( *ailen );
 		return;
 	}
 	// 終了した爆発がなければ.
@@ -136,11 +148,11 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 	m_ExplosionList.emplace_back();
 	m_ExplosionList.back().Init();
 	m_ExplosionList.back().SetExplosionParam( m_ExplosionParam );
-	m_ExplosionList.back().SetTargetPos( *ailen.get() );
+	m_ExplosionList.back().SetTargetPos( *ailen );
 }
 
 // 落とすアイテムの設定.
-void CAlienManager::SetDropItemList( const std::shared_ptr<CAlien>& ailen )
+void CAlienManager::SetDropItemList( CAlien* ailen )
 {
 	if( ailen->GetAnyItem() == EItemList::None ) return;
 	if( ailen->GetAnyItem() == EItemList::Max ) return;

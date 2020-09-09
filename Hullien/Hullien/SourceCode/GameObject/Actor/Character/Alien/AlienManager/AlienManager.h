@@ -31,15 +31,17 @@ public:
 	void SpriteRender();
 	// 落とすアイテムリストの取得.
 	DropItemList GetDropItemList(){ return m_DropItemList; }
+	// 女の子を連れ去っているか.
+	bool IsGirlAbduct();
 
 private:
 	// スポーン.
 	void Spawn();
 
 	// 爆発できるかどうか確認.
-	void ExplosionConfirming( const std::shared_ptr<CAlien>& ailen );
+	void ExplosionConfirming( CAlien* ailen );
 	// 落とすアイテムの設定.
-	void SetDropItemList( const std::shared_ptr<CAlien>& ailen );
+	void SetDropItemList( CAlien* ailen );
 	// スポーンUFOの初期化.
 	bool SpawnUFOInit();
 	// 宇宙人パラメータリストの読み込み.
@@ -64,6 +66,7 @@ private:
 	D3DXVECTOR3	m_AbductUFOPosition;	// 連れ去るUFOの座標.
 	bool		m_IsAlienAbduct;		// 宇宙人が連れ去っているかどうか.
 	int			m_SortCount;			// ソートする時のカウント.
+	bool		m_IsRisingMotherShip;	// マザーシップに昇っているか.
 };
 
 #endif	// #ifdef ALIEN_MANAGER_H.
