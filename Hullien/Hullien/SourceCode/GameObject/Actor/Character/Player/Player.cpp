@@ -189,6 +189,12 @@ bool CPlayer::IsSpecialAbility()
 	return true;			// true‚ğ•Ô‚·.
 }
 
+// ƒJƒƒ‰‚Ì•ûŒü.
+float CPlayer::GetCameraRadianX()
+{
+	return m_pCamera->GetRadianX();
+}
+
 // ‘€ìŠÖ”.
 void CPlayer::Controller()
 {
@@ -211,6 +217,9 @@ void CPlayer::CameraController()
 		m_pCamera->DegreeHorizontalMove(  m_Parameter.CameraMoveSpeed );	// ‰E•ûŒü.
 	if( CXInput::RThumbX_Axis() <= IDLE_THUMB_MIN ) 
 		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// ¶•ûŒü.
+
+	if (GetAsyncKeyState(VK_SHIFT) & 0x8000 && GetAsyncKeyState(VK_RIGHT) & 0x8000) m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);
+	if (GetAsyncKeyState(VK_SHIFT)  & 0x8000 && GetAsyncKeyState(VK_LEFT) & 0x8000)	m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);
 }
 
 // UŒ‚‘€ìŠÖ”.
