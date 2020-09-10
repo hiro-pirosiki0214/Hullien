@@ -319,12 +319,12 @@ void CGirl::WarningRotation()
 	if (dot > 2.4f)
 	{
 		// ƒJƒƒ‰“à.
-		m_IsWarning = false;
+		m_pWarning->SetIsGirlOffScreen(false);
 	}
 	else
 	{
 		// ƒJƒƒ‰ŠO.
-		m_IsWarning = true;
+		m_pWarning->SetIsGirlOffScreen(true);
 	}
 
 	const float pos_y = 40.0f;

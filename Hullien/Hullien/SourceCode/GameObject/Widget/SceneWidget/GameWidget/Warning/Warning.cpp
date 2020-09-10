@@ -10,8 +10,8 @@
 CWarning::CWarning()
 	: m_vTargetPos	(D3DXVECTOR3(0.0f,0.0f,0.0f))
 	, m_vTargetRot	(D3DXVECTOR3(0.0f,0.0f,0.0f))
-	, m_IsUI				( false )
-	, m_pCamera		( nullptr )
+	, m_IsGirlOffScreen( false )
+	, m_pCamera			( nullptr )
 {
 	m_pCamera = std::make_shared<CCameraManager>();
 }
@@ -30,6 +30,7 @@ bool CWarning::Init()
 // 更新関数.
 void CWarning::Update()
 {
+	if (m_IsGirlOffScreen == false ) return;
 	m_vPosition = m_vTargetPos;
 	m_vPosition.y = m_vTargetPos.y + ADJ_POS_Y; // 女の子の頭上に設定.
 }
@@ -40,7 +41,14 @@ void CWarning::Render()
 	if ( m_pSprite == nullptr ) return;
 	// 表示フラグが立っていなければ描画しない.
 	m_pSprite->SetPosition( m_vPosition );
-	m_pSprite->Render(true);	// ビルボードにする.
+	if (m_IsGirlOffScreen == false)
+	{
+		m_pSprite->Render(true);	// ビルボードにする.
+	}
+	else
+	{
+		m_pSprite->RenderUI();	// UIとして表示.
+	}
 }
 
 // スプライトの設定関数.
