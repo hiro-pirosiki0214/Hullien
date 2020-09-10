@@ -6,20 +6,21 @@
 #include "..\..\..\..\XAudio2\SoundManager.h"
 
 CAlien::CAlien()
-	: m_TargetPosition				( 0.0f, 0.0f, 0.0f )
-	, m_TargetRotation				( 0.0f, 0.0f, 0.0f )
+	: m_TargetPosition			( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
 	, m_pAbductUFOPosition		( nullptr )
 	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
-	, m_Parameter						()
-	, m_NowState						( EAlienState::None )
-	, m_NowMoveState				( EMoveState::None )
-	, m_HasAnyItem					( EItemList::None )
-	, m_LifePoint						( 0.0f )
-	, m_ModelAlpha					( 0.0f )
-	, m_WaitCount						( 0 )
+	, m_Parameter				()
+	, m_NowState				( EAlienState::None )
+	, m_NowMoveState			( EMoveState::None )
+	, m_HasAnyItem				( EItemList::None )
+	, m_LifePoint				( 0.0f )
+	, m_ModelAlpha				( 0.0f )
+	, m_WaitCount				( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
-	, m_IsExplosion					( false )
-	, m_IsDelete						( false )
+	, m_IsExplosion				( false )
+	, m_IsDelete				( false )
+	, m_IsRisingMotherShip		( false )
 {
 }
 
@@ -90,6 +91,7 @@ void CAlien::SetPosition( const D3DXVECTOR3 vPos )
 {
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	m_vPosition = vPos;
+	m_IsRisingMotherShip = true;
 }
 
 // à⁄ìÆÉxÉNÉgÉãê›íËä÷êî.
