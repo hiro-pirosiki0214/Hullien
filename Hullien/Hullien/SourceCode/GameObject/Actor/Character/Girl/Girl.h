@@ -100,7 +100,6 @@ private:
 	float		m_CameraRadianX;// カメラのラジアン値.
 	bool		m_IsDanger;		// 危険かどうか.
 	bool		m_IsOnlyFirst;	//一度しか処理しない.
-	bool		m_IsWarning;
 };
 
 #endif	// #ifndef GIRL_H.

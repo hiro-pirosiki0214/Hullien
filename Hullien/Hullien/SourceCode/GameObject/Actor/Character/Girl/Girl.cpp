@@ -73,7 +73,7 @@ void CGirl::Update()
 	// サウンド.
 	Sound();
 
-	//=============Warning=====================//.
+	//警告.
 	WarningRotation();
 }
 
@@ -179,7 +179,7 @@ void CGirl::TargetRotation()
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 
-																			// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
+	// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
 	m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
 
 	// 内積が許容範囲なら.
@@ -292,6 +292,9 @@ void CGirl::Sound()
 // 危険矢印の回転.
 void CGirl::WarningRotation()
 {
+	// 女の子が危険な状態でなければ処理しない.
+	if (m_IsDanger == false) return;
+
 	const D3DXVECTOR3 targetPosition = { 0.0f, 0.0f, 0.0f };
 	// カメラから女の子への回転軸を取得.
 	D3DXVECTOR3 targetRotation = { 0.0f, 0.0f, 0.0f };
@@ -299,8 +302,8 @@ void CGirl::WarningRotation()
 	targetRotation.y = atan2f(
 		m_vPosition.x - CCameraManager::GetPosition().x,
 		m_vPosition.z - CCameraManager::GetPosition().z);
-	MoveVector.x = sinf(targetRotation.y);
-	MoveVector.z = cosf(targetRotation.y);
+	MoveVector.x = sinf( targetRotation.y );
+	MoveVector.z = cosf( targetRotation.y );
 
 	// カメラの前ベクトルを用意.
 	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
@@ -316,36 +319,15 @@ void CGirl::WarningRotation()
 	float dot = myVector.x * MoveVector.x + myVector.z * MoveVector.z;
 	dot = acosf(dot / (myLenght * targetLenght));
 
-	if (dot > 2.4f)
-	{
-		// カメラ内.
-		m_pWarning->SetIsGirlOffScreen(false);
-	}
-	else
-	{
-		// カメラ外.
-		m_pWarning->SetIsGirlOffScreen(true);
-	}
+	const float THRESHOLD_VALUE_RADIAN = static_cast<float>(D3DXToRadian(140.0));	// しきい値.
 
-	const float pos_y = 40.0f;
-	const float pos_x = 880.0f;
+	// 内積がしきい値を超えたら女の子が画面外に出た.
+	bool IsOffScreen = dot < THRESHOLD_VALUE_RADIAN ? true : false;
+	m_pWarning->SetIsGirlOffScreen( IsOffScreen );
 
-	if (m_IsWarning == true)
-	{
-		CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 23, 0.0f });
-		if (cross > 0.0f) {
-			CDebugText::Render("right");
-		}
-		else
-		{
-			CDebugText::Render("left");
-		}
-	}
-
-	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 21, 0.0f });
-	CDebugText::Render("cross : ", cross);
-	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 22, 0.0f });
-	CDebugText::Render("dot : ", dot);
+	// 外積が0.0fより大きければ 右：左 に表示.
+	bool IsRight = cross > 0.0f ? true : false;
+	m_pWarning->SetIsDispRight( IsRight );
 }
 
 // デバッグ描画関数.
@@ -370,13 +352,5 @@ void CGirl::DebugRender()
 	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 19, 0.0f });
 	CDebugText::Render("-- WarningPosition --");
 	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 20, 0.0f });
-	if (m_IsWarning == true)
-	{
-		CDebugText::Render("GirlPosition");
-	}
-	else
-	{
-		CDebugText::Render("!GirlPosition");
-	}
 
 }
