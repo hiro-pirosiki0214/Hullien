@@ -6,9 +6,9 @@
 *
 */
 #include "EventManager/EventManager.h"
-#include "SceneEvents/ClearEvent/ClearEvent.h"
+#include "SceneEvents/GameClearEvent/GameClearEvent.h"
 #include "SceneEvents/GameOverEvent/GameOverEvent.h"
-#include "SceneEvents/StartEvent/StartEvent.h"
+#include "SceneEvents/GameStartEvent/GameStartEvent.h"
 
 
 #endif	//#define SCENE_EVENT_LIST_H.

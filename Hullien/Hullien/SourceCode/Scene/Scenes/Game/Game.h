@@ -5,8 +5,9 @@
 
 class CGameActorManager;	// ゲームオブジェクト管理クラス.
 class CGameWidgetManager;	// UI管理クラス.
-class CContinueWidget;		// コンテニューUIクラス;
-class CSkyDome;				// 背景クラス.
+class CContinueWidget;		// コンテニューUIクラス.
+class CSkyDome;					// 背景クラス.
+class CEventManager;			//イベント管理クラス.
 
 
 /**********************************
@@ -18,6 +19,8 @@ private:
 	// シーン切り替え状態.
 	enum class enChangeSceneState
 	{
+		None, 
+
 		Game,			//ゲーム.
 		Clear,				//クリア.
 		GameOver,		//ゲームオーバー.
@@ -48,12 +51,13 @@ private:
 
 
 private:
-	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.
-	std::unique_ptr<CGameWidgetManager>	m_WidgetManager;	// ゲームUI管理クラス.
-	std::unique_ptr<CContinueWidget>	m_ContinueWidget;	// コンテニューUIクラス.
-	std::unique_ptr<CSkyDome>			m_pSkyDome;			// 背景.
-	EChangeSceneState					m_ChangeSceneState;	// シーン切り替え状態.
-	bool								m_IsChangeScene;	// シーン切り替えが可能か.
+	std::unique_ptr<CGameActorManager>		m_GameObjManager;	// ゲームオブジェクト管理クラス.
+	std::unique_ptr<CGameWidgetManager>	m_WidgetManager;		// ゲームUI管理クラス.
+	std::unique_ptr<CContinueWidget>			m_ContinueWidget;		// コンテニューUIクラス.
+	std::unique_ptr<CSkyDome>					m_pSkyDome;				// 背景.
+	std::unique_ptr<CEventManager>			m_pEventManager;		//	イベント管理クラス.
+	EChangeSceneState							m_ChangeSceneState;	// シーン切り替え状態.
+	bool													m_IsChangeScene;		// シーン切り替えが可能か.
 
 };
 

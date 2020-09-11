@@ -1,16 +1,16 @@
-#ifndef CLEAR_EVENT_H
-#define CLEAR_EVENT_H
+#ifndef GAMECLEAR_EVENT_H
+#define GAMECLEAR_EVENT_H
 
 #include "..\..\EventBase\EventBase.h"
 
 /************************************
 *	クリアイベントクラス.
 **/
-class CClearEvent : public CEventBase
+class CGameClearEvent : public CEventBase
 {
 public:
-	CClearEvent();
-	virtual ~CClearEvent();
+	CGameClearEvent();
+	virtual ~CGameClearEvent();
 
 	// 読み込み関数.
 	virtual bool Load() override;
@@ -23,4 +23,4 @@ private:
 };
 
 
-#endif	//#ifndef CLEAR_EVENT_H
+#endif	//#ifndef GAMECLEAR_EVENT_H

@@ -194,6 +194,10 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Event\EventActor\Character\EventCharacter.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Event\EventActor\Character\Player\EventPlayer.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Event\EventActor\EventActor.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Event\EventUFO\EventUFO.cpp" />
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
     <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
@@ -221,9 +225,9 @@
     <ClCompile Include="SourceCode\Resource\FontResource\FontResource.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\EventBase\EventBase.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\EventManager\EventManager.cpp" />
-    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\ClearEvent\ClearEvent.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
-    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\StartEvent\StartEvent.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp" />
@@ -314,6 +318,10 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h" />
+    <ClInclude Include="SourceCode\GameObject\Event\EventActor\Character\EventCharacter.h" />
+    <ClInclude Include="SourceCode\GameObject\Event\EventActor\Character\Player\EventPlayer.h" />
+    <ClInclude Include="SourceCode\GameObject\Event\EventActor\EventActor.h" />
+    <ClInclude Include="SourceCode\GameObject\Event\EventUFO\EventUFO.h" />
     <ClInclude Include="SourceCode\GameObject\GameObject.h" />
     <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />
     <ClInclude Include="SourceCode\GameObject\ObjectList.h" />
@@ -344,9 +352,9 @@
     <ClInclude Include="SourceCode\SceneEvent\EventBase\EventBase.h" />
     <ClInclude Include="SourceCode\SceneEvent\EventList.h" />
     <ClInclude Include="SourceCode\SceneEvent\EventManager\EventManager.h" />
-    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\ClearEvent\ClearEvent.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
-    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\StartEvent\StartEvent.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\Editor\Editor.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h" />

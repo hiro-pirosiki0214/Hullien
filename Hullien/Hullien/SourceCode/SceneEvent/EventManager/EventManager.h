@@ -28,17 +28,24 @@ public:
 
 	// 更新関数.
 	void Update();
-	// イベントの設定.
-	void NextEvent(const EEvent& EventNo, int TypeNo = 0);
+	// 次のイベントに移動.
+	void NextEventMove();
 	// イベントの終了を取得.
 	bool GetIsEventEnd() const { return m_IsEventEnd; };
 	// スキップの設定.
 	void OnSkip() { m_IsSkip = true; }
+	// ゲームオーバーの設定.
+	void OnGameOver() { m_IsGameOver = true; }
 
 
 private:
-	bool m_IsSkip;			//スキップするか.
-	bool m_IsEventEnd;	//イベントが終了したか.
+	std::shared_ptr<CEventBase> m_pEventBase;	// イベント元クラス.
+	EEvent								 m_NowEvent;		// 現在のイベント.	
+	EEvent								 m_NextEvent;		// 次のイベント.
+	bool									 m_IsLoadEnd;		// ロードが終了したか.
+	bool									 m_IsSkip;			// スキップするか.
+	bool									 m_IsGameOver;	// ゲームオーバーか.
+	bool									 m_IsEventEnd;	// イベントが終了したか.
 };
 
 #endif	//#ifndef SCENE_EVENT_MANAGER_H

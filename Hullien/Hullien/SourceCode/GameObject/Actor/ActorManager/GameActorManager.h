@@ -41,12 +41,12 @@ private:
 	void SetPositionList( CActor* pActor );
 
 private:
-	std::shared_ptr<CGroundStage>	m_pGroundStage;
-	std::shared_ptr<CPlayer>		m_pPlayer;
-	std::shared_ptr<CGirl>			m_pGirl;
-	std::shared_ptr<CAlienManager>	m_pAlienManager;
-	std::shared_ptr<CItemManager>	m_pItemManager;
-	std::shared_ptr<CBarrier>		m_pBarrier;
+	std::shared_ptr<CGroundStage>								m_pGroundStage;
+	std::shared_ptr<CPlayer>										m_pPlayer;
+	std::shared_ptr<CGirl>											m_pGirl;
+	std::shared_ptr<CAlienManager>								m_pAlienManager;
+	std::shared_ptr<CItemManager>								m_pItemManager;
+	std::shared_ptr<CBarrier>										m_pBarrier;
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;
 };

@@ -4,6 +4,7 @@
 *	イベントシーン元クラス.
 **/
 CEventBase::CEventBase()
+	: m_IsEventEnd	( false )
 {
 }
 

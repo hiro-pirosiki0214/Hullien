@@ -1,27 +1,28 @@
-#include "GameOverEvent.h"
+#include "GameClearEvent.h"
 #include "..\..\..\Utility\XInput\XInput.h"
 
 #include "..\..\..\Common\DebugText\DebugText.h"
 
 /************************************
-*	ゲームオーバーイベントクラス.
+*	クリアイベントクラス.
 **/
-CGameOverEvent::CGameOverEvent()
+CGameClearEvent::CGameClearEvent()
+{
+	m_IsEventEnd = false;
+}
+
+CGameClearEvent::~CGameClearEvent()
 {
 }
 
-CGameOverEvent::~CGameOverEvent()
-{
-}
-
-// 読込関数.
-bool CGameOverEvent::Load()
+// 読み込み関数.
+bool CGameClearEvent::Load()
 {
 	return true;
 }
 
 // 更新関数.
-void CGameOverEvent::Update()
+void CGameClearEvent::Update()
 {
 	if (GetAsyncKeyState(VK_RETURN) & 0x0001
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
@@ -31,8 +32,8 @@ void CGameOverEvent::Update()
 }
 
 // 描画関数.
-void CGameOverEvent::Render()
+void CGameClearEvent::Render()
 {
 	CDebugText::SetPosition({ 0.0f, 80.0f + CDebugText::GetScale() * 0 ,0.0f });
-	CDebugText::Render("- GameOverEvent -");
+	CDebugText::Render("- GameClearEvent -");
 }

@@ -6,6 +6,7 @@
 #include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.h"
 #include "..\..\..\GameObject\SkyDome\SkyDome.h"
+#include "..\..\..\SceneEvent\EventManager\EventManager.h"
 #include "..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
@@ -15,16 +16,18 @@
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 	, m_GameObjManager	( nullptr )
-	, m_WidgetManager	( nullptr )
-	, m_ContinueWidget	( nullptr )
-	, m_pSkyDome		( nullptr )
-	, m_ChangeSceneState( EChangeSceneState::Clear )
-	, m_IsChangeScene	( false )
+	, m_WidgetManager		( nullptr )
+	, m_ContinueWidget		( nullptr )
+	, m_pSkyDome				( nullptr )
+	, m_pEventManager		( nullptr )
+	, m_ChangeSceneState	( EChangeSceneState::None)
+	, m_IsChangeScene		( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
 	m_pSkyDome				= std::make_unique<CSkyDome>();
+	m_pEventManager		= std::make_unique<CEventManager>();
 	CFade::SetFadeOut();
 
 }
@@ -55,51 +58,64 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
-
-	if (m_GameObjManager->IsDanger() == false)
+	if (m_pEventManager->GetIsEventEnd() == false)
 	{
-		CSoundManager::ThreadPlayBGM("GameBGM");
-		CSoundManager::FadeInBGM("GameBGM");
-		CSoundManager::FadeOutBGM("DangerBGM");		
+		m_pEventManager->Update();
 	}
 	else
 	{
-		CSoundManager::ThreadPlayBGM("DangerBGM");
-		CSoundManager::FadeInBGM("DangerBGM");
-		CSoundManager::FadeOutBGM("GameBGM");
-	}
+
+		if (m_GameObjManager->IsDanger() == false)
+		{
+			CSoundManager::ThreadPlayBGM("GameBGM");
+			CSoundManager::FadeInBGM("GameBGM");
+			CSoundManager::FadeOutBGM("DangerBGM");
+		}
+		else
+		{
+			CSoundManager::ThreadPlayBGM("DangerBGM");
+			CSoundManager::FadeInBGM("DangerBGM");
+			CSoundManager::FadeOutBGM("GameBGM");
+		}
 
 
-	if (m_GameObjManager->IsGameOver() == false)
-	{
-		m_GameObjManager->Update();
-		m_WidgetManager->Update(m_GameObjManager.get());
-	}
-	else
-	{
-		if (CFade::GetIsFade() == true) return;
-		UpdateContinue();
-	}
+		if (m_GameObjManager->IsGameOver() == false)
+		{
+			m_GameObjManager->Update();
+			m_WidgetManager->Update(m_GameObjManager.get());
+		}
+		else
+		{
+			if (CFade::GetIsFade() == true) return;
+			UpdateContinue();
+		}
 
 #if 0	// ŽŸ‚ÌƒV[ƒ“‚ÖˆÚ“®.
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
-	{
-		if (CFade::GetIsFade() == true) return;
-		SetChangeScene(EChangeSceneState::Clear);
-	}
-#else 
-	if(m_WidgetManager->IsGameFinish() == true )
-	{
-		if (m_IsChangeScene == false)
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001
+			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 		{
+			if (CFade::GetIsFade() == true) return;
 			SetChangeScene(EChangeSceneState::Clear);
 		}
-	}
+#else 
+		if (m_WidgetManager->IsGameFinish() == true)
+		{
+			if (m_IsChangeScene == false)
+			{
+				m_pEventManager->NextEventMove();
+				m_IsChangeScene = true;
+			}
+			if (m_pEventManager->GetIsEventEnd() == true
+				&& m_ChangeSceneState == EChangeSceneState::None)
+			{
+				SetChangeScene(EChangeSceneState::Clear);
+			}
+
+		}
 #endif	// #if 0.
+	}
 
 	ChangeScene();
-
 }
 
 //============================.
@@ -107,6 +123,9 @@ void CGame::Update()
 //============================.
 void CGame::Render()
 {
+
+	if (m_pEventManager->GetIsEventEnd() == false) return;
+
 //	m_pSkyDome->Render();
 	m_GameObjManager->Render();
 	m_GameObjManager->SpriteRender();
