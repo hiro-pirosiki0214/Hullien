@@ -53,7 +53,7 @@ void CFade::Update()
 		else
 		{
 			GetInstance()->m_IsFade = false;
-			GetInstance()->m_FadeState == EFadeState::Finish;
+			GetInstance()->m_FadeState = EFadeState::Finish;
 		}
 	}
 }
