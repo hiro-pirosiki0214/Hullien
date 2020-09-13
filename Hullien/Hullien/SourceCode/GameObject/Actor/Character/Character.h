@@ -3,14 +3,14 @@
 
 #include "..\Actor.h"
 
-#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
+//#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
 
 class CCharacter : public CActor
 {
 protected:
 	const float INIT_POSITION_ADJ_HEIGHT = 5.0f;	// 調整用座標の高さ.
 
-													// キャラクターパラメータ.
+	// キャラクターパラメータ.
 	struct stParameter
 	{
 		float	LifeMax;		// 体力.

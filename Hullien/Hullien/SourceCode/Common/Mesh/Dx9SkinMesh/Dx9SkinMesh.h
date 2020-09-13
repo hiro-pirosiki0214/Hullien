@@ -152,6 +152,8 @@ private:
 	ID3D11Buffer*			m_pCBufferPerFrame;		//コンスタントバッファ(フレーム毎).
 	ID3D11Buffer*			m_pCBufferPerBone;		//コンスタントバッファ(ボーン毎).
 
+	ID3D11ShaderResourceView*	m_pToonTexture;
+
 	D3DXMATRIX		m_mWorld;
 	D3DXMATRIX		m_mRotation;
 

@@ -28,6 +28,7 @@ CDX9SkinMesh::CDX9SkinMesh()
 	, m_pCBufferPerMaterial(nullptr)
 	, m_pCBufferPerFrame(nullptr)
 	, m_pCBufferPerBone(nullptr)
+	, m_pToonTexture(nullptr)
 	, m_mWorld()
 	, m_mRotation()
 	, m_mView()
@@ -306,6 +307,17 @@ HRESULT CDX9SkinMesh::LoadXMesh( const char* fileName )
 
 	//全てのメッシュを作成する.
 	BuildAllMesh( m_pD3dxMesh->m_pFrameRoot );
+
+	// ﾃｸｽﾁｬ作成.
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11, "Data\\Mesh\\toon.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
+		nullptr, nullptr,
+		&m_pToonTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
+		nullptr)))
+	{
+		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -737,7 +749,6 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_pContext11->VSSetConstantBuffers(	2, 1, &m_pCBufferPerFrame);
 	m_pContext11->PSSetConstantBuffers(	2, 1, &m_pCBufferPerFrame);
 
-
 	//------------------------------------------------.
 	//	コンスタントバッファに情報を設定(メッシュごと).
 	//------------------------------------------------.
@@ -759,6 +770,8 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_pContext11->VSSetConstantBuffers(0, 1, &m_pCBufferPerMesh);
 	m_pContext11->PSSetConstantBuffers(0, 1, &m_pCBufferPerMesh);
 
+	// トゥーンマップテクスチャを渡す.
+	m_pContext11->PSSetShaderResources( 1, 1, &m_pToonTexture);
 
 	//マテリアルの数だけ、
 	//それぞれのマテリアルのインデックスバッファを描画.
@@ -824,6 +837,7 @@ HRESULT CDX9SkinMesh::Release()
 		m_pD3dxMesh->Release();
 		SAFE_DELETE( m_pD3dxMesh );
 	}
+	SAFE_RELEASE(m_pToonTexture);
 
 	return S_OK;
 }

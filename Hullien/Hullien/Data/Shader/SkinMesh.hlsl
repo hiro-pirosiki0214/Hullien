@@ -8,7 +8,8 @@
 
 //グローバル.
 Texture2D		g_Texture	: register( t0 );	//テクスチャーは レジスターt(n).
-SamplerState	g_Sampler	: register( s0 );	//サンプラーはレジスターs(n).
+Texture2D		g_ToonMap	: register( t1 );	// toonシェーダー用のテクスチャ.
+SamplerState	g_SamLinear	: register( s0 );	//サンプラーはレジスターs(n).
 
 
 //コンスタントバッファ(メッシュごと).
@@ -59,12 +60,12 @@ struct VSSkinIn
 //ピクセルシェーダーの入力（バーテックスバッファーの出力）　
 struct VS_OUTPUT
 {
-	float4	Pos			: SV_Position;
-	float4	Color		: COLOR;
-	float3	Light		: TEXCOORD0;
-	float3	Normal		: TEXCOORD1;
-	float3	EyeVector	: TEXCOORD2;
-	float2	Tex			: TEXCOORD3;
+	float4	Pos			: SV_Position;	// WVPでの座標.
+	float4	PosW		: Position;		// Wでの座標.
+	float3	LightDir	: TEXCOORD0;	// ライト方向.
+	float3	Normal		: TEXCOORD1;	// 法線.
+	float3	EyeVector	: TEXCOORD2;	// 視点ベクトル.
+	float2	Tex			: TEXCOORD3;	// テクスチャ座標.
 };
 
 //指定した番号のボーンのポーズ行列を返す.
@@ -73,7 +74,6 @@ matrix FetchBoneMatrix( uint iBone )
 {
 	return g_mConstBoneWorld[iBone];
 }
-
 
 //頂点をスキニング（ボーンにより移動）する.
 //サブ関数（バーテックスシェーダーで使用）.
@@ -116,40 +116,42 @@ VS_OUTPUT VS_Main(VSSkinIn input)
 {
     VS_OUTPUT output = (VS_OUTPUT) 0;
 	Skin vSkinned = SkinVert( input);
-
-	output.Pos	= mul( vSkinned.Pos, g_mWVP );
-    output.Normal = normalize(mul(vSkinned.Norm, (float3x3) g_mW));
-	output.Tex	= input.Tex;
-    output.Light = normalize(g_vLightDir).xyz;
-    float3 PosWorld = mul(input.Pos, g_mW).xyz;
-    output.EyeVector = normalize(g_vCamPos.xyz - PosWorld);
+	
+	output.Pos		= mul( vSkinned.Pos, g_mWVP );	// WVP座標.
+	output.PosW		= mul( vSkinned.Pos, g_mW );	// world座標.
+    output.Normal	= normalize(mul( vSkinned.Norm.xyz, (float3x3) g_mW ));	// 法線.
+    output.LightDir	= normalize( g_vLightDir ).xyz;							// ライト方向.
+    output.EyeVector	= normalize( g_vCamPos - output.PosW ).xyz;			// 視点ベクトル.
+    output.Tex			= input.Tex;	//　テクスチャ座標.
 
     return output;
 }
 
-
 // ピクセルシェーダ.
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
-	//環境光　①.
-    float4 ambient = g_vAmbient;
+	// モデルのテクスチャ色を取得.
+    float4 color = g_Texture.Sample( g_SamLinear, input.Tex );
+	
+	//-----トゥーン処理------.
+	// ハーフランバート拡散照明によるライティング計算
+    float p = dot( input.Normal, input.LightDir );
+	p = p * 0.5f + 0.5f;
+	p = p * p;
+	// 計算結果よりトゥーンシェーダー用のテクスチャから色をフェッチする
+	float4 toonColor = g_ToonMap.Sample( g_SamLinear, float2( p, 0.0f ) );
+    color *= toonColor * g_fIntensity.x;
+	
+	//-----高さフォグ処理------.
+	const float4 fogColor = float4( 0.5f, 0.5f, 0.5f, 1.0f );
+	const float4 fogTColor = float4( 0.5f, 0.5f, 0.5f, 1.0f );
+	const float minHeight = -5.0f;
+	const float maxHeight = 20.0f;
+	float alpha = clamp((input.PosW.y - minHeight) / (maxHeight - minHeight), 0.0f, 1.0f );
+	float4 alphas = 1.0f - ( 1.0f - alpha ) * fogTColor;
 
-	//拡散反射光 ②.
-    float NL = saturate(dot(input.Normal, input.Light));
-    float4 diffuse =
-		(g_vDiffuse / 2 + g_Texture.Sample(g_Sampler, input.Tex) / 2) * NL;
-
-	//鏡面反射光 ③.
-    float3 reflect = normalize(2 * NL * input.Normal - input.Light);
-    float4 specular =
-		pow(saturate(dot(reflect, input.EyeVector)), 4) * g_vSpecular;
-
-	//ﾌｫﾝﾓﾃﾞﾙ最終色　①②③の合計.
-    float4 Color = ambient + diffuse + specular;
-
-	//ﾗｲﾄ強度を反映.
-    Color *= g_fIntensity.x * g_Color;
-    Color.a = g_Color.a;
-    
-    return Color;
+	color = color * alphas + fogColor * ( 1.0f - alpha );
+	color *= g_Color;
+	
+	return color;
 }

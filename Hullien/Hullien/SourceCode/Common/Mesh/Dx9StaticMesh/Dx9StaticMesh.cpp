@@ -269,9 +269,9 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		= D3D11_TEXTURE_ADDRESS_WRAP;//×¯ËßÝ¸ÞÓ°ÄÞ(WRAP:ŒJ‚è•Ô‚µ).
 	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-						//MIRROR: ”½“]ŒJ‚è•Ô‚µ.
-						//CLAMP : ’[‚Ì–Í—l‚ðˆø‚«L‚Î‚·.
-						//BORDER: •Ê“r‹«ŠEF‚ðŒˆ‚ß‚é.
+	//MIRROR: ”½“]ŒJ‚è•Ô‚µ.
+	//CLAMP : ’[‚Ì–Í—l‚ðˆø‚«L‚Î‚·.
+	//BORDER: •Ê“r‹«ŠEF‚ðŒˆ‚ß‚é.
 	//»ÝÌß×ì¬.
 	if (FAILED(m_pDevice11->CreateSamplerState(
 		&samDesc, &m_pSampleLinear)))//(out)»ÝÌß×.

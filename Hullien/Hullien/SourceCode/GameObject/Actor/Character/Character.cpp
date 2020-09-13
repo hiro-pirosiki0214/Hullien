@@ -14,6 +14,7 @@ CCharacter::CCharacter()
 	, m_HasFinishedParamSetting	( false )
 {
 	m_vPosition.y = INIT_POSITION_ADJ_HEIGHT;
+	m_vSclae = { 0.1f, 0.1f, 0.1f };
 }
 
 CCharacter::~CCharacter()
