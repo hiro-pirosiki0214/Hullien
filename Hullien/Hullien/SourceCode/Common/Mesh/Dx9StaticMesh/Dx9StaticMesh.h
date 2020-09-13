@@ -122,6 +122,8 @@ private:
 	LPD3DXMESH			m_pMeshForRay;	//Ú²‚ÆÒ¯¼­—p.
 	DWORD				m_NumMaterials;	//ÏÃØ±Ù”.
 
+	ID3D11ShaderResourceView*	m_pToonTexture;
+
 	MY_MATERIAL*	m_pMaterials;	//ÏÃØ±Ù\‘¢‘Ì.
 	DWORD			m_NumAttr;		//‘®«”.
 	DWORD			m_AttrID[300];	//‘®«ID ¦300‘®«‚Ü‚Å.

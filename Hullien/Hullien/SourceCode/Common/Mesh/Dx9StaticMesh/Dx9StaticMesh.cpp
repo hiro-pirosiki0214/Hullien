@@ -25,6 +25,7 @@ CDX9StaticMesh::CDX9StaticMesh()
 	, m_pMesh(nullptr)
 	, m_NumMaterials(0)
 	, m_pMaterials(nullptr)
+	, m_pToonTexture(nullptr)
 	, m_NumAttr(0)
 	, m_AttrID()
 	, m_EnableTexture(false)
@@ -160,7 +161,16 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 			}
 		}
 	}
-
+	// ﾃｸｽﾁｬ作成.
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11, "Data\\Mesh\\toon.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
+		nullptr, nullptr,
+		&m_pToonTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
+		nullptr)))
+	{
+		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
+		return E_FAIL;
+	}
 	//------------------------------------------------
 	//	ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ作成.
 	//------------------------------------------------
@@ -294,7 +304,7 @@ void CDX9StaticMesh::Release()
 	}
 	//ﾒｯｼｭﾃﾞｰﾀの解放.
 	SAFE_RELEASE(m_pMesh);
-
+	SAFE_RELEASE(m_pToonTexture);
 	SAFE_RELEASE(m_pSampleLinear);
 	SAFE_RELEASE(m_pVertexBuffer);
 	SAFE_RELEASE(m_pCBufferPerMaterial);
@@ -575,7 +585,8 @@ void CDX9StaticMesh::Render()
 	m_pContext11->PSSetConstantBuffers(
 		2, 1, &m_pCBufferPerFrame);	//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
-
+	// トゥーンマップテクスチャを渡す.
+	m_pContext11->PSSetShaderResources( 1, 1, &m_pToonTexture);
 	//ﾒｯｼｭのﾚﾝﾀﾞﾘﾝｸﾞ.
 	D3DXMATRIX mView = CCameraManager::GetViewMatrix();
 	D3DXMATRIX mProj = CCameraManager::GetProjMatrix();
