@@ -16,6 +16,7 @@
 #include "..\Utility\FileManager\FileManager.h"
 #include "..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\XAudio2\SoundManager.h"
+#include "..\Common\Shader\ShadowMap\ShadowMap.h"
 
 #include "..\Common\Font\FontCreate.h"
 #include "..\Common\Font\Font.h"
@@ -24,7 +25,6 @@ LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 
 CMain::CMain()
 	: m_hWnd			( nullptr )
-	, m_pDirectX11		( nullptr )
 	, m_pDirectX9		( nullptr )
 	, m_pFrameRate		( nullptr )
 	, m_pCamera			( nullptr )
@@ -32,7 +32,6 @@ CMain::CMain()
 	, m_pSceneManager	( nullptr )
 	, m_pLoadManager	( nullptr )
 {
-	m_pDirectX11	= std::make_unique<CDirectX11>();
 	m_pDirectX9		= std::make_unique<CDirectX9>();
 	m_pFrameRate	= std::make_unique<CFrameRate>( FPS );
 	m_pCamera		= std::make_shared<CCamera>();
@@ -46,7 +45,7 @@ CMain::CMain()
 	// カメラのセット.
 	CCameraManager::SetCamera( m_pCamera );
 
-	m_pLight->SetPosition( D3DXVECTOR3( 0.0f, 5.0f, 0.0f ) );
+	m_pLight->SetPosition( D3DXVECTOR3( 0.0f, 200.0f, -200.0f ) );
 	m_pLight->SetDirection( D3DXVECTOR3( 1.5f, 1.0f, -1.0f ) );
 	m_pLight->SetIntensity( 1.0f );
 	CLightManager::SetLgiht( m_pLight );
@@ -69,12 +68,13 @@ HRESULT CMain::Init()
 	// DirectX9の構築.
 	if( FAILED( m_pDirectX9->Create( m_hWnd ) )) return E_FAIL;
 	// DirectX11の構築.
-	if( FAILED( m_pDirectX11->Create( m_hWnd ) )) return E_FAIL;
+	if( FAILED( CDirectX11::Create( m_hWnd ) )) return E_FAIL;
+	// シャドウマップシェーダーの初期化.
+	if( FAILED( CShadowMap::Init() )) return E_FAIL;
 	// ImGuiの初期化.
-	CImGuiManager::Init(
-		m_hWnd, 
-		m_pDirectX11->GetDevice(), 
-		m_pDirectX11->GetContext() );
+	if( FAILED( CImGuiManager::Init( m_hWnd, 
+		CDirectX11::GetDevice(), 
+		CDirectX11::GetContext() ))) return E_FAIL;
 
 	m_pSceneManager->SethWnd(m_hWnd);
 
@@ -86,9 +86,10 @@ HRESULT CMain::Init()
 //====================================.
 void CMain::Release()
 {
+	CShadowMap::ReleaseShader();
 	CSoundManager::Release();
 	CImGuiManager::Release();
-	m_pDirectX11->Release();
+	CDirectX11::Release();
 	m_pDirectX9->Release();
 }
 
@@ -98,13 +99,13 @@ void CMain::Release()
 HRESULT CMain::Load()
 {
 	CDebugText::Init(
-		m_pDirectX11->GetDevice(),
-		m_pDirectX11->GetContext(),
+		CDirectX11::GetDevice(),
+		CDirectX11::GetContext(),
 		38.0f, D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 	// 各リソースの読み込み.
 	m_pLoadManager->LoadResource( m_hWnd,
-		m_pDirectX11->GetDevice(), 
-		m_pDirectX11->GetContext(), 
+		CDirectX11::GetDevice(), 
+		CDirectX11::GetContext(), 
 		m_pDirectX9->GetDevice() );
 
 	return S_OK;
@@ -116,7 +117,7 @@ HRESULT CMain::Load()
 void CMain::Update()
 {
 	// 画面のクリア.
-	m_pDirectX11->ClearBackBuffer();
+	CDirectX11::ClearBackBuffer();
 	CCameraManager::InitViewProj();
 
 	CCameraManager::Update();
@@ -126,7 +127,7 @@ void CMain::Update()
 	CDebugText::SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	CDebugText::Render( "FPS:", (int)m_pFrameRate->GetFrameTime() );
 #endif
-	m_pDirectX11->SwapChainPresent();
+	CDirectX11::SwapChainPresent();
 }
 
 //====================================.

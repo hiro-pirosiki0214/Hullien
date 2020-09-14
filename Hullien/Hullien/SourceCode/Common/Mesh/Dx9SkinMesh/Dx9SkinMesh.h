@@ -39,7 +39,10 @@ public:
 		D3DXVECTOR4	vLightDir;	//ﾗｲﾄ方向.
 		D3DXMATRIX	mLightRot;	//ﾗｲﾄ回転行列.
 		D3DXVECTOR4	fIntensity;	//ﾗｲﾄ強度(明るさ). ※xのみ使用する.
-		D3DXVECTOR4	vColor;		//色.
+		D3DXVECTOR4 vColor;		//色.
+		D3DXMATRIX	mLightWVP[4];
+		D3DXVECTOR4	SpritPos;
+		D3DXVECTOR4 IsShadow;
 	};
 
 	//ボーン単位.
@@ -144,6 +147,7 @@ private:
 
 	//Dx11.
 	ID3D11SamplerState*		m_pSampleLinear;
+	ID3D11SamplerState*		m_pShadowMapSampler;	// シャドウマップ用サンプラー.
 	ID3D11VertexShader*		m_pVertexShader;
 	ID3D11PixelShader*		m_pPixelShader;
 	ID3D11InputLayout*		m_pVertexLayout;
@@ -180,6 +184,8 @@ private:
 	//アニメーションフレーム.
 	int		m_iFrame;
 
+	bool m_IsShadow;	// 影を描画するか.
+
 	HRESULT InitShader();
 	HRESULT CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buffer** ppIndexBuffer );
 	void RecursiveSetNewPoseMatrices( BONE* pBone,D3DXMATRIX* pmParent );
@@ -203,6 +209,9 @@ private:
 	//パーツ描画.
 	void DrawPartsMesh( SKIN_PARTS_MESH* p, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
 	void DrawPartsMeshStatic( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
+
+	// 影の描画.
+	bool ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld );
 
 	//全てのメッシュを削除.
 	void DestroyAllMesh( D3DXFRAME* pFrame );

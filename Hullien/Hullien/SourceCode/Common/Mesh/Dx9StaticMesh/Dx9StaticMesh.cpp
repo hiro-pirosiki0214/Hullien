@@ -2,6 +2,8 @@
 #include "..\..\..\Camera\Camera.h"
 #include "..\..\..\Light\LightManager\LightManager.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\D3DX\D3DX11.h"
+#include "..\..\Shader\ShadowMap\ShadowMap.h"
 #include <crtdbg.h>	//_ASSERTﾏｸﾛで必要.
 
 //ｼｪｰﾀﾞﾌｧｲﾙ名(ﾃﾞｨﾚｸﾄﾘも含む).
@@ -21,6 +23,7 @@ CDX9StaticMesh::CDX9StaticMesh()
 	, m_pVertexBuffer(nullptr)
 	, m_ppIndexBuffer(nullptr)
 	, m_pSampleLinear(nullptr)
+	, m_pShadowMapSampler(nullptr)
 
 	, m_pMesh(nullptr)
 	, m_NumMaterials(0)
@@ -30,6 +33,7 @@ CDX9StaticMesh::CDX9StaticMesh()
 	, m_AttrID()
 	, m_EnableTexture(false)
 	, m_pMeshForRay(nullptr)
+	, m_IsShadow(false)
 {
 }
 
@@ -280,6 +284,29 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		return E_FAIL;
 	}
 
+	samDesc.Filter		= D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	samDesc.AddressU	= D3D11_TEXTURE_ADDRESS_BORDER;
+	samDesc.AddressV	= D3D11_TEXTURE_ADDRESS_BORDER;
+	samDesc.AddressW	= D3D11_TEXTURE_ADDRESS_BORDER;
+	samDesc.BorderColor[0] = 1.0f;
+	samDesc.BorderColor[1] = 1.0f;
+	samDesc.BorderColor[2] = 1.0f;
+	samDesc.BorderColor[3] = 1.0f;
+	samDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	samDesc.MaxAnisotropy = 1;
+	samDesc.MipLODBias = 0.0f;
+	samDesc.MinLOD = 0.0f;
+	samDesc.MinLOD = D3D11_FLOAT32_MAX;
+	// サンプラ作成.
+	if( FAILED( m_pDevice11->CreateSamplerState(
+		&samDesc, &m_pShadowMapSampler ))){
+		_ASSERT_EXPR( false, "サンプラー作成失敗" );
+		MessageBox( nullptr, "サンプラー作成失敗", "Warning", MB_OK );
+		return E_FAIL;
+	}
+
+	return S_OK;
+
 
 	return S_OK;
 }
@@ -304,6 +331,7 @@ void CDX9StaticMesh::Release()
 	}
 	//ﾒｯｼｭﾃﾞｰﾀの解放.
 	SAFE_RELEASE(m_pMesh);
+	SAFE_RELEASE(m_pShadowMapSampler);
 	SAFE_RELEASE(m_pToonTexture);
 	SAFE_RELEASE(m_pSampleLinear);
 	SAFE_RELEASE(m_pVertexBuffer);
@@ -533,10 +561,21 @@ void CDX9StaticMesh::Render()
 	//拡縮×回転×移動 ※順番がとても大切！！.
 	mWorld = mScale * mRot * mTran;
 
+	// 影を描画したら終了.
+	if( ShadowRender( mWorld ) == true ) return;
 
 	//使用するｼｪｰﾀﾞのｾｯﾄ.
 	m_pContext11->VSSetShader(m_pVertexShader, nullptr, 0);//頂点ｼｪｰﾀﾞ.
 	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
+
+	// カスケードの数だけループ.
+	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+		ID3D11ShaderResourceView* shadowTex = CDirectX11::GetZBuffer()[i];
+		m_pContext11->PSSetShaderResources( i+1, 1, &shadowTex );
+		shadowTex = nullptr;
+	}
+	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
+
 
 	//ｼｪｰﾀﾞのｺﾝｽﾀﾝﾄﾊﾞｯﾌｧに各種ﾃﾞｰﾀを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -563,11 +602,25 @@ void CDX9StaticMesh::Render()
 		cb.vLightDir = { lightDir.x, lightDir.y, lightDir.z, 0.0f };
 		//ﾗｲﾄ回転行列.
 		cb.mLightRot = CLightManager::GetRorarionMatrix();
+
+		// ライトの行列を渡す.
+		for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+			cb.mLightWVP[i] = mWorld * CLightManager::GetShadowVP()[i];
+			D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
+		}
+		// カスケードの間隔幅を渡す.
+		cb.SpritPos.x = CLightManager::GetSpritPos()[0];
+		cb.SpritPos.y = CLightManager::GetSpritPos()[1];
+		cb.SpritPos.z = CLightManager::GetSpritPos()[2];
+		cb.SpritPos.w = CLightManager::GetSpritPos()[3];
+
 		//ﾗｲﾄ強度(明るさ).
 		cb.fIntensity.x = CLightManager::GetIntensity();
 		//ﾗｲﾄ方向の正規化(ﾉｰﾏﾗｲｽﾞ).
 		// ※ﾓﾃﾞﾙからﾗｲﾄへ向かう方向. ﾃﾞｨﾚｸｼｮﾅﾙﾗｲﾄで重要な要素.
 		D3DXVec4Normalize(&cb.vLightDir, &cb.vLightDir);
+
+		cb.IsShadow.x = m_IsShadow;
 
 		memcpy_s(
 			pData.pData,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧ.
@@ -586,7 +639,7 @@ void CDX9StaticMesh::Render()
 		2, 1, &m_pCBufferPerFrame);	//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
 	// トゥーンマップテクスチャを渡す.
-	m_pContext11->PSSetShaderResources( 1, 1, &m_pToonTexture);
+	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture);
 	//ﾒｯｼｭのﾚﾝﾀﾞﾘﾝｸﾞ.
 	D3DXMATRIX mView = CCameraManager::GetViewMatrix();
 	D3DXMATRIX mProj = CCameraManager::GetProjMatrix();
@@ -697,4 +750,34 @@ void CDX9StaticMesh::RenderMesh(
 		m_pContext11->DrawIndexed(
 			m_pMaterials[m_AttrID[No]].dwNumFace * 3, 0, 0);
 	}
+}
+
+// 影の描画.
+bool CDX9StaticMesh::ShadowRender( const D3DXMATRIX& mWorld )
+{
+	if( CShadowMap::GetRenderPass() != 0 ) return false;
+	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+		CDirectX11::SetZBuffer(i);
+		CShadowMap::SetConstantBufferData( mWorld*CLightManager::GetShadowVP()[i] );
+		//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+		UINT stride = m_pMesh->GetNumBytesPerVertex();
+		UINT offset = 0;
+		m_pContext11->IASetVertexBuffers(
+			0, 1, &m_pVertexBuffer, &stride, &offset);
+		//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
+		m_pContext11->IASetPrimitiveTopology(
+			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
+		for (DWORD No = 0; No < m_NumAttr; No++)
+		{
+			//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧをｾｯﾄ.
+			m_pContext11->IASetIndexBuffer(
+				m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0);
+			//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
+			m_pContext11->DrawIndexed(
+				m_pMaterials[m_AttrID[No]].dwNumFace * 3, 0, 0);
+		}
+	}
+
+	return true;
 }

@@ -1,14 +1,19 @@
 #include "D3DX11.h"
 
-ID3D11Device* CDirectX11::m_pDevice11 = nullptr;
-ID3D11DeviceContext* CDirectX11::m_pContext11 = nullptr;
-
 CDirectX11::CDirectX11()
 	: m_hWnd					( nullptr )
+	, m_pDevice11				( nullptr )
+	, m_pContext11				( nullptr )
 	, m_pSwapChain				( nullptr )
 	, m_pBackBuffer_TexRTV		( nullptr )
 	, m_pBackBuffer_DSTex		( nullptr )
 	, m_pBackBuffer_DSTexDSV	( nullptr )
+	, m_pZBufferRTV				( MAX_CASCADE )
+	, m_pZBufferSRV				( MAX_CASCADE )
+	, m_pZBufferTex				( MAX_CASCADE )
+	, m_pGBufferRTV				( G_BUFFER_NUM )
+	, m_pGBufferSRV				( G_BUFFER_NUM )
+	, m_pGBufferTex				( G_BUFFER_NUM )
 {
 }
 
@@ -17,17 +22,29 @@ CDirectX11::~CDirectX11()
 }
 
 //-----------------------------------.
+// インスタンスの取得.
+//-----------------------------------.
+CDirectX11* CDirectX11::GetInstance()
+{
+	static std::unique_ptr<CDirectX11> pInstance = 
+		std::make_unique<CDirectX11>();
+	return pInstance.get();
+}
+
+//-----------------------------------.
 // DirectX11構築関数.
 //-----------------------------------.
 HRESULT CDirectX11::Create( HWND hWnd )
 {
-	m_hWnd = hWnd;
+	GetInstance()->m_hWnd = hWnd;
 
-	if( FAILED(InitDevice11()) )	return E_FAIL;
-	if( FAILED(InitTexRTV()) )		return E_FAIL;
-	if( FAILED(InitDSTex()) )		return E_FAIL;
-	if( FAILED(InitViewports()) )	return E_FAIL;
-	if( FAILED(InitRasterizer()) )	return E_FAIL;
+	if( FAILED(GetInstance()->InitDevice11()) )		return E_FAIL;
+	if( FAILED(GetInstance()->InitTexRTV()) )		return E_FAIL;
+	if( FAILED(GetInstance()->InitDSTex()) )		return E_FAIL;
+	if( FAILED(GetInstance()->InitZBufferTex()) )	return E_FAIL;
+	if( FAILED(GetInstance()->InitGBufferTex()))	return E_FAIL;
+	if( FAILED(GetInstance()->InitViewports()) )	return E_FAIL;
+	if( FAILED(GetInstance()->InitRasterizer()) )	return E_FAIL;
 
 	return S_OK;
 }
@@ -37,12 +54,20 @@ HRESULT CDirectX11::Create( HWND hWnd )
 //-----------------------------------.
 HRESULT CDirectX11::Release()
 {
-	SAFE_RELEASE(m_pBackBuffer_DSTexDSV);
-	SAFE_RELEASE(m_pBackBuffer_DSTex);
-	SAFE_RELEASE(m_pBackBuffer_TexRTV);
-	SAFE_RELEASE(m_pSwapChain);
-	SAFE_RELEASE(m_pContext11);
-	SAFE_RELEASE(m_pDevice11);
+	for( auto& rtv : GetInstance()->m_pGBufferRTV ) SAFE_RELEASE(rtv);
+	for( auto& srv : GetInstance()->m_pGBufferSRV ) SAFE_RELEASE(srv);
+	for( auto& tex : GetInstance()->m_pGBufferTex ) SAFE_RELEASE(tex);
+
+	for( auto& rtv : GetInstance()->m_pZBufferRTV ) SAFE_RELEASE(rtv);
+	for( auto& srv : GetInstance()->m_pZBufferSRV ) SAFE_RELEASE(srv);
+	for( auto& tex : GetInstance()->m_pZBufferTex ) SAFE_RELEASE(tex);
+
+	SAFE_RELEASE(GetInstance()->m_pBackBuffer_DSTexDSV);
+	SAFE_RELEASE(GetInstance()->m_pBackBuffer_DSTex);
+	SAFE_RELEASE(GetInstance()->m_pBackBuffer_TexRTV);
+	SAFE_RELEASE(GetInstance()->m_pSwapChain);
+	SAFE_RELEASE(GetInstance()->m_pContext11);
+	SAFE_RELEASE(GetInstance()->m_pDevice11);
 
 	return S_OK;
 }
@@ -53,13 +78,17 @@ HRESULT CDirectX11::Release()
 void CDirectX11::ClearBackBuffer()
 {
 	// カラーバックバッファ.
-	m_pContext11->ClearRenderTargetView( m_pBackBuffer_TexRTV, CLEAR_BACK_COLOR );
+	GetInstance()->m_pContext11->ClearRenderTargetView( 
+		GetInstance()->m_pBackBuffer_TexRTV, GetInstance()->CLEAR_BACK_COLOR );
 
-	// デプスステンシルバッファ.
-	m_pContext11->ClearDepthStencilView(
-		m_pBackBuffer_DSTexDSV,
-		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-		1.0f, 0 );
+	// 深度バッファテクスチャのクリア.
+	for( auto& rtv : GetInstance()->m_pZBufferRTV ){
+		GetInstance()->m_pContext11->ClearRenderTargetView( rtv, GetInstance()->CLEAR_BACK_COLOR );
+	}
+	// G-Bufferテクスチャのクリア.
+	for( auto& rtv : GetInstance()->m_pGBufferRTV ){
+		GetInstance()->m_pContext11->ClearRenderTargetView( rtv, GetInstance()->CLEAR_BACK_COLOR );
+	}
 }
 
 //-----------------------------------.
@@ -67,7 +96,58 @@ void CDirectX11::ClearBackBuffer()
 //-----------------------------------.
 void CDirectX11::SwapChainPresent()
 {
-	m_pSwapChain->Present( 0, 0 ); 
+	GetInstance()->m_pSwapChain->Present( 0, 0 );
+}
+
+//-----------------------------------.
+// 深度バッファの設定.
+//-----------------------------------.
+void CDirectX11::SetZBuffer( int i )
+{
+	// レンダーターゲットの設定.
+	GetInstance()->m_pContext11->OMSetRenderTargets( 
+		1, 
+		&GetInstance()->m_pZBufferRTV[i], 
+		GetInstance()->m_pBackBuffer_DSTexDSV);
+	// デプスステンシルバッファ.
+	GetInstance()->m_pContext11->ClearDepthStencilView(
+		GetInstance()->m_pBackBuffer_DSTexDSV,
+		D3D11_CLEAR_DEPTH,
+		1.0f, 0 );
+}
+
+//-----------------------------------.
+// G-Bufferの設定.
+//-----------------------------------.
+void CDirectX11::SetGBuufer()
+{
+	// レンダーターゲットの設定.
+	GetInstance()->m_pContext11->OMSetRenderTargets( 
+		enGBUFFER_MAX,
+		&GetInstance()->m_pGBufferRTV[0],
+		GetInstance()->m_pBackBuffer_DSTexDSV );
+	// デプスステンシルバッファ.
+	GetInstance()->m_pContext11->ClearDepthStencilView(
+		GetInstance()->m_pBackBuffer_DSTexDSV,
+		D3D11_CLEAR_DEPTH,
+		1.0f, 0 );
+}
+
+//-----------------------------------.
+// BackBufferの設定.
+//-----------------------------------.
+void CDirectX11::SetBackBuffer()
+{
+	// レンダーターゲットの設定.
+	GetInstance()->m_pContext11->OMSetRenderTargets( 
+		1, 
+		&GetInstance()->m_pBackBuffer_TexRTV,
+		GetInstance()->m_pBackBuffer_DSTexDSV );
+	// デプスステンシルバッファ.
+	GetInstance()->m_pContext11->ClearDepthStencilView(
+		GetInstance()->m_pBackBuffer_DSTexDSV,
+		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f, 0 );
 }
 
 //-----------------------------------.
@@ -89,10 +169,10 @@ HRESULT CDirectX11::InitDevice11()
 	sd.SampleDesc.Quality	= 0;								// マルチサンプルのクオリティ.
 	sd.Windowed				= TRUE;								// ウィンドウモード(フルスクリーン時はFALSE).
 
-	//作成を試みる機能レベルの優先を指定.
-	// (GPUがサポートする機能ｾｯﾄの定義).
-	// D3D_FEATURE_LEVEL列挙型の配列.
-	// D3D_FEATURE_LEVEL_11_0:Direct3D 11.0 の GPUレベル.
+																//作成を試みる機能レベルの優先を指定.
+																// (GPUがサポートする機能ｾｯﾄの定義).
+																// D3D_FEATURE_LEVEL列挙型の配列.
+																// D3D_FEATURE_LEVEL_11_0:Direct3D 11.0 の GPUレベル.
 	D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 	D3D_FEATURE_LEVEL* pFeatureLevel = nullptr;	// 配列の要素数.
 
@@ -137,15 +217,15 @@ HRESULT CDirectX11::InitTexRTV()
 	m_pSwapChain->GetBuffer(
 		0,
 		__uuidof(ID3D11Texture2D),	//__uuidof:式に関連付けされたGUIDを取得.
-		(LPVOID*)&pBackBuffer_Tex);	//(out)ﾊﾞｯｸﾊﾞｯﾌｧﾃｸｽﾁｬ.
+		(LPVOID*)&pBackBuffer_Tex);	//(out)バックバッファテクスチャ.
 
-	//そのﾃｸｽﾁｬに対してﾚﾝﾀﾞｰﾀｰｹﾞｯﾄﾋﾞｭｰ(RTV)を作成.
+									//そのテクスチャに対してレンダーターゲットビュー(RTV)を作成.
 	m_pDevice11->CreateRenderTargetView(
 		pBackBuffer_Tex,
 		nullptr,
 		&m_pBackBuffer_TexRTV);	//(out)RTV.
 
-	//ﾊﾞｯｸﾊﾞｯﾌｧﾃｸｽﾁｬを解放.
+								// バックバッファテクスチャを解放.
 	SAFE_RELEASE(pBackBuffer_Tex);
 
 	return S_OK;
@@ -161,29 +241,169 @@ HRESULT CDirectX11::InitDSTex()
 	D3D11_TEXTURE2D_DESC descDepth;
 	descDepth.Width					= wnd_Width;				// 幅.
 	descDepth.Height				= wnd_Height;				// 高さ.
-	descDepth.MipLevels				= 1;						// ﾐｯﾌﾟﾏｯﾌﾟﾚﾍﾞﾙ:1.
+	descDepth.MipLevels				= 1;						// ミップマップレベル:1.
 	descDepth.ArraySize				= 1;						// 配列数:1.
-	descDepth.Format				= DXGI_FORMAT_D32_FLOAT;	// 32ﾋﾞｯﾄﾌｫｰﾏｯﾄ.
-	descDepth.SampleDesc.Count		= 1;						// ﾏﾙﾁｻﾝﾌﾟﾙの数.
-	descDepth.SampleDesc.Quality	= 0;						// ﾏﾙﾁｻﾝﾌﾟﾙのｸｵﾘﾃｨ.
-	descDepth.Usage					= D3D11_USAGE_DEFAULT;		// 使用方法:ﾃﾞﾌｫﾙﾄ.
-	descDepth.BindFlags				= D3D11_BIND_DEPTH_STENCIL;	// 深度(ｽﾃﾝｼﾙとして使用).
-	descDepth.CPUAccessFlags		= 0;						// CPUからはｱｸｾｽしない.
+	descDepth.Format				= DXGI_FORMAT_D32_FLOAT;	// 32ビットフォーマット.
+	descDepth.SampleDesc.Count		= 1;						// マルチサンプルの数.
+	descDepth.SampleDesc.Quality	= 0;						// マルチサンプルのクオリティ.
+	descDepth.Usage					= D3D11_USAGE_DEFAULT;		// 使用方法:デフォルト.
+	descDepth.BindFlags				= D3D11_BIND_DEPTH_STENCIL;	// 深度(ステンシルとして使用).
+	descDepth.CPUAccessFlags		= 0;						// CPUからはアクセスしない.
 	descDepth.MiscFlags				= 0;						// その他の設定なし.
 
 
-	// そのﾃｸｽﾁｬに対してﾃﾞﾌﾟｽｽﾃﾝｼﾙ(DSTex)を作成.
+																// そのテクスチャに対してデプスステンシル(DSTex)を作成.
 	if( FAILED( m_pDevice11->CreateTexture2D( &descDepth, nullptr, &m_pBackBuffer_DSTex )) ){
 		_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
 		return E_FAIL;
 	}
-	// そのﾃｸｽﾁｬに対してﾃﾞﾌﾟｽｽﾃﾝｼﾙﾋﾞｭｰ(DSV)を作成.
+	// そのテクスチャに対してデブスステンシルビュー(DSV)を作成.
 	if( FAILED( m_pDevice11->CreateDepthStencilView( m_pBackBuffer_DSTex, nullptr, &m_pBackBuffer_DSTexDSV)) ){
 		_ASSERT_EXPR( false, L"デプスステンシルビュー作成失敗" );
 		return E_FAIL;
 	}
-	// ﾚﾝﾀﾞｰﾀｰｹﾞｯﾄﾋﾞｭｰとﾃﾞﾌﾟｽｽﾃﾝｼﾙﾋﾞｭｰをﾊﾟｲﾌﾟﾗｲﾝにｾｯﾄ.
+	// レンダーターゲットとﾃﾞﾌﾞｽステンシルビューをパイプラインにセット.
 	m_pContext11->OMSetRenderTargets( 1, &m_pBackBuffer_TexRTV, m_pBackBuffer_DSTexDSV );
+	return S_OK;
+}
+
+//-----------------------------------.
+// Z-Bufferの作成.
+//-----------------------------------.
+HRESULT CDirectX11::InitZBufferTex()
+{
+	for( int i = 0; i < MAX_CASCADE; i++ ){
+		D3D11_TEXTURE2D_DESC texDepth;
+		texDepth.Width				= WND_W;						// 幅.
+		texDepth.Height				= WND_H;						// 高さ.
+		texDepth.MipLevels			= 1;							// ミップマップレベル:1.
+		texDepth.ArraySize			= 1;							// 配列数:1.
+		texDepth.SampleDesc.Count	= 1;							// 32ビットフォーマット.
+		texDepth.SampleDesc.Quality	= 0;							// マルチサンプルの数.
+		texDepth.Format				= DXGI_FORMAT_B8G8R8A8_UNORM;	// マルチサンプルのクオリティ.
+		texDepth.Usage				= D3D11_USAGE_DEFAULT;			// 使用方法:デフォルト.
+		texDepth.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;	// レンダーターゲット、シェーダーリソース.
+		texDepth.CPUAccessFlags		= 0;							// CPUからはアクセスしない.
+		texDepth.MiscFlags			= 0;							// その他の設定なし.
+
+																	// そのテクスチャに対してデプスステンシル(DSTex)を作成.
+		if( FAILED( m_pDevice11->CreateTexture2D( &texDepth, nullptr, &m_pZBufferTex[i] )) ){
+			_ASSERT_EXPR( false, L"テクスチャデスク作成失敗" );
+			return E_FAIL;
+		}
+		// レンダーターゲットビューの設定.
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+		memset( &rtvDesc, 0, sizeof( rtvDesc ) );
+		rtvDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM;
+		rtvDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
+		rtvDesc.Texture2D.MipSlice = 0;
+		// RenderTargetView作成.
+		if( FAILED( m_pDevice11->CreateRenderTargetView( m_pZBufferTex[i], &rtvDesc, &m_pZBufferRTV[i] ) )){
+			_ASSERT_EXPR( false, L"RenderTargetView作成失敗" );
+			return E_FAIL;
+		}
+
+		// シェーダリソースビューの設定
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		memset( &srvDesc, 0, sizeof( srvDesc ) );
+		srvDesc.Format              = DXGI_FORMAT_B8G8R8A8_UNORM;
+		srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
+		// テクスチャ作成時と同じフォーマット
+		if( FAILED( m_pDevice11->CreateShaderResourceView( m_pZBufferTex[i], &srvDesc, &m_pZBufferSRV[i] ) )){
+			_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
+			return E_FAIL;
+		}
+	}
+
+	return S_OK;
+}
+
+//-----------------------------------.
+// G-Bufferの作成.
+//-----------------------------------.
+HRESULT CDirectX11::InitGBufferTex()
+{
+	D3D11_TEXTURE2D_DESC texDepth;
+	texDepth.Width				= WND_W;							// 幅.
+	texDepth.Height				= WND_H;							// 高さ.
+	texDepth.MipLevels			= 1;								// ミップマップレベル:1.
+	texDepth.ArraySize			= 1;								// 配列数:1.
+	texDepth.Format				= DXGI_FORMAT_R11G11B10_FLOAT;		// 32ビットフォーマット.
+	texDepth.SampleDesc.Count	= 1;								// マルチサンプルの数.
+	texDepth.SampleDesc.Quality	= 0;								// マルチサンプルのクオリティ.
+	texDepth.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法:デフォルト.
+	texDepth.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;	// レンダーターゲット、シェーダーリソース.
+	texDepth.CPUAccessFlags		= 0;								// CPUからはアクセスしない.
+	texDepth.MiscFlags			= 0;								// その他の設定なし.
+
+	for( int i = 0; i < G_BUFFER_NUM; i++ ){
+		if( i == enGBUFFER_Z_DEPTH ){
+			texDepth.Format				= DXGI_FORMAT_B8G8R8A8_UNORM;// 32ﾋﾞｯﾄﾌｫｰﾏｯﾄ.
+
+																	 // そのテクスチャに対してデプスステンシル(DSTex)を作成.
+			if( FAILED( m_pDevice11->CreateTexture2D( &texDepth, nullptr, &m_pGBufferTex[i] )) ){
+				_ASSERT_EXPR( false, L"テクスチャデスク作成失敗" );
+				return E_FAIL;
+			}
+			// レンダーターゲットビューの設定.
+			D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+			memset( &rtvDesc, 0, sizeof( rtvDesc ) );
+			rtvDesc.Format             = DXGI_FORMAT_B8G8R8A8_UNORM;
+			rtvDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
+			rtvDesc.Texture2D.MipSlice = 0;
+			// RenderTargetView作成.
+			if( FAILED( m_pDevice11->CreateRenderTargetView( m_pGBufferTex[i], &rtvDesc, &m_pGBufferRTV[i] ) )){
+				_ASSERT_EXPR( false, L"RenderTargetView作成失敗" );
+				return E_FAIL;
+			}
+
+			// シェーダリソースビューの設定
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+			memset( &srvDesc, 0, sizeof( srvDesc ) );
+			srvDesc.Format              = DXGI_FORMAT_B8G8R8A8_UNORM;
+			srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MipLevels = 1;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+
+			// テクスチャ作成時と同じフォーマット
+			if( FAILED( m_pDevice11->CreateShaderResourceView( m_pGBufferTex[i], &srvDesc, &m_pGBufferSRV[i] ) )){
+				_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
+				return E_FAIL;
+			}
+			continue;
+		}
+		// そのテクスチャに対してデプスステンシル(DSTex)を作成.
+		if( FAILED( m_pDevice11->CreateTexture2D( &texDepth, nullptr, &m_pGBufferTex[i] )) ){
+			_ASSERT_EXPR( false, L"テクスチャデスク作成失敗" );
+			return E_FAIL;
+		}
+		// レンダーターゲットビューの設定
+		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+		memset( &rtvDesc, 0, sizeof( rtvDesc ) );
+		rtvDesc.Format             = DXGI_FORMAT_R11G11B10_FLOAT;
+		rtvDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
+		// RenderTargetView作成.
+		if( FAILED( m_pDevice11->CreateRenderTargetView( m_pGBufferTex[i], &rtvDesc, &m_pGBufferRTV[i] ) )){
+			_ASSERT_EXPR( false, L"RenderTargetView作成失敗" );
+			return E_FAIL;
+		}
+
+		// シェーダリソースビューの設定
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		memset( &srvDesc, 0, sizeof( srvDesc ) );
+		srvDesc.Format              = rtvDesc.Format;
+		srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+
+		// テクスチャ作成時と同じフォーマット
+		if( FAILED( m_pDevice11->CreateShaderResourceView( m_pGBufferTex[i], &srvDesc, &m_pGBufferSRV[i] ) )){
+			_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
+			return E_FAIL;
+		}
+	}
 	return S_OK;
 }
 
@@ -211,10 +431,10 @@ HRESULT CDirectX11::InitRasterizer()
 {
 	D3D11_RASTERIZER_DESC rdc;
 	ZeroMemory(&rdc, sizeof(rdc));
-	rdc.FillMode				= D3D11_FILL_SOLID;	// 塗りつぶし(ｿﾘｯﾄﾞ).
+	rdc.FillMode				= D3D11_FILL_SOLID;	// 塗りつぶし(ソリッド).
 	rdc.CullMode				= D3D11_CULL_NONE;	// BACK:背面を描画しない, FRONT:正面を描画しない.
-	rdc.FrontCounterClockwise	= FALSE;			// ﾎﾟﾘｺﾞﾝの表裏を決定するﾌﾗｸﾞ.
-	rdc.DepthClipEnable			= FALSE;			// 距離についてのｸﾘｯﾋﾟﾝｸﾞ有効.
+	rdc.FrontCounterClockwise	= FALSE;			// ポリゴンの表裏を決定するフラグ.
+	rdc.DepthClipEnable			= FALSE;			// 距離についてのクリッピング有効.
 
 	ID3D11RasterizerState* pRs = nullptr;
 	if( FAILED( m_pDevice11->CreateRasterizerState( &rdc, &pRs )) ){

@@ -53,11 +53,11 @@ void CAlienB::Render()
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
-	m_pSkinMesh->SetBlend( true );
+//	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
+//	m_pSkinMesh->SetBlend( false );
 #else
 	if( m_pTempStaticMesh == nullptr ) return;
 
@@ -66,11 +66,11 @@ void CAlienB::Render()
 	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.0f, 0.8f, 0.0f, m_ModelAlpha } );
-	m_pTempStaticMesh->SetBlend( true );
+//	m_pTempStaticMesh->SetBlend( true );
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pTempStaticMesh->Render();
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
+//	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;

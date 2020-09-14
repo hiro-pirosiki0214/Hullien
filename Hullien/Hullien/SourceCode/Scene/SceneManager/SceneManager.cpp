@@ -43,7 +43,9 @@ void CSceneManager::Update()
 		m_pScene->Update();	// シーンの更新.
 		// ゲーム終了してなければ描画する.
 		if( m_IsGameEnd == false ){
+			if( m_IsLoadEnd == false ) return;
 			m_pScene->Render();	// シーンの描画.
+			if( m_IsLoadEnd == false ) return;
 			CEditRenderer::Render();
 		}
 	}

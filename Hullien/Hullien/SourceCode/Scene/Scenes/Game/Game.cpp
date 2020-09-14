@@ -12,12 +12,17 @@
 #include "..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
+#include "..\..\..\Common\D3DX\D3DX11.h"
+#include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
+#include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
+
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 	, m_GameObjManager	( nullptr )
 	, m_WidgetManager	( nullptr )
 	, m_ContinueWidget	( nullptr )
 	, m_pSkyDome		( nullptr )
+	, m_pPeraRenderer	( nullptr )
 	, m_ChangeSceneState( EChangeSceneState::Clear )
 	, m_IsChangeScene	( false )
 {
@@ -25,12 +30,13 @@ CGame::CGame( CSceneManager* pSceneManager )
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
 	m_pSkyDome				= std::make_unique<CSkyDome>();
+	m_pPeraRenderer			= std::make_unique<CPeraRenderer>();
 	CFade::SetFadeOut();
-
 }
 
 CGame::~CGame()
 {
+	m_pPeraRenderer->Release();
 }
 
 //============================.
@@ -42,10 +48,11 @@ bool CGame::Load()
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
 	if( m_pSkyDome->Init() == false )		return false;
+	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
+	
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
 	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
-
 
 	return true;
 }
@@ -107,8 +114,9 @@ void CGame::Update()
 //============================.
 void CGame::Render()
 {
-	m_pSkyDome->Render();
-	m_GameObjManager->Render();
+	// モデルの描画.
+	ModelRender();
+
 	m_GameObjManager->SpriteRender();
 	m_WidgetManager->Render();
 
@@ -120,7 +128,42 @@ void CGame::Render()
 	}
 }
 
+//============================.
+// モデルの描画.
+//============================.
+void CGame::ModelRender()
+{
+	//--------------------------------------------.
+	// 描画パス1.
+	//--------------------------------------------.
+	// 深度テクスチャに影用の深度を書き込む.
+
+	CShadowMap::SetRenderPass( 0 );
+	//m_pSkyDome->Render();
+	m_GameObjManager->Render();
+
+	//--------------------------------------------.
+	// 描画パス2.
+	//--------------------------------------------.
+	// G-Bufferにcolor, normal, depthを書き込む.
+
+	CShadowMap::SetRenderPass( 1 );
+	CDirectX11::SetGBuufer();
+	m_pSkyDome->Render();
+	m_GameObjManager->Render();
+
+	//--------------------------------------------.
+	// 最終描画.
+	//--------------------------------------------.
+	// G-Bufferを使用して、画面に描画する.
+
+	CDirectX11::SetBackBuffer();
+	m_pPeraRenderer->Render( CDirectX11::GetGBuffer() );
+}
+
+//============================.
 // コンテニュー処理関数.
+//============================.
 void CGame::UpdateContinue()
 {
 	//プレイヤーの体力が0になったか取得.
@@ -153,7 +196,9 @@ void CGame::UpdateContinue()
 	}
 }
 
+//============================.
 // シーン切り替え関数.
+//============================.
 void CGame::ChangeScene()
 {
 	// フェードイン状態かつフェード中なら処理しない.
@@ -164,7 +209,9 @@ void CGame::ChangeScene()
 	SelectScene();
 }
 
+//============================.
 // シーンの選択.
+//============================.
 void CGame::SelectScene()
 {
 	if (m_GameObjManager->IsDanger() == false)
@@ -197,7 +244,9 @@ void CGame::SelectScene()
 	}
 }
 
+//============================.
 // シーン切り替え設定関数.
+//============================.
 void CGame::SetChangeScene( const EChangeSceneState& changeState )
 {
 	m_ChangeSceneState = changeState;

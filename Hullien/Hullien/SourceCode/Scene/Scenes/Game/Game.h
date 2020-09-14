@@ -7,7 +7,7 @@ class CGameActorManager;	// ゲームオブジェクト管理クラス.
 class CGameWidgetManager;	// UI管理クラス.
 class CContinueWidget;		// コンテニューUIクラス;
 class CSkyDome;				// 背景クラス.
-
+class CPeraRenderer;	// G-Buufer描画用.
 
 /**********************************
 *	ゲームシーンクラス.
@@ -35,6 +35,8 @@ public:
 	virtual void Render() override;
 
 private:
+	// モデルの描画.
+	void ModelRender();
 	// フェード初期化関数.
 	bool InitFade();	
 	// コンテニュー処理関数.
@@ -52,6 +54,7 @@ private:
 	std::unique_ptr<CGameWidgetManager>	m_WidgetManager;	// ゲームUI管理クラス.
 	std::unique_ptr<CContinueWidget>	m_ContinueWidget;	// コンテニューUIクラス.
 	std::unique_ptr<CSkyDome>			m_pSkyDome;			// 背景.
+	std::unique_ptr<CPeraRenderer>		m_pPeraRenderer;
 	EChangeSceneState					m_ChangeSceneState;	// シーン切り替え状態.
 	bool								m_IsChangeScene;	// シーン切り替えが可能か.
 

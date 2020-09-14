@@ -7,6 +7,8 @@
 #include "..\..\..\Camera\Camera.h"
 #include "..\..\..\Light\LightManager\LightManager.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\Shader\ShadowMap\ShadowMap.h"
+#include "..\..\D3DX\D3DX11.h"
 
 //シェーダ名(ディレクトリも含む)
 const char SHADER_NAME[] = "Data\\Shader\\SkinMesh.hlsl";
@@ -41,6 +43,7 @@ CDX9SkinMesh::CDX9SkinMesh()
 	, m_pD3dxMesh(nullptr)
 	, m_FilePath()
 	, m_iFrame()
+	, m_IsShadow(false)
 {
 
 }
@@ -647,20 +650,13 @@ VOID CDX9SkinMesh::DrawFrame( LPD3DXFRAME p )
 //パーツメッシュを描画.
 void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer )
 {
-	D3D11_MAPPED_SUBRESOURCE pData;
-
-	//使用するシェーダのセット.
-	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );
-	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );
-
-
 	D3DXMATRIX	mScale, mYaw, mPitch, mRoll, mTran;
 	//拡縮.
 	D3DXMatrixScaling( &mScale, m_vScale.x, m_vScale.y, m_vScale.z );
 	D3DXMatrixRotationY( &mYaw, m_vRot.y );		//Y軸回転.
 	D3DXMatrixRotationX( &mPitch, m_vRot.x );	//X軸回転.
 	D3DXMatrixRotationZ( &mRoll, m_vRot.z );	//Z軸回転.
-	//平行移動.
+												//平行移動.
 	D3DXMatrixTranslation( &mTran, m_vPos.x, m_vPos.y, m_vPos.z );
 
 	//=================================================================//
@@ -670,13 +666,14 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	//ワールド行列.
 	m_mWorld = mScale * m_mRotation * mTran;
 
-
-	//アニメーションフレームを進める スキンを更新.
-	m_iFrame++;
-	if( m_iFrame >= 3600 ){
-		m_iFrame = 0;
-	}
 	SetNewPoseMatrices( pMesh, m_iFrame, pContainer );
+	ShadowRender( pMesh, m_mWorld );
+
+	D3D11_MAPPED_SUBRESOURCE pData;
+
+	//使用するシェーダのセット.
+	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );
+	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );
 
 	//------------------------------------------------.
 	//	コンスタントバッファに情報を送る(ボーン).
@@ -737,11 +734,25 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 		cb.vLightDir = { lightDir.x, lightDir.y, lightDir.z, 0.0f };
 		//ﾗｲﾄ回転行列.
 		cb.mLightRot = CLightManager::GetRorarionMatrix();
+
+		// ライトの行列を渡す.
+		for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+			cb.mLightWVP[i] = m_mWorld * CLightManager::GetShadowVP()[i];
+			D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
+		}
+		// カスケードの間隔幅を渡す.
+		cb.SpritPos.x = CLightManager::GetSpritPos()[0];
+		cb.SpritPos.y = CLightManager::GetSpritPos()[1];
+		cb.SpritPos.z = CLightManager::GetSpritPos()[2];
+		cb.SpritPos.w = CLightManager::GetSpritPos()[3];
+
 		//ﾗｲﾄ強度(明るさ).
 		cb.fIntensity.x = CLightManager::GetIntensity();
 		//ﾗｲﾄ方向の正規化(ﾉｰﾏﾗｲｽﾞ).
 		// ※ﾓﾃﾞﾙからﾗｲﾄへ向かう方向. ﾃﾞｨﾚｸｼｮﾅﾙﾗｲﾄで重要な要素.
 		D3DXVec4Normalize(&cb.vLightDir, &cb.vLightDir);
+
+		cb.IsShadow.x = m_IsShadow;
 
 		memcpy_s( pData.pData, pData.RowPitch, (void*)&cb, sizeof(cb) );
 		m_pContext11->Unmap(m_pCBufferPerFrame, 0 );
@@ -824,6 +835,59 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	}
 }
 
+// 影の描画.
+bool CDX9SkinMesh::ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld )
+{
+	if( CShadowMap::GetRenderPass() != 0 ) return false;
+
+	//アニメーションフレームを進める スキンを更新.
+	m_iFrame++;
+	if( m_iFrame >= 3600 ){
+		m_iFrame = 0;
+	}
+	D3D11_MAPPED_SUBRESOURCE pData;
+
+	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+		CDirectX11::SetZBuffer(i);
+		CShadowMap::SetConstantBufferData( mWorld*CLightManager::GetShadowVP()[i], true );
+		if( SUCCEEDED(
+			m_pContext11->Map(
+				m_pCBufferPerBone, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
+		{
+			CBUFFER_PER_BONES cb;
+			for( int i=0; i<pMesh->iNumBone; i++ )
+			{
+				D3DXMATRIX mat = GetCurrentPoseMatrix( pMesh, i );
+				D3DXMatrixTranspose( &mat, &mat );
+				cb.mBone[i] = mat;
+			}
+			memcpy_s( pData.pData, pData.RowPitch, (void*)&cb, sizeof( cb ) );
+			m_pContext11->Unmap(m_pCBufferPerBone, 0 );
+		}
+		m_pContext11->VSSetConstantBuffers(	1, 1, &m_pCBufferPerBone);
+		m_pContext11->PSSetConstantBuffers(	1, 1, &m_pCBufferPerBone);
+
+
+		//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+		UINT stride = sizeof( MY_SKINVERTEX );
+		UINT offset = 0;
+		m_pContext11->IASetVertexBuffers(
+			0, 1, &pMesh->pVertexBuffer, &stride, & offset );
+		//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
+		m_pContext11->IASetPrimitiveTopology(
+			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
+		for( DWORD i=0; i<pMesh->dwNumMaterial; i++ )
+		{
+			m_pContext11->IASetIndexBuffer(
+				pMesh->ppIndexBuffer[i], DXGI_FORMAT_R32_UINT, 0 );
+			//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
+			m_pContext11->DrawIndexed( pMesh->pMaterial[i].dwNumFace * 3, 0, 0 );
+		}
+	}
+
+	return true;
+}
 
 
 //解放関数.
@@ -1198,17 +1262,40 @@ HRESULT CDX9SkinMesh::CreateCBuffer(
 HRESULT CDX9SkinMesh::CreateLinearSampler(ID3D11SamplerState** pSampler)
 {
 	//テクスチャー用サンプラー作成.
-	D3D11_SAMPLER_DESC SamDesc;
-	ZeroMemory(&SamDesc, sizeof(D3D11_SAMPLER_DESC));
+	D3D11_SAMPLER_DESC samDesc;
+	ZeroMemory(&samDesc, sizeof(D3D11_SAMPLER_DESC));
 
-	SamDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	SamDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	SamDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	SamDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	if (FAILED(
-		m_pDevice11->CreateSamplerState(&SamDesc, &m_pSampleLinear)))
+		m_pDevice11->CreateSamplerState(&samDesc, &m_pSampleLinear)))
 	{
 		return E_FAIL;
 	}
+	return S_OK;
+
+	samDesc.Filter		= D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	samDesc.AddressU	= D3D11_TEXTURE_ADDRESS_BORDER;
+	samDesc.AddressV	= D3D11_TEXTURE_ADDRESS_BORDER;
+	samDesc.AddressW	= D3D11_TEXTURE_ADDRESS_BORDER;
+	samDesc.BorderColor[0] = 1.0f;
+	samDesc.BorderColor[1] = 1.0f;
+	samDesc.BorderColor[2] = 1.0f;
+	samDesc.BorderColor[3] = 1.0f;
+	samDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	samDesc.MaxAnisotropy = 1;
+	samDesc.MipLODBias = 0.0f;
+	samDesc.MinLOD = 0.0f;
+	samDesc.MinLOD = D3D11_FLOAT32_MAX;
+	// サンプラ作成.
+	if( FAILED( m_pDevice11->CreateSamplerState(
+		&samDesc, &m_pShadowMapSampler ))){
+		_ASSERT_EXPR( false, "サンプラー作成失敗" );
+		MessageBox( nullptr, "サンプラー作成失敗", "Warning", MB_OK );
+		return E_FAIL;
+	}
+
 	return S_OK;
 }

@@ -18,6 +18,26 @@ void CLightManager::SetLgiht( std::shared_ptr<CLightBase> pLight )
 }
 
 //-----------------------------------.
+// カスケード分のシャドウ行列を取得する.
+//-----------------------------------.
+D3DXMATRIX* CLightManager::GetShadowVP()
+{
+	if( GetInstance()->m_pLight == nullptr ) 
+		return nullptr;
+	return GetInstance()->m_pLight->GetShadowVP();
+}
+
+//-----------------------------------.
+// カスケード分割座標を取得.
+//-----------------------------------.
+float* CLightManager::GetSpritPos()
+{
+	if( GetInstance()->m_pLight == nullptr ) 
+		return nullptr;
+	return GetInstance()->m_pLight->GetSpritPos();
+}
+
+//-----------------------------------.
 // 座標の取得.
 //-----------------------------------.
 D3DXVECTOR3 CLightManager::GetPosition()
