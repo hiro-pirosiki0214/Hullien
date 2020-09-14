@@ -41,6 +41,7 @@ VS_OUTPUT VS_Main(
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
 	float4 color = g_TextureColor.Sample(g_samLinear, input.Tex);
+	
 	//----------------------------------------------------------------.
 	// ó÷äsê¸.
 	//----------------------------------------------------------------.

@@ -12,7 +12,7 @@ class CControllerEdit
 {
 private:
 	const ImVec2 WINDOW_SIZE		= { 250.0f, 300.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION	= { 10.0f, 20.0f };		// 描画座標.
+	const ImVec2 RENDER_POSITION	= { 0.0f, 70.0f };		// 描画座標.
 	const char* BUTTON_ITEMS[6]		= { "A", "B", "X", "Y", "Left", "Right" };
 
 public:

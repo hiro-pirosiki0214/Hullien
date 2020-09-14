@@ -29,13 +29,10 @@ bool CAlienParamEdit::Init()
 // 描画関数.
 void CAlienParamEdit::Render()
 {
-	ImGui::SetNextWindowSize( WINDOW_SIZE, ImGuiCond_::ImGuiCond_Once );
-	ImGui::SetNextWindowPos( RENDER_POSITION, ImGuiCond_::ImGuiCond_Once );
+	ImGui::SetNextWindowSize( WINDOW_SIZE );
+	ImGui::SetNextWindowPos( RENDER_POSITION );
 	ImGui::GetWindowSize();
-
-	bool isOpen = true;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
-	ImGui::Begin( u8"宇宙人パラメータ設定", &isOpen );
+	ImGui::Begin( u8"宇宙人パラメータ設定" );
 
 	if( ImGui::BeginTabBar("TabBarID") == true ){
 		for( size_t i = 0; i < m_AlienNameList.size(); i++ ){
@@ -93,6 +90,8 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	};
 
 	EAlienList alienType = static_cast<EAlienList>(index);
+
+	ImGui::PushItemWidth(200.0f);
 
 	//  各パラメータの設定.
 	ImGui::InputFloat( u8"移動速度", &s.MoveSpeed );
@@ -153,4 +152,6 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	ImGui::SameLine();
 	s_success.Render();
 
+
+	ImGui::PopItemWidth();
 }

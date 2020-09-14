@@ -20,13 +20,11 @@ bool CExplosionEdit::Init()
 // 描画関数.
 void CExplosionEdit::Render()
 {
-	ImGui::SetNextWindowSize( WINDOW_SIZE, ImGuiCond_::ImGuiCond_Once );
-	ImGui::SetNextWindowPos( RENDER_POSITION, ImGuiCond_::ImGuiCond_Once );
-	ImGui::GetWindowSize();
+	ImGui::SetNextWindowSize( WINDOW_SIZE );
+	ImGui::SetNextWindowPos( RENDER_POSITION );
+	ImGui::Begin( u8"爆発パラメーター設定" );
 
-	bool isOpen = true;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
-	ImGui::Begin( u8"爆発パラメーター設定", &isOpen );
+	ImGui::PushItemWidth(200.0f);
 
 	ImGui::InputFloat( u8"爆発力", &m_ExplosionParam.AttackPower );
 	ImGui::InputFloat( u8"爆発速度", &m_ExplosionParam.ExplosionSpeed );
@@ -41,6 +39,8 @@ void CExplosionEdit::Render()
 	if( ImGui::Button(u8"保存") ) s_success.IsSucceeded = FileWriting();
 	ImGui::SameLine();
 	s_success.Render();
+
+	ImGui::PopItemWidth();
 
 	ImGui::End();
 }

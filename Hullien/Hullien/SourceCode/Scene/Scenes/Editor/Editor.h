@@ -11,6 +11,18 @@ class CItemEdit;
 
 class CEditor : public CSceneBase
 {
+	enum enEditScenes
+	{
+		None,
+
+		SpawnEdit,
+		AlienParam,
+		Explosion,
+		ItemEdit,
+
+		Max
+
+	} typedef EEditScenes;
 public:
 	CEditor( CSceneManager* pSceneManager );
 	virtual ~CEditor();
@@ -28,6 +40,8 @@ private:
 	std::unique_ptr<CAlienParamEdit>	m_pAlienParamEdit;
 	std::unique_ptr<CExplosionEdit>		m_pExplosionEdit;
 	std::unique_ptr<CItemEdit>			m_pItemEdit;
+
+	int m_NowEditScene;
 };
 
 #endif	// #ifndef EDITOR_H.

@@ -7,8 +7,8 @@
 
 class CExplosionEdit
 {
-	const ImVec2 WINDOW_SIZE = { 420.0f, 250.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION = { 260.0f, 380.0f };		// 描画座標.
+	const ImVec2 WINDOW_SIZE = { 510.0f, WND_H-70.0f };	// ウィンドウサイズ.
+	const ImVec2 RENDER_POSITION = { 0.0f, 70.0f };		// 描画座標.
 	const char* FILE_PATH = "Data\\GameParam\\Alien\\Explosion\\Explosion.bin";
 
 public:
