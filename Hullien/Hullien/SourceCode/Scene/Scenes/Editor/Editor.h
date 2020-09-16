@@ -9,6 +9,7 @@ class CAlienParamEdit;
 class CExplosionEdit;
 class CItemEdit;
 class CPeraRenderer;
+class CEditCamera;
 class CSkyDome;
 class CGroundStage;
 
@@ -49,6 +50,8 @@ private:
 	std::unique_ptr<CAlienParamEdit>	m_pAlienParamEdit;
 	std::unique_ptr<CExplosionEdit>		m_pExplosionEdit;
 	std::unique_ptr<CItemEdit>			m_pItemEdit;
+
+	std::shared_ptr<CEditCamera>		m_pEditCamera;
 
 	std::unique_ptr<CPeraRenderer>		m_pPeraRenderer;
 	std::unique_ptr<CSkyDome>			m_pSkyDome;

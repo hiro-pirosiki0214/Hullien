@@ -121,6 +121,8 @@
     <ClCompile Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.cpp" />
     <ClCompile Include="SourceCode\Common\PeraRenderer\PeraRenderer.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.cpp" />
+    <ClCompile Include="SourceCode\Camera\EditCamera\EditCamera.cpp" />
+    <ClCompile Include="SourceCode\Utility\Mouse\Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -246,5 +248,7 @@
     <ClInclude Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.h" />
     <ClInclude Include="SourceCode\Common\PeraRenderer\PeraRenderer.h" />
     <ClInclude Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.h" />
+    <ClInclude Include="SourceCode\Camera\EditCamera\EditCamera.h" />
+    <ClInclude Include="SourceCode\Utility\Mouse\Mouse.h" />
   </ItemGroup>
 </Project>

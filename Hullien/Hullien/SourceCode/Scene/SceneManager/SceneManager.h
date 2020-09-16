@@ -44,6 +44,7 @@ public:
 	void RetryGame();
 	// HWND設定.
 	void SethWnd(HWND hWnd) { m_hWnd = hWnd; }
+	HWND GethWnd(){ return m_hWnd; }
 
 private:
 	// エディットシーンに変更.

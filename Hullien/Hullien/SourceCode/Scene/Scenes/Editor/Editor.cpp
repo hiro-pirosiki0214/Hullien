@@ -5,12 +5,13 @@
 #include "..\..\..\Editor\AlienParamEdit\AlienParamEdit.h"
 #include "..\..\..\Editor\ExplosionEdit\ExplosionEdit.h"
 #include "..\..\..\Editor\ItemEdit\ItemEdit.h"
-
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
 #include "..\..\..\GameObject\SkyDome\SkyDome.h"
 #include "..\..\..\GameObject\GroundStage\GroundStage.h"
+#include "..\..\..\Camera\EditCamera\EditCamera.h"
+#include "..\..\..\Camera\CameraManager\CameraManager.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -20,6 +21,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pAlienParamEdit	( nullptr )
 	, m_pExplosionEdit	( nullptr ) 
 	, m_pItemEdit		( nullptr )
+	, m_pEditCamera		( nullptr )
 	, m_pPeraRenderer	( nullptr )
 	, m_pGroundStage	( nullptr )
 	, m_NowEditScene	( EEditScenes::None )
@@ -29,6 +31,8 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	m_pAlienParamEdit	= std::make_unique<CAlienParamEdit>();
 	m_pExplosionEdit	= std::make_unique<CExplosionEdit>();
 	m_pItemEdit			= std::make_unique<CItemEdit>();
+
+	m_pEditCamera		= std::make_shared<CEditCamera>();
 
 	m_pPeraRenderer		= std::make_unique<CPeraRenderer>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
@@ -50,12 +54,16 @@ bool CEditor::Load()
 	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
+
+	m_pEditCamera->SetHWND( m_pSceneManager->GethWnd() );
 	return true;
 }
 
 // XVŠÖ”.
 void CEditor::Update()
 {
+	m_pEditCamera->Updata();
+	CCameraManager::SetCamera( m_pEditCamera );
 	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
 		( GetAsyncKeyState('D') & 0x8000 ) ){
 		if( !(GetAsyncKeyState('W') & 0x8000 ) ) return;
