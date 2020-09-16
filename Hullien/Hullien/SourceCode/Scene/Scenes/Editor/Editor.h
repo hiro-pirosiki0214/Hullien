@@ -8,6 +8,7 @@ class CSpawnEdit;
 class CAlienParamEdit;
 class CExplosionEdit;
 class CItemEdit;
+class CPlayerEdit;
 class CPeraRenderer;
 class CEditCamera;
 class CSkyDome;
@@ -19,12 +20,13 @@ class CEditor : public CSceneBase
 	{
 		None,
 
+		PlayerEdit,
 		SpawnEdit,
 		AlienParam,
 		Explosion,
 		ItemEdit,
 
-		Max
+		Max,
 
 	} typedef EEditScenes;
 public:
@@ -50,7 +52,7 @@ private:
 	std::unique_ptr<CAlienParamEdit>	m_pAlienParamEdit;
 	std::unique_ptr<CExplosionEdit>		m_pExplosionEdit;
 	std::unique_ptr<CItemEdit>			m_pItemEdit;
-
+	std::unique_ptr<CPlayerEdit>		m_pPlayerEdit;
 	std::shared_ptr<CEditCamera>		m_pEditCamera;
 
 	std::unique_ptr<CPeraRenderer>		m_pPeraRenderer;

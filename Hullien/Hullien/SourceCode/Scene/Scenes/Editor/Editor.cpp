@@ -5,6 +5,7 @@
 #include "..\..\..\Editor\AlienParamEdit\AlienParamEdit.h"
 #include "..\..\..\Editor\ExplosionEdit\ExplosionEdit.h"
 #include "..\..\..\Editor\ItemEdit\ItemEdit.h"
+#include "..\..\..\Editor\PlayerEdit\PlayerEdit.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
@@ -21,6 +22,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pAlienParamEdit	( nullptr )
 	, m_pExplosionEdit	( nullptr ) 
 	, m_pItemEdit		( nullptr )
+	, m_pPlayerEdit		( nullptr )
 	, m_pEditCamera		( nullptr )
 	, m_pPeraRenderer	( nullptr )
 	, m_pGroundStage	( nullptr )
@@ -31,6 +33,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	m_pAlienParamEdit	= std::make_unique<CAlienParamEdit>();
 	m_pExplosionEdit	= std::make_unique<CExplosionEdit>();
 	m_pItemEdit			= std::make_unique<CItemEdit>();
+	m_pPlayerEdit		= std::make_unique<CPlayerEdit>();
 
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 
@@ -51,6 +54,7 @@ bool CEditor::Load()
 	if( m_pAlienParamEdit->Init()	== false ) return false;
 	if( m_pExplosionEdit->Init()	== false ) return false;
 	if( m_pItemEdit->Init()			== false ) return false;
+	if( m_pPlayerEdit->Init()		== false ) return false;
 	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
@@ -62,6 +66,22 @@ bool CEditor::Load()
 // 更新関数.
 void CEditor::Update()
 {
+	switch( m_NowEditScene )
+	{
+	case EEditScenes::PlayerEdit:
+		m_pPlayerEdit->Update();
+		break;
+	case EEditScenes::SpawnEdit:
+		break;
+	case EEditScenes::AlienParam:
+		break;
+	case EEditScenes::Explosion:
+		break;
+	case EEditScenes::ItemEdit:
+		break;
+	default:
+		break;
+	}
 	m_pEditCamera->Updata();
 	CCameraManager::SetCamera( m_pEditCamera );
 	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
@@ -89,6 +109,23 @@ void CEditor::ModelRender()
 	CShadowMap::SetRenderPass( 0 );
 	m_pGroundStage->Render();
 
+	switch( m_NowEditScene )
+	{
+	case EEditScenes::PlayerEdit:
+		m_pPlayerEdit->Render();
+		break;
+	case EEditScenes::SpawnEdit:
+		break;
+	case EEditScenes::AlienParam:
+		break;
+	case EEditScenes::Explosion:
+		break;
+	case EEditScenes::ItemEdit:
+		break;
+	default:
+		break;
+	}
+
 	//--------------------------------------------.
 	// 描画パス2.
 	//--------------------------------------------.
@@ -98,6 +135,23 @@ void CEditor::ModelRender()
 	CDirectX11::SetGBuufer();
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
+
+	switch( m_NowEditScene )
+	{
+	case EEditScenes::PlayerEdit:
+		m_pPlayerEdit->ModelRender();
+		break;
+	case EEditScenes::SpawnEdit:
+		break;
+	case EEditScenes::AlienParam:
+		break;
+	case EEditScenes::Explosion:
+		break;
+	case EEditScenes::ItemEdit:
+		break;
+	default:
+		break;
+	}
 
 	//--------------------------------------------.
 	// 最終描画.
@@ -123,6 +177,8 @@ void CEditor::ImGuiRender()
 	ImGui::SetNextWindowSize(ImVec2(WND_W, 70));
 	ImGui::Begin("Edit");
 
+	ImGui::RadioButton("PlayerEdit", &m_NowEditScene, EEditScenes::PlayerEdit); 
+	ImGui::SameLine();
 	ImGui::RadioButton("SpawnEdit", &m_NowEditScene, EEditScenes::SpawnEdit); 
 	ImGui::SameLine();
 	ImGui::RadioButton("AlienParam", &m_NowEditScene, EEditScenes::AlienParam);
@@ -135,6 +191,9 @@ void CEditor::ImGuiRender()
 
 	switch( m_NowEditScene )
 	{
+	case EEditScenes::PlayerEdit:
+		m_pPlayerEdit->Render();
+		break;
 	case EEditScenes::SpawnEdit:
 		m_pSpawnEdit->Render();
 		break;

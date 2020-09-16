@@ -123,6 +123,8 @@
     <ClCompile Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.cpp" />
     <ClCompile Include="SourceCode\Camera\EditCamera\EditCamera.cpp" />
     <ClCompile Include="SourceCode\Utility\Mouse\Mouse.cpp" />
+    <ClCompile Include="SourceCode\Editor\PlayerEdit\PlayerEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\EditBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -250,5 +252,7 @@
     <ClInclude Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.h" />
     <ClInclude Include="SourceCode\Camera\EditCamera\EditCamera.h" />
     <ClInclude Include="SourceCode\Utility\Mouse\Mouse.h" />
+    <ClInclude Include="SourceCode\Editor\PlayerEdit\PlayerEdit.h" />
+    <ClInclude Include="SourceCode\Editor\EditBase.h" />
   </ItemGroup>
 </Project>

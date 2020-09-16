@@ -174,9 +174,11 @@
     <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp" />
     <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\EditBase.cpp" />
     <ClCompile Include="SourceCode\Editor\EditRenderer\EditRenderer.cpp" />
     <ClCompile Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\ItemEdit\ItemEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\PlayerEdit\PlayerEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\SpawnEdit\SpawnEdit.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Barrier\Barrier.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien.cpp" />
@@ -291,9 +293,11 @@
     <ClInclude Include="SourceCode\Common\Sprite\CSprite.h" />
     <ClInclude Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.h" />
     <ClInclude Include="SourceCode\Editor\ControllerEdit\ControllerEdit.h" />
+    <ClInclude Include="SourceCode\Editor\EditBase.h" />
     <ClInclude Include="SourceCode\Editor\EditRenderer\EditRenderer.h" />
     <ClInclude Include="SourceCode\Editor\ExplosionEdit\ExplosionEdit.h" />
     <ClInclude Include="SourceCode\Editor\ItemEdit\ItemEdit.h" />
+    <ClInclude Include="SourceCode\Editor\PlayerEdit\PlayerEdit.h" />
     <ClInclude Include="SourceCode\Editor\SpawnEdit\SpawnEdit.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Barrier\Barrier.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien.h" />
