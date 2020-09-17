@@ -11,7 +11,7 @@ namespace fs = std::filesystem;
 
 CAlienParamEdit::CAlienParamEdit()
 	: m_AlienParamList	()
-	, m_Index				(0)
+	, m_Index			( 0 )
 {
 }
 
@@ -24,6 +24,11 @@ bool CAlienParamEdit::Init()
 {
 	if( FileAllReading() == false ) return false;
 	return true;
+}
+
+// 更新関数.
+void CAlienParamEdit::Update()
+{
 }
 
 // 描画関数.
@@ -44,6 +49,11 @@ void CAlienParamEdit::Render()
 	}
 
 	ImGui::End();
+}
+
+// モデルの描画.
+void CAlienParamEdit::ModelRender()
+{
 }
 
 // 全ファイルの読み込み.

@@ -7,6 +7,7 @@
 CMotherShipUFO::CMotherShipUFO()
 	: m_pStaticMesh		( nullptr )
 	, m_pCollManager	( nullptr )
+	, m_Param			()
 {
 	m_vPosition = INIT_POS;
 }
@@ -55,6 +56,21 @@ void CMotherShipUFO::Collision( CActor* pActor )
 	D3DXVECTOR3 pos = pActor->GetPosition();
 	pos.y += ADD_POS_POWER;	// 座標を上にあげる.
 	pActor->SetPosition( pos );
+}
+
+// パラメータの設定.
+void CMotherShipUFO::SetParameter( const SMotherShipUFOParam& param )
+{
+	m_Param = param;
+	m_vPosition = m_Param.Position;
+	if( m_pCollManager != nullptr ){
+		m_pCollManager->InitSphere(
+			&m_vPosition,
+			&m_vRotation,
+			&m_vSclae.x,
+			m_Param.SphereAdjPos,
+			m_Param.CollisionRadius );
+	}
 }
 
 // モデルの取得.

@@ -8,10 +8,30 @@ class CCollisionManager;	// 当たり判定クラス.
 
 class CMotherShipUFO : public CGameObject
 {
+public:
+	// マザーシップのパラメータ.
+	struct stMotherShipUFOParam
+	{
+		D3DXVECTOR3 Position;			// 座標.
+		float		AddPosYPower;		// 持ち上げる力.
+		D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
+		float		CollisionRadius;	// 当たり判定の半径.
+
+		stMotherShipUFOParam()
+			: Position			( 0.0f, 0.0f, 0.0f )
+			, AddPosYPower		( 0.0f )
+			, SphereAdjPos		( 0.0f, 0.0f, 0.0f )
+			, CollisionRadius	( 1.0f )
+		{}
+
+	} typedef SMotherShipUFOParam;
+
+private:
 	const char* MODEL_NAME = "ufo";	// モデル名.
 	const D3DXVECTOR3 INIT_POS = { 30.0f, 10.0f, 0.0f };
 	const float COLLISION_RADIUS = 5.0f;
 	const float ADD_POS_POWER = 0.1f;
+//	const SMotherShipUFOParam*	pPRAMETER;	// パラメータ(外部からポインタで受け取る).
 
 public:
 	CMotherShipUFO();
@@ -25,6 +45,8 @@ public:
 	virtual void Render() override;
 	// 当たり判定.
 	void Collision( CActor* pActor );
+	// パラメータの設定.
+	void SetParameter( const SMotherShipUFOParam& param );
 
 private:
 	// モデルの取得.
@@ -35,6 +57,7 @@ private:
 private:
 	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;	// スタティックメッシュ.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;	// 当たり判定クラス.
+	SMotherShipUFOParam	m_Param;
 };
 
 #endif	// #ifndef MOTHER_SHIP_UFO_H.

@@ -6,6 +6,7 @@
 #include "..\..\..\Editor\ExplosionEdit\ExplosionEdit.h"
 #include "..\..\..\Editor\ItemEdit\ItemEdit.h"
 #include "..\..\..\Editor\PlayerEdit\PlayerEdit.h"
+#include "..\..\..\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
@@ -15,25 +16,27 @@
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
-	: CSceneBase		( pSceneManager )
+	: CSceneBase			( pSceneManager )
 
-	, m_pControllerEdit	( nullptr )
-	, m_pSpawnEdit		( nullptr )
-	, m_pAlienParamEdit	( nullptr )
-	, m_pExplosionEdit	( nullptr ) 
-	, m_pItemEdit		( nullptr )
-	, m_pPlayerEdit		( nullptr )
-	, m_pEditCamera		( nullptr )
-	, m_pPeraRenderer	( nullptr )
-	, m_pGroundStage	( nullptr )
-	, m_NowEditScene	( EEditScenes::None )
+	, m_pControllerEdit		( nullptr )
+	, m_pSpawnEdit			( nullptr )
+	, m_pAlienParamEdit		( nullptr )
+	, m_pExplosionEdit		( nullptr ) 
+	, m_pItemEdit			( nullptr )
+	, m_pPlayerEdit			( nullptr )
+	, m_pMotherShipUFOEdit	( nullptr )
+	, m_pEditCamera			( nullptr )
+	, m_pPeraRenderer		( nullptr )
+	, m_pGroundStage		( nullptr )
+	, m_NowEditScene		( EEditScenes::None )
 {
-	m_pControllerEdit	= std::make_unique<CControllerEdit>();
-	m_pSpawnEdit		= std::make_unique<CSpawnEdit>();
-	m_pAlienParamEdit	= std::make_unique<CAlienParamEdit>();
-	m_pExplosionEdit	= std::make_unique<CExplosionEdit>();
-	m_pItemEdit			= std::make_unique<CItemEdit>();
-	m_pPlayerEdit		= std::make_unique<CPlayerEdit>();
+	m_pControllerEdit		= std::make_unique<CControllerEdit>();
+	m_pSpawnEdit			= std::make_unique<CSpawnEdit>();
+	m_pAlienParamEdit		= std::make_unique<CAlienParamEdit>();
+	m_pExplosionEdit		= std::make_unique<CExplosionEdit>();
+	m_pItemEdit				= std::make_unique<CItemEdit>();
+	m_pPlayerEdit			= std::make_unique<CPlayerEdit>();
+	m_pMotherShipUFOEdit	= std::make_unique<CMotherShipUFOEdit>();
 
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 
@@ -50,11 +53,12 @@ CEditor::~CEditor()
 // “ÇžŠÖ”.
 bool CEditor::Load()
 {
-	if( m_pSpawnEdit->Init()		== false ) return false;
-	if( m_pAlienParamEdit->Init()	== false ) return false;
-	if( m_pExplosionEdit->Init()	== false ) return false;
-	if( m_pItemEdit->Init()			== false ) return false;
-	if( m_pPlayerEdit->Init()		== false ) return false;
+	if( m_pSpawnEdit->Init()			== false ) return false;
+	if( m_pAlienParamEdit->Init()		== false ) return false;
+	if( m_pExplosionEdit->Init()		== false ) return false;
+	if( m_pItemEdit->Init()				== false ) return false;
+	if( m_pPlayerEdit->Init()			== false ) return false;
+	if( m_pMotherShipUFOEdit->Init()	== false ) return false;
 	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
@@ -79,6 +83,9 @@ void CEditor::Update()
 		m_pExplosionEdit->Update();
 		break;
 	case EEditScenes::ItemEdit:
+		break;
+	case EEditScenes::MotherShipUFOEdit:
+		m_pMotherShipUFOEdit->Update();
 		break;
 	default:
 		break;
@@ -123,6 +130,9 @@ void CEditor::ModelRender()
 		break;
 	case EEditScenes::ItemEdit:
 		break;
+	case EEditScenes::MotherShipUFOEdit:
+		m_pMotherShipUFOEdit->ModelRender();
+		break;
 	default:
 		break;
 	}
@@ -152,10 +162,13 @@ void CEditor::ModelRender()
 		break;
 	case EEditScenes::ItemEdit:
 		break;
+	case EEditScenes::MotherShipUFOEdit:
+		m_pMotherShipUFOEdit->ModelRender();
+		break;
 	default:
 		break;
 	}
-
+	
 	//--------------------------------------------.
 	// ÅI•`‰æ.
 	//--------------------------------------------.
@@ -189,6 +202,8 @@ void CEditor::ImGuiRender()
 	ImGui::RadioButton("Explosion", &m_NowEditScene, EEditScenes::Explosion);
 	ImGui::SameLine();
 	ImGui::RadioButton("ItemEdit", &m_NowEditScene, EEditScenes::ItemEdit);
+	ImGui::SameLine();
+	ImGui::RadioButton("MotherShipUFOEdit", &m_NowEditScene, EEditScenes::MotherShipUFOEdit);
 
 	ImGui::End();
 
@@ -208,6 +223,9 @@ void CEditor::ImGuiRender()
 		break;
 	case EEditScenes::ItemEdit:
 		m_pItemEdit->Render();
+		break;
+	case EEditScenes::MotherShipUFOEdit:
+		m_pMotherShipUFOEdit->Render();
 		break;
 	default:
 		break;

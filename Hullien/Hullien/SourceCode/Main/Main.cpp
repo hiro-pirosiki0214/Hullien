@@ -173,7 +173,7 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 	wc.hInstance		= hInstance;
 	wc.hIcon			= LoadIcon( nullptr, IDI_APPLICATION );
 	wc.hCursor			= LoadCursor( nullptr, IDC_ARROW );
-	wc.hbrBackground	= (HBRUSH)GetStockObject( LTGRAY_BRUSH );
+	wc.hbrBackground	= (HBRUSH)RGB(0, 0, 0);
 	wc.lpszClassName	= APP_NAME.c_str();
 	wc.hIconSm			= LoadIcon( nullptr, IDI_APPLICATION );
 
@@ -201,6 +201,7 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 	pos_x = (((deskRect.right - deskRect.left) - (rect.right - rect.left)) / 2 + deskRect.left);
 	pos_y = (((deskRect.bottom - deskRect.top) - (rect.bottom - rect.top)) / 2 + deskRect.top);
 
+	
 	// ウィンドウの作成.
 	m_hWnd = CreateWindow(
 		APP_NAME.c_str(),		// アプリ名.
@@ -217,6 +218,23 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 		ERROR_MESSAGE( "Window class creation failed" );
 		return E_FAIL;
 	}
+
+	// ウィンドウを半透明化するよう.
+	/*
+	m_hWnd = CreateWindowEx(
+	WS_EX_LAYERED | WS_EX_TOPMOST, 
+	APP_NAME.c_str(), 
+	WND_TITLE.c_str(), 
+	WS_POPUP, 
+	pos_x, pos_y, 
+	rect.right - rect.left, 
+	rect.bottom - rect.top,NULL, NULL, 
+	hInstance,
+	NULL);
+	if( SetLayeredWindowAttributes(m_hWnd, 0, 255, LWA_COLORKEY | LWA_ALPHA) == false ){
+		return E_FAIL;
+	}
+	*/
 
 	// ウィンドウの表示.
 	ShowWindow( m_hWnd, SW_SHOW );

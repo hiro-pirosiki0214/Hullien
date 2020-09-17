@@ -1,15 +1,13 @@
 #ifndef ALIEN_PARAM_EDIT_H
 #define ALIEN_PARAM_EDIT_H
 
-#include "..\..\Utility\ImGuiManager\ImGuiManager.h"
+#include "..\EditBase.h"
 #include "..\..\GameObject\Actor\Character\Alien\Alien.h"
 
 #include <vector>
 
-class CAlienParamEdit
+class CAlienParamEdit : public CEditBase
 {
-	const ImVec2 WINDOW_SIZE = { 510.0f, WND_H-70.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION = { 0.0f, 70.0f };		// 描画座標.
 	const char* FILE_PATH = "Data\\GameParam\\Alien\\AlienParamPathList.txt";
 
 public:
@@ -17,9 +15,13 @@ public:
 	~CAlienParamEdit();
 
 	// 初期化関数.
-	bool Init();
+	virtual bool Init() override;
+	// 更新関数.
+	virtual void Update() override;
 	// 描画関数.
-	void Render();
+	virtual void Render() override;
+	// モデルの描画.
+	virtual void ModelRender() override;
 
 private:
 	// 全ファイルの読み込み.

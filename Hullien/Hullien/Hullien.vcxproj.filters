@@ -125,6 +125,7 @@
     <ClCompile Include="SourceCode\Utility\Mouse\Mouse.cpp" />
     <ClCompile Include="SourceCode\Editor\PlayerEdit\PlayerEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\EditBase.cpp" />
+    <ClCompile Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -254,5 +255,6 @@
     <ClInclude Include="SourceCode\Utility\Mouse\Mouse.h" />
     <ClInclude Include="SourceCode\Editor\PlayerEdit\PlayerEdit.h" />
     <ClInclude Include="SourceCode\Editor\EditBase.h" />
+    <ClInclude Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h" />
   </ItemGroup>
 </Project>
