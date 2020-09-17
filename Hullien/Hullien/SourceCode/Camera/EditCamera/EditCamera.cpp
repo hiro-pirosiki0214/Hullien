@@ -19,21 +19,21 @@ void CEditCamera::Updata()
 	D3DXMATRIX mRot;
 	D3DXMatrixRotationYawPitchRoll( &mRot, m_vDegree.x, 0.0f, 0.0f );
 	// 軸ベクトルを用意.
-	D3DXVECTOR3 vecAxisZ( 0.0f, 0.0f, 1.0f );
+	D3DXVECTOR3 vecAxisZ( 0.0f, 0.0f, 0.5f );
 	// Z軸ベクトルそのものを回転状態により変換する.
 	D3DXVec3TransformCoord( &vecAxisZ, &vecAxisZ, &mRot );
 
 	
 	if( GetAsyncKeyState('W') & 0x8000 ) m_vPosition += vecAxisZ;
 	if( GetAsyncKeyState('S') & 0x8000 ) m_vPosition -= vecAxisZ;
-	vecAxisZ = { 1.0f, 0.0f, 0.0f };
+	vecAxisZ = { 0.5f, 0.0f, 0.0f };
 	// X軸ベクトルそのものを回転状態により変換する.
 	D3DXVec3TransformCoord( &vecAxisZ, &vecAxisZ, &mRot );
 	if( GetAsyncKeyState('D') & 0x8000 ) m_vPosition += vecAxisZ;
 	if( GetAsyncKeyState('A') & 0x8000 ) m_vPosition -= vecAxisZ;
 
-	if( GetAsyncKeyState('Q') & 0x8000 ) m_vPosition.y += 1.0f;
-	if( GetAsyncKeyState('E') & 0x8000 ) m_vPosition.y -= 1.0f;
+	if( GetAsyncKeyState('Q') & 0x8000 ) m_vPosition.y += 0.5f;
+	if( GetAsyncKeyState('E') & 0x8000 ) m_vPosition.y -= 0.5f;
 
 	MouseUpdate();
 

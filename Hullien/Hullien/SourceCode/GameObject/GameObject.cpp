@@ -34,7 +34,7 @@ D3DXVECTOR3 CGameObject::GetPosition() const
 //-----------------------------.
 // ç¿ïWê›íËä÷êî.
 //-----------------------------.
-void CGameObject::SetPosition( const D3DXVECTOR3 vPos )
+void CGameObject::SetPosition( const D3DXVECTOR3& vPos )
 {
 	m_vPosition = vPos;
 }

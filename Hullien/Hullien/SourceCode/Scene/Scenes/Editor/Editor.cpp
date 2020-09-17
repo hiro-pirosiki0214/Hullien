@@ -76,6 +76,7 @@ void CEditor::Update()
 	case EEditScenes::AlienParam:
 		break;
 	case EEditScenes::Explosion:
+		m_pExplosionEdit->Update();
 		break;
 	case EEditScenes::ItemEdit:
 		break;
@@ -112,7 +113,7 @@ void CEditor::ModelRender()
 	switch( m_NowEditScene )
 	{
 	case EEditScenes::PlayerEdit:
-		m_pPlayerEdit->Render();
+		m_pPlayerEdit->ModelRender();
 		break;
 	case EEditScenes::SpawnEdit:
 		break;
@@ -142,10 +143,12 @@ void CEditor::ModelRender()
 		m_pPlayerEdit->ModelRender();
 		break;
 	case EEditScenes::SpawnEdit:
+		
 		break;
 	case EEditScenes::AlienParam:
 		break;
 	case EEditScenes::Explosion:
+		m_pExplosionEdit->ModelRender();
 		break;
 	case EEditScenes::ItemEdit:
 		break;

@@ -87,7 +87,7 @@ void CAlien::SetGirlPos( CActor& actor )
 }
 
 // ç¿ïWê›íËä÷êî.
-void CAlien::SetPosition( const D3DXVECTOR3 vPos )
+void CAlien::SetPosition( const D3DXVECTOR3& vPos )
 {
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	m_vPosition = vPos;

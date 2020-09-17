@@ -149,7 +149,7 @@ protected:
 	// 女の子の座標を設定.
 	void SetGirlPos( CActor& actor );
 	// 座標設定関数.
-	virtual void SetPosition( const D3DXVECTOR3 vPos ) override;
+	virtual void SetPosition( const D3DXVECTOR3& vPos ) override;
 
 	// 移動ベクトル設定関数.
 	virtual void SetMoveVector( const D3DXVECTOR3& targetPos );

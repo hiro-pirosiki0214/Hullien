@@ -46,7 +46,7 @@ class CPlayer : public CCharacter
 
 		EAttackNo_Max = EAttackNo_Three,
 	} typedef EAttackNo;
-
+public:
 	// プレイヤーパラメータ.
 	struct stPlayerParam : public stParameter
 	{
@@ -75,7 +75,7 @@ class CPlayer : public CCharacter
 			, SphereAdjRadius	( 0.0f )
 		{}
 	} typedef SPlayerParam;
-
+private:
 	// 攻撃用データ.
 	struct stAttackData
 	{
