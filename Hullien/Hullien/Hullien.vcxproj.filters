@@ -121,10 +121,8 @@
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventActor\Character\Player\EventPlayer.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventActor\EventActor.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventUFO\EventUFO.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventActor\Character\EventCharacter.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.cpp" />
+    <ClCompile Include="SourceCode\Camera\EvevtCamera\EvevtCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -253,9 +251,7 @@
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventActor\Character\Player\EventPlayer.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventActor\EventActor.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventUFO\EventUFO.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventActor\Character\EventCharacter.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.h" />
+    <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
   </ItemGroup>
 </Project>

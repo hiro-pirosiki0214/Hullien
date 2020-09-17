@@ -143,6 +143,7 @@
     <ClCompile Include="Library\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="SourceCode\Camera\Camera.cpp" />
     <ClCompile Include="SourceCode\Camera\CameraManager\CameraManager.cpp" />
+    <ClCompile Include="SourceCode\Camera\EvevtCamera\EvevtCamera.cpp" />
     <ClCompile Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.cpp" />
     <ClCompile Include="SourceCode\Collider\ColliderBase\ColliderBase.cpp" />
     <ClCompile Include="SourceCode\Collider\Colliders\Capsule\CapsuleCollision.cpp" />
@@ -194,10 +195,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventActor\Character\EventCharacter.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventActor\Character\Player\EventPlayer.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventActor\EventActor.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Event\EventUFO\EventUFO.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
     <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
@@ -264,6 +262,7 @@
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />
     <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h" />
+    <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
     <ClInclude Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.h" />
     <ClInclude Include="SourceCode\Collider\ColliderBase\ColliderBase.h" />
     <ClInclude Include="SourceCode\Collider\Colliders\Capsule\CapsuleCollision.h" />
@@ -318,10 +317,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventActor\Character\EventCharacter.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventActor\Character\Player\EventPlayer.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventActor\EventActor.h" />
-    <ClInclude Include="SourceCode\GameObject\Event\EventUFO\EventUFO.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.h" />
     <ClInclude Include="SourceCode\GameObject\GameObject.h" />
     <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />
     <ClInclude Include="SourceCode\GameObject\ObjectList.h" />

@@ -23,6 +23,8 @@ public:
 
 	// オブジェクトタグ取得関数.
 	EObjectTag GetObjectTag() const;
+	// 座標設定関数.
+	void SetPosition(const D3DXVECTOR3 vPos) { m_vPosition = vPos; }
 	// 座標取得関数.
 	D3DXVECTOR3 GetPosition() const;
 

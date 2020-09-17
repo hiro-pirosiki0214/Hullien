@@ -4,7 +4,11 @@
 #include "..\..\EventBase\EventBase.h"
 
 class CGroundStage;		// 地面クラス.
-class CEventUFO;
+class CSpawnUFO;		// イベント用UFOクラス.
+class CEventPlayer;		// イベント用プレイヤークラス.
+class CGirl;			// 女の子クラス.
+class CAlienA;			// 宇宙人Aクラス.
+class CEventCamera;		// イベント用カメラクラス.
 
 /***********************************
 *	スタートイベントクラス.
@@ -27,7 +31,11 @@ private:
 
 private:
 	std::shared_ptr<CGroundStage>		m_pGroundStage;
-	std::shared_ptr<CEventUFO>			m_pUFO;
+	std::shared_ptr<CSpawnUFO>			m_pSpawnUFO;
+	std::shared_ptr<CEventPlayer>		m_pPlayer;
+	std::shared_ptr<CGirl>				m_pGirl;
+	std::shared_ptr<CAlienA>			m_pAlienA;
+	std::shared_ptr<CEventCamera>		m_pEventCamera;
 };
 
 #endif //#ifndef START_EVENT_H.
