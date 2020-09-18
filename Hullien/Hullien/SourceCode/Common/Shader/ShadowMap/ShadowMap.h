@@ -19,6 +19,16 @@ class CShadowMap : public CShaderBase
 		D3DXVECTOR2	Tex;	//√∏Ω¡¨ç¿ïW.
 	};
 public:
+	enum enShadowMapRenderPass
+	{
+		None = -1,
+
+		One,
+		Two,
+
+		Max,
+	} typedef EShadowMapRenderPass;
+public:
 	CShadowMap();
 	virtual ~CShadowMap();
 

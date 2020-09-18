@@ -1,7 +1,7 @@
 #include "Alien.h"
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
-
+#include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\XAudio2\SoundManager.h"
 
@@ -240,6 +240,36 @@ void CAlien::Escape()
 	m_NowMoveState = EMoveState::Rotation;
 }
 
+// アルファブレンドの設定.
+void CAlien::AlphaBlendSetting()
+{
+#ifndef IS_TEMP_MODEL_RENDER
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+		if( m_ModelAlpha < 1.0f ){
+			m_pSkinMesh->SetBlend( false );
+		}
+	}
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::Two ){
+		m_pSkinMesh->SetBlend( true );
+		if( m_ModelAlpha >= 1.0f ){
+			m_pSkinMesh->SetBlend( false );
+		}
+	}
+#else
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+		if( m_ModelAlpha < 1.0f ){
+			m_pTempStaticMesh->SetBlend( false );
+		}
+	}
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::Two ){
+		m_pTempStaticMesh->SetBlend( true );
+		if( m_ModelAlpha >= 1.0f ){
+			m_pTempStaticMesh->SetBlend( false );
+		}
+	}
+#endif	// #ifndef IS_TEMP_MODEL_RENDER.
+}
+
 // 女の子との当たり判定.
 void CAlien::GirlCollision( CActor* pActor )
 {
@@ -281,7 +311,7 @@ void CAlien::BarrierCollision( CActor* pActor )
 		m_IsBarrierHit = false;
 		
 	} else {
-		CSoundManager::NoMultipleSEPlay("BarrierHitSE");
+		CSoundManager::PlaySE("BarrierHitSE");
 		m_MoveSpeed = moveSpeed;
 		m_IsBarrierHit = true;
 		*m_pIsAlienOtherAbduct = false;

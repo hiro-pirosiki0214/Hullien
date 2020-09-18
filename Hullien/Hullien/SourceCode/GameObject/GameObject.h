@@ -2,7 +2,7 @@
 #define GAME_OBJECT_H
 
 #include "..\Global.h"
-
+#include "..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "ObjectList.h"
 
 /****************************************

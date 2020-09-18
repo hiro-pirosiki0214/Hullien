@@ -13,6 +13,8 @@
 #include "..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
+#include "..\..\..\Utility\ImGuiManager\ImGuiManager.h"
+#include "..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
@@ -143,6 +145,14 @@ void CGame::Render()
 		// コンテニュー.
 		m_ContinueWidget->Render();
 	}
+
+	CEditRenderer::PushRenderProc( 
+		[&]()
+		{
+			ImGui::Image( CDirectX11::GetGBuffer()[0], ImVec2(800, 400) );
+			ImGui::Image( CDirectX11::GetGBuffer()[1], ImVec2(800, 400) );
+			ImGui::Image( CDirectX11::GetGBuffer()[2], ImVec2(800, 400) );
+		});	
 }
 
 //============================.

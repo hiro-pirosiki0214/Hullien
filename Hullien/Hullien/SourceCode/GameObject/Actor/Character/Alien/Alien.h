@@ -173,6 +173,9 @@ protected:
 	// 逃げる.
 	virtual void Escape();
 
+	// アルファブレンドの設定.
+	void AlphaBlendSetting();
+
 	// 女の子との当たり判定.
 	void GirlCollision( CActor* pActor );
 	// バリアとの当たり判定.

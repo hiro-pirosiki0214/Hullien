@@ -229,7 +229,7 @@ void CItemBase::DropAndActiveRender()
 	m_pStaticMesh->SetRotation( m_vRotation );
 	m_pStaticMesh->SetScale( m_vSclae );
 	m_pStaticMesh->SetAlpha( m_ModelAlpha );
-	m_pStaticMesh->SetBlend( true );
+	AlphaBlendSetting();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
@@ -252,4 +252,20 @@ void CItemBase::HitRender()
 	// エフェクトの描画.
 	m_pEffects[static_cast<int>(EEffectNumber::Hit)]->SetLocation( m_vPosition );
 	m_pEffects[static_cast<int>(EEffectNumber::Hit)]->Render();
+}
+
+// アルファブレンドの設定.
+void CItemBase::AlphaBlendSetting()
+{
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+		if( m_ModelAlpha < 1.0f ){
+			m_pStaticMesh->SetBlend( false );
+		}
+	}
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::Two ){
+		m_pStaticMesh->SetBlend( true );
+		if( m_ModelAlpha >= 1.0f ){
+			m_pStaticMesh->SetBlend( false );
+		}
+	}
 }

@@ -118,6 +118,8 @@ private:
 	void DropAndActiveRender();
 	// ヒット時の描画.
 	void HitRender();
+	// アルファブレンドの設定.
+	void AlphaBlendSetting();
 
 protected:
 	std::shared_ptr<CDX9StaticMesh> m_pStaticMesh;	// スタティックメッシュ.
