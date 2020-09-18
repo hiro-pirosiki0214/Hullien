@@ -23,6 +23,7 @@ CDX9SkinMesh::CDX9SkinMesh()
 	: m_hWnd(nullptr)
 	, m_pDevice9(nullptr)
 	, m_pSampleLinear(nullptr)
+	, m_pShadowMapSampler(nullptr)
 	, m_pVertexShader(nullptr)
 	, m_pPixelShader(nullptr)
 	, m_pVertexLayout(nullptr)
@@ -56,6 +57,7 @@ CDX9SkinMesh::~CDX9SkinMesh()
 	Release();
 
 	//シェーダやサンプラ関係.
+	SAFE_RELEASE( m_pShadowMapSampler );
 	SAFE_RELEASE( m_pSampleLinear );
 	SAFE_RELEASE( m_pVertexShader );
 	SAFE_RELEASE( m_pPixelShader );
@@ -667,8 +669,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_mWorld = mScale * m_mRotation * mTran;
 
 	SetNewPoseMatrices( pMesh, m_iFrame, pContainer );
-	ShadowRender( pMesh, m_mWorld );
-
+	if( ShadowRender( pMesh, m_mWorld ) == true ) return;
 	D3D11_MAPPED_SUBRESOURCE pData;
 
 	//使用するシェーダのセット.
@@ -760,6 +761,14 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_pContext11->VSSetConstantBuffers(	2, 1, &m_pCBufferPerFrame);
 	m_pContext11->PSSetConstantBuffers(	2, 1, &m_pCBufferPerFrame);
 
+	// カスケードの数だけループ.
+	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+		ID3D11ShaderResourceView* shadowTex = CDirectX11::GetZBuffer()[i];
+		m_pContext11->PSSetShaderResources( i+1, 1, &shadowTex );
+		shadowTex = nullptr;
+	}
+	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
+
 	//------------------------------------------------.
 	//	コンスタントバッファに情報を設定(メッシュごと).
 	//------------------------------------------------.
@@ -782,7 +791,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_pContext11->PSSetConstantBuffers(0, 1, &m_pCBufferPerMesh);
 
 	// トゥーンマップテクスチャを渡す.
-	m_pContext11->PSSetShaderResources( 1, 1, &m_pToonTexture);
+	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture);
 
 	//マテリアルの数だけ、
 	//それぞれのマテリアルのインデックスバッファを描画.
@@ -1274,7 +1283,6 @@ HRESULT CDX9SkinMesh::CreateLinearSampler(ID3D11SamplerState** pSampler)
 	{
 		return E_FAIL;
 	}
-	return S_OK;
 
 	samDesc.Filter		= D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 	samDesc.AddressU	= D3D11_TEXTURE_ADDRESS_BORDER;

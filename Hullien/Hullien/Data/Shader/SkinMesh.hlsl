@@ -7,13 +7,13 @@
 #define MAX_BONE_MATRICES (255)
 
 //グローバル.
-Texture2D		g_Texture	: register( t0 );	//テクスチャーは レジスターt(n).
+Texture2D		g_Texture		: register( t0 );	//テクスチャーは レジスターt(n).
 Texture2D		g_ShadowMap1	: register( t1 );
 Texture2D		g_ShadowMap2	: register( t2 );
 Texture2D		g_ShadowMap3	: register( t3 );
 Texture2D		g_ShadowMap4	: register( t4 );
-Texture2D		g_ToonMap	: register( t5 );	// toonシェーダー用のテクスチャ.
-SamplerState	g_SamLinear	: register( s0 );	//サンプラーはレジスターs(n).
+Texture2D		g_ToonMap		: register( t5 );	// toonシェーダー用のテクスチャ.
+SamplerState	g_SamLinear		: register( s0 );	//サンプラーはレジスターs(n).
 SamplerState g_ShadowSamLinear : register(s1);
 
 //コンスタントバッファ(メッシュごと).

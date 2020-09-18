@@ -543,7 +543,6 @@ bool CPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
 #else
 	if( m_pTempStaticMesh == nullptr ) return false;
 	// メッシュを使用しての当たり判定初期化.
@@ -557,6 +556,7 @@ bool CPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
+#endif	// #ifndef IS_MODEL_RENDER.
 
 	// 攻撃用の当たり判定初期化.
 	if( m_pAttackCollManager == nullptr ){
@@ -569,7 +569,6 @@ bool CPlayer::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		1.0f ) )) return false;
 	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }
 
 // エフェクトの設定.

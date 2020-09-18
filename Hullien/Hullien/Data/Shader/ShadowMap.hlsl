@@ -131,6 +131,6 @@ float4 outRBGA(float depth)
 // ピクセルシェーダー.
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
-	return input.Pos.z / input.Pos.w;
+//	return input.Pos.z / input.Pos.w;
 	return outRBGA(input.Pos.z / input.Pos.w);
 }
