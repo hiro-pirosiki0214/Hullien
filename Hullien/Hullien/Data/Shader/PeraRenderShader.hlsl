@@ -40,6 +40,14 @@ VS_OUTPUT VS_Main(
 // ピクセルシェーダ.
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
+	// 魚眼レンズ.
+	/*
+	const float f = 1.0f;	// 強さ.
+	float2 pos = input.Tex * 2.0f - 1.0f;
+	float p = length(pos);
+	pos = (1 + f * p * p) / (1 + 2 * f) * pos;
+	float4 color = g_TextureColor.Sample(g_samLinear, pos*0.5+0.5);
+	*/
 	float4 color = g_TextureColor.Sample(g_samLinear, input.Tex);
 	
 	//----------------------------------------------------------------.

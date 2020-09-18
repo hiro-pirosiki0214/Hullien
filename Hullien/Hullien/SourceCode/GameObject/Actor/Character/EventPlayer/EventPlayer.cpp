@@ -14,7 +14,7 @@ CEventPlayer::~CEventPlayer()
 // ‰Šú‰»ŠÖ”
 bool CEventPlayer::Init()
 {
-	if (GetModel(MODEL_NAME) == false) return false;
+	if (GetModel(MODEL_TEMP_NAME) == false) return false;
 
 	return true;
 }
