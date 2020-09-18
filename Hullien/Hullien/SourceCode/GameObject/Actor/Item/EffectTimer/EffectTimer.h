@@ -12,6 +12,7 @@ public:
 
 	// タイムの設定.
 	void SetTime( float time ){ m_Time = time; }
+	// タイムの取得.
 	float GetTime(){ return m_Time; }
 	// 更新.
 	bool Update();

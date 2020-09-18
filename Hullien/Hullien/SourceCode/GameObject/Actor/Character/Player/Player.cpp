@@ -40,7 +40,7 @@ CPlayer::CPlayer()
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
-	, m_pEffectTimers				( EEffectTimerNo:: enEffectTimerNo_Max )
+	, m_pEffectTimers				( EEffectTimerNo::EEffectTimerNo_Max )
 	, m_IsAttackSE					( false )
 {
 	m_ObjectTag = EObjectTag::Player;
@@ -82,7 +82,7 @@ bool CPlayer::Init()
 void CPlayer::Update()
 {
 	// 麻痺タイマーが動作してなければ.
-	if( m_pEffectTimers[EEffectTimerNo::ParalysisTimer]->IsUpdate() == false ){
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->IsUpdate() == false ){
 		Controller();			// 操作.
 		AttackController();		// 攻撃操作.
 		SPController();			// 特殊能力操作.
@@ -100,7 +100,7 @@ void CPlayer::Update()
 	CameraController();	// カメラ操作.
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
 	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// 高さの設定.
-														// プレイヤーを注視して回転.
+	// プレイヤーを注視して回転.
 	m_pCamera->RotationLookAtObject( m_vPosition );
 
 	// カメラをマネージャーに設定.
@@ -118,7 +118,7 @@ void CPlayer::Update()
 void CPlayer::Render()
 {
 	MeshRender();	// メッシュの描画.
-	EffectRender();
+	EffectRender();	// エフェクトの描画.
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -135,16 +135,7 @@ void CPlayer::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	AttackCollision( pActor );
-
-
-	// 攻撃関数.
-	auto attackProc = [&]( float& life ){ life -= 10.0f; };
-	if (GetAsyncKeyState('C') & 0x8000)
-		pActor->LifeCalculation(attackProc);
-
-	// 球体の当たり判定.
-//	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	AttackCollision( pActor );	// 攻撃時の当たり判定.
 
 }
 
@@ -165,8 +156,6 @@ void CPlayer::SpriteRender()
 	// 特殊能力.
 	param.SpecialAbility = m_SpecialAbility;
 	param.SpecialAbilityMax = m_Parameter.SpecialAbilityMax;
-	// ↓ 特殊能力最大値 変数.
-	// m_Parameter.SpecialAbilityMax
 	for (const auto& s : m_pWidget)
 	{
 		s->SetParameter(param);
@@ -317,7 +306,7 @@ void CPlayer::AvoidMove()
 	// 移動距離が一定以下なら終了.
 	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
-	m_vRotation.z = 0.0f;	// 回転　アニメーション設定後消す.
+	m_vRotation.z = 0.0f;		// 回転　アニメーション設定後消す.
 }
 
 // エフェクト描画関数.
@@ -358,7 +347,7 @@ void CPlayer::AttackCollision( CActor* pActor )
 void CPlayer::SpecialAbilityUpdate()
 {							
 	// アイテムでの回復状態なら.
-	if( m_pEffectTimers[EEffectTimerNo::SPRecoveryTimer]->Update() == true ){
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->Update() == true ){
 		m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 回復値をもとに戻す.
 	}
 
@@ -373,21 +362,21 @@ void CPlayer::SpecialAbilityUpdate()
 // 攻撃力UP更新関数.
 void CPlayer::AttackUpUpdate()
 {
-	if( m_pEffectTimers[EEffectTimerNo::AttackTimer]->Update() == false ) return;
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->Update() == false ) return;
 	m_AttackPower		= m_Parameter.AttackPower;
 }
 
 // 移動速度UP更新関数.
 void CPlayer::MoveSpeedUpUpdate()
 {
-	if( m_pEffectTimers[EEffectTimerNo::MoveSpeedUpTimer]->Update() == false ) return;
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->Update() == false ) return;
 	m_MoveSpeed = m_Parameter.MoveSpeed;
 }
 
 // 麻痺中の更新関数.
 void CPlayer::ParalysisUpdate()
 {
-	if( m_pEffectTimers[EEffectTimerNo::ParalysisTimer]->Update() == false ) return;
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->Update() == false ) return;
 }
 
 // 攻撃アニメーション.
@@ -445,7 +434,7 @@ bool CPlayer::IsPushAttack()
 	SAttackData tmpAttackData;	// 仮データを用意.
 	switch( m_AttackComboCount )
 	{
-	case 1:	// 攻撃1.
+	case EAttackNo::EAttackNo_One:	// 攻撃1.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait1;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_One-1];
@@ -455,7 +444,7 @@ bool CPlayer::IsPushAttack()
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 		
 		break;
-	case 2:	// 攻撃2.
+	case EAttackNo::EAttackNo_Two:	// 攻撃2.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Happy;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Two-1];
@@ -463,7 +452,7 @@ bool CPlayer::IsPushAttack()
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;
-	case 3:// 攻撃3.
+	case EAttackNo::EAttackNo_Three:// 攻撃3.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Three-1];
@@ -492,36 +481,36 @@ void CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 // 特殊能力回復時間、効力時間設定関数.
 void CPlayer::SetSPEffectTime( const std::function<void(float&,float&)>& proc )
 {
-	if( m_pEffectTimers[EEffectTimerNo::SPRecoveryTimer]->IsUpdate() == true ) return;
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->IsUpdate() == true ) return;
 
 	float tmpTime = 0.0f;
 	proc( m_ItemSpecialAbilityValue, tmpTime );
-	m_pEffectTimers[EEffectTimerNo::SPRecoveryTimer]->SetTime( tmpTime );
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->SetTime( tmpTime );
 
 	if( m_SpecialAbility >= m_Parameter.SpecialAbilityMax ) return;
-	m_pEffectTimers[EEffectTimerNo::SPRecoveryTimer]->Set();
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->Set();
 }
 
 // 攻撃力、効力時間設定関数.
 void CPlayer::SetAttackEffectTime( const std::function<void(float&,float&)>& proc )
 {
-	if( m_pEffectTimers[EEffectTimerNo::AttackTimer]->IsUpdate() == true ) return;
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->IsUpdate() == true ) return;
 
 	float tmpTime = 0.0f;
 	proc( m_AttackPower, tmpTime );
-	m_pEffectTimers[EEffectTimerNo::AttackTimer]->SetTime( tmpTime );
-	m_pEffectTimers[EEffectTimerNo::AttackTimer]->Set();
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->SetTime( tmpTime );
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->Set();
 }
 
 // 移動速度、効力時間設定関数.
 void CPlayer::SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& proc )
 {
-	if( m_pEffectTimers[EEffectTimerNo::MoveSpeedUpTimer]->IsUpdate() == true ) return;
+	if( m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->IsUpdate() == true ) return;
 
 	float tmpTime = 0.0f;
 	proc( m_MoveSpeed, tmpTime );
-	m_pEffectTimers[EEffectTimerNo::MoveSpeedUpTimer]->SetTime( tmpTime );
-	m_pEffectTimers[EEffectTimerNo::MoveSpeedUpTimer]->Set();
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->SetTime( tmpTime );
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->Set();
 }
 
 // 麻痺の設定.
@@ -529,8 +518,8 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 {
 	float tmpTime = 0.0f;
 	proc( tmpTime );
-	m_pEffectTimers[EEffectTimerNo::ParalysisTimer]->SetTime( tmpTime );
-	m_pEffectTimers[EEffectTimerNo::ParalysisTimer]->Set();
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->SetTime( tmpTime );
+	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->Set();
 	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
 
 }
@@ -711,27 +700,27 @@ void CPlayer::DebugRender()
 
 	// 特殊能力回復中か.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*28, 0.0f } );
-	CDebugText::Render( "IsParalysis : ", m_pEffectTimers[EEffectTimerNo::SPRecoveryTimer]->IsUpdate()==true?"true":"false" );
+	CDebugText::Render( "IsParalysis : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->IsUpdate()==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*29, 0.0f } );
-	CDebugText::Render( "ParalysisTime : ", m_pEffectTimers[EEffectTimerNo::SPRecoveryTimer]->GetTime()/FPS );
+	CDebugText::Render( "ParalysisTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->GetTime()/FPS );
 
 	// 攻撃UP中か.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*23, 0.0f } );
-	CDebugText::Render( "IsItemAttackUp : ", m_pEffectTimers[EEffectTimerNo::AttackTimer]->IsUpdate()==true?"true":"false" );
+	CDebugText::Render( "IsItemAttackUp : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->IsUpdate()==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*24, 0.0f } );
-	CDebugText::Render( "AttackUpTime : ", m_pEffectTimers[EEffectTimerNo::AttackTimer]->GetTime()/FPS );
+	CDebugText::Render( "AttackUpTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->GetTime()/FPS );
 
 	// 移動速度UP中か.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*24, 0.0f } );
-	CDebugText::Render( "IsItemMoveSpeedUp : ", m_pEffectTimers[EEffectTimerNo::MoveSpeedUpTimer]->IsUpdate()==true?"true":"false" );
+	CDebugText::Render( "IsItemMoveSpeedUp : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->IsUpdate()==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*25, 0.0f } );
-	CDebugText::Render( "MoveSpeedUpTime : ", m_pEffectTimers[EEffectTimerNo::MoveSpeedUpTimer]->GetTime()/FPS );
+	CDebugText::Render( "MoveSpeedUpTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->GetTime()/FPS );
 
 	// 麻痺中か.
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*26, 0.0f } );
-	CDebugText::Render( "IsParalysis : ", m_pEffectTimers[EEffectTimerNo::ParalysisTimer]->IsUpdate()==true?"true":"false" );
+	CDebugText::Render( "IsParalysis : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->IsUpdate()==true?"true":"false" );
 	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*27, 0.0f } );
-	CDebugText::Render( "ParalysisTime : ", m_pEffectTimers[EEffectTimerNo::ParalysisTimer]->GetTime()/FPS );
+	CDebugText::Render( "ParalysisTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->GetTime()/FPS );
 }
 
 // ウィジェット設定.

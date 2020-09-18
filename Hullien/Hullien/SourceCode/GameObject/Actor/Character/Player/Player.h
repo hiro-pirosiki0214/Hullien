@@ -16,12 +16,13 @@ class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
-	const char*	MODEL_NAME	= "Sayaka_s";	// モデル名.
-	const char* MODEL_TEMP_NAME = "kaito";	// 仮モデル名.
+	const char*	MODEL_NAME			= "Sayaka_s";	// モデル名.
+	const char* MODEL_TEMP_NAME		= "kaito";		// 仮モデル名.
 
-	const char* ATTACK_ONE_EFFECT_NAME = "barrier";
-	const char* ATTACK_TWO_EFFECT_NAME = "uvtest";
-	const char* ATTACK_THREE_EFFECT_NAME = "uvtest";
+	// 使用攻撃エフェクト名.
+	const char* ATTACK_ONE_EFFECT_NAME		= "barrier";
+	const char* ATTACK_TWO_EFFECT_NAME		= "uvtest";
+	const char* ATTACK_THREE_EFFECT_NAME	= "uvtest";
 
 	// アニメーション番号.
 	enum class enAnimNo
@@ -52,14 +53,14 @@ class CPlayer : public CCharacter
 	// 効果時間計測番号.
 	enum enEffectTimerNo
 	{
-		enEffectTimerNo_None,
+		EEffectTimerNo_None,
 
-		SPRecoveryTimer = 0,
-		AttackTimer,
-		MoveSpeedUpTimer,
-		ParalysisTimer,
+		EEffectTimerNo_SPRecovery = 0,	// 特殊能力回復.
+		EEffectTimerNo_Attack,			// 攻撃力.
+		EEffectTimerNo_MoveSpeedUp,		// 移動速度.
+		EEffectTimerNo_Paralysis,		// 麻痺.
 
-		enEffectTimerNo_Max,
+		EEffectTimerNo_Max,
 	} typedef EEffectTimerNo;
 
 	// 攻撃用データ.
@@ -172,13 +173,13 @@ private:
 	std::shared_ptr<CRotLookAtCenter>				m_pCamera;		// カメラクラス.
 	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;		// Widgetクラス.
 	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
-	D3DXVECTOR3	m_OldPosition;			// 前回の座標.
+	D3DXVECTOR3	m_OldPosition;		// 前回の座標.
 	EAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
 	EAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
-	int			m_AttackComboCount;					// 攻撃コンボカウント.
-	std::vector<double>	m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
-	std::queue<SAttackData>	m_AttackDataQueue;		// 攻撃データのキュー.
-	D3DXVECTOR3		m_AttackPosition;
+	int						m_AttackComboCount;			// 攻撃コンボカウント.
+	std::vector<double>		m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
+	std::queue<SAttackData>	m_AttackDataQueue;			// 攻撃データのキュー.
+	D3DXVECTOR3				m_AttackPosition;			// 攻撃用当たり判定座標.
 	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
