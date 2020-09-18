@@ -2,8 +2,10 @@
 #include "..\..\Utility\FileManager\FileManager.h"
 
 CExplosionEdit::CExplosionEdit()
-	: m_ExplosionParam	()
+	: m_pExplosion		( nullptr )
+	, m_ExplosionParam	()
 {
+	m_pExplosion = std::make_unique<CExplosion>();
 }
 
 CExplosionEdit::~CExplosionEdit()
@@ -14,23 +16,40 @@ CExplosionEdit::~CExplosionEdit()
 bool CExplosionEdit::Init()
 {
 	if( FileReading() == false ) return false;
+	if( m_pExplosion->Init() == false ) return false;
+	m_pExplosion->SetExplosionParam( m_ExplosionParam );
 	return true;
+}
+
+// 更新関数.
+void CExplosionEdit::Update()
+{
+	m_pExplosion->Update();
 }
 
 // 描画関数.
 void CExplosionEdit::Render()
 {
-	ImGui::SetNextWindowSize( WINDOW_SIZE, ImGuiCond_::ImGuiCond_Once );
-	ImGui::SetNextWindowPos( RENDER_POSITION, ImGuiCond_::ImGuiCond_Once );
-	ImGui::GetWindowSize();
+	ImGui::SetNextWindowSize( WINDOW_SIZE );
+	ImGui::SetNextWindowPos( RENDER_POSITION );
+	ImGui::Begin( u8"爆発パラメーター設定" );
 
-	bool isOpen = true;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
-	ImGui::Begin( u8"爆発パラメーター設定", &isOpen );
+	ImGui::PushItemWidth(200.0f);
+
+	if( ImGui::Button( u8"再生" ) == true ){
+		if( m_pExplosion->IsStop() == true ){
+			m_pExplosion->Init();
+			m_pExplosion->SetPosition( D3DXVECTOR3( 0.0f, 5.0f, 0.0f ) );
+		}
+	}
 
 	ImGui::InputFloat( u8"爆発力", &m_ExplosionParam.AttackPower );
-	ImGui::InputFloat( u8"爆発速度", &m_ExplosionParam.ExplosionSpeed );
-	ImGui::InputFloat( u8"スフィアの最大半径", &m_ExplosionParam.SphereMaxRadius );
+	if( ImGui::InputFloat( u8"爆発速度", &m_ExplosionParam.ExplosionSpeed ) ){
+		m_pExplosion->SetExplosionParam( m_ExplosionParam );
+	}
+	if( ImGui::InputFloat( u8"スフィアの最大半径", &m_ExplosionParam.SphereMaxRadius ) ){
+		m_pExplosion->SetExplosionParam( m_ExplosionParam );
+	}
 	ImGui::InputFloat( u8"スフィアの調整用座標 : X", &m_ExplosionParam.SphereAdjPos.x );
 	ImGui::InputFloat( u8"スフィアの調整用座標 : Y", &m_ExplosionParam.SphereAdjPos.y );
 	ImGui::InputFloat( u8"スフィアの調整用座標 : Z", &m_ExplosionParam.SphereAdjPos.z );
@@ -42,7 +61,15 @@ void CExplosionEdit::Render()
 	ImGui::SameLine();
 	s_success.Render();
 
+	ImGui::PopItemWidth();
+
 	ImGui::End();
+}
+
+// モデルの描画.
+void CExplosionEdit::ModelRender()
+{
+	m_pExplosion->Render();
 }
 
 // ファイルの読み込み.

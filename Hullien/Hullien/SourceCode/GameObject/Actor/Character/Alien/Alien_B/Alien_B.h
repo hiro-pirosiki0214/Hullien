@@ -26,6 +26,8 @@ public:
 	virtual void SetTargetPos( CActor& actor ) override;
 
 private:
+	// プレイヤー座標の設定.
+	void SetPlayerPos( CActor& actor );
 	// スポーン.
 	virtual void Spawning() override;
 	// 移動.

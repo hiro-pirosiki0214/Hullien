@@ -9,8 +9,8 @@
 
 class CItemEdit
 {
-	const ImVec2 WINDOW_SIZE		= { 450.0f, 400.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION	= { 260.0f, 20.0f };	// 描画座標.
+	const ImVec2 WINDOW_SIZE		= { 510.0f, WND_H-70.0f };	// ウィンドウサイズ.
+	const ImVec2 RENDER_POSITION	= { 0.0f, 70.0f };	// 描画座標.
 	const char* ITEM_PARAM_FILE_PATH = "Data\\GameParam\\Item\\ItemParam.bin";
 	const char* EACH_ITEM_EFFECT_FILE_PATH = "Data\\GameParam\\Item\\EachItemEffect.bin";
 	const std::vector<std::string> TAG_LIST =

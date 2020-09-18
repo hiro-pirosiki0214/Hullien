@@ -111,22 +111,22 @@ void CAlienD::ModelRender()
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
-	m_pSkinMesh->SetBlend( true );
+//	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
+//	m_pSkinMesh->SetBlend( false );
 #else
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
 	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, m_ModelAlpha } );
-	m_pTempStaticMesh->SetBlend( true );
+//	m_pTempStaticMesh->SetBlend( true );
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pTempStaticMesh->Render();
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
+//	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
 }
 
@@ -271,6 +271,12 @@ void CAlienD::VectorMove( const float& moveSpeed )
 
 // 相手座標の設定.
 void CAlienD::SetTargetPos( CActor& actor )
+{
+	SetPlayerPos( actor );	// プレイヤー座標の設定.
+}
+
+// プレイヤー座標の設定.
+void CAlienD::SetPlayerPos( CActor& actor )
 {
 	// プレイヤーじゃなければ終了.
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;

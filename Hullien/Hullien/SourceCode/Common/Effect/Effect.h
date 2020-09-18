@@ -167,7 +167,6 @@ private:
 	Effekseer::Manager*				m_pManager;
 	EffekseerRenderer::Renderer*	m_pRenderer;
 	Effekseer::Effect*				m_pEffect;
-
 #ifdef ENABLE_XAUDIO2
 	//´Ìª¸ÄÃŞ°À‚ÉŠÜ‚Ü‚ê‚é‰¹‚ÌÄ¶‚É•K—v.
 	::EffekseerSound::Sound*		m_pSound;

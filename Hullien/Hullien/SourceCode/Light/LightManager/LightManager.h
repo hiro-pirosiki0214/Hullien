@@ -14,6 +14,11 @@ public:
 	// ライトクラスの設定.
 	static void SetLgiht( std::shared_ptr<CLightBase> pLight );
 
+	// カスケード分のシャドウ行列を取得する.
+	static D3DXMATRIX* GetShadowVP();
+	// カスケード分割座標を取得.
+	static float* GetSpritPos();
+
 	// 座標の取得.
 	static D3DXVECTOR3 GetPosition();
 	// 方向の取得.

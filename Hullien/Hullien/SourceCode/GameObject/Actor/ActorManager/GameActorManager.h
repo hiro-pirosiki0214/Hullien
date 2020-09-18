@@ -6,14 +6,15 @@
 
 #include <vector>
 
-class CActor;
-class CGroundStage;		// ’n–ÊƒNƒ‰ƒX.
-class CPlayer;					// ƒvƒŒƒCƒ„[ƒNƒ‰ƒX.
-class CGirl;						// —‚ÌqƒNƒ‰ƒX.
-class CAlienManager;		// ‰F’ˆlŠÇ—ƒNƒ‰ƒX.
-class CItemManager;		// ƒAƒCƒeƒ€ŠÇ—ƒNƒ‰ƒX.
-class CBarrier;				// ƒoƒŠƒAƒNƒ‰ƒX.
-class CWarning;				//ŒxƒNƒ‰ƒX.
+class CGameObject;
+class CGroundStage;		// åœ°é¢ã‚¯ãƒ©ã‚¹.
+class CPlayer;			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¯ãƒ©ã‚¹.
+class CGirl;			// å¥³ã®å­ã‚¯ãƒ©ã‚¹.
+class CMotherShipUFO;	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—UFO.
+class CAlienManager;	// å®‡å®™äººç®¡ç†ã‚¯ãƒ©ã‚¹.
+class CItemManager;		// ã‚¢ã‚¤ãƒ†ãƒ ç®¡ç†ã‚¯ãƒ©ã‚¹.
+class CBarrier;			// ãƒãƒªã‚¢ã‚¯ãƒ©ã‚¹.
+class CWarning;			// è­¦å‘Šã‚¯ãƒ©ã‚¹.
 
 class CGameActorManager
 {
@@ -21,32 +22,35 @@ public:
 	CGameActorManager();
 	~CGameActorManager();
 
-	// ‰Šú‰»ŠÖ”.
+	// åˆæœŸåŒ–é–¢æ•°.
 	bool Init();
-	// XVŠÖ”.
+	// æ›´æ–°é–¢æ•°.
 	void Update();
-	// •`‰æŠÖ”.
+	// æç”»é–¢æ•°.
 	void Render();
-	// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æ.
+	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”».
 	void SpriteRender();
-	// ƒIƒuƒWƒFƒNƒgÀ•WƒŠƒXƒg‚Ìæ“¾.
+	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåº§æ¨™ãƒªã‚¹ãƒˆã®å–å¾—.
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	GetObjPositionList() const { return m_ObjPositionList; }
-	// ƒQ[ƒ€ƒI[ƒo[‚©‚Ç‚¤‚©.
+	// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã‹ã©ã†ã‹.
 	bool IsGameOver();
-	// —‚Ìq‚ªŠëŒ¯‚Èó‘Ô‚©.
+	// å¥³ã®å­ã‚’é€£ã‚Œå»ã£ã¦ã„ã‚‹ã‹.
+	bool IsGirlAbduct();
+	// å¥³ã®å­ãŒå±é™ºãªçŠ¶æ…‹ã‹.
 	bool IsDanger();
 
 private:
-	// À•WƒŠƒXƒg‚Ìİ’è.
-	void SetPositionList( CActor* pActor );
+	// åº§æ¨™ãƒªã‚¹ãƒˆã®è¨­å®š.
+	void SetPositionList( CGameObject* pObj );
 
 private:
-	std::shared_ptr<CGroundStage>								m_pGroundStage;
-	std::shared_ptr<CPlayer>										m_pPlayer;
-	std::shared_ptr<CGirl>											m_pGirl;
-	std::shared_ptr<CAlienManager>								m_pAlienManager;
-	std::shared_ptr<CItemManager>								m_pItemManager;
-	std::shared_ptr<CBarrier>										m_pBarrier;
+	std::shared_ptr<CGroundStage>	m_pGroundStage;
+	std::shared_ptr<CPlayer>		m_pPlayer;
+	std::shared_ptr<CGirl>			m_pGirl;
+	std::unique_ptr<CMotherShipUFO>	m_pMotherShipUFO;
+	std::shared_ptr<CAlienManager>	m_pAlienManager;
+	std::shared_ptr<CItemManager>	m_pItemManager;
+	std::shared_ptr<CBarrier>		m_pBarrier;
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;
 };

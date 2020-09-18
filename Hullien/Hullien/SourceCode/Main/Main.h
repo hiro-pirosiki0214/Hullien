@@ -49,7 +49,6 @@ private:
 
 private:
 	HWND m_hWnd;
-	std::unique_ptr<CDirectX11>	m_pDirectX11;	// DirectX11.
 	std::unique_ptr<CDirectX9>	m_pDirectX9;	// DirectX9.
 
 	std::unique_ptr<CFrameRate>	m_pFrameRate;	// フレームレート.

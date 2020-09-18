@@ -58,10 +58,7 @@ HRESULT CSphereCollision::InitModelRadius( const float& radius )
 void CSphereCollision::DebugRender()
 {
 #ifdef _DEBUG
-	if( ( GetAsyncKeyState('D') & 0x8000 ) &&
-		( GetAsyncKeyState('E') & 0x8000 )){
-		if( GetAsyncKeyState('S') & 0x0001 ) m_IsRender = !m_IsRender;
-	}
+	if( GetAsyncKeyState(VK_F1) & 0x0001 )m_IsRender = !m_IsRender;
 	if( m_IsRender == false ) return;
 	m_pDebugSphere->SetPosition( GetPosition() );
 	m_pDebugSphere->Render();

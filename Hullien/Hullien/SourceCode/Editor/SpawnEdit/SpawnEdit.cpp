@@ -39,13 +39,12 @@ void CSpawnEdit::Render()
 		m_pStaticMesh->Render();
 	}
 
-	ImGui::SetNextWindowSize( WINDOW_SIZE, ImGuiCond_::ImGuiCond_Once );
-	ImGui::SetNextWindowPos( RENDER_POSITION, ImGuiCond_::ImGuiCond_Once );
+	ImGui::SetNextWindowSize( WINDOW_SIZE );
+	ImGui::SetNextWindowPos( RENDER_POSITION );
 	ImGui::GetWindowSize();
+	ImGui::Begin( u8"スポーン情報設定" );
 
-	bool isOpen = true;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
-	ImGui::Begin( u8"スポーン情報設定", &isOpen );
+	ImGui::PushItemWidth(200.0f);
 
 	std::vector<std::string> tagNameList;
 	tagNameList.emplace_back("Index");
@@ -64,7 +63,7 @@ void CSpawnEdit::Render()
 		}
 		ImGui::EndTabBar();
 	}
-
+	ImGui::PopItemWidth();
 	ImGui::End();
 }
 

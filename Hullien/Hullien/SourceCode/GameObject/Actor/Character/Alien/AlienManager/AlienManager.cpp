@@ -1,4 +1,5 @@
 #include "AlienManager.h"
+#include "..\..\..\..\MotherShipUFO\MotherShipUFO.h"
 #include "..\..\..\..\SpawnUFO\SpawnUFO.h"
 #include "..\AlienList.h"
 #include "..\..\..\Explosion\Explosion.h"
@@ -13,9 +14,10 @@ CAlienManager::CAlienManager()
 	, m_SpawnUFOList		()
 	, m_AlienParamList		()
 	, m_DropItemList		()
-	, m_AbductUFOPosition	( 50.0f, 0.0f, 50.0f )
+	, m_MotherShipUFOPos	( 0.0f, 0.0f, 0.0f )
 	, m_IsAlienAbduct		( false )
 	, m_SortCount			( 0 )
+	, m_IsRisingMotherShip	( false )
 {
 }
 
@@ -26,9 +28,11 @@ CAlienManager::~CAlienManager()
 // 初期化関数.
 bool CAlienManager::Init()
 {
-	if( SpawnUFOInit() == false ) return false;
-	if( ReadAlienParamList() == false ) return false;
-	if( ReadExplosionParam() == false ) return false;
+	
+	if( SpawnUFOInit() == false )			return false;
+	if( ReadAlienParamList() == false )		return false;
+	if( ReadExplosionParam() == false )		return false;
+
 	return true;
 }
 
@@ -54,18 +58,23 @@ void CAlienManager::Update( std::function<void(CActor*)> updateProc )
 		}
 
 		// 爆発できるか確認.
-		ExplosionConfirming( m_AilenList[i] );
+		ExplosionConfirming( m_AilenList[i].get() );
 		// 爆発と宇宙人の当たり判定.
 		for( auto& e : m_ExplosionList ){
 			if( e.IsStop() == true ) continue;
 			e.Collision( m_AilenList[i].get() );
 		}
 
+		// マザーシップに昇っているか確認.
+		if( m_AilenList[i]->IsRisingMotherShip() == true ){
+			m_IsRisingMotherShip = true;
+		}
+
 		// リストから指定の宇宙人を消すか.
 		if( m_AilenList[i]->IsDelete() == false ) continue;
 
 		// アイテムリストの設定.
-		SetDropItemList( m_AilenList[i] );
+		SetDropItemList( m_AilenList[i].get() );
 
 		m_AilenList[i] = m_AilenList.back();
 		m_AilenList.pop_back();
@@ -85,9 +94,6 @@ void CAlienManager::Render()
 	for( auto& s : m_SpawnUFOList ) s.Render();
 	// 爆発の描画.
 	for( auto& e : m_ExplosionList ) e.Render();
-#if _DEBUG
-	DebugRender();
-#endif	// #if _DEBUG.
 }
 
 // スプライト描画関数.
@@ -95,6 +101,12 @@ void CAlienManager::SpriteRender()
 {
 	// 宇宙人達の描画.
 	for( auto& a : m_AilenList ) a->SpriteRender();
+}
+
+// 女の子を連れ去っているか.
+bool CAlienManager::IsGirlAbduct()
+{
+	return m_IsRisingMotherShip;
 }
 
 // スポーン.
@@ -106,7 +118,7 @@ void CAlienManager::Spawn()
 }
 
 // 爆発できるかどうか確認.
-void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
+void CAlienManager::ExplosionConfirming( CAlien* ailen )
 {
 	// 宇宙人Cじゃなければ終了.
 	if( ailen->GetObjectTag() != EObjectTag::Alien_C ) return;
@@ -117,7 +129,7 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 		if( e.IsStop() == false ) continue;
 		// 爆発が終了していれば使いまわす.
 		e.Init();
-		e.SetTargetPos( *ailen.get() );
+		e.SetTargetPos( *ailen );
 		return;
 	}
 	// 終了した爆発がなければ.
@@ -125,11 +137,11 @@ void CAlienManager::ExplosionConfirming( const std::shared_ptr<CAlien>& ailen  )
 	m_ExplosionList.emplace_back();
 	m_ExplosionList.back().Init();
 	m_ExplosionList.back().SetExplosionParam( m_ExplosionParam );
-	m_ExplosionList.back().SetTargetPos( *ailen.get() );
+	m_ExplosionList.back().SetTargetPos( *ailen );
 }
 
 // 落とすアイテムの設定.
-void CAlienManager::SetDropItemList( const std::shared_ptr<CAlien>& ailen )
+void CAlienManager::SetDropItemList( CAlien* ailen )
 {
 	if( ailen->GetAnyItem() == EItemList::None ) return;
 	if( ailen->GetAnyItem() == EItemList::Max ) return;
@@ -147,7 +159,7 @@ bool CAlienManager::SpawnUFOInit()
 		m_SpawnUFOList.emplace_back();
 		m_SpawnUFOList.back().Init();
 		m_SpawnUFOList.back().SetSpawnParameter( s );
-		m_SpawnUFOList.back().SetAbductUFOPosition( &m_AbductUFOPosition );
+		m_SpawnUFOList.back().SetAbductUFOPosition( &m_MotherShipUFOPos );
 	}
 	return true;
 }
@@ -196,37 +208,4 @@ void CAlienManager::ModelAlphaSort()
 	// ソート.
 	std::sort( m_AilenList.begin(), m_AilenList.end(), comp );
 	m_SortCount = 0;	// ソートカウントを初期化.
-}
-
-// デバッグ用の描画関数.
-void CAlienManager::DebugRender()
-{
-	const float pos_y = 40.0f;
-	const float pos_x = 880.0f;
-	CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*-1, 0.0f } );
-	CDebugText::Render( "- Alien Parameter -" );
-
-	CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*1, 0.0f } );
-	CDebugText::Render( "AlienCount : ", m_AilenList.size() );
-	CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*2, 0.0f } );
-	CDebugText::Render( "SpawnCount : ", m_SpawnUFOList.size() );
-
-	auto alienA_ADashPramRender = [&]()
-	{
-		size_t a_index = static_cast<size_t>(EAlienList::A);
-		if( m_AlienParamList.empty() == true ) return;
-		if( m_AlienParamList.size() < a_index ) return;
-		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*4, 0.0f } );
-		CDebugText::Render( "-- Alien A Param --" );
-
-		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*5, 0.0f } );
-		CDebugText::Render( "Life : ", m_AlienParamList[a_index].LifeMax );
-		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*6, 0.0f } );
-		CDebugText::Render( "MoveSpeed : ", m_AlienParamList[a_index].MoveSpeed );
-		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*7, 0.0f } );
-		CDebugText::Render( "RotationalSpeed : ", m_AlienParamList[a_index].RotationalSpeed );
-		CDebugText::SetPosition( { pos_x, pos_y+CDebugText::GetScale()*8, 0.0f } );
-		CDebugText::Render( "ModelAlphaAddValue : ", m_AlienParamList[a_index].ModelAlphaAddValue );
-	};
-	alienA_ADashPramRender();
 }

@@ -6,20 +6,21 @@
 #include "..\..\..\..\XAudio2\SoundManager.h"
 
 CAlien::CAlien()
-	: m_TargetPosition				( 0.0f, 0.0f, 0.0f )
-	, m_TargetRotation				( 0.0f, 0.0f, 0.0f )
+	: m_TargetPosition			( 0.0f, 0.0f, 0.0f )
+	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
 	, m_pAbductUFOPosition		( nullptr )
 	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
-	, m_Parameter						()
-	, m_NowState						( EAlienState::None )
-	, m_NowMoveState				( EMoveState::None )
-	, m_HasAnyItem					( EItemList::None )
-	, m_LifePoint						( 0.0f )
-	, m_ModelAlpha					( 0.0f )
-	, m_WaitCount						( 0 )
+	, m_Parameter				()
+	, m_NowState				( EAlienState::None )
+	, m_NowMoveState			( EMoveState::None )
+	, m_HasAnyItem				( EItemList::None )
+	, m_LifePoint				( 0.0f )
+	, m_ModelAlpha				( 0.0f )
+	, m_WaitCount				( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
-	, m_IsExplosion					( false )
-	, m_IsDelete						( false )
+	, m_IsExplosion				( false )
+	, m_IsDelete				( false )
+	, m_IsRisingMotherShip		( false )
 {
 }
 
@@ -30,12 +31,7 @@ CAlien::~CAlien()
 // 相手座標の設定.
 void CAlien::SetTargetPos( CActor& actor )
 {
-	if( m_NowMoveState == EMoveState::Move ) return;
-	if( *m_pIsAlienOtherAbduct == true ) return;
-
-	// 女の子じゃなければ終了.
-	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
-	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+	SetGirlPos( actor );
 }
 
 // ライフ計算関数.
@@ -77,6 +73,25 @@ void CAlien::CurrentStateUpdate()
 	default:
 		break;
 	}
+}
+
+// 女の子の座標を設定.
+void CAlien::SetGirlPos( CActor& actor )
+{
+	if( m_NowMoveState == EMoveState::Move ) return;
+	if( *m_pIsAlienOtherAbduct == true ) return;
+
+	// 女の子じゃなければ終了.
+	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
+	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+}
+
+// 座標設定関数.
+void CAlien::SetPosition( const D3DXVECTOR3& vPos )
+{
+	if( *m_pIsAlienOtherAbduct == false ) return;
+	m_vPosition = vPos;
+	m_IsRisingMotherShip = true;
 }
 
 // 移動ベクトル設定関数.

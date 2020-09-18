@@ -22,13 +22,13 @@ bool CItemEdit::Init()
 // 描画関数.
 void CItemEdit::Render()
 {
-	ImGui::SetNextWindowSize( WINDOW_SIZE, ImGuiCond_::ImGuiCond_Once );
-	ImGui::SetNextWindowPos( RENDER_POSITION, ImGuiCond_::ImGuiCond_Once );
+	ImGui::SetNextWindowSize( WINDOW_SIZE );
+	ImGui::SetNextWindowPos( RENDER_POSITION );
 	ImGui::GetWindowSize();
 
-	bool isOpen = true;
-	ImGui::GetStyle().Colors[ImGuiCol_::ImGuiCol_WindowBg] = { 0.3f, 0.3f, 0.3f, 0.9f };
-	ImGui::Begin( u8"アイテム設定", &isOpen );
+	ImGui::Begin( u8"アイテム設定" );
+
+	ImGui::PushItemWidth(200.0f);
 
 	if( ImGui::BeginTabBar( "TabBarID" ) == true ){
 		for( int i = 0; i < (int)TAG_LIST.size(); i++ ){
@@ -38,7 +38,7 @@ void CItemEdit::Render()
 		}
 		ImGui::EndTabBar();
 	}
-
+	ImGui::PopItemWidth();
 	ImGui::End();
 }
 

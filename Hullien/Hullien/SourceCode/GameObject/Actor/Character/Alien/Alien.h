@@ -140,10 +140,17 @@ public:
 	bool IsExplosion() const { return m_IsExplosion; }
 	// 消去するかどうか.
 	bool IsDelete() const { return m_IsDelete; }
+	// マザーシップに昇っているか.
+	bool IsRisingMotherShip() const { return m_IsRisingMotherShip; }
 
 protected:
 	// 現在の状態の更新関数.
 	void CurrentStateUpdate();
+	// 女の子の座標を設定.
+	void SetGirlPos( CActor& actor );
+	// 座標設定関数.
+	virtual void SetPosition( const D3DXVECTOR3& vPos ) override;
+
 	// 移動ベクトル設定関数.
 	virtual void SetMoveVector( const D3DXVECTOR3& targetPos );
 	// 目的の座標へ回転.
@@ -185,9 +192,10 @@ protected:
 	float			m_ModelAlpha;				// モデルのアルファ値.
 	int				m_WaitCount;				// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.
-	bool			m_IsBarrierHit;		// バリアに当たっているか.
-	bool			m_IsExplosion;		// 爆発するか.
-	bool			m_IsDelete;			// 消去するかどうか.
+	bool			m_IsBarrierHit;				// バリアに当たっているか.
+	bool			m_IsExplosion;				// 爆発するか.
+	bool			m_IsDelete;					// 消去するかどうか.
+	bool			m_IsRisingMotherShip;		// マザーシップに昇っているか.
 };
 
 #endif	// #ifndef ALIEN_H.

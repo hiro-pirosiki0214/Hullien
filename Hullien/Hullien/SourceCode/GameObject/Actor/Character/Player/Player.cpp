@@ -126,10 +126,6 @@ void CPlayer::Render()
 	m_pCollManager->DebugRender();
 	if( m_pAttackCollManager == nullptr ) return;
 	m_pAttackCollManager->DebugRender();
-	// エディット用の描画関数をエディットレンダラーに追加.
-	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
-	// デバッグ描画.
-	DebugRender();
 #endif	// #if _DEBUG.
 }
 
@@ -178,6 +174,13 @@ void CPlayer::SpriteRender()
 		s->Update();
 		s->Render();
 	}
+
+#if _DEBUG
+	// エディット用の描画関数をエディットレンダラーに追加.
+	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
+	// デバッグ描画.
+	DebugRender();
+#endif	// #if _DEBUG.
 }
 
 // 特殊能力を使っているか.

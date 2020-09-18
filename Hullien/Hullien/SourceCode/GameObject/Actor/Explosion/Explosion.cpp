@@ -95,6 +95,15 @@ void CExplosion::SetTargetPos( CActor& pActor )
 	m_IsEffectPlay = true;
 }
 
+void CExplosion::SetPosition( const D3DXVECTOR3& vPos )
+{
+	m_vPosition = vPos;	// 座標を設定.
+	// すでにエフェクトを再生していれば終了.
+	if( m_IsEffectPlay == true ) return;
+	m_pEffect->Play( m_vPosition );	// エフェクトを再生.
+	m_IsEffectPlay = true;
+}
+
 // 止まっているかどうか.
 bool CExplosion::IsStop()
 {
@@ -116,5 +125,11 @@ bool CExplosion::ColliderSetting()
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
+	m_pCollManager->InitSphere(
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Param.SphereAdjPos,
+		0.0f );
 	return true;
 }

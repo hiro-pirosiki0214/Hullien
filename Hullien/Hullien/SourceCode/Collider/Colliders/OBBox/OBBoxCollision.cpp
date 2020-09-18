@@ -53,10 +53,7 @@ HRESULT COBBoxCollision::InitModelBox( const float& height, const float& widht )
 void COBBoxCollision::DebugRender()
 {
 #ifdef _DEBUG
-	if( ( GetAsyncKeyState('D') & 0x8000 ) &&
-		( GetAsyncKeyState('E') & 0x8000 )){
-		if( GetAsyncKeyState('B') & 0x0001 ) m_IsRender = !m_IsRender;
-	}
+	if( GetAsyncKeyState(VK_F2) & 0x0001 )m_IsRender = !m_IsRender;
 	if( m_IsRender == false ) return;
 	m_pDebugBox->SetRotation( GetRotation() );
 	m_pDebugBox->SetPosition( GetPosition() );

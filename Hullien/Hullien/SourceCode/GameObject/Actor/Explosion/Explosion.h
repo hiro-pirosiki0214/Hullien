@@ -40,6 +40,7 @@ public:
 	virtual void Collision( CActor* pActor ) override;
 	// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
 	virtual void SetTargetPos( CActor& pActor ) override;
+	virtual void SetPosition( const D3DXVECTOR3& vPos ) override;
 	
 	// ~‚Ü‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©.
 	bool IsStop();

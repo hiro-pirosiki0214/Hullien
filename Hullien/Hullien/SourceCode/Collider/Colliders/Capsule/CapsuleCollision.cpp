@@ -72,10 +72,7 @@ HRESULT CCapsuleCollision::InitModelCapsule( const float& height, const float& r
 void CCapsuleCollision::DebugRender()
 {
 #ifdef _DEBUG
-	if( ( GetAsyncKeyState('D') & 0x8000 ) &&
-		( GetAsyncKeyState('E') & 0x8000 )){
-		if( GetAsyncKeyState('X') & 0x0001 ) m_IsRender = !m_IsRender;
-	}
+	if( GetAsyncKeyState(VK_F3) & 0x0001 ) m_IsRender = !m_IsRender;
 	if( m_IsRender == false ) return;
 	m_pDebugCapsule->SetRotation( GetRotation() );
 	m_pDebugCapsule->SetPosition( GetPosition() );

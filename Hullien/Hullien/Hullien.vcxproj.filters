@@ -6,6 +6,8 @@
     <FxCompile Include="Data\Shader\SimpleShader.hlsl" />
     <FxCompile Include="Data\Shader\SkinMesh.hlsl" />
     <FxCompile Include="Data\Shader\Sprite.hlsl" />
+    <FxCompile Include="Data\Shader\PeraRenderShader.hlsl" />
+    <FxCompile Include="Data\Shader\ShadowMap.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\ImGui\imgui.cpp" />
@@ -123,6 +125,14 @@
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\Camera\EvevtCamera\EvevtCamera.cpp" />
+    <ClCompile Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.cpp" />
+    <ClCompile Include="SourceCode\Common\PeraRenderer\PeraRenderer.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.cpp" />
+    <ClCompile Include="SourceCode\Camera\EditCamera\EditCamera.cpp" />
+    <ClCompile Include="SourceCode\Utility\Mouse\Mouse.cpp" />
+    <ClCompile Include="SourceCode\Editor\PlayerEdit\PlayerEdit.cpp" />
+    <ClCompile Include="SourceCode\Editor\EditBase.cpp" />
+    <ClCompile Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -253,5 +263,13 @@
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.h" />
     <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
+    <ClInclude Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.h" />
+    <ClInclude Include="SourceCode\Common\PeraRenderer\PeraRenderer.h" />
+    <ClInclude Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.h" />
+    <ClInclude Include="SourceCode\Camera\EditCamera\EditCamera.h" />
+    <ClInclude Include="SourceCode\Utility\Mouse\Mouse.h" />
+    <ClInclude Include="SourceCode\Editor\PlayerEdit\PlayerEdit.h" />
+    <ClInclude Include="SourceCode\Editor\EditBase.h" />
+    <ClInclude Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h" />
   </ItemGroup>
 </Project>

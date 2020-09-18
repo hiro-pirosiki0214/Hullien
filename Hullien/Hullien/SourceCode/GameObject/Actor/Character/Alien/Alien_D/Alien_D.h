@@ -64,6 +64,8 @@ private:
 	virtual void VectorMove( const float& moveSpeed ) override;
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
+	// プレイヤー座標の設定.
+	void SetPlayerPos( CActor& actor );
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor  );
