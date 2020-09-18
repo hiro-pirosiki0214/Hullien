@@ -7,14 +7,14 @@
 #include <vector>
 
 class CGameObject;
-class CGroundStage;		// åœ°é¢ã‚¯ãƒ©ã‚¹.
-class CPlayer;			// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚¯ãƒ©ã‚¹.
-class CGirl;			// å¥³ã®å­ã‚¯ãƒ©ã‚¹.
-class CMotherShipUFO;	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—UFO.
-class CAlienManager;	// å®‡å®™äººç®¡ç†ã‚¯ãƒ©ã‚¹.
-class CItemManager;		// ã‚¢ã‚¤ãƒ†ãƒ ç®¡ç†ã‚¯ãƒ©ã‚¹.
-class CBarrier;			// ãƒãƒªã‚¢ã‚¯ãƒ©ã‚¹.
-class CWarning;			// è­¦å‘Šã‚¯ãƒ©ã‚¹.
+class CGroundStage;		// ’n–ÊƒNƒ‰ƒX.
+class CPlayer;			// ƒvƒŒƒCƒ„[ƒNƒ‰ƒX.
+class CGirl;			// —‚ÌqƒNƒ‰ƒX.
+class CMotherShipUFO;	// ƒ}ƒU[ƒVƒbƒvUFO.
+class CAlienManager;	// ‰F’ˆlŠÇ—ƒNƒ‰ƒX.
+class CItemManager;		// ƒAƒCƒeƒ€ŠÇ—ƒNƒ‰ƒX.
+class CBarrier;			// ƒoƒŠƒAƒNƒ‰ƒX.
+class CWarning;			// ŒxƒNƒ‰ƒX.
 
 class CGameActorManager
 {
@@ -22,25 +22,25 @@ public:
 	CGameActorManager();
 	~CGameActorManager();
 
-	// åˆæœŸåŒ–é–¢æ•°.
+	// ‰Šú‰»ŠÖ”.
 	bool Init();
-	// æ›´æ–°é–¢æ•°.
+	// XVŠÖ”.
 	void Update();
-	// æç”»é–¢æ•°.
+	// •`‰æŠÖ”.
 	void Render();
-	// ã‚¹ãƒ—ãƒ©ã‚¤ãƒˆã®æç”».
+	// ƒXƒvƒ‰ƒCƒg‚Ì•`‰æ.
 	void SpriteRender();
-	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆåº§æ¨™ãƒªã‚¹ãƒˆã®å–å¾—.
+	// ƒIƒuƒWƒFƒNƒgÀ•WƒŠƒXƒg‚Ìæ“¾.
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	GetObjPositionList() const { return m_ObjPositionList; }
-	// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã‹ã©ã†ã‹.
+	// ƒQ[ƒ€ƒI[ƒo[‚©‚Ç‚¤‚©.
 	bool IsGameOver();
-	// å¥³ã®å­ã‚’é€£ã‚Œå»ã£ã¦ã„ã‚‹ã‹.
+	// —‚Ìq‚ğ˜A‚ê‹‚Á‚Ä‚¢‚é‚©.
 	bool IsGirlAbduct();
-	// å¥³ã®å­ãŒå±é™ºãªçŠ¶æ…‹ã‹.
+	// —‚Ìq‚ªŠëŒ¯‚Èó‘Ô‚©.
 	bool IsDanger();
 
 private:
-	// åº§æ¨™ãƒªã‚¹ãƒˆã®è¨­å®š.
+	// À•WƒŠƒXƒg‚Ìİ’è.
 	void SetPositionList( CGameObject* pObj );
 
 private:
