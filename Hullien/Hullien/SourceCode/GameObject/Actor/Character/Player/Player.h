@@ -143,6 +143,8 @@ public:
 	bool IsSpecialAbility();
 	// Ž€–S‚µ‚½‚©.
 	bool IsDead(){ return m_LifePoint <= 0.0f; }
+	// ƒJƒƒ‰‚Ì•ûŒü.
+	float GetCameraRadianX();
 
 private:
 	// ‘€ìŠÖ”.

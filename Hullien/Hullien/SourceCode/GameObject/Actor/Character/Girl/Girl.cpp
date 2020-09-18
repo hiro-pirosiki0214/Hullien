@@ -4,6 +4,8 @@
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\XAudio2\SoundManager.h"
+#include "..\..\..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\..\..\Common\DebugText\DebugText.h"
 
 CGirl::CGirl()
 	: m_Parameter			()
@@ -70,6 +72,9 @@ void CGirl::Update()
 
 	// サウンド.
 	Sound();
+
+	//警告.
+	WarningRotation();
 }
 
 // 描画関数.
@@ -85,6 +90,8 @@ void CGirl::Render()
 	m_pCollManager->DebugRender();
 	if( m_pSearchCollManager == nullptr ) return;
 	m_pSearchCollManager->DebugRender();
+
+	DebugRender();
 #endif	// #if _DEBUG.
 }
 
@@ -172,7 +179,7 @@ void CGirl::TargetRotation()
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 
-																			// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
+	// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
 	m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
 
 	// 内積が許容範囲なら.
@@ -280,4 +287,70 @@ void CGirl::Sound()
 	{
 		m_IsOnlyFirst = false;
 	}
+}
+
+// 危険矢印の回転.
+void CGirl::WarningRotation()
+{
+	// 女の子が危険な状態でなければ処理しない.
+	if (m_IsDanger == false) return;
+
+	const D3DXVECTOR3 targetPosition = { 0.0f, 0.0f, 0.0f };
+	// カメラから女の子への回転軸を取得.
+	D3DXVECTOR3 targetRotation = { 0.0f, 0.0f, 0.0f };
+	D3DXVECTOR3 MoveVector = { 0.0f, 0.0f, 0.0f };
+	targetRotation.y = atan2f(
+		m_vPosition.x - CCameraManager::GetPosition().x,
+		m_vPosition.z - CCameraManager::GetPosition().z);
+	MoveVector.x = sinf( targetRotation.y );
+	MoveVector.z = cosf( targetRotation.y );
+
+	// カメラの前ベクトルを用意.
+	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
+	myVector.x = sinf(m_CameraRadianX);
+	myVector.z = cosf(m_CameraRadianX);
+
+	// ベクトルの長さを求める.
+	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
+	float targetLenght = sqrtf(MoveVector.x*MoveVector.x + MoveVector.z*MoveVector.z);
+
+	// カメラから女の子へのベクトルと、カメラの前ベクトルの外積を求める.
+	float cross = myVector.x * MoveVector.z - myVector.z * MoveVector.x;
+	float dot = myVector.x * MoveVector.x + myVector.z * MoveVector.z;
+	dot = acosf(dot / (myLenght * targetLenght));
+
+	const float THRESHOLD_VALUE_RADIAN = static_cast<float>(D3DXToRadian(140.0));	// しきい値.
+
+	// 内積がしきい値を超えたら女の子が画面外に出た.
+	bool IsOffScreen = dot < THRESHOLD_VALUE_RADIAN ? true : false;
+	m_pWarning->SetIsGirlOffScreen( IsOffScreen );
+
+	// 外積が0.0fより大きければ 右：左 に表示.
+	bool IsRight = cross > 0.0f ? true : false;
+	m_pWarning->SetIsDispRight( IsRight );
+}
+
+// デバッグ描画関数.
+void CGirl::DebugRender()
+{
+	const float pos_y = 40.0f;
+	const float pos_x = 880.0f;
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale()*10, 0.0f });
+	CDebugText::Render("- warning -");
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 11, 0.0f });
+	CDebugText::Render("-- CameraRadianX --");
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 12, 0.0f });
+	CDebugText::Render("CameraRadianX : ", m_CameraRadianX);
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 14, 0.0f });
+	CDebugText::Render("-- CameraPosition --");
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 15, 0.0f });
+	CDebugText::Render("Pos_X : ", CCameraManager::GetPosition().x);
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 16, 0.0f });
+	CDebugText::Render("Pos_Y : ", CCameraManager::GetPosition().y);
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 17, 0.0f });
+	CDebugText::Render("Pos_Z : ", CCameraManager::GetPosition().z);
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 19, 0.0f });
+	CDebugText::Render("-- WarningPosition --");
+	CDebugText::SetPosition({ pos_x, pos_y + CDebugText::GetScale() * 20, 0.0f });
+
 }

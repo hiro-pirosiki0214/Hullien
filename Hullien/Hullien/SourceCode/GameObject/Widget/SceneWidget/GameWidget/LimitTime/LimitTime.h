@@ -16,7 +16,7 @@ private:
 	const int LIMITTIME_MAX				= 60;	//制限時間最大.
 	const int FRAME_DIVISION			= 100;//フレーム割る数.
 	const int ANIM_MAX					= 10;	//アニメーション最大数.
-	const int TEN						= 10;	//十.
+	const int TEN								= 10;	//十.
 
 public:
 	CLimitTime();

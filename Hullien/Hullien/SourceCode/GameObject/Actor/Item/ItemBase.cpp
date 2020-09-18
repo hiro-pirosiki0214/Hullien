@@ -4,6 +4,7 @@
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Common\Effect\EffectManager.h"
 #include "..\..\..\XAudio2\SoundManager.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CItemBase::CItemBase()
 	: m_pStaticMesh			( nullptr )
@@ -94,7 +95,8 @@ void CItemBase::Collision( CActor* pActor )
 
 	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
-
+	// SE‚ð–Â‚ç‚·.
+	CSoundManager::PlaySE("GetItem");
 	// “–‚½‚Á‚½Û‚ÌŒø‰Ê‚ð—^‚¦‚é.
 	this->GiveEffect( pActor );
 	m_pEffects[static_cast<int>(EEffectNumber::Hit)]->Play( m_vPosition );

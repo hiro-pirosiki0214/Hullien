@@ -65,6 +65,8 @@ public:
 	virtual void SpriteRender() override;
 	// 危険な状態か.
 	bool IsDanger(){ return m_IsDanger; }
+	// カメラのラジアン値の設定関数.
+	void SetCameraRadianX(const float& radian) { m_CameraRadianX = radian; }
 
 private:
 	// 移動関数.
@@ -83,6 +85,11 @@ private:
 	// サウンド.
 	void Sound();
 
+	// 危険矢印の回転.
+	void WarningRotation();
+	// デバッグ描画関数.
+	void DebugRender();
+
 private:
 	SGirlParam m_Parameter;	// 女の子のパラメーター.
 	std::shared_ptr<CCollisionManager>	m_pSearchCollManager;	// 索敵用の当たり判定.
@@ -90,8 +97,9 @@ private:
 	D3DXVECTOR3	m_OldPosition;	// 前回の座標.
 	ENowState	m_NowState;		// 現在の状態.
 	EMoveState	m_NowMoveState;	// 現在の移動状態.
+	float		m_CameraRadianX;// カメラのラジアン値.
 	bool		m_IsDanger;		// 危険かどうか.
-	bool		m_IsOnlyFirst;		//一度しか処理しない.
+	bool		m_IsOnlyFirst;	//一度しか処理しない.
 };
 
 #endif	// #ifndef GIRL_H.

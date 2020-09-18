@@ -7,12 +7,12 @@
 *	êßå¿éûä‘ÉNÉâÉX.
 **/
 CLimitTime::CLimitTime()
-	: m_pSprite		()
-	, m_vPosition	()
-	, m_Anim		()
+	: m_pSprite			()
+	, m_vPosition		()
+	, m_Anim				()
 	, m_FrameCount	( 0 )
 	, m_Seconds		( LIMITTIME_MAX )
-	, m_IsFinish	( false )
+	, m_IsFinish			( false )
 {
 }
 

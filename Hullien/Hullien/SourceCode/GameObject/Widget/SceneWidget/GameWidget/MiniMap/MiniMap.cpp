@@ -137,12 +137,10 @@ int CMiniMap::SetAnimNumber(const EObjectTag& tag)
 	case EObjectTag::AttackUpItem:
 	case EObjectTag::LifeRecoveryItem:
 	case EObjectTag::MoveSpeedUpItem:
+		animNumber = 4;
 		break;
 
 	default:
-		// タグがNoneならオブジェクトが存在しないのでリストを減らす.
-		//m_IconList[m_ObjPosListCount] = m_IconList.back();
-		//m_IconList.pop_back();
 		break;
 	}
 

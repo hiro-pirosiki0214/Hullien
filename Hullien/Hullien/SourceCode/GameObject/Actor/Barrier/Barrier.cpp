@@ -5,8 +5,12 @@
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
+#include "..\..\..\Common\Effect\EffectManager.h"
+
 CBarrier::CBarrier()
 	: m_StaticMesh			( nullptr )
+	, m_pEffect				( nullptr )
+	, m_IsEffectPlay		( false )
 	, m_IsActive			( false )
 	, m_ActiveCount			( 0.0f )
 	, m_CollSphereRadius	( 0.0f )
@@ -15,6 +19,8 @@ CBarrier::CBarrier()
 #endif	// #if _DEBUG.
 {
 	m_ObjectTag = EObjectTag::Bariier;
+	m_pEffect = std::make_shared<CEffectManager>();
+
 }
 
 CBarrier::~CBarrier()
@@ -27,9 +33,11 @@ bool CBarrier::Init()
 	if( m_IsActive == true ) return false;
 	if( GetModel() == false ) return false;
 	if( ColliderSetting() == false ) return false;
+	if (m_pEffect->SetEffect(EFFECT_NAME) == false) return false;
 	m_IsActive			= true;
 	m_CollSphereRadius	= 0.0f;
 	m_ActiveCount		= 0.0f;
+	m_IsEffectPlay = false;
 
 	return true;
 }
@@ -73,6 +81,9 @@ void CBarrier::Render()
 	m_StaticMesh->Render();
 	m_StaticMesh->SetBlend( false );
 
+	// エフェクトを描画.
+	m_pEffect->Render();
+
 #if _DEBUG
 	m_pCollManager->DebugRender();
 	m_ResizeCollTime++;
@@ -113,6 +124,11 @@ void CBarrier::SetTargetPos( CActor& pActor )
 {
 	if( m_IsActive == false ) return;
 	m_vPosition = pActor.GetPosition();
+	// すでにエフェクトを再生していれば終了.
+	if (m_IsEffectPlay == true) return;
+	m_pEffect->Play(m_vPosition);	// エフェクトを再生.
+	m_IsEffectPlay = true;
+
 }
 
 // モデルの取得.

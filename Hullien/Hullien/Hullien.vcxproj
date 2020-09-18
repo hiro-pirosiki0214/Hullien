@@ -143,6 +143,7 @@
     <ClCompile Include="Library\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="SourceCode\Camera\Camera.cpp" />
     <ClCompile Include="SourceCode\Camera\CameraManager\CameraManager.cpp" />
+    <ClCompile Include="SourceCode\Camera\EvevtCamera\EvevtCamera.cpp" />
     <ClCompile Include="SourceCode\Camera\EditCamera\EditCamera.cpp" />
     <ClCompile Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.cpp" />
     <ClCompile Include="SourceCode\Collider\ColliderBase\ColliderBase.cpp" />
@@ -200,6 +201,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\GameObject\GameObject.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Actor.cpp" />
     <ClCompile Include="SourceCode\GameObject\GroundStage\GroundStage.cpp" />
@@ -226,6 +228,11 @@
     <ClCompile Include="SourceCode\Light\LightBase.cpp" />
     <ClCompile Include="SourceCode\Light\LightManager\LightManager.cpp" />
     <ClCompile Include="SourceCode\Resource\FontResource\FontResource.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\EventBase\EventBase.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\EventManager\EventManager.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
+    <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp" />
@@ -263,6 +270,7 @@
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />
     <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h" />
+    <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
     <ClInclude Include="SourceCode\Camera\EditCamera\EditCamera.h" />
     <ClInclude Include="SourceCode\Camera\RotLookAtCenter\RotLookAtCenter.h" />
     <ClInclude Include="SourceCode\Collider\ColliderBase\ColliderBase.h" />
@@ -323,6 +331,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\MoveSpeedUp\MoveSpeedUp.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\Items\SPEffectTime\SPEffectTime.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\LaserBeam\LaserBeam.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.h" />
     <ClInclude Include="SourceCode\GameObject\GameObject.h" />
     <ClInclude Include="SourceCode\GameObject\GroundStage\GroundStage.h" />
     <ClInclude Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.h" />
@@ -351,6 +360,12 @@
     <ClInclude Include="SourceCode\Light\LightBase.h" />
     <ClInclude Include="SourceCode\Light\LightManager\LightManager.h" />
     <ClInclude Include="SourceCode\Resource\FontResource\FontResource.h" />
+    <ClInclude Include="SourceCode\SceneEvent\EventBase\EventBase.h" />
+    <ClInclude Include="SourceCode\SceneEvent\EventList.h" />
+    <ClInclude Include="SourceCode\SceneEvent\EventManager\EventManager.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
+    <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\Editor\Editor.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h" />

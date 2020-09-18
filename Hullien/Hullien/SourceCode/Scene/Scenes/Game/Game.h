@@ -3,60 +3,64 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
-class CGameActorManager;	// ƒQ[ƒ€ƒIƒuƒWƒFƒNƒgŠÇ—ƒNƒ‰ƒX.
-class CGameWidgetManager;	// UIŠÇ—ƒNƒ‰ƒX.
-class CContinueWidget;		// ƒRƒ“ƒeƒjƒ…[UIƒNƒ‰ƒX;
-class CSkyDome;				// ”wŒiƒNƒ‰ƒX.
-class CPeraRenderer;	// G-Buufer•`‰æ—p.
+class CGameActorManager;	// ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹.
+class CGameWidgetManager;	// UIç®¡ç†ã‚¯ãƒ©ã‚¹.
+class CContinueWidget;		// ã‚³ãƒ³ãƒ†ãƒ‹ãƒ¥ãƒ¼UIã‚¯ãƒ©ã‚¹.
+class CSkyDome;					// èƒŒæ™¯ã‚¯ãƒ©ã‚¹.
+class CEventManager;			//ã‚¤ãƒ™ãƒ³ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹.
+class CPeraRenderer;	// G-Buuferæç”»ç”¨.
 
 /**********************************
-*	ƒQ[ƒ€ƒV[ƒ“ƒNƒ‰ƒX.
+*	ã‚²ãƒ¼ãƒ ã‚·ãƒ¼ãƒ³ã‚¯ãƒ©ã‚¹.
 */
 class CGame : public CSceneBase
 {
 private:
-	// ƒV[ƒ“Ø‚è‘Ö‚¦ó‘Ô.
+	// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆçŠ¶æ…‹.
 	enum class enChangeSceneState
 	{
-		Game,			//ƒQ[ƒ€.
-		Clear,				//ƒNƒŠƒA.
-		GameOver,		//ƒQ[ƒ€ƒI[ƒo[.
+		None, 
+
+		Game,			//ã‚²ãƒ¼ãƒ .
+		Clear,				//ã‚¯ãƒªã‚¢.
+		GameOver,		//ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼.
 	}typedef EChangeSceneState;
 
 public:
 	CGame( CSceneManager* pSceneManager );
 	virtual ~CGame();
 
-	// “ÇŠÖ”.
+	// èª­è¾¼é–¢æ•°.
 	virtual bool Load() override;
-	// XVŠÖ”.
+	// æ›´æ–°é–¢æ•°.
 	virtual void Update() override;
-	// •`‰æŠÖ”.
+	// æç”»é–¢æ•°.
 	virtual void Render() override;
 
 private:
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ.
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”».
 	void ModelRender();
-	// ƒtƒF[ƒh‰Šú‰»ŠÖ”.
+	// ãƒ•ã‚§ãƒ¼ãƒ‰åˆæœŸåŒ–é–¢æ•°.
 	bool InitFade();	
-	// ƒRƒ“ƒeƒjƒ…[ˆ—ŠÖ”.
+	// ã‚³ãƒ³ãƒ†ãƒ‹ãƒ¥ãƒ¼å‡¦ç†é–¢æ•°.
 	void UpdateContinue();
-	// ƒV[ƒ“Ø‚è‘Ö‚¦ŠÖ”.
+	// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆé–¢æ•°.
 	void ChangeScene();
-	// ƒV[ƒ“‚Ì‘I‘ğ.
+	// ã‚·ãƒ¼ãƒ³ã®é¸æŠ.
 	void SelectScene();
-	// ƒV[ƒ“Ø‚è‘Ö‚¦İ’èŠÖ”.
+	// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆè¨­å®šé–¢æ•°.
 	void SetChangeScene( const EChangeSceneState& changeState );
 
 
 private:
-	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ƒQ[ƒ€ƒIƒuƒWƒFƒNƒgŠÇ—ƒNƒ‰ƒX.
-	std::unique_ptr<CGameWidgetManager>	m_WidgetManager;	// ƒQ[ƒ€UIŠÇ—ƒNƒ‰ƒX.
-	std::unique_ptr<CContinueWidget>	m_ContinueWidget;	// ƒRƒ“ƒeƒjƒ…[UIƒNƒ‰ƒX.
-	std::unique_ptr<CSkyDome>			m_pSkyDome;			// ”wŒi.
+	std::unique_ptr<CGameActorManager>		m_GameObjManager;	// ã‚²ãƒ¼ãƒ ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹.
+	std::unique_ptr<CGameWidgetManager>	m_WidgetManager;		// ã‚²ãƒ¼ãƒ UIç®¡ç†ã‚¯ãƒ©ã‚¹.
+	std::unique_ptr<CContinueWidget>			m_ContinueWidget;		// ã‚³ãƒ³ãƒ†ãƒ‹ãƒ¥ãƒ¼UIã‚¯ãƒ©ã‚¹.
+	std::unique_ptr<CSkyDome>					m_pSkyDome;				// èƒŒæ™¯.
+	std::unique_ptr<CEventManager>			m_pEventManager;		//	ã‚¤ãƒ™ãƒ³ãƒˆç®¡ç†ã‚¯ãƒ©ã‚¹.
 	std::unique_ptr<CPeraRenderer>		m_pPeraRenderer;
-	EChangeSceneState					m_ChangeSceneState;	// ƒV[ƒ“Ø‚è‘Ö‚¦ó‘Ô.
-	bool								m_IsChangeScene;	// ƒV[ƒ“Ø‚è‘Ö‚¦‚ª‰Â”\‚©.
+	EChangeSceneState					m_ChangeSceneState;	// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆçŠ¶æ…‹.
+	bool								m_IsChangeScene;	// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆãŒå¯èƒ½ã‹.
 
 };
 

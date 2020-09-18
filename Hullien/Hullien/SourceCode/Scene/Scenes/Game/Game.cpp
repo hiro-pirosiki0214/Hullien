@@ -6,6 +6,7 @@
 #include "..\..\..\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.h"
 #include "..\..\..\GameObject\SkyDome\SkyDome.h"
+#include "..\..\..\SceneEvent\EventManager\EventManager.h"
 #include "..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
@@ -30,6 +31,7 @@ CGame::CGame( CSceneManager* pSceneManager )
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
 	m_pSkyDome				= std::make_unique<CSkyDome>();
+	m_pEventManager		= std::make_unique<CEventManager>();
 	m_pPeraRenderer			= std::make_unique<CPeraRenderer>();
 	CFade::SetFadeOut();
 }
@@ -40,7 +42,7 @@ CGame::~CGame()
 }
 
 //============================.
-//	“ÇŠÖ”.
+//	èª­è¾¼é–¢æ•°.
 //============================.
 bool CGame::Load()
 {
@@ -58,63 +60,80 @@ bool CGame::Load()
 }
 
 //============================.
-//	XVŠÖ”.
+//	æ›´æ–°é–¢æ•°.
 //============================.
 void CGame::Update()
 {
-
-	if (m_GameObjManager->IsDanger() == false)
+	if (m_pEventManager->GetIsEventEnd() == false)
 	{
-		CSoundManager::ThreadPlayBGM("GameBGM");
-		CSoundManager::FadeInBGM("GameBGM");
-		CSoundManager::FadeOutBGM("DangerBGM");		
+		m_pEventManager->Update();
 	}
 	else
 	{
-		CSoundManager::ThreadPlayBGM("DangerBGM");
-		CSoundManager::FadeInBGM("DangerBGM");
-		CSoundManager::FadeOutBGM("GameBGM");
-	}
 
-
-	if (m_GameObjManager->IsGameOver() == false)
-	{
-		m_GameObjManager->Update();
-		m_WidgetManager->Update(m_GameObjManager.get());
-	}
-	else
-	{
-		if (CFade::GetIsFade() == true) return;
-		UpdateContinue();
-	}
-
-#if 0	// Ÿ‚ÌƒV[ƒ“‚ÖˆÚ“®.
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
-	{
-		if (CFade::GetIsFade() == true) return;
-		SetChangeScene(EChangeSceneState::Clear);
-	}
-#else 
-	if(m_WidgetManager->IsGameFinish() == true )
-	{
-		if (m_IsChangeScene == false)
+		if (m_GameObjManager->IsDanger() == false)
 		{
+			CSoundManager::ThreadPlayBGM("GameBGM");
+			CSoundManager::FadeInBGM("GameBGM");
+			CSoundManager::FadeOutBGM("DangerBGM");
+		}
+		else
+		{
+			CSoundManager::ThreadPlayBGM("DangerBGM");
+			CSoundManager::FadeInBGM("DangerBGM");
+			CSoundManager::FadeOutBGM("GameBGM");
+		}
+
+
+		if (m_GameObjManager->IsGameOver() == false)
+		{
+			m_GameObjManager->Update();
+			m_WidgetManager->Update(m_GameObjManager.get());
+		}
+		else
+		{
+			if (CFade::GetIsFade() == true) return;
+			UpdateContinue();
+		}
+
+#if 0	// æ¬¡ã®ã‚·ãƒ¼ãƒ³ã¸ç§»å‹•.
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001
+			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+		{
+			if (CFade::GetIsFade() == true) return;
 			SetChangeScene(EChangeSceneState::Clear);
 		}
-	}
+#else 
+		if (m_WidgetManager->IsGameFinish() == true)
+		{
+			if (m_IsChangeScene == false)
+			{
+				m_pEventManager->NextEventMove();
+				m_IsChangeScene = true;
+			}
+			if (m_pEventManager->GetIsEventEnd() == true
+				&& m_ChangeSceneState == EChangeSceneState::None)
+			{
+				SetChangeScene(EChangeSceneState::Clear);
+			}
+
+		}
 #endif	// #if 0.
+	}
 
 	ChangeScene();
-
 }
 
 //============================.
-//	•`‰æŠÖ”.
+//	æç”»é–¢æ•°.
 //============================.
 void CGame::Render()
 {
-	// ƒ‚ƒfƒ‹‚Ì•`‰æ.
+	if (m_pEventManager->GetIsEventEnd() == false) return;
+
+//	m_pSkyDome->Render();
+	m_GameObjManager->Render();
+	// ãƒ¢ãƒ‡ãƒ«ã®æç”».
 	ModelRender();
 
 	m_GameObjManager->SpriteRender();
@@ -122,30 +141,30 @@ void CGame::Render()
 
 	if (m_GameObjManager->IsGameOver() == true)
 	{
-		//ƒvƒŒƒCƒ„[‚Ì‘Ì—Í‚ª0‚É‚È‚Á‚½‚©æ“¾.
-		// ƒRƒ“ƒeƒjƒ…[.
+		//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½“åŠ›ãŒ0ã«ãªã£ãŸã‹å–å¾—.
+		// ã‚³ãƒ³ãƒ†ãƒ‹ãƒ¥ãƒ¼.
 		m_ContinueWidget->Render();
 	}
 }
 
 //============================.
-// ƒ‚ƒfƒ‹‚Ì•`‰æ.
+// ãƒ¢ãƒ‡ãƒ«ã®æç”».
 //============================.
 void CGame::ModelRender()
 {
 	//--------------------------------------------.
-	// •`‰æƒpƒX1.
+	// æç”»ãƒ‘ã‚¹1.
 	//--------------------------------------------.
-	// [“xƒeƒNƒXƒ`ƒƒ‚É‰e—p‚Ì[“x‚ğ‘‚«‚Ş.
+	// æ·±åº¦ãƒ†ã‚¯ã‚¹ãƒãƒ£ã«å½±ç”¨ã®æ·±åº¦ã‚’æ›¸ãè¾¼ã‚€.
 
 	CShadowMap::SetRenderPass( 0 );
 	//m_pSkyDome->Render();
 	m_GameObjManager->Render();
 
 	//--------------------------------------------.
-	// •`‰æƒpƒX2.
+	// æç”»ãƒ‘ã‚¹2.
 	//--------------------------------------------.
-	// G-Buffer‚Écolor, normal, depth‚ğ‘‚«‚Ş.
+	// G-Bufferã«color, normal, depthã‚’æ›¸ãè¾¼ã‚€.
 
 	CShadowMap::SetRenderPass( 1 );
 	CDirectX11::SetGBuufer();
@@ -153,21 +172,21 @@ void CGame::ModelRender()
 	m_GameObjManager->Render();
 
 	//--------------------------------------------.
-	// ÅI•`‰æ.
+	// æœ€çµ‚æç”».
 	//--------------------------------------------.
-	// G-Buffer‚ğg—p‚µ‚ÄA‰æ–Ê‚É•`‰æ‚·‚é.
+	// G-Bufferã‚’ä½¿ç”¨ã—ã¦ã€ç”»é¢ã«æç”»ã™ã‚‹.
 
 	CDirectX11::SetBackBuffer();
 	m_pPeraRenderer->Render( CDirectX11::GetGBuffer() );
 }
 
 //============================.
-// ƒRƒ“ƒeƒjƒ…[ˆ—ŠÖ”.
+// ã‚³ãƒ³ãƒ†ãƒ‹ãƒ¥ãƒ¼å‡¦ç†é–¢æ•°.
 //============================.
 void CGame::UpdateContinue()
 {
-	//ƒvƒŒƒCƒ„[‚Ì‘Ì—Í‚ª0‚É‚È‚Á‚½‚©æ“¾.
-	// ƒRƒ“ƒeƒjƒ…[.
+	//ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ä½“åŠ›ãŒ0ã«ãªã£ãŸã‹å–å¾—.
+	// ã‚³ãƒ³ãƒ†ãƒ‹ãƒ¥ãƒ¼.
 	m_ContinueWidget->Update();
 
 	if (m_ContinueWidget->GetIsDrawing() == true) return;
@@ -197,20 +216,20 @@ void CGame::UpdateContinue()
 }
 
 //============================.
-// ƒV[ƒ“Ø‚è‘Ö‚¦ŠÖ”.
+// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆé–¢æ•°.
 //============================.
 void CGame::ChangeScene()
 {
-	// ƒtƒF[ƒhƒCƒ“ó‘Ô‚©‚ÂƒtƒF[ƒh’†‚È‚çˆ—‚µ‚È‚¢.
+	// ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³çŠ¶æ…‹ã‹ã¤ãƒ•ã‚§ãƒ¼ãƒ‰ä¸­ãªã‚‰å‡¦ç†ã—ãªã„.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (CFade::GetIsFade() == true) return;
 
-	// ‚Ç‚ÌƒV[ƒ“‚É‘JˆÚ‚·‚é‚©.
+	// ã©ã®ã‚·ãƒ¼ãƒ³ã«é·ç§»ã™ã‚‹ã‹.
 	SelectScene();
 }
 
 //============================.
-// ƒV[ƒ“‚Ì‘I‘ğ.
+// ã‚·ãƒ¼ãƒ³ã®é¸æŠ.
 //============================.
 void CGame::SelectScene()
 {
@@ -226,17 +245,17 @@ void CGame::SelectScene()
 	switch (m_ChangeSceneState)
 	{
 	case EChangeSceneState::Game:
-		// ƒŠƒgƒ‰ƒCˆ—.
+		// ãƒªãƒˆãƒ©ã‚¤å‡¦ç†.
 		m_pSceneManager->RetryGame();
 		break;
 	case EChangeSceneState::Clear:
-		// Ÿ‚ÌƒV[ƒ“‚ÖˆÚs.
+		// æ¬¡ã®ã‚·ãƒ¼ãƒ³ã¸ç§»è¡Œ.
 		m_pSceneManager->NextSceneMove();
 		break;
 	case EChangeSceneState::GameOver:
-		// ƒQ[ƒ€ƒI[ƒo[‚Ìİ’è.
+		// ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼ã®è¨­å®š.
 		m_pSceneManager->OnGameOver();
-		// Ÿ‚ÌƒV[ƒ“‚ÖˆÚs.
+		// æ¬¡ã®ã‚·ãƒ¼ãƒ³ã¸ç§»è¡Œ.
 		m_pSceneManager->NextSceneMove();
 		break;
 	default:
@@ -245,7 +264,7 @@ void CGame::SelectScene()
 }
 
 //============================.
-// ƒV[ƒ“Ø‚è‘Ö‚¦İ’èŠÖ”.
+// ã‚·ãƒ¼ãƒ³åˆ‡ã‚Šæ›¿ãˆè¨­å®šé–¢æ•°.
 //============================.
 void CGame::SetChangeScene( const EChangeSceneState& changeState )
 {

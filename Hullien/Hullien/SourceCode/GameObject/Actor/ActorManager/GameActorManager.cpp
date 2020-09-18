@@ -62,6 +62,7 @@ void CGameActorManager::Update()
 
 	// 女の子の更新.
 	m_pGirl->Update();
+	m_pGirl->SetCameraRadianX(m_pPlayer->GetCameraRadianX());	//カメラのラジアン値取得.
 	SetPositionList( m_pGirl.get() );	// 座標リストの設定.
 	m_pBarrier->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 
