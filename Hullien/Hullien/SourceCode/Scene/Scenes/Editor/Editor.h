@@ -9,6 +9,7 @@ class CAlienParamEdit;
 class CExplosionEdit;
 class CItemEdit;
 class CPlayerEdit;
+class CGirlEdit;
 class CMotherShipUFOEdit;
 class CPeraRenderer;
 class CEditCamera;
@@ -22,6 +23,7 @@ class CEditor : public CSceneBase
 		None,
 
 		PlayerEdit,
+		GirlEdit,
 		SpawnEdit,
 		AlienParam,
 		Explosion,
@@ -55,6 +57,7 @@ private:
 	std::unique_ptr<CExplosionEdit>		m_pExplosionEdit;
 	std::unique_ptr<CItemEdit>			m_pItemEdit;
 	std::unique_ptr<CPlayerEdit>		m_pPlayerEdit;
+	std::unique_ptr<CGirlEdit>			m_pGirlEdit;
 	std::unique_ptr<CMotherShipUFOEdit>	m_pMotherShipUFOEdit;
 	std::shared_ptr<CEditCamera>		m_pEditCamera;
 

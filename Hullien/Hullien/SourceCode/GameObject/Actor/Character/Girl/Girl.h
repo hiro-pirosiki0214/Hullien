@@ -2,26 +2,17 @@
 #define GIRL_H
 
 #include "..\Character.h"
+#include "GirlParam.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\Warning\Warning.h"
 
 class CGirl : public CCharacter
 {
-	const char* MODEL_NAME = "Towa_s";	// モデル名.
-	const char* MODEL_TEMP_NAME = "yuri-dy";	// 仮モデル名.
-
-	// プレイヤーパラメータ.
-	struct stGirlParam : public stParameter
-	{
-		float		SearchCollRadius;	// 索敵用のスフィアの半径.
-		D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
-		float		SphereAdjRadius;	// スフィアの調整半径.
-
-		stGirlParam()
-			: SearchCollRadius	( 10.0f )
-			, SphereAdjPos		( 0.0f, 0.0f, 0.0f )
-			, SphereAdjRadius	( 0.0f )
-		{}
-	} typedef SGirlParam;
+	// パラメータのファイルパス.
+	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Girl\\Girl.bin";
+	const char* MODEL_NAME			= "Towa_s";	// モデル名.
+	const char* MODEL_TEMP_NAME		= "yuri-dy";// 仮モデル名.
+	const float TOLERANCE_RADIAN		= static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
+	const float THRESHOLD_VALUE_RADIAN	= static_cast<float>(D3DXToRadian(140.0));	// しきい値.
 
 	// 現在の状態.
 	enum class enNowState
@@ -93,7 +84,7 @@ private:
 private:
 	SGirlParam m_Parameter;	// 女の子のパラメーター.
 	std::shared_ptr<CCollisionManager>	m_pSearchCollManager;	// 索敵用の当たり判定.
-	std::unique_ptr<CWarning>					m_pWarning;						// 警告クラス.
+	std::unique_ptr<CWarning>			m_pWarning;				// 警告クラス.
 	D3DXVECTOR3	m_OldPosition;	// 前回の座標.
 	ENowState	m_NowState;		// 現在の状態.
 	EMoveState	m_NowMoveState;	// 現在の移動状態.

@@ -6,22 +6,24 @@
 #include "..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\..\Common\DebugText\DebugText.h"
+#include "..\..\..\..\Utility\FileManager\FileManager.h"
 
 CGirl::CGirl()
 	: m_Parameter			()
 	, m_pSearchCollManager	( nullptr )
-	, m_pWarning					( nullptr )
-	, m_OldPosition				( 0.0f, 0.0f, 0.0f )
-	, m_NowState					( ENowState::None )
-	, m_NowMoveState			( EMoveState::None )
-	, m_IsDanger					( false )
-	, m_IsOnlyFirst					( false )
+	, m_pWarning			( nullptr )
+	, m_OldPosition			( 0.0f, 0.0f, 0.0f )
+	, m_NowState			( ENowState::None )
+	, m_NowMoveState		( EMoveState::None )
+	, m_CameraRadianX		( 0.0f )
+	, m_IsDanger			( false )
+	, m_IsOnlyFirst			( false )
 {
-	m_ObjectTag	= EObjectTag::Girl;
-	m_NowState	= ENowState::Protected;
-	m_NowMoveState = EMoveState::Wait;
+	m_ObjectTag		= EObjectTag::Girl;
+	m_NowState		= ENowState::Protected;
+	m_NowMoveState	= EMoveState::Wait;
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
-	m_pWarning = std::make_unique<CWarning>();
+	m_pWarning		= std::make_unique<CWarning>();
 }
 
 CGirl::~CGirl()
@@ -36,6 +38,7 @@ bool CGirl::Init()
 #else
 	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
+	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	if ( m_pWarning->Init() == false ) return false;
 
@@ -177,7 +180,6 @@ void CGirl::TargetRotation()
 	dot = acosf( dot / ( myLenght * targetLenght ));
 
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
-	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 
 	// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
 	m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
@@ -197,15 +199,12 @@ void CGirl::TargetMove()
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
 
-	// 目的の場所.
-	const D3DXVECTOR3 targetPosition = { 0.0f, 5.0f, 0.0f };
-	const float moveSpeed = 0.05f;
-	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
-	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * m_Parameter.MoveSpeed;
+	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * m_Parameter.MoveSpeed;
 
-	float lenght = D3DXVec3Length( &D3DXVECTOR3(targetPosition - m_vPosition) );
+	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_Parameter.InitPosition - m_vPosition) );
 
-	if( lenght >= 1.0f ) return;
+	if( lenght >= m_Parameter.InitPosLenght ) return;
 
 	m_NowMoveState = EMoveState::Wait;
 }
@@ -318,8 +317,6 @@ void CGirl::WarningRotation()
 	float cross = myVector.x * MoveVector.z - myVector.z * MoveVector.x;
 	float dot = myVector.x * MoveVector.x + myVector.z * MoveVector.z;
 	dot = acosf(dot / (myLenght * targetLenght));
-
-	const float THRESHOLD_VALUE_RADIAN = static_cast<float>(D3DXToRadian(140.0));	// しきい値.
 
 	// 内積がしきい値を超えたら女の子が画面外に出た.
 	bool IsOffScreen = dot < THRESHOLD_VALUE_RADIAN ? true : false;

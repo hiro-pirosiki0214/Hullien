@@ -6,6 +6,7 @@
 #include "..\..\..\Editor\ExplosionEdit\ExplosionEdit.h"
 #include "..\..\..\Editor\ItemEdit\ItemEdit.h"
 #include "..\..\..\Editor\PlayerEdit\PlayerEdit.h"
+#include "..\..\..\Editor\GirlEdit\GirlEdit.h"
 #include "..\..\..\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
@@ -24,6 +25,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pExplosionEdit		( nullptr ) 
 	, m_pItemEdit			( nullptr )
 	, m_pPlayerEdit			( nullptr )
+	, m_pGirlEdit			( nullptr )
 	, m_pMotherShipUFOEdit	( nullptr )
 	, m_pEditCamera			( nullptr )
 	, m_pPeraRenderer		( nullptr )
@@ -36,6 +38,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	m_pExplosionEdit		= std::make_unique<CExplosionEdit>();
 	m_pItemEdit				= std::make_unique<CItemEdit>();
 	m_pPlayerEdit			= std::make_unique<CPlayerEdit>();
+	m_pGirlEdit				= std::make_unique<CGirlEdit>();
 	m_pMotherShipUFOEdit	= std::make_unique<CMotherShipUFOEdit>();
 
 	m_pEditCamera		= std::make_shared<CEditCamera>();
@@ -58,6 +61,7 @@ bool CEditor::Load()
 	if( m_pExplosionEdit->Init()		== false ) return false;
 	if( m_pItemEdit->Init()				== false ) return false;
 	if( m_pPlayerEdit->Init()			== false ) return false;
+	if( m_pGirlEdit->Init()				== false ) return false;
 	if( m_pMotherShipUFOEdit->Init()	== false ) return false;
 	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
@@ -74,6 +78,9 @@ void CEditor::Update()
 	{
 	case EEditScenes::PlayerEdit:
 		m_pPlayerEdit->Update();
+		break;
+	case EEditScenes::GirlEdit:
+		m_pGirlEdit->Update();
 		break;
 	case EEditScenes::SpawnEdit:
 		break;
@@ -122,6 +129,9 @@ void CEditor::ModelRender()
 	case EEditScenes::PlayerEdit:
 		m_pPlayerEdit->ModelRender();
 		break;
+	case EEditScenes::GirlEdit:
+		m_pGirlEdit->ModelRender();
+		break;
 	case EEditScenes::SpawnEdit:
 		break;
 	case EEditScenes::AlienParam:
@@ -152,8 +162,10 @@ void CEditor::ModelRender()
 	case EEditScenes::PlayerEdit:
 		m_pPlayerEdit->ModelRender();
 		break;
+	case EEditScenes::GirlEdit:
+		m_pGirlEdit->ModelRender();
+		break;
 	case EEditScenes::SpawnEdit:
-		
 		break;
 	case EEditScenes::AlienParam:
 		break;
@@ -195,6 +207,8 @@ void CEditor::ImGuiRender()
 
 	ImGui::RadioButton("PlayerEdit", &m_NowEditScene, EEditScenes::PlayerEdit); 
 	ImGui::SameLine();
+	ImGui::RadioButton("GirlEdit", &m_NowEditScene, EEditScenes::GirlEdit); 
+	ImGui::SameLine();
 	ImGui::RadioButton("SpawnEdit", &m_NowEditScene, EEditScenes::SpawnEdit); 
 	ImGui::SameLine();
 	ImGui::RadioButton("AlienParam", &m_NowEditScene, EEditScenes::AlienParam);
@@ -211,6 +225,9 @@ void CEditor::ImGuiRender()
 	{
 	case EEditScenes::PlayerEdit:
 		m_pPlayerEdit->Render();
+		break;
+	case EEditScenes::GirlEdit:
+		m_pGirlEdit->Render();
 		break;
 	case EEditScenes::SpawnEdit:
 		m_pSpawnEdit->Render();
