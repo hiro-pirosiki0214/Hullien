@@ -133,6 +133,7 @@
     <ClCompile Include="SourceCode\Editor\PlayerEdit\PlayerEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\EditBase.cpp" />
     <ClCompile Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -271,5 +272,7 @@
     <ClInclude Include="SourceCode\Editor\PlayerEdit\PlayerEdit.h" />
     <ClInclude Include="SourceCode\Editor\EditBase.h" />
     <ClInclude Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Player\PlayerParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.h" />
   </ItemGroup>
 </Project>

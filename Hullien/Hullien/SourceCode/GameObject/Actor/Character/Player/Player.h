@@ -2,11 +2,13 @@
 #define PLAYER_H
 
 #include "..\Character.h"
+#include "PlayerParam.h"
 #include <queue>
 
 class CRotLookAtCenter;
 class CCharacterWidget;
 class CEffectManager;
+class CEffectTimer;
 
 #define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
 
@@ -46,36 +48,20 @@ class CPlayer : public CCharacter
 
 		EAttackNo_Max = EAttackNo_Three,
 	} typedef EAttackNo;
-public:
-	// プレイヤーパラメータ.
-	struct stPlayerParam : public stParameter
-	{
-		float		SpecialAbilityMax;	// 特殊能力最大値.
-		float		SpecialAbilityValue;// 特殊能力回復値.
-		int			AttackComboMax;		// 攻撃の最大数.
-		int			AttackQueueMax;		// 攻撃キューの最大数.
-		float		AvoidMoveDistance;	// 回避の移動距離.
-		float		AvoidMoveSpeed;		// 回避用の移動速度.
-		float		CameraMoveSpeed;	// カメラの移動速度.
-		float		CameraDistance;		// カメラの距離.
-		float		CameraHeight;		// カメラの高さ.
-		D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
-		float		SphereAdjRadius;	// スフィアの調整半径.
 
-		stPlayerParam()
-			: SpecialAbilityMax	( 0.0f )
-			, AttackComboMax	( 0 )
-			, AttackQueueMax	( 0 )
-			, AvoidMoveDistance	( 0.0f )
-			, AvoidMoveSpeed	( 0.0f )
-			, CameraMoveSpeed	( 0.01f )
-			, CameraDistance	( 7.0f )
-			, CameraHeight		( 4.0f )
-			, SphereAdjPos		( 0.0f, 0.0f, 0.0f )
-			, SphereAdjRadius	( 0.0f )
-		{}
-	} typedef SPlayerParam;
-private:
+	// 効果時間計測番号.
+	enum enEffectTimerNo
+	{
+		enEffectTimerNo_None,
+
+		SPRecoveryTimer = 0,
+		AttackTimer,
+		MoveSpeedUpTimer,
+		ParalysisTimer,
+
+		enEffectTimerNo_Max,
+	} typedef EEffectTimerNo;
+
 	// 攻撃用データ.
 	struct stAttackData
 	{
@@ -91,36 +77,6 @@ private:
 			, EndFrame			( 2.0 )
 		{}
 	} typedef SAttackData;
-
-	// アイテムや、麻痺などのタイマー.
-	struct stEffectTimer
-	{
-		bool	IsUpdate;	// 更新中か.
-		float	Time;		// 時間.
-
-		stEffectTimer()
-			: IsUpdate	( false )
-			, Time		( 0.0f )
-		{}
-
-		// タイマーの設定.
-		void Set()
-		{
-			Time *= FPS;
-			IsUpdate = true;
-		}
-
-		// 更新.
-		bool Update()
-		{
-			if( IsUpdate == false ) return false;
-			Time--;
-
-			if( Time > 0.0f ) return false;
-			IsUpdate = false;
-			return true;
-		}
-	} typedef SEffectTimer;
 
 public:
 	CPlayer();
@@ -237,11 +193,8 @@ private:
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
 
-	SEffectTimer	m_ItemSPRecoveryTimer;	// アイテムでの特殊能力回復タイマー.
-	SEffectTimer	m_ItemAttackTimer;		// アイテムでの攻撃力UPタイマー.
-	SEffectTimer	m_ItemMoveSpeedUpTimer;	// アイテムでの移動速度UPタイマー.
-	SEffectTimer	m_ParalysisTimer;		// 麻痺タイマー.
-
+	std::vector<std::shared_ptr<CEffectTimer>>	m_pEffectTimers;	// 効果時間計測クラス.
+	
 	bool				m_IsAttackSE;				//攻撃SEを鳴らすか.
 };
 

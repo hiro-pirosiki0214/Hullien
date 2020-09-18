@@ -23,7 +23,7 @@ public:
 
 private:
 	std::unique_ptr<CPlayer>	m_pPlayer;
-	CPlayer::SPlayerParam		m_pPlayerParam;
+	SPlayerParam		m_pPlayerParam;
 };
 
 #endif	// #ifndef PLAYER_EDIT_H.
