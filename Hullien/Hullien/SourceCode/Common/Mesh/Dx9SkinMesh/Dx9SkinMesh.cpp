@@ -357,14 +357,16 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	m_CameraPos = CCameraManager::GetPosition();
 	m_CameraLookPos = CCameraManager::GetLookPosition();
 
-	if (pAC == nullptr)
-	{
-		if (m_pD3dxMesh->m_pAnimController)
+	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+		if (pAC == nullptr)
 		{
-			m_pD3dxMesh->m_pAnimController->AdvanceTime(m_dAnimSpeed, NULL);
+			if (m_pD3dxMesh->m_pAnimController)
+			{
+				m_pD3dxMesh->m_pAnimController->AdvanceTime(m_dAnimSpeed, NULL);
+			}
+		} else {
+			pAC->AdvanceTime( m_dAnimSpeed, NULL );
 		}
-	} else {
-		pAC->AdvanceTime( m_dAnimSpeed, NULL );
 	}
 
 	D3DXMATRIX m;
@@ -850,10 +852,6 @@ bool CDX9SkinMesh::ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorl
 	if( CShadowMap::GetRenderPass() != 0 ) return false;
 
 	//アニメーションフレームを進める スキンを更新.
-	m_iFrame++;
-	if( m_iFrame >= 3600 ){
-		m_iFrame = 0;
-	}
 	D3D11_MAPPED_SUBRESOURCE pData;
 
 	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
