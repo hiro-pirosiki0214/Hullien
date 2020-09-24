@@ -52,9 +52,8 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	float4 color = g_TextureColor.Sample(g_samLinear, input.Tex);
 	
 	float4 transColor =  g_TextureTrans.Sample(g_samLinear, input.Tex);
-	float4 gray = transColor.r * 0.299 + transColor.g * 0.587 + transColor.b * 0.114;
+	float gray = transColor.r * 0.299 + transColor.g * 0.587 + transColor.b * 0.114;
 	gray = 1.0f - saturate(gray);
-	gray.a = 1.0f;
 	
 	
 	//----------------------------------------------------------------.
@@ -95,18 +94,18 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	depth = depth4.r + (depth4.g + (depth4.b + depth4.a / 256.0f) / 256.0f) / 256.0f;
 	depth /= 8.0f;
 	
-	float4 outLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-	if (length(norm) >= 0.58f || abs(z - depth) > 0.0011f )
+	float outLineColor = 0.0f;
+	if (length(norm) >= 0.2f || abs(z - depth) > 0.011f )
 	{
-		outLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+		outLineColor = 0.0f;
 		gray *= 0.0f;
 	}
 	else
 	{
-		outLineColor = float4(1.0f, 0.0f, 0.0f, 1.0f);
+		outLineColor = 1.0f;
 		gray *= 1.0f;
 	}
-	color = lerp(color, outLineColor, gray);
+	color *= lerp(color, outLineColor, gray);
 	
 	return color;
 }

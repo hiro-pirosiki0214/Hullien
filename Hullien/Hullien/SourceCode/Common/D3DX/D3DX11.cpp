@@ -276,7 +276,7 @@ HRESULT CDirectX11::InitDSTex()
 	descDepth.MiscFlags				= 0;						// その他の設定なし.
 
 
-																// そのテクスチャに対してデプスステンシル(DSTex)を作成.
+	// そのテクスチャに対してデプスステンシル(DSTex)を作成.
 	if( FAILED( m_pDevice11->CreateTexture2D( &descDepth, nullptr, &m_pBackBuffer_DSTex )) ){
 		_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
 		return E_FAIL;
@@ -355,7 +355,7 @@ HRESULT CDirectX11::InitGBufferTex()
 	texDepth.Height				= WND_H;							// 高さ.
 	texDepth.MipLevels			= 1;								// ミップマップレベル:1.
 	texDepth.ArraySize			= 1;								// 配列数:1.
-	texDepth.Format				= DXGI_FORMAT_R11G11B10_FLOAT;		// 32ビットフォーマット.
+	texDepth.Format				= DXGI_FORMAT_R16G16B16A16_FLOAT;		// 32ビットフォーマット.
 	texDepth.SampleDesc.Count	= 1;								// マルチサンプルの数.
 	texDepth.SampleDesc.Quality	= 0;								// マルチサンプルのクオリティ.
 	texDepth.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法:デフォルト.
@@ -367,7 +367,7 @@ HRESULT CDirectX11::InitGBufferTex()
 		if( i == enGBUFFER_Z_DEPTH ){
 			texDepth.Format				= DXGI_FORMAT_B8G8R8A8_UNORM;// 32ﾋﾞｯﾄﾌｫｰﾏｯﾄ.
 
-																	 // そのテクスチャに対してデプスステンシル(DSTex)を作成.
+			// そのテクスチャに対してデプスステンシル(DSTex)を作成.
 			if( FAILED( m_pDevice11->CreateTexture2D( &texDepth, nullptr, &m_pGBufferTex[i] )) ){
 				_ASSERT_EXPR( false, L"テクスチャデスク作成失敗" );
 				return E_FAIL;
@@ -407,7 +407,7 @@ HRESULT CDirectX11::InitGBufferTex()
 		// レンダーターゲットビューの設定
 		D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
 		memset( &rtvDesc, 0, sizeof( rtvDesc ) );
-		rtvDesc.Format             = DXGI_FORMAT_R11G11B10_FLOAT;
+		rtvDesc.Format             = DXGI_FORMAT_R16G16B16A16_FLOAT;
 		rtvDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
 		// RenderTargetView作成.
 		if( FAILED( m_pDevice11->CreateRenderTargetView( m_pGBufferTex[i], &rtvDesc, &m_pGBufferRTV[i] ) )){
