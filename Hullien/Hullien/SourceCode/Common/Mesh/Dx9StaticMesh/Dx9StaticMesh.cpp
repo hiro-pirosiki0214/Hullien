@@ -4,6 +4,7 @@
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\D3DX\D3DX11.h"
 #include "..\..\Shader\ShadowMap\ShadowMap.h"
+#include "..\..\Shader\TranslucentShader\TranslucentShader.h"
 #include <crtdbg.h>	//_ASSERTﾏｸﾛで必要.
 
 //ｼｪｰﾀﾞﾌｧｲﾙ名(ﾃﾞｨﾚｸﾄﾘも含む).
@@ -563,6 +564,7 @@ void CDX9StaticMesh::Render()
 
 	// 影を描画したら終了.
 	if( ShadowRender( mWorld ) == true ) return;
+	if( TranslucentRender( mWorld ) == true ) return;
 
 	//使用するｼｪｰﾀﾞのｾｯﾄ.
 	m_pContext11->VSSetShader(m_pVertexShader, nullptr, 0);//頂点ｼｪｰﾀﾞ.
@@ -779,5 +781,31 @@ bool CDX9StaticMesh::ShadowRender( const D3DXMATRIX& mWorld )
 		}
 	}
 
+	return true;
+}
+
+// 半透明の描画,
+bool CDX9StaticMesh::TranslucentRender( const D3DXMATRIX& mWorld )
+{
+	if( CShadowMap::GetRenderPass() != 1 ) return false;
+	CTranslucentShader::SetConstantBufferData( mWorld*CCameraManager::GetViewMatrix()*CCameraManager::GetProjMatrix() );
+	//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+	UINT stride = m_pMesh->GetNumBytesPerVertex();
+	UINT offset = 0;
+	m_pContext11->IASetVertexBuffers(
+		0, 1, &m_pVertexBuffer, &stride, &offset);
+	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
+	m_pContext11->IASetPrimitiveTopology(
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
+	for (DWORD No = 0; No < m_NumAttr; No++)
+	{
+		//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧをｾｯﾄ.
+		m_pContext11->IASetIndexBuffer(
+			m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0);
+		//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
+		m_pContext11->DrawIndexed(
+			m_pMaterials[m_AttrID[No]].dwNumFace * 3, 0, 0);
+	}
 	return true;
 }

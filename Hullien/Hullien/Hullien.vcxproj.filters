@@ -8,6 +8,7 @@
     <FxCompile Include="Data\Shader\Sprite.hlsl" />
     <FxCompile Include="Data\Shader\PeraRenderShader.hlsl" />
     <FxCompile Include="Data\Shader\ShadowMap.hlsl" />
+    <FxCompile Include="Data\Shader\TranslucentShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\ImGui\imgui.cpp" />
@@ -135,6 +136,7 @@
     <ClCompile Include="SourceCode\Editor\MotherShipUFOEdit\MotherShipUFOEdit.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.cpp" />
     <ClCompile Include="SourceCode\Editor\GirlEdit\GirlEdit.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -277,5 +279,6 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\GirlParam.h" />
     <ClInclude Include="SourceCode\Editor\GirlEdit\GirlEdit.h" />
+    <ClInclude Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.h" />
   </ItemGroup>
 </Project>

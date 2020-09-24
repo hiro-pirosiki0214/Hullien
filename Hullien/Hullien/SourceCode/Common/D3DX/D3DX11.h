@@ -51,11 +51,14 @@ public: //----- 関数 ------.
 	static void SetGBuufer();
 	// BackBufferの設定.
 	static void SetBackBuffer();
+	//
+	static void SetTransBuffer();
 
 	// 深度バッファテクスチャを取得.
 	static std::vector<ID3D11ShaderResourceView*> GetZBuffer(){ return GetInstance()->m_pZBufferSRV; }
 	// G-Bufferテクスチャを取得.
 	static std::vector<ID3D11ShaderResourceView*> GetGBuffer(){ return GetInstance()->m_pGBufferSRV; }
+	static ID3D11ShaderResourceView* GetTransBaffer(){ return GetInstance()->m_pTransBufferSRV; }
 
 private: //----- 関数 ------.
 		 // デバイス11の作成.
@@ -68,6 +71,8 @@ private: //----- 関数 ------.
 	HRESULT InitZBufferTex();
 	// G-Bufferの作成.
 	HRESULT InitGBufferTex();
+	// 
+	HRESULT InitTransBufferTex();
 	// ビューポートの作成.
 	HRESULT InitViewports();
 	// ラスタライザの作成.
@@ -92,6 +97,10 @@ private: //----- 変数 ------.
 	std::vector<ID3D11RenderTargetView*>	m_pGBufferRTV;	// G-Bufferのレンダーターゲットビュー.
 	std::vector<ID3D11ShaderResourceView*>	m_pGBufferSRV;	// G-Bufferのシェーダーリソースビュー.
 	std::vector<ID3D11Texture2D*>			m_pGBufferTex;	// G-Bufferのテクスチャ2D.
+
+	ID3D11RenderTargetView*		m_pTransBufferRTV;	// G-Bufferのレンダーターゲットビュー.
+	ID3D11ShaderResourceView*	m_pTransBufferSRV;	// G-Bufferのシェーダーリソースビュー.
+	ID3D11Texture2D*			m_pTransBufferTex;	// G-Bufferのテクスチャ2D.
 
 private:
 	// コピー・ムーブコンストラクタ, 代入演算子の削除.

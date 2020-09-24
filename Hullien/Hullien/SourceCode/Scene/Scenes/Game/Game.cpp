@@ -136,8 +136,8 @@ void CGame::Render()
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ.
 	ModelRender();
 
-	m_GameObjManager->SpriteRender();
-	m_WidgetManager->Render();
+//	m_GameObjManager->SpriteRender();
+//	m_WidgetManager->Render();
 
 	if (m_GameObjManager->IsGameOver() == true)
 	{
@@ -172,9 +172,19 @@ void CGame::ModelRender()
 	//--------------------------------------------.
 	// •`‰æƒpƒX2.
 	//--------------------------------------------.
-	// G-Buffer‚Écolor, normal, depth‚ğ‘‚«‚Ş.
+	// ƒGƒtƒFƒNƒg‚È‚Ç‚Ì•`‰æ.
 
 	CShadowMap::SetRenderPass( 1 );
+	CDirectX11::SetTransBuffer();
+	m_pSkyDome->Render();
+	m_GameObjManager->Render();
+
+	//--------------------------------------------.
+	// •`‰æƒpƒX3.
+	//--------------------------------------------.
+	// G-Buffer‚Écolor, normal, depth‚ğ‘‚«‚Ş.
+
+	CShadowMap::SetRenderPass( 2 );
 	CDirectX11::SetGBuufer();
 	m_pSkyDome->Render();
 	m_GameObjManager->Render();

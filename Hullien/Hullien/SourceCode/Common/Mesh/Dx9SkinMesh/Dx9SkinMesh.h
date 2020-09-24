@@ -212,6 +212,8 @@ private:
 
 	// ‰e‚Ì•`‰æ.
 	bool ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld );
+	// ”¼“§–¾‚Ì•`‰æ,
+	bool TranslucentRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld );
 
 	//‘S‚Ä‚ÌƒƒbƒVƒ…‚ğíœ.
 	void DestroyAllMesh( D3DXFRAME* pFrame );

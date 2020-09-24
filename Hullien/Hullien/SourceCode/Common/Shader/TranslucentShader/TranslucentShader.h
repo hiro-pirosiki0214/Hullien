@@ -1,15 +1,15 @@
-#ifndef SHADOW_MAP_H
-#define SHADOW_MAP_H
+#ifndef TRANSLUCEN_SHADER_H
+#define TRANSLUCEN_SHADER_H
 
 #include "..\ShaderBase.h"
 
-class CShadowMap : public CShaderBase
+class CTranslucentShader : public CShaderBase
 {
-	const char* SHADER_NAME = "Data\\Shader\\ShadowMap.hlsl";	// シェーダーファイル名.
+	const char* SHADER_NAME = "Data\\Shader\\TranslucentShader.hlsl";	// シェーダーファイル名.
 																//※シェーダー内のコンスタントバッファと一致している必要あり.
 	struct C_BUFFER
 	{
-		D3DXMATRIX	mLightWVP;		// ワールド,ビュー,プロジェクションの合成変換行列.
+		D3DXMATRIX	mWVP;		// ワールド,ビュー,プロジェクションの合成変換行列.
 	};
 	//頂点の構造体.
 	struct VERTEX
@@ -25,16 +25,15 @@ public:
 
 		One,
 		Two,
-		Three,
 
 		Max,
 	} typedef EShadowMapRenderPass;
 public:
-	CShadowMap();
-	virtual ~CShadowMap();
+	CTranslucentShader();
+	virtual ~CTranslucentShader();
 
 	// インスタンスの取得.
-	static CShadowMap* GetInstance();
+	static CTranslucentShader* GetInstance();
 
 	// 初期化.
 	static HRESULT Init();
@@ -42,7 +41,7 @@ public:
 	static HRESULT ReleaseShader();
 
 	// コンスタントバッファにデータを渡す.
-	static void SetConstantBufferData( const D3DXMATRIX& mLWVP, const bool isSkin = false );
+	static void SetConstantBufferData( const D3DXMATRIX& mWVP, const bool isSkin = false );
 	// 各種シェーダの設定.
 	static void ShaderSet( ID3D11Buffer* pVertexBuffer, ID3D11Buffer* pIndexBuffer );
 
@@ -65,4 +64,4 @@ private:
 	int					m_RenderPass;			// レンダリングパス.
 };
 
-#endif	// #ifndef SHADOW_MAP_H.
+#endif	// #ifndef TRANSLUCEN_SHADER_H.

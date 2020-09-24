@@ -14,6 +14,9 @@ CDirectX11::CDirectX11()
 	, m_pGBufferRTV				( G_BUFFER_NUM )
 	, m_pGBufferSRV				( G_BUFFER_NUM )
 	, m_pGBufferTex				( G_BUFFER_NUM )
+	, m_pTransBufferRTV			( nullptr )
+	, m_pTransBufferSRV			( nullptr )
+	, m_pTransBufferTex			( nullptr )
 {
 }
 
@@ -43,6 +46,7 @@ HRESULT CDirectX11::Create( HWND hWnd )
 	if( FAILED(GetInstance()->InitDSTex()) )		return E_FAIL;
 	if( FAILED(GetInstance()->InitZBufferTex()) )	return E_FAIL;
 	if( FAILED(GetInstance()->InitGBufferTex()))	return E_FAIL;
+	if( FAILED(GetInstance()->InitTransBufferTex()))return E_FAIL;
 	if( FAILED(GetInstance()->InitViewports()) )	return E_FAIL;
 	if( FAILED(GetInstance()->InitRasterizer()) )	return E_FAIL;
 
@@ -61,6 +65,10 @@ HRESULT CDirectX11::Release()
 	for( auto& rtv : GetInstance()->m_pZBufferRTV ) SAFE_RELEASE(rtv);
 	for( auto& srv : GetInstance()->m_pZBufferSRV ) SAFE_RELEASE(srv);
 	for( auto& tex : GetInstance()->m_pZBufferTex ) SAFE_RELEASE(tex);
+
+	SAFE_RELEASE(GetInstance()->m_pTransBufferSRV);
+	SAFE_RELEASE(GetInstance()->m_pTransBufferTex);
+	SAFE_RELEASE(GetInstance()->m_pTransBufferRTV);
 
 	SAFE_RELEASE(GetInstance()->m_pBackBuffer_DSTexDSV);
 	SAFE_RELEASE(GetInstance()->m_pBackBuffer_DSTex);
@@ -89,6 +97,8 @@ void CDirectX11::ClearBackBuffer()
 	for( auto& rtv : GetInstance()->m_pGBufferRTV ){
 		GetInstance()->m_pContext11->ClearRenderTargetView( rtv, GetInstance()->CLEAR_BACK_COLOR );
 	}
+	GetInstance()->m_pContext11->ClearRenderTargetView( 
+		GetInstance()->m_pTransBufferRTV, GetInstance()->CLEAR_BACK_COLOR );
 }
 
 //-----------------------------------.
@@ -147,6 +157,20 @@ void CDirectX11::SetBackBuffer()
 	GetInstance()->m_pContext11->ClearDepthStencilView(
 		GetInstance()->m_pBackBuffer_DSTexDSV,
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+		1.0f, 0 );
+}
+//
+void CDirectX11::SetTransBuffer()
+{
+	// レンダーターゲットの設定.
+	GetInstance()->m_pContext11->OMSetRenderTargets( 
+		1,
+		&GetInstance()->m_pTransBufferRTV,
+		GetInstance()->m_pBackBuffer_DSTexDSV );
+	// デプスステンシルバッファ.
+	GetInstance()->m_pContext11->ClearDepthStencilView(
+		GetInstance()->m_pBackBuffer_DSTexDSV,
+		D3D11_CLEAR_DEPTH,
 		1.0f, 0 );
 }
 
@@ -403,6 +427,54 @@ HRESULT CDirectX11::InitGBufferTex()
 			_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
 			return E_FAIL;
 		}
+	}
+	return S_OK;
+}
+
+// 
+HRESULT CDirectX11::InitTransBufferTex()
+{
+	D3D11_TEXTURE2D_DESC texDepth;
+	texDepth.Width				= WND_W;							// 幅.
+	texDepth.Height				= WND_H;							// 高さ.
+	texDepth.MipLevels			= 1;								// ミップマップレベル:1.
+	texDepth.ArraySize			= 1;								// 配列数:1.
+	texDepth.Format				= DXGI_FORMAT_R11G11B10_FLOAT;		// 32ビットフォーマット.
+	texDepth.SampleDesc.Count	= 1;								// マルチサンプルの数.
+	texDepth.SampleDesc.Quality	= 0;								// マルチサンプルのクオリティ.
+	texDepth.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法:デフォルト.
+	texDepth.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;	// レンダーターゲット、シェーダーリソース.
+	texDepth.CPUAccessFlags		= 0;								// CPUからはアクセスしない.
+	texDepth.MiscFlags			= 0;								// その他の設定なし.
+
+	
+	// そのテクスチャに対してデプスステンシル(DSTex)を作成.
+	if( FAILED( m_pDevice11->CreateTexture2D( &texDepth, nullptr, &m_pTransBufferTex )) ){
+		_ASSERT_EXPR( false, L"テクスチャデスク作成失敗" );
+		return E_FAIL;
+	}
+	// レンダーターゲットビューの設定
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc;
+	memset( &rtvDesc, 0, sizeof( rtvDesc ) );
+	rtvDesc.Format             = DXGI_FORMAT_R11G11B10_FLOAT;
+	rtvDesc.ViewDimension      = D3D11_RTV_DIMENSION_TEXTURE2D;
+	// RenderTargetView作成.
+	if( FAILED( m_pDevice11->CreateRenderTargetView( m_pTransBufferTex, &rtvDesc, &m_pTransBufferRTV ) )){
+		_ASSERT_EXPR( false, L"RenderTargetView作成失敗" );
+		return E_FAIL;
+	}
+
+	// シェーダリソースビューの設定
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	memset( &srvDesc, 0, sizeof( srvDesc ) );
+	srvDesc.Format              = rtvDesc.Format;
+	srvDesc.ViewDimension       = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+
+	// テクスチャ作成時と同じフォーマット
+	if( FAILED( m_pDevice11->CreateShaderResourceView( m_pTransBufferTex, &srvDesc, &m_pTransBufferSRV ) )){
+		_ASSERT_EXPR( false, L"デプスステンシル作成失敗" );
+		return E_FAIL;
 	}
 	return S_OK;
 }

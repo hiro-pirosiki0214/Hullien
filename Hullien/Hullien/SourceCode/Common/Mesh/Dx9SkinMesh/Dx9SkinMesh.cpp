@@ -8,6 +8,7 @@
 #include "..\..\..\Light\LightManager\LightManager.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\Shader\ShadowMap\ShadowMap.h"
+#include "..\..\Shader\TranslucentShader\TranslucentShader.h"
 #include "..\..\D3DX\D3DX11.h"
 
 //シェーダ名(ディレクトリも含む)
@@ -672,6 +673,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 
 	SetNewPoseMatrices( pMesh, m_iFrame, pContainer );
 	if( ShadowRender( pMesh, m_mWorld ) == true ) return;
+	if( TranslucentRender( pMesh, m_mWorld ) == true ) return;
 	D3D11_MAPPED_SUBRESOURCE pData;
 
 	//使用するシェーダのセット.
@@ -896,6 +898,52 @@ bool CDX9SkinMesh::ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorl
 	return true;
 }
 
+// 半透明の描画,
+bool CDX9SkinMesh::TranslucentRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld )
+{
+	if( CShadowMap::GetRenderPass() != 1 ) return false;
+
+	//アニメーションフレームを進める スキンを更新.
+	D3D11_MAPPED_SUBRESOURCE pData;
+
+	CTranslucentShader::SetConstantBufferData( mWorld*CCameraManager::GetViewMatrix()*CCameraManager::GetProjMatrix(), true );
+	if( SUCCEEDED(
+		m_pContext11->Map(
+			m_pCBufferPerBone, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData ) ) )
+	{
+		CBUFFER_PER_BONES cb;
+		for( int i=0; i<pMesh->iNumBone; i++ )
+		{
+			D3DXMATRIX mat = GetCurrentPoseMatrix( pMesh, i );
+			D3DXMatrixTranspose( &mat, &mat );
+			cb.mBone[i] = mat;
+		}
+		memcpy_s( pData.pData, pData.RowPitch, (void*)&cb, sizeof( cb ) );
+		m_pContext11->Unmap(m_pCBufferPerBone, 0 );
+	}
+	m_pContext11->VSSetConstantBuffers(	1, 1, &m_pCBufferPerBone);
+	m_pContext11->PSSetConstantBuffers(	1, 1, &m_pCBufferPerBone);
+
+
+	//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+	UINT stride = sizeof( MY_SKINVERTEX );
+	UINT offset = 0;
+	m_pContext11->IASetVertexBuffers(
+		0, 1, &pMesh->pVertexBuffer, &stride, & offset );
+	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
+	m_pContext11->IASetPrimitiveTopology(
+		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
+	for( DWORD i=0; i<pMesh->dwNumMaterial; i++ )
+	{
+		m_pContext11->IASetIndexBuffer(
+			pMesh->ppIndexBuffer[i], DXGI_FORMAT_R32_UINT, 0 );
+		//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
+		m_pContext11->DrawIndexed( pMesh->pMaterial[i].dwNumFace * 3, 0, 0 );
+	}
+
+	return true;
+}
 
 //解放関数.
 HRESULT CDX9SkinMesh::Release()

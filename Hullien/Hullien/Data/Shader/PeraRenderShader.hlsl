@@ -1,8 +1,9 @@
 //¸ÞÛ°ÊÞÙ•Ï”.
 //Ã¸½Á¬‚ÍAÚ¼Þ½À t(n).
-Texture2D g_TextureColor : register(t0);
-Texture2D g_TextureNormal : register(t1);
-Texture2D g_TextureDepth : register(t2);
+Texture2D g_TextureColor	: register(t0);
+Texture2D g_TextureNormal	: register(t1);
+Texture2D g_TextureDepth	: register(t2);
+Texture2D g_TextureTrans	: register(t3);
 //»ÝÌß×‚ÍAÚ¼Þ½À s(n).
 SamplerState g_samLinear : register(s0);
 
@@ -50,6 +51,12 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	*/
 	float4 color = g_TextureColor.Sample(g_samLinear, input.Tex);
 	
+	float4 transColor =  g_TextureTrans.Sample(g_samLinear, input.Tex);
+	float4 gray = transColor.r * 0.299 + transColor.g * 0.587 + transColor.b * 0.114;
+	gray = 1.0f - saturate(gray);
+	gray.a = 1.0f;
+	
+	
 	//----------------------------------------------------------------.
 	// —ÖŠsü.
 	//----------------------------------------------------------------.
@@ -88,14 +95,18 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	depth = depth4.r + (depth4.g + (depth4.b + depth4.a / 256.0f) / 256.0f) / 256.0f;
 	depth /= 8.0f;
 	
+	float4 outLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	if (length(norm) >= 0.58f || abs(z - depth) > 0.0011f )
 	{
-		color = float4(0.0f, 0.0f, 0.0f, 1.0f);
+		outLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+		gray *= 0.0f;
 	}
 	else
 	{
-		color = color;
+		outLineColor = float4(1.0f, 0.0f, 0.0f, 1.0f);
+		gray *= 1.0f;
 	}
+	color = lerp(color, outLineColor, gray);
 	
 	return color;
 }

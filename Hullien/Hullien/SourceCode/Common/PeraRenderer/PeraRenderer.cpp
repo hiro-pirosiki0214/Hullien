@@ -111,6 +111,9 @@ void CPeraRenderer::Render( std::vector<ID3D11ShaderResourceView*> gbuffers )
 	m_pContext11->PSSetShaderResources( 0, 1, &gbuffers[0] );
 	m_pContext11->PSSetShaderResources( 1, 1, &gbuffers[1] );
 	m_pContext11->PSSetShaderResources( 2, 1, &gbuffers[2] );
+	ID3D11ShaderResourceView* tex = CDirectX11::GetTransBaffer();
+	m_pContext11->PSSetShaderResources( 3, 1, &tex );
+	tex = nullptr;
 
 	// ÌßØÐÃ¨ÌÞ‚ðÚÝÀÞØÝ¸Þ.
 	m_pContext11->Draw( 4, 0 );//”ÂÎßØ(’¸“_4‚Â•ª).

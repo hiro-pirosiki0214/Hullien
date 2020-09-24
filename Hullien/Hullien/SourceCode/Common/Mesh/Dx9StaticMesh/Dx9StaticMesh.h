@@ -145,6 +145,8 @@ private:
 		const D3DXMATRIX& mProj);
 	// ‰e‚Ì•`‰æ.
 	bool ShadowRender( const D3DXMATRIX& mWorld );
+	// ”¼“§–¾‚Ì•`‰æ,
+	bool TranslucentRender( const D3DXMATRIX& mWorld );
  };
 
 #endif	// #ifndef DX9_STATIC_MESH_H.

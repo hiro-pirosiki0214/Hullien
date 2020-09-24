@@ -17,6 +17,7 @@
 #include "..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\XAudio2\SoundManager.h"
 #include "..\Common\Shader\ShadowMap\ShadowMap.h"
+#include "..\Common\Shader\TranslucentShader\TranslucentShader.h"
 
 #include "..\Common\Font\FontCreate.h"
 #include "..\Common\Font\Font.h"
@@ -71,6 +72,8 @@ HRESULT CMain::Init()
 	if( FAILED( CDirectX11::Create( m_hWnd ) )) return E_FAIL;
 	// シャドウマップシェーダーの初期化.
 	if( FAILED( CShadowMap::Init() )) return E_FAIL;
+	// 半透明シェーダーの初期化.
+	if( FAILED( CTranslucentShader::Init() )) return E_FAIL;
 	// ImGuiの初期化.
 	if( FAILED( CImGuiManager::Init( m_hWnd, 
 		CDirectX11::GetDevice(), 
@@ -86,6 +89,7 @@ HRESULT CMain::Init()
 //====================================.
 void CMain::Release()
 {
+	CTranslucentShader::ReleaseShader();
 	CShadowMap::ReleaseShader();
 	CSoundManager::Release();
 	CImGuiManager::Release();
