@@ -15,6 +15,8 @@ CLaserBeam::CLaserBeam()
 	, m_FrameTime			( 1.0f )
 	, m_InitPosition		( 0.0f, 0.0f, 0.0f )
 	, m_ControlPointList	()
+	, m_VertexPoint			()
+	, m_VertexCount			( 0 )
 {
 	m_ObjectTag = EObjectTag::LaserBeam;
 }
@@ -36,6 +38,7 @@ void CLaserBeam::Update()
 {
 	if( m_IsInAttack == false ) return;
 
+	m_VertexCount++;
 	// 操作座標のサイズで比較.
 	switch( m_ControlPointList.size() )
 	{
@@ -109,6 +112,7 @@ void CLaserBeam::Shot( const D3DXVECTOR3& pos )
 	m_vPosition		= pos;
 	m_InitPosition	= pos;
 	m_FrameCount	= 0.0f;
+	m_VertexCount	= 0;
 }
 
 // パラメータを初期に戻す.
@@ -187,6 +191,24 @@ void CLaserBeam::ThirdBezierCurve()
 	m_vPosition.z = b * p[0].z + a * p[1].z;
 
 	m_FrameCount += m_MoveSpeed;
+
+	if( m_VertexCount >= 15 ){
+		if( m_VertexPoint.size() < 5 ){
+			m_VertexPoint.push( 
+				{ 
+					{ m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z }, 
+					{ m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z }
+				} );
+		} else {
+			m_VertexPoint.pop();
+			m_VertexPoint.push( 
+				{ 
+					{ m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z }, 
+					{ m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z }
+				} );
+		}
+		m_VertexCount = 0;
+	}
 }
 
 // モデルの取得.
@@ -212,4 +234,14 @@ bool CLaserBeam::CollisionSetting()
 		1.0f ) )) return false;
 
 	return true;
+}
+
+void CLaserBeam::CreateVertex()
+{
+	if( m_VertexPoint.size() < 2 ) return;
+
+	std::vector<D3DXVECTOR3> vertex;
+	for( auto& v : m_VertexPoint ){
+
+	}
 }

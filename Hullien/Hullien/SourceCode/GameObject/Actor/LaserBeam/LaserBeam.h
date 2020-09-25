@@ -2,6 +2,7 @@
 #define LASER_BEAM_H
 
 #include "..\Actor.h"
+#include <queue>
 
 class CLaserBeam : public CActor
 {
@@ -52,6 +53,8 @@ private:
 	// 当たり判定の設定.
 	bool CollisionSetting();
 
+	void CreateVertex();
+
 private:
 	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;	// モデル.
 	float m_MoveSpeed;
@@ -64,6 +67,9 @@ private:
 	float m_FrameTime;		// フレーム時間.
 	D3DXVECTOR3 m_InitPosition;	// 初期座標.
 	std::vector<D3DXVECTOR3> m_ControlPointList;	// 制御座標.
+
+	std::queue<std::pair<D3DXVECTOR3,D3DXVECTOR3>> m_VertexPoint;
+	int m_VertexCount;
 };
 
 #endif	// #ifndef LASER_BEAM_H.
