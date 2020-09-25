@@ -11,7 +11,6 @@ class CItemEdit;
 class CPlayerEdit;
 class CGirlEdit;
 class CMotherShipUFOEdit;
-class CSceneTexRenderer;
 class CEditCamera;
 class CSkyDome;
 class CGroundStage;
@@ -61,7 +60,6 @@ private:
 	std::unique_ptr<CMotherShipUFOEdit>	m_pMotherShipUFOEdit;
 	std::shared_ptr<CEditCamera>		m_pEditCamera;
 
-	std::unique_ptr<CSceneTexRenderer>	m_pPeraRenderer;
 	std::unique_ptr<CSkyDome>			m_pSkyDome;
 	std::unique_ptr<CGroundStage>		m_pGroundStage;
 

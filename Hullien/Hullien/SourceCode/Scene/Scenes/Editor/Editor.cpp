@@ -28,7 +28,6 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pGirlEdit			( nullptr )
 	, m_pMotherShipUFOEdit	( nullptr )
 	, m_pEditCamera			( nullptr )
-	, m_pPeraRenderer		( nullptr )
 	, m_pGroundStage		( nullptr )
 	, m_NowEditScene		( EEditScenes::None )
 {
@@ -42,15 +41,12 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	m_pMotherShipUFOEdit	= std::make_unique<CMotherShipUFOEdit>();
 
 	m_pEditCamera		= std::make_shared<CEditCamera>();
-
-	m_pPeraRenderer		= std::make_unique<CSceneTexRenderer>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_unique<CGroundStage>();
 }
 
 CEditor::~CEditor()
 {
-	m_pPeraRenderer->Release();
 }
 
 // 読込関数.
@@ -63,7 +59,6 @@ bool CEditor::Load()
 	if( m_pPlayerEdit->Init()			== false ) return false;
 	if( m_pGirlEdit->Init()				== false ) return false;
 	if( m_pMotherShipUFOEdit->Init()	== false ) return false;
-	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
 
@@ -121,7 +116,7 @@ void CEditor::ModelRender()
 	//--------------------------------------------.
 	// 深度テクスチャに影用の深度を書き込む.
 
-	CShadowMap::SetRenderPass( 0 );
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Shadow );
 	m_pGroundStage->Render();
 
 	switch( m_NowEditScene )
@@ -146,14 +141,48 @@ void CEditor::ModelRender()
 	default:
 		break;
 	}
-
 	//--------------------------------------------.
 	// 描画パス2.
 	//--------------------------------------------.
+	// エフェクトなどの描画.
+
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Trans );
+	CSceneTexRenderer::SetTransBuffer();
+	m_pSkyDome->Render();
+	m_pGroundStage->Render();
+
+	switch( m_NowEditScene )
+	{
+	case EEditScenes::PlayerEdit:
+		m_pPlayerEdit->ModelRender();
+		break;
+	case EEditScenes::GirlEdit:
+		m_pGirlEdit->ModelRender();
+		break;
+	case EEditScenes::SpawnEdit:
+		break;
+	case EEditScenes::AlienParam:
+		break;
+	case EEditScenes::Explosion:
+		m_pExplosionEdit->ModelRender();
+		break;
+	case EEditScenes::ItemEdit:
+		break;
+	case EEditScenes::MotherShipUFOEdit:
+		m_pMotherShipUFOEdit->ModelRender();
+		break;
+	default:
+		break;
+	}
+
+
+	//--------------------------------------------.
+	// 描画パス3.
+	//--------------------------------------------.
 	// G-Bufferにcolor, normal, depthを書き込む.
 
-	CShadowMap::SetRenderPass( 1 );
-	CDirectX11::SetGBuufer();
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::GBuffer );
+	CSceneTexRenderer::SetGBuufer();
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
 
@@ -187,7 +216,7 @@ void CEditor::ModelRender()
 	// G-Bufferを使用して、画面に描画する.
 
 	CDirectX11::SetBackBuffer();
-	m_pPeraRenderer->Render( CDirectX11::GetGBuffer() );
+	CSceneTexRenderer::Render( CSceneTexRenderer::GetGBuffer() );
 }
 
 // UIの表示.

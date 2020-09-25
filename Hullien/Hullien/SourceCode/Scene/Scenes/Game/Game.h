@@ -8,7 +8,6 @@ class CGameWidgetManager;	// UI管理クラス.
 class CContinueWidget;		// コンテニューUIクラス.
 class CSkyDome;					// 背景クラス.
 class CEventManager;			//イベント管理クラス.
-class CSceneTexRenderer;	// G-Buufer描画用.
 
 /**********************************
 *	ゲームシーンクラス.
@@ -58,7 +57,6 @@ private:
 	std::unique_ptr<CContinueWidget>			m_ContinueWidget;		// コンテニューUIクラス.
 	std::unique_ptr<CSkyDome>					m_pSkyDome;				// 背景.
 	std::unique_ptr<CEventManager>			m_pEventManager;		//	イベント管理クラス.
-	std::unique_ptr<CSceneTexRenderer>		m_pPeraRenderer;
 	EChangeSceneState					m_ChangeSceneState;	// シーン切り替え状態.
 	bool								m_IsChangeScene;	// シーン切り替えが可能か.
 

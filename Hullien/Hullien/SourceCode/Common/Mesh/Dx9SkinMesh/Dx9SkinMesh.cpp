@@ -10,6 +10,7 @@
 #include "..\..\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\Shader\TranslucentShader\TranslucentShader.h"
 #include "..\..\D3DX\D3DX11.h"
+#include "..\..\SceneTexRenderer\SceneTexRenderer.h"
 
 //シェーダ名(ディレクトリも含む)
 const char SHADER_NAME[] = "Data\\Shader\\SkinMesh.hlsl";
@@ -358,7 +359,8 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	m_CameraPos = CCameraManager::GetPosition();
 	m_CameraLookPos = CCameraManager::GetLookPosition();
 
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ||
+		CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Trans ){
 		if (pAC == nullptr)
 		{
 			if (m_pD3dxMesh->m_pAnimController)
@@ -741,7 +743,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 		cb.mLightRot = CLightManager::GetRorarionMatrix();
 
 		// ライトの行列を渡す.
-		for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+		for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 			cb.mLightWVP[i] = m_mWorld * CLightManager::GetShadowVP()[i];
 			D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
 		}
@@ -766,10 +768,8 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_pContext11->PSSetConstantBuffers(	2, 1, &m_pCBufferPerFrame);
 
 	// カスケードの数だけループ.
-	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
-		ID3D11ShaderResourceView* shadowTex = CDirectX11::GetZBuffer()[i];
-		m_pContext11->PSSetShaderResources( i+1, 1, &shadowTex );
-		shadowTex = nullptr;
+	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
+		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
 	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
 
@@ -851,13 +851,13 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 // 影の描画.
 bool CDX9SkinMesh::ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld )
 {
-	if( CShadowMap::GetRenderPass() != 0 ) return false;
+	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Shadow ) return false;
 
 	//アニメーションフレームを進める スキンを更新.
 	D3D11_MAPPED_SUBRESOURCE pData;
 
-	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
-		CDirectX11::SetZBuffer(i);
+	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
+		CSceneTexRenderer::SetShadowBuffer( i );
 		CShadowMap::SetConstantBufferData( mWorld*CLightManager::GetShadowVP()[i], true );
 		if( SUCCEEDED(
 			m_pContext11->Map(
@@ -901,7 +901,7 @@ bool CDX9SkinMesh::ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorl
 // 半透明の描画,
 bool CDX9SkinMesh::TranslucentRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld )
 {
-	if( CShadowMap::GetRenderPass() != 1 ) return false;
+	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Trans ) return false;
 
 	//アニメーションフレームを進める スキンを更新.
 	D3D11_MAPPED_SUBRESOURCE pData;

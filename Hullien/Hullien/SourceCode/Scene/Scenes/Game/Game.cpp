@@ -25,7 +25,6 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_WidgetManager	( nullptr )
 	, m_ContinueWidget	( nullptr )
 	, m_pSkyDome		( nullptr )
-	, m_pPeraRenderer	( nullptr )
 	, m_ChangeSceneState( EChangeSceneState::Clear )
 	, m_IsChangeScene	( false )
 {
@@ -33,14 +32,12 @@ CGame::CGame( CSceneManager* pSceneManager )
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
 	m_pSkyDome				= std::make_unique<CSkyDome>();
-	m_pEventManager		= std::make_unique<CEventManager>();
-	m_pPeraRenderer			= std::make_unique<CSceneTexRenderer>();
+	m_pEventManager			= std::make_unique<CEventManager>();
 	CFade::SetFadeOut();
 }
 
 CGame::~CGame()
 {
-	m_pPeraRenderer->Release();
 }
 
 //============================.
@@ -52,7 +49,6 @@ bool CGame::Load()
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
 	if( m_pSkyDome->Init() == false )		return false;
-	if( m_pPeraRenderer->Init(nullptr,nullptr) == E_FAIL ) return false;
 	
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
 	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
@@ -149,9 +145,9 @@ void CGame::Render()
 	CEditRenderer::PushRenderProc( 
 		[&]()
 		{
-			ImGui::Image( CDirectX11::GetGBuffer()[0], ImVec2(800, 400) );
-			ImGui::Image( CDirectX11::GetGBuffer()[1], ImVec2(800, 400) );
-			ImGui::Image( CDirectX11::GetGBuffer()[2], ImVec2(800, 400) );
+			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[0], ImVec2(800, 400) );
+			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[1], ImVec2(800, 400) );
+			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[2], ImVec2(800, 400) );
 		});	
 }
 
@@ -165,7 +161,7 @@ void CGame::ModelRender()
 	//--------------------------------------------.
 	// [“xƒeƒNƒXƒ`ƒƒ‚É‰e—p‚Ì[“x‚ð‘‚«ž‚Þ.
 
-	CShadowMap::SetRenderPass( 0 );
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Shadow );
 //	m_pSkyDome->Render();	// ”wŒi‚Ì‰e‚Í‚¢‚ç‚È‚¢.
 	m_GameObjManager->Render();
 
@@ -174,8 +170,8 @@ void CGame::ModelRender()
 	//--------------------------------------------.
 	// ƒGƒtƒFƒNƒg‚È‚Ç‚Ì•`‰æ.
 
-	CShadowMap::SetRenderPass( 1 );
-	CDirectX11::SetTransBuffer();
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Trans );
+	CSceneTexRenderer::SetTransBuffer();
 	m_pSkyDome->Render();
 	m_GameObjManager->Render();
 
@@ -184,8 +180,8 @@ void CGame::ModelRender()
 	//--------------------------------------------.
 	// G-Buffer‚Écolor, normal, depth‚ð‘‚«ž‚Þ.
 
-	CShadowMap::SetRenderPass( 2 );
-	CDirectX11::SetGBuufer();
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::GBuffer );
+	CSceneTexRenderer::SetGBuufer();
 	m_pSkyDome->Render();
 	m_GameObjManager->Render();
 
@@ -195,7 +191,7 @@ void CGame::ModelRender()
 	// G-Buffer‚ðŽg—p‚µ‚ÄA‰æ–Ê‚É•`‰æ‚·‚é.
 
 	CDirectX11::SetBackBuffer();
-	m_pPeraRenderer->Render( CDirectX11::GetGBuffer() );
+	CSceneTexRenderer::Render( CSceneTexRenderer::GetGBuffer() );
 }
 
 //============================.

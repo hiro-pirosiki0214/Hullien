@@ -3,6 +3,7 @@
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Common\Effect\EffectManager.h"
+#include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
@@ -257,12 +258,12 @@ void CItemBase::HitRender()
 // アルファブレンドの設定.
 void CItemBase::AlphaBlendSetting()
 {
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
 		if( m_ModelAlpha < 1.0f ){
 			m_pStaticMesh->SetBlend( false );
 		}
 	}
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::Two ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::GBuffer ){
 		m_pStaticMesh->SetBlend( true );
 		if( m_ModelAlpha >= 1.0f ){
 			m_pStaticMesh->SetBlend( false );

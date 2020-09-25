@@ -18,6 +18,7 @@
 #include "..\XAudio2\SoundManager.h"
 #include "..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\Common\Shader\TranslucentShader\TranslucentShader.h"
+#include "..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
 #include "..\Common\Font\FontCreate.h"
 #include "..\Common\Font\Font.h"
@@ -70,6 +71,8 @@ HRESULT CMain::Init()
 	if( FAILED( m_pDirectX9->Create( m_hWnd ) )) return E_FAIL;
 	// DirectX11の構築.
 	if( FAILED( CDirectX11::Create( m_hWnd ) )) return E_FAIL;
+	// シーンテクスチャの初期化.
+	if( FAILED( CSceneTexRenderer::Init() ))	return E_FAIL;
 	// シャドウマップシェーダーの初期化.
 	if( FAILED( CShadowMap::Init() )) return E_FAIL;
 	// 半透明シェーダーの初期化.
@@ -91,6 +94,7 @@ void CMain::Release()
 {
 	CTranslucentShader::ReleaseShader();
 	CShadowMap::ReleaseShader();
+	CSceneTexRenderer::Release();
 	CSoundManager::Release();
 	CImGuiManager::Release();
 	CDirectX11::Release();
@@ -122,6 +126,7 @@ void CMain::Update()
 {
 	// 画面のクリア.
 	CDirectX11::ClearBackBuffer();
+	CSceneTexRenderer::ClearBuffer();
 	CCameraManager::InitViewProj();
 
 	CCameraManager::Update();

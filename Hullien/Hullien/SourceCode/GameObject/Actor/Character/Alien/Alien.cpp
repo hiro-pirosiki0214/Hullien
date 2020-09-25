@@ -3,6 +3,7 @@
 #include "..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\..\XAudio2\SoundManager.h"
 
 CAlien::CAlien()
@@ -244,24 +245,24 @@ void CAlien::Escape()
 void CAlien::AlphaBlendSetting()
 {
 #ifndef IS_TEMP_MODEL_RENDER
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
 		if( m_ModelAlpha < 1.0f ){
 			m_pSkinMesh->SetBlend( false );
 		}
 	}
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::Two ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::GBuffer ){
 		m_pSkinMesh->SetBlend( true );
 		if( m_ModelAlpha >= 1.0f ){
 			m_pSkinMesh->SetBlend( false );
 		}
 	}
 #else
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::One ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
 		if( m_ModelAlpha < 1.0f ){
 			m_pTempStaticMesh->SetBlend( false );
 		}
 	}
-	if( CShadowMap::GetRenderPass() == CShadowMap::EShadowMapRenderPass::Two ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::GBuffer ){
 		m_pTempStaticMesh->SetBlend( true );
 		if( m_ModelAlpha >= 1.0f ){
 			m_pTempStaticMesh->SetBlend( false );

@@ -5,6 +5,7 @@
 #include "..\..\D3DX\D3DX11.h"
 #include "..\..\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\Shader\TranslucentShader\TranslucentShader.h"
+#include "..\..\SceneTexRenderer\SceneTexRenderer.h"
 #include <crtdbg.h>	//_ASSERTﾏｸﾛで必要.
 
 //ｼｪｰﾀﾞﾌｧｲﾙ名(ﾃﾞｨﾚｸﾄﾘも含む).
@@ -571,10 +572,8 @@ void CDX9StaticMesh::Render()
 	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
 	// カスケードの数だけループ.
-	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
-		ID3D11ShaderResourceView* shadowTex = CDirectX11::GetZBuffer()[i];
-		m_pContext11->PSSetShaderResources( i+1, 1, &shadowTex );
-		shadowTex = nullptr;
+	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
+		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
 	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
 
@@ -606,7 +605,7 @@ void CDX9StaticMesh::Render()
 		cb.mLightRot = CLightManager::GetRorarionMatrix();
 
 		// ライトの行列を渡す.
-		for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
+		for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 			cb.mLightWVP[i] = mWorld * CLightManager::GetShadowVP()[i];
 			D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
 		}
@@ -757,9 +756,9 @@ void CDX9StaticMesh::RenderMesh(
 // 影の描画.
 bool CDX9StaticMesh::ShadowRender( const D3DXMATRIX& mWorld )
 {
-	if( CShadowMap::GetRenderPass() != 0 ) return false;
-	for( int i = 0; i < CDirectX11::GetInstance()->MAX_CASCADE; i++ ){
-		CDirectX11::SetZBuffer(i);
+	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Shadow ) return false;
+	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
+		CSceneTexRenderer::SetShadowBuffer( i );
 		CShadowMap::SetConstantBufferData( mWorld*CLightManager::GetShadowVP()[i] );
 		//頂点ﾊﾞｯﾌｧをｾｯﾄ.
 		UINT stride = m_pMesh->GetNumBytesPerVertex();
@@ -787,7 +786,7 @@ bool CDX9StaticMesh::ShadowRender( const D3DXMATRIX& mWorld )
 // 半透明の描画,
 bool CDX9StaticMesh::TranslucentRender( const D3DXMATRIX& mWorld )
 {
-	if( CShadowMap::GetRenderPass() != 1 ) return false;
+	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Trans ) return false;
 	CTranslucentShader::SetConstantBufferData( mWorld*CCameraManager::GetViewMatrix()*CCameraManager::GetProjMatrix() );
 	//頂点ﾊﾞｯﾌｧをｾｯﾄ.
 	UINT stride = m_pMesh->GetNumBytesPerVertex();

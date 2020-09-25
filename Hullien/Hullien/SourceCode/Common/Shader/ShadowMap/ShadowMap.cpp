@@ -5,7 +5,6 @@
 CShadowMap::CShadowMap()
 	: m_pVertexSkinShader	( nullptr )
 	, m_pVertexSkinLayout	( nullptr )
-	, m_RenderPass			( 0 )
 {
 }
 
