@@ -20,7 +20,7 @@ class CPlayer : public CCharacter
 	const char* MODEL_TEMP_NAME		= "kaito";		// 仮モデル名.
 
 	// 使用攻撃エフェクト名.
-	const char* ATTACK_ONE_EFFECT_NAME		= "barrier";
+	const char* ATTACK_ONE_EFFECT_NAME		= "uvtest";
 	const char* ATTACK_TWO_EFFECT_NAME		= "uvtest";
 	const char* ATTACK_THREE_EFFECT_NAME	= "uvtest";
 

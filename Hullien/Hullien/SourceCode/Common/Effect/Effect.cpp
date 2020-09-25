@@ -1,5 +1,6 @@
 #include "Effect.h"
 #include "..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
 //定数宣言.
 //描画用ｲﾝｽﾀﾝｽ(ｽﾌﾟﾗｲﾄ)最大数.
@@ -180,15 +181,18 @@ void CEffect::Render( const Effekseer::Handle& eHandle )
 	//ﾌﾟﾛｼﾞｪｸｼｮﾝ行列を設定.
 	SetProjectionMatrix(Proj);
 
-	//ｴﾌｪｸﾄの更新処理.
-	m_pManager->BeginUpdate();
-	m_pManager->UpdateHandle( eHandle );
-	m_pManager->EndUpdate();
-
-	//ｴﾌｪｸﾄの描画開始処理.
-	m_pRenderer->BeginRendering();
-	m_pManager->DrawHandle( eHandle );
-	m_pRenderer->EndRendering();
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Trans ){
+		//ｴﾌｪｸﾄの更新処理.
+		m_pManager->BeginUpdate();
+		m_pManager->UpdateHandle( eHandle );
+		m_pManager->EndUpdate();
+	}
+	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Shadow ){
+		//ｴﾌｪｸﾄの描画開始処理.
+		m_pRenderer->BeginRendering();
+		m_pManager->DrawHandle( eHandle );
+		m_pRenderer->EndRendering();
+	}	
 }
 
 

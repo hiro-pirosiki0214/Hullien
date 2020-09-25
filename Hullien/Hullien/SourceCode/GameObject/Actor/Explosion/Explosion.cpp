@@ -39,14 +39,17 @@ void CExplosion::Update()
 // 描画関数.
 void CExplosion::Render()
 {
-	m_CollSphereRadius += m_Param.ExplosionSpeed;	// 当たり判定を大きくする.
-	// 当たり判定が最大当たり判定より大きければ終了.
-	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
-	if( m_pCollManager == nullptr ) return;
+	// エフェクトの再生終わっていれば終了,
+	if( m_IsEffectPlay == false ) return;
 
 	// エフェクトを描画.
 	m_pEffect->SetScale( 2.0f );
 	m_pEffect->Render();
+
+	// 当たり判定が最大当たり判定より大きければ終了.
+	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
+	if( m_pCollManager == nullptr ) return;
+	m_CollSphereRadius += m_Param.ExplosionSpeed;	// 当たり判定を大きくする.
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -108,7 +111,8 @@ void CExplosion::SetPosition( const D3DXVECTOR3& vPos )
 bool CExplosion::IsStop()
 {
 	if( m_CollSphereRadius < m_Param.SphereMaxRadius ) return false;
-	m_pEffect->Stop();	// エフェクトを止める.
+	if( m_pEffect->IsExists() == true ) return false;
+	m_IsEffectPlay = false;
 	return true;
 }
 

@@ -51,7 +51,8 @@ bool CGameActorManager::Init()
 // 更新関数.
 void CGameActorManager::Update()
 {
-	m_ObjPosListCount = 0;	// カウントの初期化.
+	m_ObjPosListCount = 0;		// カウントの初期化.
+	m_ObjPositionList.clear();	// リストの初期化.
 
 	// プレイヤーの更新.
 	m_pPlayer->Update();
@@ -154,10 +155,5 @@ void CGameActorManager::SetPositionList( CGameObject* pObj )
 {
 	if( pObj == nullptr ) return;
 	m_ObjPosListCount++;	// オブジェクト数の加算.
-	if( static_cast<int>(m_ObjPositionList.size()) < m_ObjPosListCount ){
-		// リスト数を追加.
-		m_ObjPositionList.emplace_back( pObj->GetObjectTag(), pObj->GetPosition() );
-	} else {
-		m_ObjPositionList[m_ObjPosListCount-1] = { pObj->GetObjectTag(), pObj->GetPosition() };
-	}
+	m_ObjPositionList.emplace_back( pObj->GetObjectTag(), pObj->GetPosition() );
 }

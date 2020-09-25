@@ -28,9 +28,7 @@ bool CEffectManager::SetEffect( const char* effectName )
 void CEffectManager::Render()
 {
 	if( m_pEffect == nullptr ) return;
-	if( m_pEffect->IsPause( m_Handle ) == false ){
-		int i = 0;
-	}
+	if( m_Handle == -1 ) return;
 	m_pEffect->Render( m_Handle );
 }
 
@@ -101,4 +99,12 @@ void CEffectManager::SetRotation( const D3DXVECTOR3& vRot )
 void CEffectManager::SetSpeed( const float fSpeed )
 {
 	m_pEffect->SetSpeed( m_Handle, fSpeed );
+}
+
+//------------------------------.
+// ‘¶Ý‚µ‚Ä‚¢‚é‚©.
+//------------------------------.
+bool CEffectManager::IsExists()
+{
+	return m_pEffect->IsExists( m_Handle );
 }

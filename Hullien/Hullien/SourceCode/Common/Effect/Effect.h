@@ -139,11 +139,11 @@ public:
 		if( handle == -1 ) return;
 		m_pManager->SetSpeed( handle, fSpeed );
 	}
-	// 一時停止しているか確認.
-	bool IsPause( const Effekseer::Handle& handle )
+	// 存在しているか確認.
+	bool IsExists( const Effekseer::Handle& handle )
 	{
 		if( handle == -1 ) return true;
-		return m_pManager->GetShown( handle );
+		return m_pManager->Exists( handle );
 	}
 
 private:

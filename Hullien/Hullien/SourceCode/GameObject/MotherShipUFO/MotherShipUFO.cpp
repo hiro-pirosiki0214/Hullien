@@ -35,7 +35,9 @@ void CMotherShipUFO::Render()
 	if( m_pStaticMesh == nullptr ) return;
 
 	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
+	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 
 #if _DEBUG
 	m_pCollManager->DebugRender();

@@ -34,6 +34,8 @@ public:
 	void SetRotation( const D3DXVECTOR3& vRot );
 	// 再生速度を設定する.
 	void SetSpeed( const float fSpeed );
+	// 存在しているか.
+	bool IsExists();
 
 private:
 	std::shared_ptr<CEffect>	m_pEffect;	// エフェクトクラス.

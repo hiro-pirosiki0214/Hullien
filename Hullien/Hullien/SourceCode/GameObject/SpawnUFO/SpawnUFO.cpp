@@ -57,7 +57,9 @@ void CSpawnUFO::Render()
 	if( m_pStaticMesh == nullptr ) return;
 
 	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
+	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 }
 
 // 宇宙人をスポーンさせる.
@@ -120,7 +122,7 @@ void CSpawnUFO::WaveCountUpdate(
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {
 	// 宇宙人番号の作成.
-	const EAlienList alienNo = static_cast<EAlienList>(GetAlienNo());
+	const EAlienList alienNo = EAlienList::C;//static_cast<EAlienList>(GetAlienNo());
 
 	switch( alienNo )
 	{

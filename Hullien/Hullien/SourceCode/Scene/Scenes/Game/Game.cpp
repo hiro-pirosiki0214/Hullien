@@ -145,7 +145,7 @@ void CGame::Render()
 	CEditRenderer::PushRenderProc( 
 		[&]()
 		{
-			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[0], ImVec2(800, 400) );
+			ImGui::Image( CSceneTexRenderer::GetTransBaffer(), ImVec2(800, 400) );
 			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[1], ImVec2(800, 400) );
 			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[2], ImVec2(800, 400) );
 		});	

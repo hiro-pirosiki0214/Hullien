@@ -30,7 +30,9 @@ void CSkyDome::Render()
 	if( m_StaticMesh == nullptr ) return;
 
 	m_StaticMesh->SetPosition( m_vPosition );
+	m_StaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_StaticMesh->Render();
+	m_StaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 
 }
 
