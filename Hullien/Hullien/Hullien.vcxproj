@@ -165,7 +165,7 @@
     <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.cpp" />
     <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Parser\CDX9SkinMeshParser.cpp" />
     <ClCompile Include="SourceCode\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.cpp" />
-    <ClCompile Include="SourceCode\Common\PeraRenderer\PeraRenderer.cpp" />
+    <ClCompile Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\DebugTextShader\DebugTextShader.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\ShaderBase.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.cpp" />
@@ -295,7 +295,7 @@
     <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h" />
     <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Parser\CDX9SkinMeshParser.h" />
     <ClInclude Include="SourceCode\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h" />
-    <ClInclude Include="SourceCode\Common\PeraRenderer\PeraRenderer.h" />
+    <ClInclude Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.h" />
     <ClInclude Include="SourceCode\Common\Shader\DebugTextShader\DebugTextShader.h" />
     <ClInclude Include="SourceCode\Common\Shader\ShaderBase.h" />
     <ClInclude Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.h" />
@@ -424,7 +424,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="Data\Shader\PeraRenderShader.hlsl">
+    <FxCompile Include="Data\Shader\SceneTexRenderer.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>

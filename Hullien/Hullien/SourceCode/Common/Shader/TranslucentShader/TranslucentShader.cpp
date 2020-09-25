@@ -5,7 +5,6 @@
 CTranslucentShader::CTranslucentShader()
 	: m_pVertexSkinShader	( nullptr )
 	, m_pVertexSkinLayout	( nullptr )
-	, m_RenderPass			( 0 )
 {
 }
 
@@ -14,6 +13,7 @@ CTranslucentShader::~CTranslucentShader()
 	GetInstance()->Release();
 }
 
+// インスタンスの取得.
 CTranslucentShader* CTranslucentShader::GetInstance()
 {
 	static std::unique_ptr<CTranslucentShader> pInstance = 

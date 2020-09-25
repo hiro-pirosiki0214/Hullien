@@ -1,7 +1,7 @@
-#include "PeraRenderer.h"
+#include "SceneTexRenderer.h"
 #include "..\D3DX\D3DX11.h"
 
-CPeraRenderer::CPeraRenderer()
+CSceneTexRenderer::CSceneTexRenderer()
 	: m_pVertexShader	( nullptr )
 	, m_pPixelShader	( nullptr )
 	, m_pVertexLayout	( nullptr )
@@ -11,13 +11,13 @@ CPeraRenderer::CPeraRenderer()
 {
 }
 
-CPeraRenderer::~CPeraRenderer()
+CSceneTexRenderer::~CSceneTexRenderer()
 {
 	Release();
 }
 
 // 初期化.
-HRESULT CPeraRenderer::Init(
+HRESULT CSceneTexRenderer::Init(
 	ID3D11Device* pDevice11,
 	ID3D11DeviceContext* pContext11 )
 {
@@ -35,7 +35,7 @@ HRESULT CPeraRenderer::Init(
 }
 
 // 解放.
-void CPeraRenderer::Release()
+void CSceneTexRenderer::Release()
 {
 	SAFE_RELEASE( m_pSampleLinear );
 	SAFE_RELEASE( m_pVertexBuffer );
@@ -49,7 +49,7 @@ void CPeraRenderer::Release()
 }
 
 // 描画関数.
-void CPeraRenderer::Render( std::vector<ID3D11ShaderResourceView*> gbuffers )
+void CSceneTexRenderer::Render( std::vector<ID3D11ShaderResourceView*> gbuffers )
 {
 	// シェーダーのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -114,13 +114,12 @@ void CPeraRenderer::Render( std::vector<ID3D11ShaderResourceView*> gbuffers )
 	ID3D11ShaderResourceView* tex = CDirectX11::GetTransBaffer();
 	m_pContext11->PSSetShaderResources( 3, 1, &tex );
 	tex = nullptr;
-
 	// ﾌﾟﾘﾐﾃｨﾌﾞをﾚﾝﾀﾞﾘﾝｸﾞ.
 	m_pContext11->Draw( 4, 0 );//板ﾎﾟﾘ(頂点4つ分).
 }
 
 // シェーダ作成.
-HRESULT CPeraRenderer::CreateShader()
+HRESULT CSceneTexRenderer::CreateShader()
 {
 	ID3DBlob* pCompileVS = nullptr;
 	ID3DBlob* pCompilePS = nullptr;
@@ -213,15 +212,15 @@ HRESULT CPeraRenderer::CreateShader()
 }
 
 // サンプラの作成.
-HRESULT CPeraRenderer::InitSample()
+HRESULT CSceneTexRenderer::InitSample()
 {
 	// テクスチャ用のサンプラ構造体.
 	D3D11_SAMPLER_DESC samDesc;
 	ZeroMemory( &samDesc, sizeof( samDesc ) );
 	samDesc.Filter			= D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samDesc.AddressU		= D3D11_TEXTURE_ADDRESS_WRAP;
-	samDesc.AddressV		= D3D11_TEXTURE_ADDRESS_WRAP;
-	samDesc.AddressW		= D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressU		= D3D11_TEXTURE_ADDRESS_CLAMP;		// UV値が[0,1]を超えたら,[0,1]に設定する.
+	samDesc.AddressV		= D3D11_TEXTURE_ADDRESS_CLAMP;
+	samDesc.AddressW		= D3D11_TEXTURE_ADDRESS_CLAMP;
 	samDesc.ComparisonFunc	= D3D11_COMPARISON_NEVER;
 	samDesc.MinLOD			= 0;
 	samDesc.MaxLOD			= D3D11_FLOAT32_MAX;
@@ -251,7 +250,7 @@ HRESULT CPeraRenderer::InitSample()
 
 
 // モデル作成.
-HRESULT CPeraRenderer::CreateModel()
+HRESULT CSceneTexRenderer::CreateModel()
 {
 	// 板ポリ(四角形)の頂点を作成.
 	VERTEX vertices[]=

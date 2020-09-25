@@ -10,7 +10,7 @@
 #include "..\..\..\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
-#include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
+#include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\GameObject\SkyDome\SkyDome.h"
 #include "..\..\..\GameObject\GroundStage\GroundStage.h"
 #include "..\..\..\Camera\EditCamera\EditCamera.h"
@@ -43,7 +43,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 
-	m_pPeraRenderer		= std::make_unique<CPeraRenderer>();
+	m_pPeraRenderer		= std::make_unique<CSceneTexRenderer>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_unique<CGroundStage>();
 }

@@ -17,7 +17,7 @@
 #include "..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
-#include "..\..\..\Common\PeraRenderer\PeraRenderer.h"
+#include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -34,7 +34,7 @@ CGame::CGame( CSceneManager* pSceneManager )
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
 	m_pSkyDome				= std::make_unique<CSkyDome>();
 	m_pEventManager		= std::make_unique<CEventManager>();
-	m_pPeraRenderer			= std::make_unique<CPeraRenderer>();
+	m_pPeraRenderer			= std::make_unique<CSceneTexRenderer>();
 	CFade::SetFadeOut();
 }
 
@@ -136,8 +136,8 @@ void CGame::Render()
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ.
 	ModelRender();
 
-//	m_GameObjManager->SpriteRender();
-//	m_WidgetManager->Render();
+	m_GameObjManager->SpriteRender();
+	m_WidgetManager->Render();
 
 	if (m_GameObjManager->IsGameOver() == true)
 	{

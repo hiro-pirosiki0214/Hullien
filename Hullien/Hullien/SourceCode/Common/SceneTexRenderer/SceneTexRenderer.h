@@ -6,9 +6,9 @@
 
 #include <vector>
 
-class CPeraRenderer : public CCommon
+class CSceneTexRenderer : public CCommon
 {
-	const char* SHADER_NAME = "Data\\Shader\\PeraRenderShader.hlsl";
+	const char* SHADER_NAME = "Data\\Shader\\SceneTexRenderer.hlsl";
 public:
 	//======================================
 	//	\‘¢‘Ì.
@@ -28,8 +28,8 @@ public:
 	};
 
 public:
-	CPeraRenderer();
-	virtual ~CPeraRenderer();
+	CSceneTexRenderer();
+	virtual ~CSceneTexRenderer();
 
 	// ‰Šú‰».
 	HRESULT Init(

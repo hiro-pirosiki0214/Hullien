@@ -51,13 +51,14 @@ public: //----- 関数 ------.
 	static void SetGBuufer();
 	// BackBufferの設定.
 	static void SetBackBuffer();
-	//
+	// TransBufferの設定.
 	static void SetTransBuffer();
 
 	// 深度バッファテクスチャを取得.
 	static std::vector<ID3D11ShaderResourceView*> GetZBuffer(){ return GetInstance()->m_pZBufferSRV; }
 	// G-Bufferテクスチャを取得.
 	static std::vector<ID3D11ShaderResourceView*> GetGBuffer(){ return GetInstance()->m_pGBufferSRV; }
+	// TransBufferテクスチャを取得.
 	static ID3D11ShaderResourceView* GetTransBaffer(){ return GetInstance()->m_pTransBufferSRV; }
 
 private: //----- 関数 ------.
@@ -98,9 +99,9 @@ private: //----- 変数 ------.
 	std::vector<ID3D11ShaderResourceView*>	m_pGBufferSRV;	// G-Bufferのシェーダーリソースビュー.
 	std::vector<ID3D11Texture2D*>			m_pGBufferTex;	// G-Bufferのテクスチャ2D.
 
-	ID3D11RenderTargetView*		m_pTransBufferRTV;	// G-Bufferのレンダーターゲットビュー.
-	ID3D11ShaderResourceView*	m_pTransBufferSRV;	// G-Bufferのシェーダーリソースビュー.
-	ID3D11Texture2D*			m_pTransBufferTex;	// G-Bufferのテクスチャ2D.
+	ID3D11RenderTargetView*		m_pTransBufferRTV;	// 半透明描画用のレンダーターゲットビュー.
+	ID3D11ShaderResourceView*	m_pTransBufferSRV;	// 半透明描画用のシェーダーリソースビュー.
+	ID3D11Texture2D*			m_pTransBufferTex;	// 半透明描画用のテクスチャ2D.
 
 private:
 	// コピー・ムーブコンストラクタ, 代入演算子の削除.

@@ -159,7 +159,10 @@ void CDirectX11::SetBackBuffer()
 		D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 		1.0f, 0 );
 }
-//
+
+//-----------------------------------.
+// TransBufferの設定.
+//-----------------------------------.
 void CDirectX11::SetTransBuffer()
 {
 	// レンダーターゲットの設定.

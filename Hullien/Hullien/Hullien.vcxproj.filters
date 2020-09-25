@@ -6,9 +6,9 @@
     <FxCompile Include="Data\Shader\SimpleShader.hlsl" />
     <FxCompile Include="Data\Shader\SkinMesh.hlsl" />
     <FxCompile Include="Data\Shader\Sprite.hlsl" />
-    <FxCompile Include="Data\Shader\PeraRenderShader.hlsl" />
     <FxCompile Include="Data\Shader\ShadowMap.hlsl" />
     <FxCompile Include="Data\Shader\TranslucentShader.hlsl" />
+    <FxCompile Include="Data\Shader\SceneTexRenderer.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\ImGui\imgui.cpp" />
@@ -127,7 +127,6 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\Camera\EvevtCamera\EvevtCamera.cpp" />
     <ClCompile Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.cpp" />
-    <ClCompile Include="SourceCode\Common\PeraRenderer\PeraRenderer.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.cpp" />
     <ClCompile Include="SourceCode\Camera\EditCamera\EditCamera.cpp" />
     <ClCompile Include="SourceCode\Utility\Mouse\Mouse.cpp" />
@@ -137,6 +136,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.cpp" />
     <ClCompile Include="SourceCode\Editor\GirlEdit\GirlEdit.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.cpp" />
+    <ClCompile Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -268,7 +268,6 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.h" />
     <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
     <ClInclude Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.h" />
-    <ClInclude Include="SourceCode\Common\PeraRenderer\PeraRenderer.h" />
     <ClInclude Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.h" />
     <ClInclude Include="SourceCode\Camera\EditCamera\EditCamera.h" />
     <ClInclude Include="SourceCode\Utility\Mouse\Mouse.h" />
@@ -280,5 +279,6 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\GirlParam.h" />
     <ClInclude Include="SourceCode\Editor\GirlEdit\GirlEdit.h" />
     <ClInclude Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.h" />
+    <ClInclude Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.h" />
   </ItemGroup>
 </Project>
