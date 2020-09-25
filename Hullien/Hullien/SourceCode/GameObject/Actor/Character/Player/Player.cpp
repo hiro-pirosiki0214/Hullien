@@ -271,15 +271,42 @@ void CPlayer::Move()
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
-	// スティックの傾いた方向に向く.
-	m_vRotation.y = atan2f( m_MoveVector.x, m_MoveVector.z );
-	// カメラの角度と足し合わせる.
-	m_vRotation.y += m_pCamera->GetRadianX();
 
-	// 回転軸で移動.
-	m_vPosition.x -= sinf( m_vRotation.y ) * m_MoveSpeed;
-	m_vPosition.z -= cosf( m_vRotation.y ) * m_MoveSpeed;
-	m_OldPosition = m_vPosition;
+	// ターゲットのベクトルを用意.
+	float targetRot = atan2f( m_MoveVector.x, m_MoveVector.z ) + m_pCamera->GetRadianX();
+	D3DXVECTOR3 targetVec = { 0.0f, 0.0f, 0.0f };
+	targetVec.x = sinf( targetRot );
+	targetVec.z = cosf( targetRot );
+
+	// 自身のベクトルを用意.
+	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
+	myVector.x = sinf( m_vRotation.y );
+	myVector.z = cosf( m_vRotation.y );
+
+	// ベクトルの長さを求める.
+	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
+	float targetLenght = sqrtf(targetVec.x*targetVec.x + targetVec.z*targetVec.z);
+
+	// 内積を求める.
+	float dot = myVector.x*targetVec.x + myVector.z*targetVec.z;
+	dot = acosf( dot / ( myLenght * targetLenght ));
+	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(20.0));
+	
+	if( ( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ) ||	// 内積が許容範囲なら.
+		( std::isfinite( dot ) ) == false ){						// 内積の値が計算できない値なら.
+		// ターゲットの回転を取得.
+		m_vRotation.y = targetRot;
+		// 回転軸で移動.
+		m_vPosition.x -= targetVec.x * m_MoveSpeed;
+		m_vPosition.z -= targetVec.z * m_MoveSpeed;
+		m_OldPosition = m_vPosition;
+	} else {
+		const float ROTATIONAL_SPEED = 0.3f;	// 回転速度.
+		// 目的のベクトルと、自分のベクトルの外積を求める.
+		float cross = myVector.x*targetVec.z - myVector.z*targetVec.x;
+		// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
+		m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
+	}
 }
 
 // 回避動作関数.

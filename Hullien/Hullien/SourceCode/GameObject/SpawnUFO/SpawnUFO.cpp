@@ -122,7 +122,7 @@ void CSpawnUFO::WaveCountUpdate(
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {
 	// ‰F’ˆl”Ô†‚Ìì¬.
-	const EAlienList alienNo = EAlienList::C;//static_cast<EAlienList>(GetAlienNo());
+	const EAlienList alienNo = static_cast<EAlienList>(GetAlienNo());
 
 	switch( alienNo )
 	{
