@@ -216,7 +216,7 @@ void CEditor::ModelRender()
 	// G-Bufferを使用して、画面に描画する.
 
 	CDirectX11::SetBackBuffer();
-	CSceneTexRenderer::Render( CSceneTexRenderer::GetGBuffer() );
+	CSceneTexRenderer::Render();
 }
 
 // UIの表示.

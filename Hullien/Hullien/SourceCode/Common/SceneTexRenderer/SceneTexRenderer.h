@@ -66,7 +66,7 @@ public:
 	static void Release();
 
 	// 描画関数.
-	static void Render( std::vector<ID3D11ShaderResourceView*> gbuffers );
+	static void Render();
 
 	// バッファバッファ.
 	static void ClearBuffer();

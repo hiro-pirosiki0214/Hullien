@@ -79,7 +79,7 @@ void CSceneTexRenderer::Release()
 }
 
 // 描画関数.
-void CSceneTexRenderer::Render( std::vector<ID3D11ShaderResourceView*> gbuffers )
+void CSceneTexRenderer::Render()
 {
 	// 使用するシェーダのセット.
 	GetInstance()->m_pContext11->VSSetShader( GetInstance()->m_pVertexShader, nullptr, 0 );	// 頂点シェーダ.

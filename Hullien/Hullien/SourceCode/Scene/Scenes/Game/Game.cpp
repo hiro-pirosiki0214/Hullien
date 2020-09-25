@@ -191,7 +191,7 @@ void CGame::ModelRender()
 	// G-Buffer‚ğg—p‚µ‚ÄA‰æ–Ê‚É•`‰æ‚·‚é.
 
 	CDirectX11::SetBackBuffer();
-	CSceneTexRenderer::Render( CSceneTexRenderer::GetGBuffer() );
+	CSceneTexRenderer::Render();
 }
 
 //============================.
