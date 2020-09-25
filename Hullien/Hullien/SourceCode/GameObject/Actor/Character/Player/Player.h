@@ -23,6 +23,10 @@ class CPlayer : public CCharacter
 	const char* ATTACK_ONE_EFFECT_NAME		= "uvtest";
 	const char* ATTACK_TWO_EFFECT_NAME		= "uvtest";
 	const char* ATTACK_THREE_EFFECT_NAME	= "uvtest";
+	// 特殊能力エフェクト名.
+	const char* SPECIAL_ABILITY_EFFECT_NAME	= "uvtest";
+	// 回避エフェクト名.
+	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
 
 	// アニメーション番号.
 	enum class enAnimNo
@@ -62,6 +66,18 @@ class CPlayer : public CCharacter
 
 		EEffectTimerNo_Max,
 	} typedef EEffectTimerNo;
+
+	// 使用エフェクト番号.
+	enum enEffectNo
+	{
+		enEffectNo_AttackOne,		// 攻撃1.
+		enEffectNo_AttackTwo,		// 攻撃2.
+		enEffectNo_AttackThree,		// 攻撃3.
+		enEffectNo_SP,				// 特殊能力.
+		enEffectNo_Avoidance,		// 回避.
+
+		enEffectNo_Max,
+	} typedef EEffectNo;
 
 	// 攻撃用データ.
 	struct stAttackData

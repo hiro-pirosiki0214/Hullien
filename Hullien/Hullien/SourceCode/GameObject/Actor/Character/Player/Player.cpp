@@ -256,7 +256,7 @@ void CPlayer::AvoidController()
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
 	m_OldPosition = m_vPosition;	// 現在の座標を設定.
 	CSoundManager::NoMultipleSEPlay("AvoidMove");
-
+	m_pEffects[EEffectNo::enEffectNo_Avoidance]->Play( m_vPosition );
 	// 回避アニメーションを設定するなら ここ.
 	//
 
@@ -339,9 +339,12 @@ void CPlayer::AvoidMove()
 // エフェクト描画関数.
 void CPlayer::EffectRender()
 {
-	if( m_AttackComboCount <= EAttackNo_None ) return;
-	m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
-	m_pEffects[m_AttackComboCount-1]->Render();
+	if( m_AttackComboCount > EAttackNo_None ){
+		m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
+	}
+	for( auto& e : m_pEffects ){
+		e->Render();
+	}
 }
 
 // 攻撃の当たり判定.
@@ -602,6 +605,8 @@ bool CPlayer::EffectSetting()
 		ATTACK_ONE_EFFECT_NAME,
 		ATTACK_TWO_EFFECT_NAME,
 		ATTACK_THREE_EFFECT_NAME,
+		SPECIAL_ABILITY_EFFECT_NAME,
+		AVOIDANCE_EFFECT_NAME,
 	};
 	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
 	// メモリの最大値設定.
