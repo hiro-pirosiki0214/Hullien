@@ -238,10 +238,10 @@ bool CLaserBeam::CollisionSetting()
 
 void CLaserBeam::CreateVertex()
 {
-	if( m_VertexPoint.size() < 2 ) return;
+	//if( m_VertexPoint.size() < 2 ) return;
 
-	std::vector<D3DXVECTOR3> vertex;
-	for( auto& v : m_VertexPoint ){
+	//std::vector<D3DXVECTOR3> vertex;
+	//for( auto& v : m_VertexPoint ){
 
-	}
+	//}
 }

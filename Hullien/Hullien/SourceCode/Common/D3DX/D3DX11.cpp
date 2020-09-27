@@ -97,6 +97,75 @@ void CDirectX11::SetBackBuffer()
 //-----------------------------------.
 HRESULT CDirectX11::InitDevice11()
 {
+#if 0	// アンチエイリアス処理.
+	//デバイスの生成
+	HRESULT hr;
+	hr = D3D11CreateDevice(
+		NULL,
+		D3D_DRIVER_TYPE_HARDWARE,
+		NULL,
+		0,
+		NULL,
+		0,
+		D3D11_SDK_VERSION,
+		&m_pDevice11,
+		NULL,
+		&m_pContext11);
+	if(FAILED(hr)){
+		MessageBoxW(m_hWnd, L"D3D11CreateDevice", L"Err", MB_ICONSTOP);
+	}
+
+	for(int i=0; i <= D3D11_MAX_MULTISAMPLE_SAMPLE_COUNT; i++){
+		UINT Quality;
+		if( SUCCEEDED(
+			m_pDevice11->CheckMultisampleQualityLevels(
+				DXGI_FORMAT_D24_UNORM_S8_UINT, i, &Quality ))){
+			if(0 < Quality){
+				m_MSAASampleDesc.Count = i;
+				m_MSAASampleDesc.Quality = Quality - 1;
+			}
+		}
+	}
+
+	//インターフェース取得
+	IDXGIDevice1* hpDXGI = NULL;
+	if(FAILED(m_pDevice11->QueryInterface(__uuidof(IDXGIDevice1), (void**)&hpDXGI))){
+		MessageBoxW(m_hWnd, L"QueryInterface", L"Err", MB_ICONSTOP);
+	}
+
+	//アダプター取得
+	IDXGIAdapter* hpAdapter = NULL;
+	if(FAILED(hpDXGI->GetAdapter(&hpAdapter))){
+		MessageBoxW(m_hWnd, L"GetAdapter", L"Err", MB_ICONSTOP);
+	}
+
+	//ファクトリー取得
+	IDXGIFactory* hpDXGIFactory = NULL;
+	hpAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&hpDXGIFactory);
+	if(hpDXGIFactory == NULL){
+		MessageBoxW(m_hWnd, L"GetParent", L"Err", MB_ICONSTOP);
+	}
+
+	//スワップチェイン作成
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	swapChainDesc.BufferDesc.Width	= WND_W;
+	swapChainDesc.BufferDesc.Height	= WND_H;
+	swapChainDesc.BufferDesc.RefreshRate.Numerator		= 0;
+	swapChainDesc.BufferDesc.RefreshRate.Denominator	= 1;
+	swapChainDesc.BufferDesc.Format				= DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferDesc.ScanlineOrdering	= DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	swapChainDesc.BufferDesc.Scaling			= DXGI_MODE_SCALING_UNSPECIFIED;
+	swapChainDesc.SampleDesc	= m_MSAASampleDesc;
+	swapChainDesc.BufferUsage	= DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.BufferCount	= 1;
+	swapChainDesc.OutputWindow	= m_hWnd;
+	swapChainDesc.Windowed		= TRUE;
+	swapChainDesc.SwapEffect	= DXGI_SWAP_EFFECT_DISCARD;
+	swapChainDesc.Flags			= DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+	if(FAILED(hpDXGIFactory->CreateSwapChain(m_pDevice11, &swapChainDesc, &m_pSwapChain))){
+		MessageBoxW(m_hWnd, L"CreateSwapChain", L"Err", MB_ICONSTOP);
+	}
+#else
 	// スワップチェーン構造体.
 	DXGI_SWAP_CHAIN_DESC sd = {0};
 	sd.BufferCount			= 1;								// バックバッファの数.
@@ -111,10 +180,10 @@ HRESULT CDirectX11::InitDevice11()
 	sd.SampleDesc.Quality	= 0;								// マルチサンプルのクオリティ.
 	sd.Windowed				= TRUE;								// ウィンドウモード(フルスクリーン時はFALSE).
 
-																//作成を試みる機能レベルの優先を指定.
-																// (GPUがサポートする機能ｾｯﾄの定義).
-																// D3D_FEATURE_LEVEL列挙型の配列.
-																// D3D_FEATURE_LEVEL_11_0:Direct3D 11.0 の GPUレベル.
+	//作成を試みる機能レベルの優先を指定.
+	// (GPUがサポートする機能ｾｯﾄの定義).
+	// D3D_FEATURE_LEVEL列挙型の配列.
+	// D3D_FEATURE_LEVEL_11_0:Direct3D 11.0 の GPUレベル.
 	D3D_FEATURE_LEVEL pFeatureLevels = D3D_FEATURE_LEVEL_11_0;
 	D3D_FEATURE_LEVEL* pFeatureLevel = nullptr;	// 配列の要素数.
 
@@ -146,6 +215,8 @@ HRESULT CDirectX11::InitDevice11()
 		}
 	}
 	pFeatureLevel = nullptr;
+
+#endif
 
 	return S_OK;
 }
@@ -192,6 +263,7 @@ HRESULT CDirectX11::InitDSTex()
 	descDepth.BindFlags				= D3D11_BIND_DEPTH_STENCIL;	// 深度(ステンシルとして使用).
 	descDepth.CPUAccessFlags		= 0;						// CPUからはアクセスしない.
 	descDepth.MiscFlags				= 0;						// その他の設定なし.
+//	descDepth.SampleDesc			= m_MSAASampleDesc;
 
 
 	// そのテクスチャに対してデプスステンシル(DSTex)を作成.
