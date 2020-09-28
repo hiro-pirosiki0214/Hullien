@@ -104,11 +104,11 @@ void CTrajectory::Render()
 	m_pContext11->IASetInputLayout( m_pVertexLayout );
 	m_pContext11->Draw( m_VertexCount, 0 );
 
-	stride = sizeof(VERTEX); // データの間隔.
-	offset = 0;
-	m_pContext11->IASetVertexBuffers( 0, 1, &m_pWidthVertexBuffer, &stride, &offset );
-	m_pContext11->IASetInputLayout( m_pVertexLayout );
-	m_pContext11->Draw( m_VertexCount, 0 );
+	//stride = sizeof(VERTEX); // データの間隔.
+	//offset = 0;
+	//m_pContext11->IASetVertexBuffers( 0, 1, &m_pWidthVertexBuffer, &stride, &offset );
+	//m_pContext11->IASetInputLayout( m_pVertexLayout );
+	//m_pContext11->Draw( m_VertexCount, 0 );
 }
 
 // 頂点バッファの取得.
@@ -116,8 +116,69 @@ void CTrajectory::CreateVertexBuffer(
 	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& height,
 	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& width )
 {
-	CreateVertexBuffer( height, &m_pHeightVertexBuffer, true );	// 高さ.
-	CreateVertexBuffer( width, &m_pWidthVertexBuffer, false );	// 幅.
+//	CreateVertexBuffer( height, &m_pHeightVertexBuffer, true );	// 高さ.
+//	CreateVertexBuffer( width, &m_pWidthVertexBuffer, false );	// 幅.
+
+	//
+	// ビールボードビームはテクスチャが不安定なので放置.
+	//
+	std::vector<D3DXVECTOR3> pos;
+	for( const auto& p : height ){
+		pos.emplace_back( D3DXVECTOR3( 
+			p.first.x, 
+			p.first.y-1.0f,
+			p.first.z ) );
+	}
+	std::vector<VERTEX> vertex(pos.size()*2);
+	m_VertexCount = pos.size()*2;
+	float x = 0.0f;
+	float cal = 1.0f;
+	for( int i = 0; i < pos.size(); i++ ){
+		// 点からカメラへの単位ベクトルを求める.
+		D3DXVECTOR3 z = CCameraManager::GetPosition() - pos[i];
+		// 点の単位接線ベクトルを求める
+		D3DXVECTOR3		t;
+		if( i == 0 ){
+			t = pos[i + 1] - pos[i];
+		} else if( i == pos.size() - 1 ){
+			t = pos[i] - pos[i - 1];
+		} else {
+			t = pos[i + 1] - pos[i - 1];
+		}
+		// ストリップ頂点を求める
+		D3DXVECTOR3		cross;
+		D3DXVec3Cross( &cross, &t, &z );
+		D3DXVec3Normalize( &cross, &cross );
+		vertex[i * 2].Pos = pos[i] - cross * cal;
+		vertex[i * 2 + 1].Pos = pos[i] + cross * cal;
+		cal = static_cast<float>(m_VertexCount/2)*0.1f;
+		vertex[i * 2].Tex.x = x / static_cast<float>(m_VertexCount/2);
+		vertex[i * 2].Tex.y = 1.0f;
+		vertex[i * 2 + 1].Tex.x = x / static_cast<float>(m_VertexCount/2);
+		vertex[i * 2 + 1].Tex.y = 0.0f;
+		x += x <= 0.0f ? 2.0f : 1.0f;
+	}
+	// バッファ構造体.
+	D3D11_BUFFER_DESC bd;
+	bd.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法(デフォルト).
+	bd.ByteWidth			= sizeof(VERTEX) * vertex.size();	// 頂点のサイズ.
+	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			// 頂点バッファとして扱う.
+	bd.CPUAccessFlags		= 0;	// CPUからはアクセスしない.
+	bd.MiscFlags			= 0;	// その他のフラグ(未使用).
+	bd.StructureByteStride	= 0;	// 構造体のサイズ(未使用).
+	
+	// サブリソースデータ構造体.
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = &vertex[0];	// 板ポリの頂点をセット.
+	
+	// 頂点バッファの作成.
+	if( FAILED( m_pDevice11->CreateBuffer(
+		&bd, 
+		&InitData,
+		&m_pHeightVertexBuffer ))){
+		ERROR_MESSAGE( "頂点ﾊﾞｯﾌｧ作成失敗" );
+		return;
+	}
 }
 
 // シェーダー作成.

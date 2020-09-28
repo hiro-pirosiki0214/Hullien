@@ -42,9 +42,12 @@ bool CLaserBeam::Init()
 // 更新関数.
 void CLaserBeam::Update()
 {
+	m_VertexCount += m_IsEndAttack == false ? 1 : 4;
+	SetVertexPoint();	// 使用頂点の設定.
+	CreateVertex();		// 頂点座標の作成.
+
 	if( m_IsInAttack == false ) return;
 
-	m_VertexCount++;
 	// 操作座標のサイズで比較.
 	switch( m_ControlPointList.size() )
 	{
@@ -61,10 +64,9 @@ void CLaserBeam::Update()
 	default:
 		break;
 	}
-	CreateVertex();
+	
 	// カウントがタイム以上になればショットフラグを下す.
 	if( m_FrameCount >= m_FrameTime ){
-		m_IsInAttack = false;
 		m_IsEndAttack = true;
 	}
 }
@@ -72,19 +74,20 @@ void CLaserBeam::Update()
 // 描画関数.
 void CLaserBeam::Render()
 {
-	if( m_IsInAttack == false ) return;
 	if( m_pStaticMesh == nullptr ) return;
-
-	m_pStaticMesh->SetPosition( m_vPosition );
-	m_pStaticMesh->SetScale( 1.0f );
-	m_pStaticMesh->SetColor( { 0.0f, 0.0f, 1.0f, 1.0f } );
-	m_pStaticMesh->Render();
-
 	if( m_VertexPointHeight.size() >= 2 ){
 		m_pStaticMesh->SetBlend( true );
 		m_pTrajectory->Render();
 		m_pStaticMesh->SetBlend( false );
 	}
+
+	if( m_IsInAttack == false ) return;
+	if( m_IsEndAttack == true ) return;
+
+	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->SetScale( 1.0f );
+	m_pStaticMesh->SetColor( { 0.0f, 1.0f, 0.0f, 1.0f } );
+	m_pStaticMesh->Render();
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -95,6 +98,7 @@ void CLaserBeam::Render()
 void CLaserBeam::Collision( CActor* pActor )
 {
 	if( m_IsInAttack == false ) return;
+	if( m_IsEndAttack == true ) return;
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
@@ -163,23 +167,6 @@ void CLaserBeam::SecondaryBeziercurve()
 	m_vPosition.z = b * point[0].z + a * point[1].z;
 
 	m_FrameCount += m_MoveSpeed;
-
-	if( m_VertexCount >= TRAJECTORY_TIME_COUNT ){
-		// 頂点数が一定以上なら、先頭の座標を取り出す.
-		if( static_cast<int>(m_VertexPointHeight.size()) > MAX_TRAJECTORY_COUNT ){
-			m_VertexPointHeight.pop_front();	// 高さ.
-			m_VertexPointWidth.pop_front();		// 幅.
-		}
-		// 高さ.
-		m_VertexPointHeight.emplace_back(
-			D3DXVECTOR3( m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z ),
-			D3DXVECTOR3( m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z ));
-		// 幅.
-		m_VertexPointWidth.emplace_back(
-			D3DXVECTOR3( m_vPosition.x+1.0f, m_vPosition.y, m_vPosition.z+1.0f ),
-			D3DXVECTOR3( m_vPosition.x-1.0f, m_vPosition.y, m_vPosition.z-1.0f ));
-		m_VertexCount = 0;
-	}
 }
 
 // 三次ベジェ曲線.
@@ -219,23 +206,6 @@ void CLaserBeam::ThirdBezierCurve()
 	m_vPosition.z = b * p[0].z + a * p[1].z;
 
 	m_FrameCount += m_MoveSpeed;
-
-	if( m_VertexCount >= TRAJECTORY_TIME_COUNT ){
-		// 頂点数が一定以上なら、先頭の座標を取り出す.
-		if( static_cast<int>(m_VertexPointHeight.size()) > MAX_TRAJECTORY_COUNT ){
-			m_VertexPointHeight.pop_front();	// 高さ.
-			m_VertexPointWidth.pop_front();		// 幅.
-		}
-		// 高さ.
-		m_VertexPointHeight.emplace_back(
-			D3DXVECTOR3( m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z ),
-			D3DXVECTOR3( m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z ));
-		// 幅.
-		m_VertexPointWidth.emplace_back(
-			D3DXVECTOR3( m_vPosition.x+1.0f, m_vPosition.y, m_vPosition.z+1.0f ),
-			D3DXVECTOR3( m_vPosition.x-1.0f, m_vPosition.y, m_vPosition.z-1.0f ));
-		m_VertexCount = 0;
-	}
 }
 
 // モデルの取得.
@@ -262,7 +232,35 @@ bool CLaserBeam::CollisionSetting()
 
 	return true;
 }
+// 使用頂点の設定.
+void CLaserBeam::SetVertexPoint()
+{
+	if( m_IsInAttack == false ) return;
+	if( m_VertexCount >= TRAJECTORY_TIME_COUNT ){
+		if( m_IsEndAttack == true ){
+			m_VertexPointHeight.pop_front();	// 高さ.
+			m_VertexPointWidth.pop_front();		// 幅.
+			if( m_VertexPointHeight.empty() == true ) m_IsInAttack = false;
+		} else {
+			// 頂点数が一定以上なら、先頭の座標を取り出す.
+			if( static_cast<int>(m_VertexPointHeight.size()) > MAX_TRAJECTORY_COUNT ){
+				m_VertexPointHeight.pop_front();	// 高さ.
+				m_VertexPointWidth.pop_front();		// 幅.
+			}
+			// 高さ.
+			m_VertexPointHeight.emplace_back(
+				D3DXVECTOR3( m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z ),
+				D3DXVECTOR3( m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z ));
+			// 幅.
+			m_VertexPointWidth.emplace_back(
+				D3DXVECTOR3( m_vPosition.x+1.0f, m_vPosition.y, m_vPosition.z+1.0f ),
+				D3DXVECTOR3( m_vPosition.x-1.0f, m_vPosition.y, m_vPosition.z-1.0f ));
+		}
+		m_VertexCount = 0;
+	}
+}
 
+// 頂点の作成.
 void CLaserBeam::CreateVertex()
 {
 	if( m_VertexPointHeight.size() < 2 ) return;

@@ -12,7 +12,7 @@ class CLaserBeam : public CActor
 	const float DEFAULT_PARALYSIS_TIME	= 3.0f;	// 麻痺の時間.
 	const char* MODEL_NAME				= "Barrier";
 	const int	MAX_TRAJECTORY_COUNT	= 10;
-	const int	TRAJECTORY_TIME_COUNT	= 10;
+	const int	TRAJECTORY_TIME_COUNT	= 5;
 public:
 	CLaserBeam();
 	virtual ~CLaserBeam();
@@ -56,7 +56,9 @@ private:
 	bool GetModel();
 	// 当たり判定の設定.
 	bool CollisionSetting();
-
+	// 使用頂点の設定.
+	void SetVertexPoint();
+	// 頂点の作成.
 	void CreateVertex();
 
 private:
