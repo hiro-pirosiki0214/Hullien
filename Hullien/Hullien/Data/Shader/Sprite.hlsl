@@ -2,7 +2,7 @@
 //ﾃｸｽﾁｬは、ﾚｼﾞｽﾀ t(n).
 Texture2D g_Texture : register(t0);
 //ｻﾝﾌﾟﾗは、ﾚｼﾞｽﾀ s(n).
-SamplerState g_samLinear : register(s0);
+SamplerState g_SamLinear : register(s0);
 
 //ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ.
 cbuffer global : register(b0)
@@ -61,7 +61,7 @@ VS_OUTPUT VS_MainUI(
 // ピクセルシェーダ.
 float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
-    float4 color = g_Texture.Sample(g_samLinear, input.Tex);
+    float4 color = g_Texture.Sample( g_SamLinear, input.Tex );
     color *= g_Color;
 
     return color;

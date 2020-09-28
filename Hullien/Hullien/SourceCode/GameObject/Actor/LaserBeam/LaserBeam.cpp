@@ -3,6 +3,7 @@
 
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\..\Common\Shader\Trajectory\Trajectory.h"
 
 CLaserBeam::CLaserBeam()
 	: m_pStaticMesh			( nullptr )
@@ -15,14 +16,18 @@ CLaserBeam::CLaserBeam()
 	, m_FrameTime			( 1.0f )
 	, m_InitPosition		( 0.0f, 0.0f, 0.0f )
 	, m_ControlPointList	()
-	, m_VertexPoint			()
+	, m_VertexPointHeight	()
+	, m_VertexPointWidth	()
 	, m_VertexCount			( 0 )
+	, m_pTrajectory			( nullptr )
 {
 	m_ObjectTag = EObjectTag::LaserBeam;
+	m_pTrajectory = std::make_unique<CTrajectory>();
 }
 
 CLaserBeam::~CLaserBeam()
 {
+	m_pTrajectory->Release();
 }
 
 // 初期化関数.
@@ -30,6 +35,7 @@ bool CLaserBeam::Init()
 {
 	if( GetModel() == false ) return false;
 	if( CollisionSetting() == false ) return false; 
+	if( FAILED( m_pTrajectory->Init( nullptr, nullptr ) ) ) return false;
 	return true;
 }
 
@@ -55,7 +61,7 @@ void CLaserBeam::Update()
 	default:
 		break;
 	}
-
+	CreateVertex();
 	// カウントがタイム以上になればショットフラグを下す.
 	if( m_FrameCount >= m_FrameTime ){
 		m_IsInAttack = false;
@@ -69,11 +75,16 @@ void CLaserBeam::Render()
 	if( m_IsInAttack == false ) return;
 	if( m_pStaticMesh == nullptr ) return;
 
-
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetScale( 1.0f );
-	m_pStaticMesh->SetColor( { 1.0f, 0.5f, 0.0f, 1.0f } );
+	m_pStaticMesh->SetColor( { 0.0f, 0.0f, 1.0f, 1.0f } );
 	m_pStaticMesh->Render();
+
+	if( m_VertexPointHeight.size() >= 2 ){
+		m_pStaticMesh->SetBlend( true );
+		m_pTrajectory->Render();
+		m_pStaticMesh->SetBlend( false );
+	}
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -113,6 +124,8 @@ void CLaserBeam::Shot( const D3DXVECTOR3& pos )
 	m_InitPosition	= pos;
 	m_FrameCount	= 0.0f;
 	m_VertexCount	= 0;
+	m_VertexPointHeight.clear();
+	m_VertexPointWidth.clear();
 }
 
 // パラメータを初期に戻す.
@@ -192,21 +205,20 @@ void CLaserBeam::ThirdBezierCurve()
 
 	m_FrameCount += m_MoveSpeed;
 
-	if( m_VertexCount >= 15 ){
-		if( m_VertexPoint.size() < 5 ){
-			m_VertexPoint.push( 
-				{ 
-					{ m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z }, 
-					{ m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z }
-				} );
-		} else {
-			m_VertexPoint.pop();
-			m_VertexPoint.push( 
-				{ 
-					{ m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z }, 
-					{ m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z }
-				} );
+	if( m_VertexCount >= TRAJECTORY_TIME_COUNT ){
+		// 頂点数が一定以上なら、先頭の座標を取り出す.
+		if( static_cast<int>(m_VertexPointHeight.size()) > MAX_TRAJECTORY_COUNT ){
+			m_VertexPointHeight.pop_front();	// 高さ.
+			m_VertexPointWidth.pop_front();		// 幅.
 		}
+		// 高さ.
+		m_VertexPointHeight.emplace_back(
+			D3DXVECTOR3( m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z ),
+			D3DXVECTOR3( m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z ));
+		// 幅.
+		m_VertexPointWidth.emplace_back(
+			D3DXVECTOR3( m_vPosition.x+1.0f, m_vPosition.y, m_vPosition.z+1.0f ),
+			D3DXVECTOR3( m_vPosition.x-1.0f, m_vPosition.y, m_vPosition.z-1.0f ));
 		m_VertexCount = 0;
 	}
 }
@@ -238,10 +250,7 @@ bool CLaserBeam::CollisionSetting()
 
 void CLaserBeam::CreateVertex()
 {
-	//if( m_VertexPoint.size() < 2 ) return;
+	if( m_VertexPointHeight.size() < 2 ) return;
 
-	//std::vector<D3DXVECTOR3> vertex;
-	//for( auto& v : m_VertexPoint ){
-
-	//}
+	m_pTrajectory->CreateVertexBuffer( m_VertexPointWidth, m_VertexPointHeight );
 }

@@ -172,6 +172,7 @@
     <ClCompile Include="SourceCode\Common\Shader\SimpleShader\SimpleShader.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\Toon\Toon.cpp" />
+    <ClCompile Include="SourceCode\Common\Shader\Trajectory\Trajectory.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.cpp" />
     <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp" />
     <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp" />
@@ -302,6 +303,7 @@
     <ClInclude Include="SourceCode\Common\Shader\SimpleShader\SimpleShader.h" />
     <ClInclude Include="SourceCode\Common\Shader\SpriteShader\SpriteShader.h" />
     <ClInclude Include="SourceCode\Common\Shader\Toon\Toon.h" />
+    <ClInclude Include="SourceCode\Common\Shader\Trajectory\Trajectory.h" />
     <ClInclude Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.h" />
     <ClInclude Include="SourceCode\Common\Sprite\CSprite.h" />
     <ClInclude Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.h" />
@@ -477,6 +479,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Data\Shader\Trajectory.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS_Main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS_Main</EntryPointName>
     </FxCompile>
     <FxCompile Include="Data\Shader\TranslucentShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>

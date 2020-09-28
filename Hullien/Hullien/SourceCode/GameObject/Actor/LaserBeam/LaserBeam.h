@@ -2,13 +2,17 @@
 #define LASER_BEAM_H
 
 #include "..\Actor.h"
-#include <queue>
+#include <list>
+
+class CTrajectory;	// 軌跡.
 
 class CLaserBeam : public CActor
 {
 	const float DEFAULT_MOVE_SPEED		= 0.1f;	// 移動速度.
 	const float DEFAULT_PARALYSIS_TIME	= 3.0f;	// 麻痺の時間.
-	const char* MODEL_NAME = "Barrier";
+	const char* MODEL_NAME				= "Barrier";
+	const int	MAX_TRAJECTORY_COUNT	= 10;
+	const int	TRAJECTORY_TIME_COUNT	= 10;
 public:
 	CLaserBeam();
 	virtual ~CLaserBeam();
@@ -68,8 +72,10 @@ private:
 	D3DXVECTOR3 m_InitPosition;	// 初期座標.
 	std::vector<D3DXVECTOR3> m_ControlPointList;	// 制御座標.
 
-	std::queue<std::pair<D3DXVECTOR3,D3DXVECTOR3>> m_VertexPoint;
+	std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>> m_VertexPointHeight;
+	std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>> m_VertexPointWidth;
 	int m_VertexCount;
+	std::unique_ptr<CTrajectory>	m_pTrajectory;	// 軌跡描画クラス.
 };
 
 #endif	// #ifndef LASER_BEAM_H.
