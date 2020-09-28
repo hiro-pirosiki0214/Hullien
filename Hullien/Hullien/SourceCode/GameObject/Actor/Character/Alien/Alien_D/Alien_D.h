@@ -14,15 +14,6 @@ class CAlienD : public CAlien
 	const D3DXVECTOR4 ATTACK_RANGE_COLOR		= { 0.8f, 0.0f, 0.0f, 0.0f };	// ê‘êF.
 	const D3DXVECTOR4 ATTACK_RANGE_DANGER_COLOR	= { 0.8f, 0.8f, 0.0f, 1.0f };	// â©êF.
 	const float ATTACK_TIME = 1.0f;
-	const float ATTACK_RANGE_SPRITE_POS_Y = 0.002f;
-	const float ATTACK_RANGE_SPRITE_SCALE = 10.0f;
-	const float ATTACK_RANGE_ADD_VALUE = 0.005f;
-	const float ATTACK_RANGE_SUB_VALUE = -0.01f;
-
-	const float CONTROL_POINT_ONE_LENGHT	= -1.5f;
-	const float CONTROL_POINT_ONE_Y_LENGHT	= 10.0f;
-	const float CONTROL_POINT_TWO_LENGHT	= 1.5f;
-	const float CONTROL_POINT_TWO_Y_LENGHT	= 7.0f;
 
 public:
 	CAlienD();

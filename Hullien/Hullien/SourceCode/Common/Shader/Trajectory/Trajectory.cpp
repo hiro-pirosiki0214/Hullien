@@ -50,7 +50,7 @@ HRESULT CTrajectory::Release()
 // 描画.
 void CTrajectory::Render()
 {
-	//　ワールド行列.
+	// ワールド行列.
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity( &mWorld );	// 行列の初期化.
 	// ビルボードで描画.
@@ -72,9 +72,9 @@ void CTrajectory::Render()
 		0,
 		&pData))) {
 
-		//ﾜｰﾙﾄﾞ行列を渡す.
+		// ワールド、ビュー、プロジェクション行列を渡す.
 		cb.mWVP = mWVP;
-		D3DXMatrixTranspose(&cb.mWVP, &cb.mWVP);//行列を転置する.
+		D3DXMatrixTranspose(&cb.mWVP, &cb.mWVP);// 行列を転置する.
 
 		memcpy_s(
 			pData.pData,
@@ -102,15 +102,13 @@ void CTrajectory::Render()
 	UINT offset = 0;
 	m_pContext11->IASetVertexBuffers( 0, 1, &m_pHeightVertexBuffer, &stride, &offset );
 	m_pContext11->IASetInputLayout( m_pVertexLayout );
-	//ﾌﾟﾘﾐﾃｨﾌﾞをﾚﾝﾀﾞﾘﾝｸﾞ.
-	m_pContext11->Draw( m_VertexCount, 0 );//板ﾎﾟﾘ(頂点4つ分).
+	m_pContext11->Draw( m_VertexCount, 0 );
 
 	stride = sizeof(VERTEX); // データの間隔.
 	offset = 0;
 	m_pContext11->IASetVertexBuffers( 0, 1, &m_pWidthVertexBuffer, &stride, &offset );
 	m_pContext11->IASetInputLayout( m_pVertexLayout );
-	//ﾌﾟﾘﾐﾃｨﾌﾞをﾚﾝﾀﾞﾘﾝｸﾞ.
-	m_pContext11->Draw( m_VertexCount, 0 );//板ﾎﾟﾘ(頂点4つ分).
+	m_pContext11->Draw( m_VertexCount, 0 );
 }
 
 // 頂点バッファの取得.
@@ -118,8 +116,8 @@ void CTrajectory::CreateVertexBuffer(
 	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& height,
 	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& width )
 {
-	CreateVertexBuffer( height, &m_pHeightVertexBuffer );
-	CreateVertexBuffer( width, &m_pWidthVertexBuffer );
+	CreateVertexBuffer( height, &m_pHeightVertexBuffer, true );	// 高さ.
+	CreateVertexBuffer( width, &m_pWidthVertexBuffer, false );	// 幅.
 }
 
 // シェーダー作成.
@@ -145,9 +143,9 @@ HRESULT CTrajectory::InitShader()
 		ERROR_MESSAGE("hlsl read failure");
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pErrors);
+	SAFE_RELEASE( pErrors );
 
-	// 上記で作成したﾌﾞﾛﾌﾞから「ﾊﾞｰﾃｯｸｽｼｪｰﾀﾞ」を作成.
+	// 上記で作成したブロブからシェーダーを作成.
 	if( FAILED( CShaderBase::CreateVertexShader( pCompiledShader, &m_pVertexShader ))){
 		ERROR_MESSAGE("VertexShader creation failed");
 		return E_FAIL;
@@ -164,43 +162,43 @@ HRESULT CTrajectory::InitShader()
 	UINT numElements = sizeof(layout) / sizeof(layout[0]);
 
 	// 頂点インプットレイアウトを作成.
-	if (FAILED(
+	if( FAILED(
 		CShaderBase::CreateInputLayout(
 			layout,
 			numElements,
 			pCompiledShader,
-			&m_pVertexLayout))) {
+			&m_pVertexLayout ))){
 		ERROR_MESSAGE("Vertex input layout creation failed");
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pCompiledShader);
+	SAFE_RELEASE( pCompiledShader );
 
 
-	//HLSLからﾋﾟｸｾﾙｼｪｰﾀﾞのﾌﾞﾛﾌﾞを作成.
-	if (FAILED(
+	// HLSLからピクセルシェーダーのブロブを作成.
+	if( FAILED(
 		CShaderBase::InitShader(
 			SHADER_NAME,		// シェーダーファイル名.
 			"PS_Main",			// シェーダーエントリーポイント.
 			"ps_5_0",			// シェーダーモデル.
 			uCompileFlag,		// シェーダーコンパイルフラグ.
 			&pCompiledShader,	// ブロブを格納するメモリへのポインタ.
-			&pErrors))) {		// エラーと警告一覧を格納するメモリへのポインタ.
+			&pErrors ))){		// エラーと警告一覧を格納するメモリへのポインタ.
 		ERROR_MESSAGE("hlsl read failure");
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pErrors);
+	SAFE_RELEASE( pErrors );
 
-	//上記で作成したﾌﾞﾛﾌﾞから「ﾋﾟｸｾﾙｼｪｰﾀﾞ」を作成.
-	if (FAILED(CShaderBase::CreatePixelShader(pCompiledShader, &m_pPixelShader))) {
+	//上記で作成したブロブからピクセルシェーダーを作成.
+	if( FAILED( CShaderBase::CreatePixelShader(pCompiledShader, &m_pPixelShader ))){
 		ERROR_MESSAGE("VertexShader creation failed");
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pCompiledShader);
+	SAFE_RELEASE( pCompiledShader );
 
 	// シェーダーに特定の数値を送るバッファ.
 	// コンスタントバッファの作成.
-	if (FAILED(
-		CShaderBase::CreateConstantBuffer(&m_pConstantBuffer, sizeof(C_BUFFER)))) {
+	if( FAILED(
+		CShaderBase::CreateConstantBuffer( &m_pConstantBuffer, sizeof(C_BUFFER) ))){
 		ERROR_MESSAGE("Instant buffer creation failed");
 		return E_FAIL;
 	}
@@ -211,14 +209,15 @@ HRESULT CTrajectory::InitShader()
 // テクスチャの作成.
 HRESULT CTrajectory::CreateTexture()
 {
-	//ﾃｸｽﾁｬ作成.
+	// テクスチャの作成.
 	if( FAILED(
 		D3DX11CreateShaderResourceViewFromFile(
-			m_pDevice11,	// ﾘｿｰｽを使用するﾃﾞﾊﾞｲｽのﾎﾟｲﾝﾀ.
-			IMAGE_NAME,		// ﾌｧｲﾙ名.
-			nullptr, nullptr,
-			&m_pTexture,		//(out)ﾃｸｽﾁｬ.
-			nullptr))) {
+			m_pDevice11,
+			IMAGE_NAME,
+			nullptr,
+			nullptr,
+			&m_pTexture,
+			nullptr ))){
 		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
 		return E_FAIL;
 	}
@@ -248,7 +247,8 @@ HRESULT CTrajectory::CreateSample()
 // 頂点バッファの作成.
 void CTrajectory::CreateVertexBuffer( 
 	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& vertexPoint,
-	ID3D11Buffer** ppHeightVertexBuffer)
+	ID3D11Buffer** ppHeightVertexBuffer,
+	const bool& isHeight )
 {
 	std::vector<VERTEX> vertex;
 	float x = 0.0f;
@@ -264,7 +264,7 @@ void CTrajectory::CreateVertexBuffer(
 		vertex.emplace_back();
 		vertex.back().Pos = v.first;
 		vertex.back().Tex.x = x / size;
-		vertex.back().Tex.y = 1.0f;
+		vertex.back().Tex.y = isHeight == true ? 0.0f : 1.0f;
 		m_VertexCount++;	// 頂点加算.
 		x += x <= 0.0f ? 2.0f : 1.0f;
 	}

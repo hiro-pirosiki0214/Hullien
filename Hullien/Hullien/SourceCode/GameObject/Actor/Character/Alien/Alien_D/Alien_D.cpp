@@ -10,7 +10,7 @@
 CAlienD::CAlienD()
 	: m_pAttackRangeSprite	( nullptr )
 	, m_pLaserBeam			( nullptr )
-	, m_ControlPositions	( 2 )
+	, m_ControlPositions	( 1 )
 	, m_AttackCount			( 0.0f )
 	, m_IsAttackStart		( false )
 {
@@ -230,9 +230,9 @@ void CAlienD::Attack()
 			m_ControlPositions[0].y = m_vPosition.y + m_Parameter.ControlPointOneLenghtY;
 			m_ControlPositions[0].z = m_vPosition.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
 			// 少し上の少し前.
-			m_ControlPositions[1].x = m_vPosition.x + sinf( radius ) * lenght;
-			m_ControlPositions[1].y = m_vPosition.y + m_Parameter.ControlPointTwoLenghtY;
-			m_ControlPositions[1].z = m_vPosition.z + cosf( radius ) * lenght;
+			//m_ControlPositions[1].x = m_vPosition.x + sinf( radius ) * lenght;
+			//m_ControlPositions[1].y = m_vPosition.y + m_Parameter.ControlPointTwoLenghtY;
+			//m_ControlPositions[1].z = m_vPosition.z + cosf( radius ) * lenght;
 		}
 		// 上で設定したコントロールポジションを設定.
 		m_pLaserBeam->SetControlPointList( m_ControlPositions );

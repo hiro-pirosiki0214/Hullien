@@ -162,9 +162,24 @@ void CLaserBeam::SecondaryBeziercurve()
 	m_vPosition.y = b * point[0].y + a * point[1].y;
 	m_vPosition.z = b * point[0].z + a * point[1].z;
 
-	const float modeSpeed = 0.1f;
-
 	m_FrameCount += m_MoveSpeed;
+
+	if( m_VertexCount >= TRAJECTORY_TIME_COUNT ){
+		// 頂点数が一定以上なら、先頭の座標を取り出す.
+		if( static_cast<int>(m_VertexPointHeight.size()) > MAX_TRAJECTORY_COUNT ){
+			m_VertexPointHeight.pop_front();	// 高さ.
+			m_VertexPointWidth.pop_front();		// 幅.
+		}
+		// 高さ.
+		m_VertexPointHeight.emplace_back(
+			D3DXVECTOR3( m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z ),
+			D3DXVECTOR3( m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z ));
+		// 幅.
+		m_VertexPointWidth.emplace_back(
+			D3DXVECTOR3( m_vPosition.x+1.0f, m_vPosition.y, m_vPosition.z+1.0f ),
+			D3DXVECTOR3( m_vPosition.x-1.0f, m_vPosition.y, m_vPosition.z-1.0f ));
+		m_VertexCount = 0;
+	}
 }
 
 // 三次ベジェ曲線.
