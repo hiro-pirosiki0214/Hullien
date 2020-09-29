@@ -8,11 +8,11 @@ class CTrajectory;	// 軌跡.
 
 class CLaserBeam : public CActor
 {
-	const float DEFAULT_MOVE_SPEED		= 0.1f;	// 移動速度.
-	const float DEFAULT_PARALYSIS_TIME	= 3.0f;	// 麻痺の時間.
-	const char* MODEL_NAME				= "Barrier";
-	const int	MAX_TRAJECTORY_COUNT	= 10;
-	const int	TRAJECTORY_TIME_COUNT	= 5;
+	const float DEFAULT_MOVE_SPEED			= 0.1f;	// 移動速度.
+	const float DEFAULT_PARALYSIS_TIME		= 3.0f;	// 麻痺の時間.
+	const int	MAX_TRAJECTORY_COUNT		= 50;	// 軌跡の最大頂点数.
+	const int	TRAJECTORY_TIME				= 1;	// 軌跡の頂点加算時間.
+	const int	TRAJECTORY_END_ADD_VALUE	= 8;	// 軌跡が終了する際の加算値.
 public:
 	CLaserBeam();
 	virtual ~CLaserBeam();
@@ -52,8 +52,6 @@ private:
 	// 三次ベジェ曲線.
 	void ThirdBezierCurve();
 
-	// モデルの取得.
-	bool GetModel();
 	// 当たり判定の設定.
 	bool CollisionSetting();
 	// 使用頂点の設定.
@@ -62,22 +60,18 @@ private:
 	void CreateVertex();
 
 private:
-	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;	// モデル.
-	float m_MoveSpeed;
-	float m_ParalysisTime;
+	std::unique_ptr<CTrajectory> m_pTrajectory;	// 軌跡描画クラス.
+	float		m_MoveSpeed;		// 移動速度.
+	float		m_ParalysisTime;	// 麻痺時間.
 	D3DXVECTOR3	m_TargetPosition;	// 攻撃対象の座標.
-	bool m_IsInAttack;		// 攻撃中.
-	bool m_IsEndAttack;		// 攻撃終了.
-
-	float m_FrameCount;		// フレームカウント.
-	float m_FrameTime;		// フレーム時間.
-	D3DXVECTOR3 m_InitPosition;	// 初期座標.
-	std::vector<D3DXVECTOR3> m_ControlPointList;	// 制御座標.
-
-	std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>> m_VertexPointHeight;
-	std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>> m_VertexPointWidth;
-	int m_VertexCount;
-	std::unique_ptr<CTrajectory>	m_pTrajectory;	// 軌跡描画クラス.
+	bool		m_IsInAttack;		// 攻撃中.
+	bool		m_IsEndAttack;		// 攻撃終了.
+	float		m_FrameCount;		// フレームカウント.
+	float		m_FrameTime;		// フレーム時間.
+	D3DXVECTOR3 m_InitPosition;		// 初期座標.
+	std::vector<D3DXVECTOR3>	m_ControlPointList;		// 制御座標.
+	std::vector<D3DXVECTOR3>	m_VertexPointList;		// 頂点の座標のリスト.
+	int							m_VertexAddTimeCount;	// 頂点を加算する時間のカウント.
 };
 
 #endif	// #ifndef LASER_BEAM_H.

@@ -2,14 +2,16 @@
 #define TRAJECTOTY_H
 
 #include "..\ShaderBase.h"
-#include <list>
+#include <vector>
 
 class CTrajectory : public CShaderBase
 {
 	// シェーダー名.
 	const char* SHADER_NAME = "Data\\Shader\\Trajectory.hlsl";
 	// テクスチャ名.
-	const char* IMAGE_NAME = "Data\\Mesh\\Barrier\\laser.png";
+	const char* IMAGE_NAME = "Data\\Mesh\\Laser\\laser.png";
+	// 頭のビルボード用テクスチャ名.
+	const char* HEAD_IMAGE_NAME = "Data\\Mesh\\Laser\\LaserHead.png";
 public:
 	// コンスタントバッファのアプリ側の定義.
 	//※シェーダー内のコンスタントバッファと一致している必要あり.
@@ -35,9 +37,7 @@ public:
 	// 描画.
 	void Render();
 	// 頂点バッファの作成.
-	void CreateVertexBuffer( 
-		const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& height,
-		const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& width );
+	void CreateVertexBuffer( const std::vector<D3DXVECTOR3>& height );
 
 private:
 	// シェーダー作成.
@@ -46,18 +46,22 @@ private:
 	HRESULT CreateTexture();
 	// サンプラの作成.
 	HRESULT CreateSample();
-	// 頂点バッファの作成.
-	void CreateVertexBuffer( 
-		const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& vertexPoint,
-		ID3D11Buffer** ppHeightVertexBuffer,
-		const bool& isHeight );
+	// ブレンド作成.
+	HRESULT InitBlend();
+	// アルファカバレージを有効:無効に設定する.
+	void SetCoverage( bool EnableCoverage );
 
 private:
-	ID3D11ShaderResourceView*	m_pTexture;			// テクスチャ.
-	ID3D11SamplerState*			m_pSampleLinear;	// サンプラ.
-	ID3D11Buffer*	m_pHeightVertexBuffer;	// 高さ頂点バッファ.
-	ID3D11Buffer*	m_pWidthVertexBuffer;	// 幅頂点バッファ.
-	int				m_VertexCount;			// 頂点数.
+	ID3D11ShaderResourceView*	m_pLaserTexture;		// レーザーテクスチャ.
+	ID3D11ShaderResourceView*	m_pLaserHeadTexture;	// レーザーの頭テクスチャ.
+	ID3D11SamplerState*			m_pSampleLinear;		// サンプラ.
+	ID3D11Buffer*				m_pHeightVertexBuffer;	// 高さ頂点バッファ.
+	ID3D11Buffer*				m_pWidthVertexBuffer;	// 幅頂点バッファ.
+	ID3D11Buffer*				m_pHeadVertexbuffer;	// 頭の頂点バッファ.
+	ID3D11BlendState*			m_pNoAlphaBlend;		// アルファブレンド無効.
+	ID3D11BlendState*			m_pAlphaToCoverage;		// アルファカバレージ有効.
+	int							m_VertexCount;			// 頂点数.
+	D3DXVECTOR3					m_HeadPosition;			// 頭の座標.
 };
 
 #endif	// #ifndef TRAJECTOTY_H.

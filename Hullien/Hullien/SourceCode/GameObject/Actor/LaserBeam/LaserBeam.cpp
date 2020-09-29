@@ -4,9 +4,10 @@
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\Common\Shader\Trajectory\Trajectory.h"
+#include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
 CLaserBeam::CLaserBeam()
-	: m_pStaticMesh			( nullptr )
+	: m_pTrajectory			( nullptr )
 	, m_MoveSpeed			( DEFAULT_MOVE_SPEED )
 	, m_ParalysisTime		( DEFAULT_PARALYSIS_TIME )
 	, m_TargetPosition		( 0.0f, 0.0f, 0.0f )
@@ -16,13 +17,12 @@ CLaserBeam::CLaserBeam()
 	, m_FrameTime			( 1.0f )
 	, m_InitPosition		( 0.0f, 0.0f, 0.0f )
 	, m_ControlPointList	()
-	, m_VertexPointHeight	()
-	, m_VertexPointWidth	()
-	, m_VertexCount			( 0 )
-	, m_pTrajectory			( nullptr )
+	, m_VertexPointList		()
+	, m_VertexAddTimeCount	( 0 )
 {
 	m_ObjectTag = EObjectTag::LaserBeam;
 	m_pTrajectory = std::make_unique<CTrajectory>();
+	m_VertexPointList.reserve( MAX_TRAJECTORY_COUNT );
 }
 
 CLaserBeam::~CLaserBeam()
@@ -33,7 +33,6 @@ CLaserBeam::~CLaserBeam()
 // 初期化関数.
 bool CLaserBeam::Init()
 {
-	if( GetModel() == false ) return false;
 	if( CollisionSetting() == false ) return false; 
 	if( FAILED( m_pTrajectory->Init( nullptr, nullptr ) ) ) return false;
 	return true;
@@ -42,7 +41,7 @@ bool CLaserBeam::Init()
 // 更新関数.
 void CLaserBeam::Update()
 {
-	m_VertexCount += m_IsEndAttack == false ? 1 : 4;
+	m_VertexAddTimeCount += m_IsEndAttack == false ? 1 : TRAJECTORY_END_ADD_VALUE;
 	SetVertexPoint();	// 使用頂点の設定.
 	CreateVertex();		// 頂点座標の作成.
 
@@ -74,20 +73,15 @@ void CLaserBeam::Update()
 // 描画関数.
 void CLaserBeam::Render()
 {
-	if( m_pStaticMesh == nullptr ) return;
-	if( m_VertexPointHeight.size() >= 2 ){
-		m_pStaticMesh->SetBlend( true );
+	if( ( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Trans ) &&
+		( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::GBuffer )) return;
+	
+	if( m_VertexPointList.size() >= 2 ){
 		m_pTrajectory->Render();
-		m_pStaticMesh->SetBlend( false );
 	}
 
 	if( m_IsInAttack == false ) return;
 	if( m_IsEndAttack == true ) return;
-
-	m_pStaticMesh->SetPosition( m_vPosition );
-	m_pStaticMesh->SetScale( 1.0f );
-	m_pStaticMesh->SetColor( { 0.0f, 1.0f, 0.0f, 1.0f } );
-	m_pStaticMesh->Render();
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -127,9 +121,8 @@ void CLaserBeam::Shot( const D3DXVECTOR3& pos )
 	m_vPosition		= pos;
 	m_InitPosition	= pos;
 	m_FrameCount	= 0.0f;
-	m_VertexCount	= 0;
-	m_VertexPointHeight.clear();
-	m_VertexPointWidth.clear();
+	m_VertexAddTimeCount	= 0;
+	m_VertexPointList.clear();
 }
 
 // パラメータを初期に戻す.
@@ -208,15 +201,6 @@ void CLaserBeam::ThirdBezierCurve()
 	m_FrameCount += m_MoveSpeed;
 }
 
-// モデルの取得.
-bool CLaserBeam::GetModel()
-{
-	if( m_pStaticMesh != nullptr ) return false;
-	CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME );
-	if( m_pStaticMesh == nullptr ) return false;
-	return true;
-}
-
 // 当たり判定の設定.
 bool CLaserBeam::CollisionSetting()
 {
@@ -235,35 +219,30 @@ bool CLaserBeam::CollisionSetting()
 // 使用頂点の設定.
 void CLaserBeam::SetVertexPoint()
 {
+	// 攻撃中じゃなければ終了.
 	if( m_IsInAttack == false ) return;
-	if( m_VertexCount >= TRAJECTORY_TIME_COUNT ){
-		if( m_IsEndAttack == true ){
-			m_VertexPointHeight.pop_front();	// 高さ.
-			m_VertexPointWidth.pop_front();		// 幅.
-			if( m_VertexPointHeight.empty() == true ) m_IsInAttack = false;
-		} else {
-			// 頂点数が一定以上なら、先頭の座標を取り出す.
-			if( static_cast<int>(m_VertexPointHeight.size()) > MAX_TRAJECTORY_COUNT ){
-				m_VertexPointHeight.pop_front();	// 高さ.
-				m_VertexPointWidth.pop_front();		// 幅.
-			}
-			// 高さ.
-			m_VertexPointHeight.emplace_back(
-				D3DXVECTOR3( m_vPosition.x, m_vPosition.y+1.0f, m_vPosition.z ),
-				D3DXVECTOR3( m_vPosition.x, m_vPosition.y-1.0f, m_vPosition.z ));
-			// 幅.
-			m_VertexPointWidth.emplace_back(
-				D3DXVECTOR3( m_vPosition.x+1.0f, m_vPosition.y, m_vPosition.z+1.0f ),
-				D3DXVECTOR3( m_vPosition.x-1.0f, m_vPosition.y, m_vPosition.z-1.0f ));
+	// 加算カウントが規定時間より少なければ終了.
+	if( m_VertexAddTimeCount < TRAJECTORY_TIME ) return;
+
+	if( m_IsEndAttack == true ){
+		// 攻撃が終了しているので、尻尾(配列の頭)から削除していく.
+		m_VertexPointList.erase( m_VertexPointList.begin() );
+		// 配列がなくなれば攻撃終了させる.
+		if( m_VertexPointList.empty() == true ) m_IsInAttack = false;
+	} else {
+		// 頂点数が一定以上なら、先頭の座標を取り出す.
+		if( static_cast<int>(m_VertexPointList.size()) > MAX_TRAJECTORY_COUNT ){
+			m_VertexPointList.erase( m_VertexPointList.begin() );
 		}
-		m_VertexCount = 0;
+		// 高さ.
+		m_VertexPointList.emplace_back( D3DXVECTOR3( m_vPosition.x, m_vPosition.y, m_vPosition.z ) );
 	}
 }
 
 // 頂点の作成.
 void CLaserBeam::CreateVertex()
 {
-	if( m_VertexPointHeight.size() < 2 ) return;
+	if( m_VertexPointList.size() < 2 ) return;
 
-	m_pTrajectory->CreateVertexBuffer( m_VertexPointWidth, m_VertexPointHeight );
+	m_pTrajectory->CreateVertexBuffer( m_VertexPointList );
 }

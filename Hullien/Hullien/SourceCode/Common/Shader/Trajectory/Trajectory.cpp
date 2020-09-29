@@ -5,11 +5,16 @@
 #include <vector>
 
 CTrajectory::CTrajectory()
-	: m_pTexture			( nullptr )
+	: m_pLaserTexture		( nullptr )
+	, m_pLaserHeadTexture	( nullptr )
 	, m_pSampleLinear		( nullptr )
 	, m_pHeightVertexBuffer	( nullptr )
 	, m_pWidthVertexBuffer	( nullptr )
+	, m_pHeadVertexbuffer	( nullptr )
+	, m_pNoAlphaBlend		( nullptr )
+	, m_pAlphaToCoverage	( nullptr )
 	, m_VertexCount			( 0 )
+	, m_HeadPosition		{ 0.0f, 0.0f, 0.0f }
 {
 }
 
@@ -26,14 +31,19 @@ HRESULT CTrajectory::Init( ID3D11Device* pDevice11, ID3D11DeviceContext* pContex
 	if( FAILED( InitShader() ))		return E_FAIL;
 	if( FAILED( CreateTexture() ))	return E_FAIL;
 	if( FAILED( CreateSample() ))	return E_FAIL;
+	if( FAILED( InitBlend() ))		return E_FAIL;
 	return S_OK;
 }
 
 // 解放.
 HRESULT CTrajectory::Release()
 {
+	SAFE_RELEASE( m_pNoAlphaBlend );
+	SAFE_RELEASE( m_pAlphaToCoverage );
 	SAFE_RELEASE( m_pSampleLinear );
-	SAFE_RELEASE( m_pTexture );
+	SAFE_RELEASE( m_pLaserHeadTexture );
+	SAFE_RELEASE( m_pLaserTexture );
+	SAFE_RELEASE( m_pHeadVertexbuffer )
 	SAFE_RELEASE( m_pWidthVertexBuffer );
 	SAFE_RELEASE( m_pHeightVertexBuffer );
 	SAFE_RELEASE( m_pVertexShader );
@@ -50,112 +60,109 @@ HRESULT CTrajectory::Release()
 // 描画.
 void CTrajectory::Render()
 {
+	SetCoverage( true );
+	//////////////////////////////////////////////.
+	// 頭の描画.
+	//////////////////////////////////////////////.
 	// ワールド行列.
 	D3DXMATRIX mWorld;
 	D3DXMatrixIdentity( &mWorld );	// 行列の初期化.
+	// 頭の座標を設定.
+	D3DXMatrixTranslation( &mWorld, m_HeadPosition.x, m_HeadPosition.y, m_HeadPosition.z );
 	// ビルボードで描画.
 	D3DXMATRIX CancelRotation = CCameraManager::GetViewMatrix();
 	CancelRotation._41 = CancelRotation._42 = CancelRotation._43 = 0.0f; // xyzを0にする.
 	// CancelRotationの逆行列を求める.
 	D3DXMatrixInverse( &CancelRotation, nullptr, &CancelRotation );
-//	mWorld = CancelRotation * mWorld;
-	// WVPの作成.
+	mWorld = CancelRotation * mWorld;
 	D3DXMATRIX mWVP = mWorld * CCameraManager::GetViewMatrix() * CCameraManager::GetProjMatrix();
 
-	// シェーダーのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
 	C_BUFFER cb;	// コンスタントバッファ.
-	if( SUCCEEDED( m_pContext11->Map(
-		m_pConstantBuffer,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&pData))) {
+	// シェーダーのコンスタントバッファに各種データを渡す.
+	if( SUCCEEDED( m_pContext11->Map( m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData))) {
+
+		// ワールド、ビュー、プロジェクション行列を渡す.
+		cb.mWVP = mWVP;
+		D3DXMatrixTranspose( &cb.mWVP, &cb.mWVP );// 行列を転置する.
+
+		memcpy_s( pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
+		m_pContext11->Unmap( m_pConstantBuffer, 0 );
+	}
+
+	// 使用するシェーダのセット.
+	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );	// 頂点シェーダ.
+	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );	// ピクセルシェーダ.
+	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+	// コンスタントバッファのセット.
+	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// 頂点シェーダ.
+	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// ピクセルシェーダー.
+
+	m_pContext11->PSSetSamplers( 0, 1, &m_pSampleLinear );				// サンプラのセット.
+	m_pContext11->PSSetShaderResources( 0, 1, &m_pLaserHeadTexture );	// テクスチャのセット.
+	m_pContext11->IASetInputLayout( m_pVertexLayout );
+	UINT stride = sizeof(VERTEX);	// データの間隔.
+	UINT offset = 0;
+	m_pContext11->IASetVertexBuffers( 0, 1, &m_pHeadVertexbuffer, &stride, &offset );
+	m_pContext11->Draw( 4, 0 );	// 板ポリ頂点4つ分.
+
+	//////////////////////////////////////////////.
+	// レーザーの描画.
+	//////////////////////////////////////////////.
+	D3DXMatrixIdentity( &mWorld );	// 行列の初期化.
+	// WVPの作成.
+	mWVP = mWorld * CCameraManager::GetViewMatrix() * CCameraManager::GetProjMatrix();
+	// コンスタントバッファの設定.
+	if( SUCCEEDED( m_pContext11->Map( m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pData))) {
 
 		// ワールド、ビュー、プロジェクション行列を渡す.
 		cb.mWVP = mWVP;
 		D3DXMatrixTranspose(&cb.mWVP, &cb.mWVP);// 行列を転置する.
 
-		memcpy_s(
-			pData.pData,
-			pData.RowPitch,
-			(void*)(&cb),
-			sizeof(cb));
+		memcpy_s( pData.pData, pData.RowPitch, (void*)(&cb), sizeof(cb));
 
-		m_pContext11->Unmap(m_pConstantBuffer, 0);
+		m_pContext11->Unmap( m_pConstantBuffer, 0 );
 	}
-	// 使用するシェーダのセット.
-	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );	// 頂点シェーダ.
-	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );	// ピクセルシェーダ.
+	
+	m_pContext11->PSSetShaderResources( 0, 1, &m_pLaserTexture );	// テクスチャのセット.
 
-	// このコンスタントバッファをどのシェーダで使用するか？.
-	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// 頂点シェーダ.
-	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );	// ピクセルシェーダー.
-	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
-
-	//ﾃｸｽﾁｬをｼｪｰﾀﾞに渡す.
-	m_pContext11->PSSetSamplers( 0, 1, &m_pSampleLinear );
-	m_pContext11->PSSetShaderResources( 0, 1, &m_pTexture );
-
-
-	UINT stride = sizeof(VERTEX); // データの間隔.
-	UINT offset = 0;
+	stride = sizeof(VERTEX); // データの間隔.
+	offset = 0;
 	m_pContext11->IASetVertexBuffers( 0, 1, &m_pHeightVertexBuffer, &stride, &offset );
-	m_pContext11->IASetInputLayout( m_pVertexLayout );
 	m_pContext11->Draw( m_VertexCount, 0 );
 
-	//stride = sizeof(VERTEX); // データの間隔.
-	//offset = 0;
-	//m_pContext11->IASetVertexBuffers( 0, 1, &m_pWidthVertexBuffer, &stride, &offset );
-	//m_pContext11->IASetInputLayout( m_pVertexLayout );
-	//m_pContext11->Draw( m_VertexCount, 0 );
+	SetCoverage( false );
 }
 
 // 頂点バッファの取得.
-void CTrajectory::CreateVertexBuffer( 
-	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& height,
-	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& width )
+void CTrajectory::CreateVertexBuffer( const std::vector<D3DXVECTOR3>& height )
 {
-//	CreateVertexBuffer( height, &m_pHeightVertexBuffer, true );	// 高さ.
-//	CreateVertexBuffer( width, &m_pWidthVertexBuffer, false );	// 幅.
-
-	//
-	// ビールボードビームはテクスチャが不安定なので放置.
-	//
-	std::vector<D3DXVECTOR3> pos;
-	for( const auto& p : height ){
-		pos.emplace_back( D3DXVECTOR3( 
-			p.first.x, 
-			p.first.y-1.0f,
-			p.first.z ) );
-	}
-	std::vector<VERTEX> vertex(pos.size()*2);
-	m_VertexCount = pos.size()*2;
+	m_HeadPosition = height.back();		// 頭の座標を取得する.
+	m_VertexCount = height.size()*2;
+	std::vector<VERTEX> vertex( m_VertexCount );	// 頂点バッファの設定.
 	float x = 0.0f;
-	float cal = 1.0f;
-	for( int i = 0; i < pos.size(); i++ ){
+	for( int i = 0; i < static_cast<int>(height.size()); i++ ){
 		// 点からカメラへの単位ベクトルを求める.
-		D3DXVECTOR3 z = CCameraManager::GetPosition() - pos[i];
+		D3DXVECTOR3 z = CCameraManager::GetPosition() - height[i];
 		// 点の単位接線ベクトルを求める
-		D3DXVECTOR3		t;
+		D3DXVECTOR3 t;
 		if( i == 0 ){
-			t = pos[i + 1] - pos[i];
-		} else if( i == pos.size() - 1 ){
-			t = pos[i] - pos[i - 1];
+			t = height[i + 1] - height[i];
+		} else if( i == height.size() - 1 ){
+			t = height[i] - height[i - 1];
 		} else {
-			t = pos[i + 1] - pos[i - 1];
+			t = height[i + 1] - height[i - 1];
 		}
 		// ストリップ頂点を求める
-		D3DXVECTOR3		cross;
+		D3DXVECTOR3 cross;
 		D3DXVec3Cross( &cross, &t, &z );
 		D3DXVec3Normalize( &cross, &cross );
-		vertex[i * 2].Pos = pos[i] - cross * cal;
-		vertex[i * 2 + 1].Pos = pos[i] + cross * cal;
-		cal = static_cast<float>(m_VertexCount/2)*0.1f;
-		vertex[i * 2].Tex.x = x / static_cast<float>(m_VertexCount/2);
-		vertex[i * 2].Tex.y = 1.0f;
-		vertex[i * 2 + 1].Tex.x = x / static_cast<float>(m_VertexCount/2);
-		vertex[i * 2 + 1].Tex.y = 0.0f;
+		vertex[i*2].Pos		= height[i] - cross * 1.0f;
+		vertex[i*2+1].Pos	= height[i] + cross * 1.0f;
+
+		// UV座標を求める.
+		vertex[i*2].Tex		= { x / static_cast<float>(m_VertexCount/2), 1.0f };
+		vertex[i*2+1].Tex	= { x / static_cast<float>(m_VertexCount/2), 0.0f };
 		x += x <= 0.0f ? 2.0f : 1.0f;
 	}
 	// バッファ構造体.
@@ -277,9 +284,52 @@ HRESULT CTrajectory::CreateTexture()
 			IMAGE_NAME,
 			nullptr,
 			nullptr,
-			&m_pTexture,
+			&m_pLaserTexture,
 			nullptr ))){
 		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
+		return E_FAIL;
+	}
+	// テクスチャの作成.
+	if( FAILED(
+		D3DX11CreateShaderResourceViewFromFile(
+			m_pDevice11,
+			HEAD_IMAGE_NAME,
+			nullptr,
+			nullptr,
+			&m_pLaserHeadTexture,
+			nullptr ))){
+		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
+		return E_FAIL;
+	}
+
+	const float size = 1.0f;
+	// 板ポリ(四角形)の頂点を作成.
+	VERTEX vertices[] =
+	{
+		// ポリゴンの中心を頂点とする.
+		// 頂点座標(x,y,z)				 UV座標(u,v)
+		D3DXVECTOR3(-size, -size, 0.0f), D3DXVECTOR2( 0.0f, 1.0f ),	//頂点１(左下).
+		D3DXVECTOR3(-size,  size, 0.0f), D3DXVECTOR2( 0.0f, 0.0f ),	//頂点２(左上).
+		D3DXVECTOR3( size, -size, 0.0f), D3DXVECTOR2( 1.0f, 1.0f ),	//頂点３(右下).
+		D3DXVECTOR3( size,  size, 0.0f), D3DXVECTOR2( 1.0f, 0.0f )	//頂点４(右上).
+	};
+	int vertexSize = sizeof(vertices)/sizeof(vertices[0]);
+	// バッファ構造体.
+	D3D11_BUFFER_DESC bd;
+	bd.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法(デフォルト).
+	bd.ByteWidth			= sizeof(VERTEX) * vertexSize;	// 頂点のサイズ.
+	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			// 頂点バッファとして扱う.
+	bd.CPUAccessFlags		= 0;	// CPUからはアクセスしない.
+	bd.MiscFlags			= 0;	// その他のフラグ(未使用).
+	bd.StructureByteStride	= 0;	// 構造体のサイズ(未使用).
+	
+	// サブリソースデータ構造体.
+	D3D11_SUBRESOURCE_DATA InitData;
+	InitData.pSysMem = vertices;	// 板ポリの頂点をセット.
+	// 頂点バッファの作成.
+	if( FAILED( m_pDevice11->CreateBuffer(
+		&bd, &InitData, &m_pHeadVertexbuffer ))){
+		_ASSERT_EXPR(false, L"頂点ﾊﾞｯﾌｧ作成失敗");
 		return E_FAIL;
 	}
 	return S_OK;
@@ -305,49 +355,51 @@ HRESULT CTrajectory::CreateSample()
 	return S_OK;
 }
 
-// 頂点バッファの作成.
-void CTrajectory::CreateVertexBuffer( 
-	const std::list<std::pair<D3DXVECTOR3,D3DXVECTOR3>>& vertexPoint,
-	ID3D11Buffer** ppHeightVertexBuffer,
-	const bool& isHeight )
+//--------------------------------------------.
+// ブレンド作成.
+//--------------------------------------------.
+HRESULT CTrajectory::InitBlend()
 {
-	std::vector<VERTEX> vertex;
-	float x = 0.0f;
-	float size = static_cast<float>(vertexPoint.size());
-	m_VertexCount = 0;	// 頂点初期化.
-	for( auto& v : vertexPoint ){
-		vertex.emplace_back();
-		vertex.back().Pos = v.second;
-		vertex.back().Tex.x = x / size;
-		vertex.back().Tex.y = 1.0f;
-		m_VertexCount++;	// 頂点加算.
+	// ｱﾙﾌｧﾌﾞﾚﾝﾄﾞ用ﾌﾞﾚﾝﾄﾞｽﾃｰﾄ構造体.
+	// pngﾌｧｲﾙ内にｱﾙﾌｧ情報があるので、透過するようにﾌﾞﾚﾝﾄﾞｽﾃｰﾄで設定する.
+	D3D11_BLEND_DESC BlendDesc;
+	ZeroMemory( &BlendDesc, sizeof( BlendDesc ) );
 
-		vertex.emplace_back();
-		vertex.back().Pos = v.first;
-		vertex.back().Tex.x = x / size;
-		vertex.back().Tex.y = isHeight == true ? 0.0f : 1.0f;
-		m_VertexCount++;	// 頂点加算.
-		x += x <= 0.0f ? 2.0f : 1.0f;
+	BlendDesc.IndependentBlendEnable				= false;	
+	BlendDesc.AlphaToCoverageEnable					= false;
+	BlendDesc.RenderTarget[0].BlendEnable			= true;
+	BlendDesc.RenderTarget[0].SrcBlend				= D3D11_BLEND_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].DestBlend				= D3D11_BLEND_INV_SRC_ALPHA;
+	BlendDesc.RenderTarget[0].BlendOp				= D3D11_BLEND_OP_ADD;	
+	BlendDesc.RenderTarget[0].SrcBlendAlpha			= D3D11_BLEND_ONE;
+	BlendDesc.RenderTarget[0].DestBlendAlpha		= D3D11_BLEND_ZERO;
+	BlendDesc.RenderTarget[0].BlendOpAlpha			= D3D11_BLEND_OP_ADD;
+	BlendDesc.RenderTarget[0].RenderTargetWriteMask	= D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	BlendDesc.AlphaToCoverageEnable = true;
+	if( FAILED( m_pDevice11->CreateBlendState( &BlendDesc, &m_pAlphaToCoverage ) ) ){
+		ERROR_MESSAGE( "BlendState(AlphaToCoverage) creation failed" );
+		return E_FAIL;
 	}
-	// バッファ構造体.
-	D3D11_BUFFER_DESC bd;
-	bd.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法(デフォルト).
-	bd.ByteWidth			= sizeof(VERTEX) * vertex.size();	// 頂点のサイズ.
-	bd.BindFlags			= D3D11_BIND_VERTEX_BUFFER;			// 頂点バッファとして扱う.
-	bd.CPUAccessFlags		= 0;	// CPUからはアクセスしない.
-	bd.MiscFlags			= 0;	// その他のフラグ(未使用).
-	bd.StructureByteStride	= 0;	// 構造体のサイズ(未使用).
 
-	// サブリソースデータ構造体.
-	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = &vertex[0];	// 板ポリの頂点をセット.
-
-	// 頂点バッファの作成.
-	if( FAILED( m_pDevice11->CreateBuffer(
-		&bd, 
-		&InitData,
-		ppHeightVertexBuffer ))){
-		ERROR_MESSAGE( "頂点ﾊﾞｯﾌｧ作成失敗" );
-		return;
+	BlendDesc.RenderTarget[0].BlendEnable	= false;	//false:ｱﾙﾌｧﾌﾞﾚﾝﾄﾞを使用しない.
+	BlendDesc.AlphaToCoverageEnable			= false;
+	if( FAILED( m_pDevice11->CreateBlendState( &BlendDesc, &m_pNoAlphaBlend ) ) ){
+		ERROR_MESSAGE( "BlendState(NoAlphaBlend) creation failed" );
+		return E_FAIL;
 	}
+
+	return S_OK;
+}
+
+//--------------------------------------------.
+// アルファカバレージを有効:無効に設定する.
+//--------------------------------------------.
+void CTrajectory::SetCoverage( bool EnableCoverage )
+{
+	// ブレンドステートの設定.
+	UINT mask = 0xffffffff;	// マスク値.
+	ID3D11BlendState* blend = 
+		EnableCoverage == true ? m_pAlphaToCoverage : m_pNoAlphaBlend;
+	m_pContext11->OMSetBlendState( blend, nullptr, mask );
 }
