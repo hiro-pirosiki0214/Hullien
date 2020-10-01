@@ -10,6 +10,7 @@
     <FxCompile Include="Data\Shader\TranslucentShader.hlsl" />
     <FxCompile Include="Data\Shader\SceneTexRenderer.hlsl" />
     <FxCompile Include="Data\Shader\Trajectory.hlsl" />
+    <FxCompile Include="Data\Shader\FXAA.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\ImGui\imgui.cpp" />

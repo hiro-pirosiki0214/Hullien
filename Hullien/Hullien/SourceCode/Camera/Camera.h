@@ -22,7 +22,7 @@ public: //------- 関数 -------.
 	virtual ~CCamera();
 
 	// カメラの更新処理.
-	void Update();
+	virtual void Update();
 	// ビュー行列、プロジェクション行列の初期化.
 	void InitViewProj();
 

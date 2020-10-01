@@ -88,7 +88,7 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnParameter.Position );
 	// 連れ去るUFOの座標を設定.
 	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
-//	m_SpawnCount = 0;
+	m_SpawnCount = 0;
 }
 
 // 宇宙人のパラメータリストを設定する.
@@ -122,7 +122,7 @@ void CSpawnUFO::WaveCountUpdate(
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {
 	// 宇宙人番号の作成.
-	const EAlienList alienNo = EAlienList::D;//static_cast<EAlienList>(GetAlienNo());
+	const EAlienList alienNo = static_cast<EAlienList>(GetAlienNo());
 
 	switch( alienNo )
 	{

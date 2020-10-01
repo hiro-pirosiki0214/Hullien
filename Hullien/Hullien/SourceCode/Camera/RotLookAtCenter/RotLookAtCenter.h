@@ -16,8 +16,11 @@ public:  //------ 関数 -------.
 	CRotLookAtCenter();
 	virtual ~CRotLookAtCenter();
 
+	// 更新.
+	virtual void Update() override;
+
 	// オブジェクトをを注視に回転.
-	void RotationLookAtObject( const D3DXVECTOR3& vLookPos );
+	void RotationLookAtObject( const D3DXVECTOR3& vLookPos, const float& attenRate );
 
 	// 横方向の回転.
 	void DegreeHorizontalMove( const float& movePower );

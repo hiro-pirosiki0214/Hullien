@@ -40,6 +40,12 @@ CPlayer::CPlayer()
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
+	, m_CameraDefaultHeight			( 0.0f )
+	, m_CameraHeight				( 0.0f )
+	, m_IsAttackHitCamera			( false )
+	, m_CameraShakeCount			( 0.0f )
+	, m_CameraShakeTieme			( 10.0f )
+	, m_CameraShakeCountAdd			( 1.0f )
 	, m_pEffectTimers				( EEffectTimerNo::EEffectTimerNo_Max )
 	, m_IsAttackSE					( false )
 {
@@ -68,7 +74,7 @@ bool CPlayer::Init()
 	m_AttackPower	= m_Parameter.AttackPower;	// 攻撃力の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
 	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
-
+	m_CameraHeight = m_CameraDefaultHeight = m_Parameter.CameraHeight;
 #if 0
 	// アニメーション再生.
 	SetAttackFrameList();
@@ -93,15 +99,17 @@ void CPlayer::Update()
 	} else {
 		ParalysisUpdate();	// 麻痺時の更新.
 	}
-	SpecialAbilityUpdate();	// 特殊能力回復更新.
-	AttackUpUpdate();		// 攻撃力UP更新.
-	MoveSpeedUpUpdate();	// 移動速度UP更新.
+	AttackHitCameraUpdate();	// 攻撃ヒット時のカメラ動作.
+	SpecialAbilityUpdate();		// 特殊能力回復更新.
+	AttackUpUpdate();			// 攻撃力UP更新.
+	MoveSpeedUpUpdate();		// 移動速度UP更新.
 
 	CameraController();	// カメラ操作.
-	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
-	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// 高さの設定.
 	// プレイヤーを注視して回転.
-	m_pCamera->RotationLookAtObject( m_vPosition );
+	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z },
+		m_Parameter.CameraLerpValue );
+	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
+	m_pCamera->SetHeight( m_CameraHeight );	// 高さの設定.
 
 	// カメラをマネージャーに設定.
 	CCameraManager::SetCamera( m_pCamera );
@@ -371,6 +379,19 @@ void CPlayer::AttackCollision( CActor* pActor )
 	// 攻撃関数.
 	auto attackProc = [&]( float& life ){ life -= 10.0f; };
 	pActor->LifeCalculation( attackProc );
+	m_IsAttackHitCamera = true;
+}
+
+// 攻撃ヒット時のカメラ動作.
+void CPlayer::AttackHitCameraUpdate()
+{
+	if( m_IsAttackHitCamera == false ) return;
+	m_CameraShakeCount += m_CameraShakeCountAdd;
+	m_CameraHeight = m_CameraDefaultHeight + sinf( m_CameraShakeCount ) * (m_AttackComboCount*0.1f);
+	if( m_CameraShakeCount <= m_CameraShakeTieme ) return;
+	m_CameraShakeCount = 0.0f;
+	m_CameraHeight = m_CameraDefaultHeight;
+	m_IsAttackHitCamera = false;
 }
 
 // 特殊能力回復更新関数.
@@ -645,6 +666,8 @@ void CPlayer::EditRender()
 	ImGui::InputFloat( u8"カメラの移動速度", &m_Parameter.CameraMoveSpeed );
 	ImGui::InputFloat( u8"カメラの距離", &m_Parameter.CameraDistance );
 	ImGui::InputFloat( u8"カメラの高さ", &m_Parameter.CameraHeight );
+	ImGui::InputFloat( u8"カメラ注視点の高さ", &m_Parameter.CameraLookHeight );
+	ImGui::InputFloat( u8"カメラ移動の補完値", &m_Parameter.CameraLerpValue );
 	ImGui::InputFloat( u8"スフィアの調整座標 X", &m_Parameter.SphereAdjPos.x );
 	ImGui::InputFloat( u8"スフィアの調整座標 Y", &m_Parameter.SphereAdjPos.y );
 	ImGui::InputFloat( u8"スフィアの調整座標 Z", &m_Parameter.SphereAdjPos.z );

@@ -15,18 +15,26 @@ CRotLookAtCenter::~CRotLookAtCenter()
 {
 }
 
+// 更新.
+void CRotLookAtCenter::Update()
+{
+}
+
 //-------------------------------.
 // オブジェクトをを注視に回転.
 //-------------------------------.
-void CRotLookAtCenter::RotationLookAtObject( const D3DXVECTOR3& vLookPos )
+void CRotLookAtCenter::RotationLookAtObject( const D3DXVECTOR3& vLookPos, const float& attenRate )
 {
 	// 注視位置を取得.
 	m_vLookPosition = vLookPos;
 
+	D3DXVECTOR3 pos;	// 本来の座標.
 	// カメラ位置を算出.
-	m_vPosition.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
-//	m_vPosition.y = m_vLookPosition.y + ( sinf(m_vDegree.y) * m_Length );
-	m_vPosition.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
+	pos.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
+	pos.y = m_vPosition.y;
+	pos.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
+	// lerp減衰.
+	D3DXVec3Lerp( &m_vPosition, &m_vPosition, &pos, attenRate );
 }
 
 //-------------------------------.

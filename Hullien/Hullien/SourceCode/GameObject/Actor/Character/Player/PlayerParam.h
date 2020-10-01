@@ -15,6 +15,8 @@ struct stPlayerParam : public CCharacter::SParameter
 	float		CameraMoveSpeed;	// カメラの移動速度.
 	float		CameraDistance;		// カメラの距離.
 	float		CameraHeight;		// カメラの高さ.
+	float		CameraLookHeight;	// カメラの注視点の高さ.
+	float		CameraLerpValue;	// カメラ移動の補完値.
 	D3DXVECTOR3 SphereAdjPos;		// スフィアの調整座標.
 	float		SphereAdjRadius;	// スフィアの調整半径.
 
@@ -27,6 +29,8 @@ struct stPlayerParam : public CCharacter::SParameter
 		, CameraMoveSpeed	( 0.01f )
 		, CameraDistance	( 7.0f )
 		, CameraHeight		( 4.0f )
+		, CameraLookHeight	( 0.0 )
+		, CameraLerpValue	( 1.0f )
 		, SphereAdjPos		( 0.0f, 0.0f, 0.0f )
 		, SphereAdjRadius	( 0.0f )
 	{}

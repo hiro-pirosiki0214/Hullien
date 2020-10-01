@@ -68,7 +68,7 @@ public:
 	// 描画関数.
 	static void Render();
 
-	// バッファバッファ.
+	// バッファのクリア.
 	static void ClearBuffer();
 
 	// レンダリングパスを設定.

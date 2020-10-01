@@ -104,7 +104,7 @@ void CSceneTexRenderer::Render()
 	GetInstance()->m_pContext11->Draw( 4, 0 );
 }
 
-// バッファバッファ.
+// バッファのクリア.
 void CSceneTexRenderer::ClearBuffer()
 {
 	// 深度バッファテクスチャのクリア.

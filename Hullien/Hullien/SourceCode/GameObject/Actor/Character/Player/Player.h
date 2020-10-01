@@ -141,6 +141,8 @@ private:
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
+	// 攻撃ヒット時のカメラ動作.
+	void AttackHitCameraUpdate();
 
 	// 特殊能力回復更新関数.
 	void SpecialAbilityUpdate();
@@ -209,10 +211,17 @@ private:
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
+	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
+	float			m_CameraHeight;				// カメラの高さ.
 
+	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
+	float			m_CameraShakeCount;			// カメラの揺れカウント.
+	float			m_CameraShakeTieme;			// カメラの揺れ時間.
+	float			m_CameraShakeCountAdd;		// カメラの揺れカウント加算値.
 	std::vector<std::shared_ptr<CEffectTimer>>	m_pEffectTimers;	// 効果時間計測クラス.
 	
 	bool				m_IsAttackSE;				//攻撃SEを鳴らすか.
+
 };
 
 #endif	// #ifndef PLAYER_H.
