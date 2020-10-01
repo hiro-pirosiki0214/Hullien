@@ -30,7 +30,7 @@ void CCharacter::MeshRender()
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetAnimSpeed( 0.01 );
+	m_pSkinMesh->SetAnimSpeed( 0.001 );
 	m_pSkinMesh->Render();
 #else
 	if( m_pTempStaticMesh == nullptr ) return;
