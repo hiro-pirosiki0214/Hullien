@@ -28,6 +28,9 @@ public:
 	// 座標設定関数.
 	virtual void SetPosition( const D3DXVECTOR3& vPos );
 
+	// 画面の外に出ているか.
+	bool IsDisplayOut();
+
 protected:
 	EObjectTag	m_ObjectTag;	// オブジェクトタグ.
 	D3DXVECTOR3 m_vPosition;	// 座標.

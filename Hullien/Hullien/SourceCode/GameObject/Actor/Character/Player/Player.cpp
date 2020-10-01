@@ -567,6 +567,7 @@ void CPlayer::SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& 
 // –ƒáƒ‚Ìİ’è.
 void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 {
+	if( m_IsDuringAvoid == true ) return;
 	float tmpTime = 0.0f;
 	proc( tmpTime );
 	m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->SetTime( tmpTime );

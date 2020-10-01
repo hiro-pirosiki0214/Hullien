@@ -42,6 +42,8 @@ void CAlienC::Update()
 // •`‰æŠÖ”.
 void CAlienC::Render()
 {
+	// ‰æ–Ê‚ÌŠO‚È‚çI—¹.
+	if( IsDisplayOut() == true ) return;
 #ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 

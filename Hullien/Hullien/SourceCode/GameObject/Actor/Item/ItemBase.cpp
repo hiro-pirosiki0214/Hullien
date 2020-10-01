@@ -78,6 +78,8 @@ void CItemBase::Update()
 // 描画関数.
 void CItemBase::Render()
 {
+	// 画面の外なら終了.
+	if( IsDisplayOut() == true ) return;
 	// ドロップ　アクティブ時の描画.
 	DropAndActiveRender();
 	// ヒット時の描画.

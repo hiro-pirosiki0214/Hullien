@@ -16,7 +16,7 @@ class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
-	const char*	MODEL_NAME			= "kaito_move_s";	// モデル名.
+	const char*	MODEL_NAME			= "kaito_taiki_s";	// モデル名.
 	const char* MODEL_TEMP_NAME		= "kaito";		// 仮モデル名.
 
 	// 使用攻撃エフェクト名.

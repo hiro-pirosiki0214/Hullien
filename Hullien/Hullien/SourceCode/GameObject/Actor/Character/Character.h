@@ -3,7 +3,7 @@
 
 #include "..\Actor.h"
 
-//#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
+#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
 
 class CCharacter : public CActor
 {

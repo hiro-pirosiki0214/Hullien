@@ -54,6 +54,8 @@ void CSpawnUFO::Update()
 // •`‰æŠÖ”.
 void CSpawnUFO::Render()
 {
+	// ‰æ–ÊŠO‚È‚çI—¹.
+	if( IsDisplayOut() == true ) return;
 	if( m_pStaticMesh == nullptr ) return;
 
 	m_pStaticMesh->SetPosition( m_vPosition );

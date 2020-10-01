@@ -48,6 +48,8 @@ void CAlienD::Update()
 // •`‰æŠÖ”.
 void CAlienD::Render()
 {
+	// ‰æ–Ê‚ÌŠO‚È‚çI—¹.
+	if( IsDisplayOut() == true ) return;
 	m_pLaserBeam->Render();
 	ModelRender();
 

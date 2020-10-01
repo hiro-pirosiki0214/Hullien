@@ -359,8 +359,7 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	m_CameraPos = CCameraManager::GetPosition();
 	m_CameraLookPos = CCameraManager::GetLookPosition();
 
-	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ||
-		CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Trans ){
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
 		if (pAC == nullptr)
 		{
 			if (m_pD3dxMesh->m_pAnimController)

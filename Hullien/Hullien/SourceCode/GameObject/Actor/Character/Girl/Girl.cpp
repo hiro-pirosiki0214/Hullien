@@ -83,6 +83,8 @@ void CGirl::Update()
 // 描画関数.
 void CGirl::Render()
 {
+	// 画面の外なら終了.
+	if( IsDisplayOut() == true ) return;
 	float rotY = m_vRotation.y;
 	m_vRotation.y += static_cast<float>(D3DX_PI);
 	MeshRender();	// メッシュの描画.
