@@ -4,6 +4,8 @@
 #include "..\Character.h"
 #include "..\..\Item\ItemList.h"
 
+#include <random>
+
 class CAlien : public CCharacter
 {
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
@@ -136,6 +138,8 @@ public:
 	void SetOtherAbduct( bool* pisAbduct ){ m_pIsAlienOtherAbduct = pisAbduct; }
 	// 連れ去るUFOの座標の取得.
 	void SetAbductUFOPosition( D3DXVECTOR3* pos ){ m_pAbductUFOPosition = pos; }
+	// アイテムの設定.
+	void SetItem( const EItemList& item ){ m_HasAnyItem = item; }
 	// 爆発するか.
 	bool IsExplosion() const { return m_IsExplosion; }
 	// 消去するかどうか.

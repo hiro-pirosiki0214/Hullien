@@ -9,15 +9,12 @@
 CSpawnUFO::CSpawnUFO()
 	: m_pStaticMesh				( nullptr )
 	, m_SpawnParameter			()
+	, m_SpawnPoint				{ 0.0f, 0.0f, 0.0f }
 	, m_pAbductUFOPosition		( nullptr )
 	, m_pAlienParamList			( nullptr )
 	, m_FrameCount				( 0 )
 	, m_SpawnCount				( 0 )
 	, m_AlienIndex				( 0 )
-	, m_AlienCWaveCount			( 0 )
-	, m_AlienCWaveIntervalCount	( 0 )
-	, m_AlienDWaveCount			( 0 )
-	, m_AlienDWaveIntervalCount	( 0 )
 	, m_RandomSeed				()
 {
 	// ランダムシードの初期化.
@@ -39,16 +36,7 @@ bool CSpawnUFO::Init()
 // 更新関数.
 void CSpawnUFO::Update()
 {
-	m_FrameCount++;	// カウントの加算.
-	m_SpawnCount++;	// スポーンカウントの加算.
-	m_AlienCWaveCount++;	// 宇宙人Cのウェーブカウントの加算.
-	m_AlienDWaveCount++;	// 宇宙人Dのウェーブカウントの加算.
-	WaveCountUpdate(
-		m_AlienCWaveCount, m_SpawnParameter.AlienCWaveTime,
-		m_AlienCWaveIntervalCount, m_SpawnParameter.AlienCWaveIntervalTime );
-	WaveCountUpdate(
-		m_AlienDWaveCount, m_SpawnParameter.AlienDWaveTime,
-		m_AlienDWaveIntervalCount, m_SpawnParameter.AlienDWaveIntervalTime );
+	m_SpawnCount++;
 }
 
 // 描画関数.
@@ -72,24 +60,26 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 
 	Update();	// 更新関数.
 
-	if( m_SpawnCount != m_SpawnParameter.SpawnTime*FPS ) return;
-//	std::shared_ptr<CAlien> tempAlien = AlienFactory();
-//	if( tempAlien == nullptr ) return;
+	if( m_SpawnCount < m_SpawnParameter.SpawnTime*FPS ) return;
 	if( m_pAbductUFOPosition == nullptr ) return;
 
 	alienList.emplace_back( AlienFactory() );	// 宇宙人の追加.
+	// 追加したエイリアンがnullなら削除して、終了.
 	if( alienList.back() == nullptr ){
 		alienList.pop_back();
 		return;
 	}
+
 	// 宇宙人のパラメータリストが空なら終了.
 	if( m_pAlienParamList->empty() == true ) return;
 	if( m_pAlienParamList->size() <= static_cast<size_t>(m_AlienIndex) ) return;
 
 	// リストにあったパラメータとスポーン座標を設定し、スポーンさせる.
-	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnParameter.Position );
+	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnPoint );
 	// 連れ去るUFOの座標を設定.
 	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
+	// アイテムの設定.
+	alienList.back()->SetItem( ProbabilityGetItem( static_cast<EAlienList>(m_AlienIndex) == EAlienList::D ) );
 	m_SpawnCount = 0;
 }
 
@@ -103,21 +93,8 @@ void CSpawnUFO::SetAlienParameterList( std::vector<CAlien::SAlienParam>* alienPa
 void CSpawnUFO::SetSpawnParameter( const SSpawnUFOParam& param )
 { 
 	m_SpawnParameter = param;
-	m_vPosition = m_SpawnParameter.Position;
-	m_vPosition.y = POS_HEIGHT;
-}
-
-// ウェーブカウントの更新.
-void CSpawnUFO::WaveCountUpdate( 
-	int& waveCount, const int& waveTime, 
-	int& intervalcount, const int& intervalTime )
-{
-	if( waveCount < waveTime*FPS ) return;
-	intervalcount++;	// 間隔カウントの加算.
-
-	if( intervalcount < intervalTime*FPS ) return;
-	intervalcount = 0;	// 初期化.
-	waveCount = 0;		// 初期化.
+	m_SpawnPoint	= m_vPosition = m_SpawnParameter.Position;
+	m_SpawnPoint.y	= m_SpawnParameter.SpawnPointHight;
 }
 
 // 宇宙人の作成.
@@ -160,25 +137,18 @@ std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 // 宇宙人番号の作成.
 int CSpawnUFO::GetAlienNo()
 {
-	if( m_AlienCWaveCount >= m_SpawnParameter.AlienCWaveTime*FPS &&
-		m_AlienDWaveCount >= m_SpawnParameter.AlienDWaveTime*FPS ){
-		// 宇宙人C、Dをスポーンを含める.
-		return CreateAlienNo( 
-			static_cast<int>(EAlienList::First),	// 最小値.
-			static_cast<int>(EAlienList::Last),		// 最大値.
-			static_cast<int>(EAlienList::Max) );	// 除外する値.
-	} else if( m_AlienCWaveCount >= m_SpawnParameter.AlienCWaveTime*FPS ){
-		// 宇宙人Cを含める.
-		return CreateAlienNo( 
-			static_cast<int>(EAlienList::First),	// 最小値.
-			static_cast<int>(EAlienList::C),		// 最大値.
-			static_cast<int>(EAlienList::D) );		// 除外する値.
-	} else if( m_AlienDWaveCount >= m_SpawnParameter.AlienDWaveTime*FPS ){
+	if( (rand()%100) < m_SpawnParameter.ProbabilityD ){
 		// 宇宙人Dを含める.
 		return CreateAlienNo( 
 			static_cast<int>(EAlienList::First),	// 最小値.
 			static_cast<int>(EAlienList::D),		// 最大値.
 			static_cast<int>(EAlienList::C) );		// 除外する値.
+	} else if( (rand()%100) < m_SpawnParameter.ProbabilityC ){
+		// 宇宙人Cを含める.
+		return CreateAlienNo( 
+			static_cast<int>(EAlienList::First),	// 最小値.
+			static_cast<int>(EAlienList::C),		// 最大値.
+			static_cast<int>(EAlienList::D) );		// 除外する値.
 	} else {
 		// 宇宙人C、Dを含めない.
 		return CreateAlienNo( 
@@ -198,6 +168,22 @@ int CSpawnUFO::CreateAlienNo( const int& min, const int& max, const int& outVal 
 		outAlienNo = CreateAlienNo( min, max, outVal );
 	}
 	return outAlienNo;
+}
+
+// アイテムを取得する.
+EItemList CSpawnUFO::ProbabilityGetItem( const bool& isAlienD )
+{
+	// 乱数が確率値より少ない場合　または　宇宙人Dの場合.
+	if(( (rand()%100) < m_SpawnParameter.ProbabilityItem ) || ( isAlienD == true )){
+		// ランダム値の最大と最小の値を設定.
+		std::uniform_int_distribution<int> itemNoMaxMin( 
+			static_cast<int>(EItemList::First),
+			static_cast<int>(EItemList::Last) );
+		// アイテム番号を取得する.
+		return static_cast<EItemList>(itemNoMaxMin( m_RandomSeed ));
+	} else {
+		return EItemList::None;	// アイテムなし.
+	}
 }
 
 // モデルの取得.

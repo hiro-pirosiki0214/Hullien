@@ -135,7 +135,7 @@ void CSceneTexRenderer::SetShadowBuffer( int i )
 }
 
 // G-Bufferの設定.
-void CSceneTexRenderer::SetGBuufer()
+void CSceneTexRenderer::SetGBuffer()
 {
 	// レンダーターゲットの設定.
 	GetInstance()->m_pContext11->OMSetRenderTargets( 
@@ -214,7 +214,7 @@ HRESULT CSceneTexRenderer::InitGBufferTex()
 			&m_pGBufferSRV[i],
 			&m_pGBufferTex[i] ))) return E_FAIL;
 	}
-	// 深度度用のフォーマットに変更.
+	// 深度用のフォーマットに変更.
 	texDesc.Format				= DXGI_FORMAT_B8G8R8A8_UNORM;// 32ﾋﾞｯﾄﾌｫｰﾏｯﾄ.
 	if( FAILED( CreateBufferTex(
 		texDesc,

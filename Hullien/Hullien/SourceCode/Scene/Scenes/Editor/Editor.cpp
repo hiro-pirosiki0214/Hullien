@@ -182,7 +182,7 @@ void CEditor::ModelRender()
 	// G-Buffer‚Écolor, normal, depth‚ğ‘‚«‚Ş.
 
 	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::GBuffer );
-	CSceneTexRenderer::SetGBuufer();
+	CSceneTexRenderer::SetGBuffer();
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
 

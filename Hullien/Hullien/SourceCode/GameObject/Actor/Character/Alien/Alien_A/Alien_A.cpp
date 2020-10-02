@@ -10,7 +10,6 @@
 CAlienA::CAlienA()
 {
 	m_ObjectTag = EObjectTag::Alien_A;
-	m_HasAnyItem = EItemList::AttackUp;
 }
 
 CAlienA::~CAlienA()

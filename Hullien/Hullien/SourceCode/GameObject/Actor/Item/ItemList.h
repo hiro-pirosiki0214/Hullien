@@ -16,6 +16,9 @@ enum  class enItemList
 
 	Max,
 
+	First	= LifeRecovery,	// 開始位置.
+	Last	= MoveSpeedUp,	// 終了位置.
+
 } typedef EItemList;
 
 typedef std::unordered_map<EItemList, D3DXVECTOR3>	DropItemList;	// 落とすアイテムのリスト.

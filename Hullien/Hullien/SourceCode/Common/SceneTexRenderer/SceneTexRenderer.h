@@ -79,7 +79,7 @@ public:
 	// Shadowバッファの設定.
 	static void SetShadowBuffer( int i );
 	// G-Bufferの設定.
-	static void SetGBuufer();
+	static void SetGBuffer();
 	// TransBufferの設定.
 	static void SetTransBuffer();
 

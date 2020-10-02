@@ -16,7 +16,6 @@ CAlienB::CAlienB()
 	, m_IsAttackSE		( false )
 {
 	m_ObjectTag = EObjectTag::Alien_B;
-	m_HasAnyItem = EItemList::LifeRecovery;
 }
 
 CAlienB::~CAlienB()

@@ -124,13 +124,12 @@ void CSpawnEdit::SpawnParamRender( const int& index )
 	ImGui::InputFloat( u8"座標 : X", &s.Position.x );
 	ImGui::InputFloat( u8"座標 : Y", &s.Position.y );
 	ImGui::InputFloat( u8"座標 : Z", &s.Position.z );
+	ImGui::InputFloat( u8"スポーンポイントの高さ", &s.SpawnPointHight );
 	ImGui::InputInt( u8"スポーン間隔時間", &s.SpawnTime );
 	ImGui::InputInt( u8"宇宙人の最大数", &s.MaxAlienCount );
-
-	ImGui::InputInt( u8"宇宙人Cのウェーブ時間", &s.AlienCWaveTime );
-	ImGui::InputInt( u8"宇宙人Cのウェーブの間隔時間", &s.AlienCWaveIntervalTime );
-	ImGui::InputInt( u8"宇宙人Dのウェーブ時間", &s.AlienDWaveTime );
-	ImGui::InputInt( u8"宇宙人Dのウェーブの間隔時間", &s.AlienDWaveIntervalTime );
+	ImGui::InputInt( u8"宇宙人Cの出現率", &s.ProbabilityC );
+	ImGui::InputInt( u8"宇宙人Dの出現率", &s.ProbabilityD );
+	ImGui::InputInt( u8"アイテムを落とす確率", &s.ProbabilityItem );
 
 	ImGui::PushItemWidth(100); // これから先のUIパーツの幅を70で固定します.
 
