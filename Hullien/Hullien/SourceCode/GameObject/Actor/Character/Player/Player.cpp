@@ -64,6 +64,7 @@ bool CPlayer::Init()
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 #ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
+	SetAttackFrameList();
 #else
 	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.

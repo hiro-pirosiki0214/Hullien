@@ -171,6 +171,8 @@ private:
 	double m_dAnimSpeed;
 	double m_dAnimTime;
 
+	bool m_IsChangeAnim;
+
 	//解放処理用に.
 	SKIN_PARTS_MESH* m_pReleaseMaterial;
 
@@ -209,6 +211,9 @@ private:
 	//パーツ描画.
 	void DrawPartsMesh( SKIN_PARTS_MESH* p, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
 	void DrawPartsMeshStatic( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
+
+	void GetOldBonePos( LPD3DXFRAME pFrame );
+	void GetOldPartsBonePos( SKIN_PARTS_MESH* p, MYMESHCONTAINER* pContainer );
 
 	// 影の描画.
 	bool ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld );
