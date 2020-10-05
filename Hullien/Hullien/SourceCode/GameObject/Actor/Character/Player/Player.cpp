@@ -459,7 +459,7 @@ void CPlayer::SetAnimation( const enAnimNo& animNo )
 	if( m_NowAnimNo == m_OldAnimNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
-	m_pSkinMesh->ChangeAnimSet( static_cast<int>(animNo) );
+	m_pSkinMesh->ChangeAnimBlend( static_cast<int>(m_NowAnimNo), static_cast<int>(m_OldAnimNo) );
 }
 
 // 攻撃アニメーションフレームの設定.

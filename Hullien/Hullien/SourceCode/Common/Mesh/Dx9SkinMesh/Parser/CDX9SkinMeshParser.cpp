@@ -646,10 +646,10 @@ void D3DXPARSER::ChangeAnimSet(int index, LPD3DXANIMATIONCONTROLLER pAC)
 		pTmpAC = m_pAnimController;
 	}
 
-	//指定(index）のアニメーショントラックに変更.
-	pTmpAC->SetTrackDesc(0, &TrackDesc);
-	pTmpAC->SetTrackAnimationSet(0, m_pAnimSet[index]);
-	pTmpAC->SetTrackEnable(index, true);
+	// トラック0 に新しいアニメーションを設定.
+	pTmpAC->SetTrackDesc( 0, &TrackDesc );
+	pTmpAC->SetTrackAnimationSet( 0, m_pAnimSet[index] );
+	pTmpAC->SetTrackEnable( 0, true );
 }
 
 
@@ -682,6 +682,40 @@ void D3DXPARSER::ChangeAnimSet_StartPos(int index, double dStartFramePos, LPD3DX
 	pTmpAC->SetTrackEnable(index, true);
 }
 
+// アニメーションをブレンドして切り替え.
+void D3DXPARSER::ChangeAnimBlend( int index, int oldIndex, LPD3DXANIMATIONCONTROLLER pAC )
+{
+	D3DXTRACK_DESC TrackDesc;		//アニメーショントラック構造体.
+	ZeroMemory(&TrackDesc, sizeof(TrackDesc));
+
+	//※以下3つは、ほぼ固定でOK.
+	TrackDesc.Weight = 1;		//重み.
+	TrackDesc.Speed = 1;		//速さ.
+	TrackDesc.Enable = 1;		//有効.
+
+	TrackDesc.Position = 0.0;		//フレーム位置(開始位置を指定できる)
+
+	LPD3DXANIMATIONCONTROLLER pTmpAC;
+	if (pAC) {
+		pTmpAC = pAC;
+	}
+	else {
+		pTmpAC = m_pAnimController;
+	}
+	D3DXTRACK_DESC nowTrackDesc;
+	// 現在のアニメーショントラックを取得.
+	pTmpAC->GetTrackDesc( 0, &nowTrackDesc );
+
+	// トラック1 に現在のアニメーションを設定.
+	pTmpAC->SetTrackDesc( 1, &nowTrackDesc );
+	pTmpAC->SetTrackAnimationSet( 1, m_pAnimSet[oldIndex] );
+	pTmpAC->SetTrackEnable( 1, true );
+
+	// トラック0 に新しいアニメーションを設定.
+	pTmpAC->SetTrackDesc( 0, &TrackDesc );
+	pTmpAC->SetTrackAnimationSet( 0, m_pAnimSet[index] );
+	pTmpAC->SetTrackEnable( 0, true );
+}
 
 //アニメーション停止時間を取得.
 double D3DXPARSER::GetAnimPeriod(int index)

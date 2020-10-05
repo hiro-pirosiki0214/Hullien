@@ -359,20 +359,21 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	m_mProj		= CCameraManager::GetProjMatrix();
 	m_CameraPos = CCameraManager::GetPosition();
 	m_CameraLookPos = CCameraManager::GetLookPosition();
-
+	
 	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
 		if (pAC == nullptr)
 		{
 			if (m_pD3dxMesh->m_pAnimController)
 			{
-				m_pD3dxMesh->m_pAnimController->AdvanceTime(m_dAnimSpeed, NULL);
+				BlendAnimUpdate();
+				m_pD3dxMesh->m_pAnimController->AdvanceTime( m_dAnimSpeed, NULL );
 			}
 		} else {
+			BlendAnimUpdate();
 			pAC->AdvanceTime( m_dAnimSpeed, NULL );
 		}
 	}
 	m_dAnimTime += m_dAnimSpeed;
-	if( m_dAnimTime >= 1.0f ) m_IsChangeAnim = false;
 	D3DXMATRIX m;
 	D3DXMatrixIdentity( &m );
 	m_pD3dxMesh->UpdateFrameMatrices( m_pD3dxMesh->m_pFrameRoot, &m );
@@ -619,10 +620,10 @@ void CDX9SkinMesh::SetNewPoseMatrices(
 //次の(現在の)ポーズ行列を返す関数.
 D3DXMATRIX CDX9SkinMesh::GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int index )
 {
-	D3DXMATRIX ret = m_IsChangeAnim == false ? 
-		pParts->pBoneArray[index].mBindPose * pParts->pBoneArray[index].mNewPose :
-		pParts->pBoneArray[index].mBindPose *
-		((1-m_dAnimTime)*pParts->pBoneArray[index].mOldPose + m_dAnimTime*pParts->pBoneArray[index].mNewPose);
+	D3DXMATRIX ret = 
+		pParts->pBoneArray[index].mBindPose * pParts->pBoneArray[index].mNewPose;
+		//pParts->pBoneArray[index].mBindPose *
+		//((1-m_dAnimTime)*pParts->pBoneArray[index].mOldPose + m_dAnimTime*pParts->pBoneArray[index].mNewPose);
 
 	return ret;
 }
@@ -848,38 +849,6 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 		}
 		//Draw.
 		m_pContext11->DrawIndexed( pMesh->pMaterial[i].dwNumFace * 3, 0, 0 );
-	}
-}
-
-void CDX9SkinMesh::GetOldBonePos( LPD3DXFRAME p )
-{
-	MYFRAME*			pFrame	= (MYFRAME*)p;
-	SKIN_PARTS_MESH*	pPartsMesh	= pFrame->pPartsMesh;
-	MYMESHCONTAINER*	pContainer	= (MYMESHCONTAINER*)pFrame->pMeshContainer;
-
-	if( pPartsMesh != nullptr )
-	{
-		GetOldPartsBonePos( pPartsMesh, pContainer );
-	}
-	//再帰関数.
-	//(兄弟)
-	if( pFrame->pFrameSibling != nullptr )
-	{
-		GetOldBonePos( pFrame->pFrameSibling );
-	}
-	//(親子)
-	if( pFrame->pFrameFirstChild != nullptr )
-	{
-		GetOldBonePos( pFrame->pFrameFirstChild );
-	}
-}
-
-void CDX9SkinMesh::GetOldPartsBonePos( SKIN_PARTS_MESH* p, MYMESHCONTAINER* pContainer )
-{
-	for( int i=0; i<p->iNumBone; i++ )
-	{
-		p->pBoneArray[i].mOldPose
-			= m_pD3dxMesh->GetNewPose( pContainer, i );
 	}
 }
 
@@ -1210,9 +1179,8 @@ void CDX9SkinMesh::ChangeAnimSet( int index, LPD3DXANIMATIONCONTROLLER pAC )
 	{
 		m_pD3dxMesh->m_pAnimController = pAC;
 	}
-	GetOldBonePos( m_pD3dxMesh->m_pFrameRoot );
 	m_pD3dxMesh->ChangeAnimSet( index, pAC );
-	m_IsChangeAnim = true;
+	m_IsChangeAnim = false;
 	m_dAnimTime = 0.0;
 }
 
@@ -1224,6 +1192,35 @@ void CDX9SkinMesh::ChangeAnimSet_StartPos( int index, double dStartFramePos, LPD
 	m_pD3dxMesh->ChangeAnimSet_StartPos( index, dStartFramePos, pAC );
 }
 
+// アニメーションをブレンドして切り替え.
+void CDX9SkinMesh::ChangeAnimBlend( int index, int oldIndex, LPD3DXANIMATIONCONTROLLER pAC )
+{
+	if( m_pD3dxMesh == nullptr )	return;
+	if (pAC != nullptr)
+	{
+		m_pD3dxMesh->m_pAnimController = pAC;
+	}
+	m_pD3dxMesh->ChangeAnimBlend( index, oldIndex, pAC );
+	m_IsChangeAnim = true;
+	m_dAnimTime = 0.0;
+}
+
+// ブレンドアニメーションの更新.
+void CDX9SkinMesh::BlendAnimUpdate()
+{
+	// アニメーション切り替えフラグが下りてたら終了.
+	if( m_IsChangeAnim == false ) return;
+
+	float weight = static_cast<float>(m_dAnimTime) / 1.0f;	// ウェイトの計算.
+	m_pD3dxMesh->m_pAnimController->SetTrackWeight( 0, weight );	// トラック0 にウェイトを設定.
+	m_pD3dxMesh->m_pAnimController->SetTrackWeight( 1, 1 - weight );// トラック1 にウェイトを設定.
+
+	if( m_dAnimTime < 1.0 ) return;
+	// アニメーションタイムが一定値に達したら.
+	m_IsChangeAnim = false;	// フラグを下す.
+	m_pD3dxMesh->m_pAnimController->SetTrackWeight( 0, 1.0f );		// ウェイトを1に固定する.
+	m_pD3dxMesh->m_pAnimController->SetTrackEnable( 1, false );		// トラック1を無効にする.
+}
 
 //アニメーション停止時間を取得.
 double CDX9SkinMesh::GetAnimPeriod( int index )

@@ -51,7 +51,6 @@ struct BONE
 {
 	D3DXMATRIX mBindPose;	//初期ポーズ（ずっと変わらない）.
 	D3DXMATRIX mNewPose;	//現在のポーズ（その都度変わる）.
-	D3DXMATRIX mOldPose;	
 	DWORD dwNumChild;		//子の数.
 	int iChildIndex[50];	//自分の子の“インデックス”50個まで.
 	char Name[256];
@@ -59,14 +58,12 @@ struct BONE
 	BONE()
 		: mBindPose()
 		, mNewPose()
-		, mOldPose()
 		, dwNumChild()
 		, iChildIndex()
 		, Name()
 	{
 		D3DXMatrixIdentity(&mBindPose);
 		D3DXMatrixIdentity(&mNewPose);
-		D3DXMatrixIdentity(&mOldPose);
 	}
 };
 
@@ -213,6 +210,9 @@ public:
 	void ChangeAnimSet(int index, LPD3DXANIMATIONCONTROLLER pAC = nullptr);
 	//アニメーションセットの切り替え(開始フレーム指定可能版).
 	void ChangeAnimSet_StartPos(int index, double dStartFramePos, LPD3DXANIMATIONCONTROLLER pAC = nullptr);
+	// アニメーションをブレンドして切り替え.
+	void ChangeAnimBlend( int index, int oldIndex, LPD3DXANIMATIONCONTROLLER pAC = nullptr );
+
 
 	//アニメーション停止時間を取得.
 	double GetAnimPeriod(int index);

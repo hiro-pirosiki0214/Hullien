@@ -123,6 +123,11 @@ public:
 	void ChangeAnimSet( int index, LPD3DXANIMATIONCONTROLLER pAC=nullptr );
 	//アニメーションセットの切り替え(開始フレーム指定可能版).
 	void ChangeAnimSet_StartPos( int index, double dStartFramePos, LPD3DXANIMATIONCONTROLLER pAC=nullptr );
+	// アニメーションをブレンドして切り替え.
+	void ChangeAnimBlend( int index, int oldIndex, LPD3DXANIMATIONCONTROLLER pAC = nullptr );
+
+	// ブレンドアニメーションの更新.
+	void BlendAnimUpdate();
 
 	//アニメーション停止時間を取得.
 	double GetAnimPeriod( int index );
@@ -211,9 +216,6 @@ private:
 	//パーツ描画.
 	void DrawPartsMesh( SKIN_PARTS_MESH* p, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
 	void DrawPartsMeshStatic( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYMESHCONTAINER* pContainer );
-
-	void GetOldBonePos( LPD3DXFRAME pFrame );
-	void GetOldPartsBonePos( SKIN_PARTS_MESH* p, MYMESHCONTAINER* pContainer );
 
 	// 影の描画.
 	bool ShadowRender( SKIN_PARTS_MESH* pMesh, const D3DXMATRIX& mWorld );
