@@ -296,10 +296,11 @@ bool CCollisionManager::IsCapsuleToCapsule( CCollisionManager* pManager )
 
 	Point p1, p2;
 	float t1, t2;
-	Segment c1 = m_pCapsule->GetSegment();
-	Segment c2 = pManager->GetCapsule()->GetSegment();
-	float d = m_pCapsule->calcSegmentSegmentDist( c1, c2, p1, p2, t1, t2 );
-	if( d <= m_pCapsule->GetRadius() + pManager->GetCapsule()->GetRadius() == false ){
+	float d = m_pCapsule->calcSegmentSegmentDist( 
+		m_pCapsule->GetSegment(), 
+		pManager->GetCapsule()->GetSegment(),
+		p1, p2, t1, t2 );
+	if( d >= (m_pCapsule->GetRadius() + pManager->GetCapsule()->GetRadius()) ){
 		m_pCapsule->SetChangeColor( false );
 		return false;
 	}

@@ -70,7 +70,11 @@ D3DXMATRIX CBoxModel::CreateWVPMatrix( D3DXMATRIX& mWVP )
 	D3DXMATRIX mRot, mTran, mScale;
 
 	// âÒì].
-	D3DXMatrixRotationYawPitchRoll( &mRot, m_vRot.y, m_vRot.x, m_vRot.z );
+	D3DXMATRIX mYaw, mPitch, mRoll;
+	D3DXMatrixRotationX( &mPitch, m_vRot.x );
+	D3DXMatrixRotationY( &mYaw, m_vRot.y );
+	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
+	mRot = mYaw * mPitch * mRoll;
 	// ïΩçsà⁄ìÆ.
 	D3DXMatrixTranslation( &mTran, m_vPos.x, m_vPos.y, m_vPos.z );
 	// ägëÂèkè¨çsóÒçÏê¨.

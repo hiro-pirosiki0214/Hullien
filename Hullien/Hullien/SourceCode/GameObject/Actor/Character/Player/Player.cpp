@@ -174,8 +174,6 @@ void CPlayer::SpriteRender()
 #if _DEBUG
 	// エディット用の描画関数をエディットレンダラーに追加.
 	CEditRenderer::PushRenderProc( [&](){ EditRender(); } );
-	// デバッグ描画.
-	DebugRender();
 #endif	// #if _DEBUG.
 }
 
@@ -369,9 +367,11 @@ void CPlayer::AttackCollision( CActor* pActor )
 	//
 
 	// 回転軸で移動.
-	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
-	m_AttackPosition.y = 5.0f;
-	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
+//	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
+//	m_AttackPosition.y = 5.0f;
+//	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
+
+	m_pSkinMesh->GetPosFromBone( "kaito_rifa_2_L_ude_1", &m_AttackPosition );
 
 	// 球体の当たり判定.
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
@@ -604,6 +604,15 @@ bool CPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
+
+	if( FAILED( m_pCollManager->InitCapsule( 
+		m_pTempStaticMesh->GetMesh(),
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		-5.0f,
+		0.0f ) )) return false;
 #endif	// #ifndef IS_MODEL_RENDER.
 
 	// 攻撃用の当たり判定初期化.
@@ -692,91 +701,6 @@ void CPlayer::EditRender()
 
 	ImGui::End();
 #endif	// #if _DEBUG.
-}
-
-// デバッグ用の描画.
-void CPlayer::DebugRender()
-{
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*-1, 0.0f } );
-	CDebugText::Render( "- Player Parameter -" );
-
-	// 座標の描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*0 ,0.0f } );
-	CDebugText::Render( "----- Position -----" );
-
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*1, 0.0f } );
-	CDebugText::Render( "Pos_x : ", m_vPosition.x );				 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*2, 0.0f } );
-	CDebugText::Render( "Pos_y : ", m_vPosition.y );				 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*3, 0.0f } );
-	CDebugText::Render( "Pos_z : ", m_vPosition.z );
-
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*5, 0.0f } );
-	CDebugText::Render( "----- Rotation -----" );
-
-	// 回転の描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*6, 0.0f } );
-	CDebugText::Render( "Rot_x : ", m_vRotation.x );				 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*7, 0.0f } );
-	CDebugText::Render( "Rot_y : ", m_vRotation.y );				 
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*8, 0.0f } );
-	CDebugText::Render( "Rot_z : ", m_vRotation.z );
-
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*10, 0.0f } );
-	CDebugText::Render( "----- Parameter ----" );
-
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*11, 0.0f } );
-	CDebugText::Render( "LifePoint : ", m_LifePoint );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*12, 0.0f } );
-	CDebugText::Render( "SpecialAbility : ", m_SpecialAbility );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*13, 0.0f } );
-	CDebugText::Render( "AttackPower : ", m_AttackPower );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*14, 0.0f } );
-	CDebugText::Render( "InvincibleTime : ", m_Parameter.InvincibleTime );
-
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*16, 0.0f } );
-	CDebugText::Render( "----- Animation ----" );
-
-	// アニメーション番号の描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*17, 0.0f } );
-	CDebugText::Render( "Now_AnimationNo : ", (int)m_NowAnimNo );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*18, 0.0f } );
-	CDebugText::Render( "Old_AnimationNo : ", (int)m_OldAnimNo );
-
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*20, 0.0f } );
-	CDebugText::Render( "------ Other -------" );
-
-	// 攻撃カウントの描画.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*21, 0.0f } );
-	CDebugText::Render( "AttackComboCount : ", m_AttackComboCount );
-
-	// 回避中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*22, 0.0f } );
-	CDebugText::Render( "IsDuringAvoid : ", m_IsDuringAvoid==true?"true":"false" );
-
-	// 特殊能力回復中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*28, 0.0f } );
-	CDebugText::Render( "IsParalysis : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->IsUpdate()==true?"true":"false" );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*29, 0.0f } );
-	CDebugText::Render( "ParalysisTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_SPRecovery]->GetTime()/FPS );
-
-	// 攻撃UP中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*23, 0.0f } );
-	CDebugText::Render( "IsItemAttackUp : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->IsUpdate()==true?"true":"false" );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*24, 0.0f } );
-	CDebugText::Render( "AttackUpTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Attack]->GetTime()/FPS );
-
-	// 移動速度UP中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*24, 0.0f } );
-	CDebugText::Render( "IsItemMoveSpeedUp : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->IsUpdate()==true?"true":"false" );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*25, 0.0f } );
-	CDebugText::Render( "MoveSpeedUpTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_MoveSpeedUp]->GetTime()/FPS );
-
-	// 麻痺中か.
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*26, 0.0f } );
-	CDebugText::Render( "IsParalysis : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->IsUpdate()==true?"true":"false" );
-	CDebugText::SetPosition( { 0.0f, 80.0f+CDebugText::GetScale()*27, 0.0f } );
-	CDebugText::Render( "ParalysisTime : ", m_pEffectTimers[EEffectTimerNo::EEffectTimerNo_Paralysis]->GetTime()/FPS );
 }
 
 // ウィジェット設定.

@@ -222,7 +222,7 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
 	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
 	
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
 	// プレイヤーの体力を減らす.
 	pActor->LifeCalculation( [&]( float& life ){ life -= m_Parameter.AttackPower; });
 	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
@@ -295,6 +295,15 @@ bool CAlienB::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
+	if( FAILED( m_pCollManager->InitCapsule( 
+		m_pTempStaticMesh->GetMesh(),
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		m_Parameter.SphereAdjRadius,
+		0.0f ) )) return false;
+
 	return true;
 #endif	// #ifndef IS_MODEL_RENDER.
 }

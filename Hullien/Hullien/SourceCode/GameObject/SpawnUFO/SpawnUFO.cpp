@@ -101,7 +101,7 @@ void CSpawnUFO::SetSpawnParameter( const SSpawnUFOParam& param )
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {
 	// ‰F’ˆl”Ô†‚Ìì¬.
-	const EAlienList alienNo = static_cast<EAlienList>(GetAlienNo());
+	const EAlienList alienNo = EAlienList::D;// static_cast<EAlienList>(GetAlienNo());
 
 	switch( alienNo )
 	{

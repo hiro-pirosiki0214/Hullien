@@ -250,7 +250,11 @@ Segment CCapsuleCollision::GetSegment()
 {
 	D3DXMATRIX mRot;
 	D3DXVECTOR3 vRot = *m_pvRotation;
-	D3DXMatrixRotationYawPitchRoll( &mRot, vRot.y, vRot.x, vRot.z );
+	D3DXMATRIX mYaw, mPitch, mRoll;
+	D3DXMatrixRotationX( &mPitch, vRot.x );
+	D3DXMatrixRotationY( &mYaw, vRot.y );
+	D3DXMatrixRotationZ( &mRoll, vRot.z );
+	mRot = mYaw * mPitch * mRoll;
 
 	// 軸ベクトルを用意.
 	D3DXVECTOR3 vAxis = { 0.0, m_Height/2.0f, 0.0f };
@@ -261,7 +265,7 @@ Segment CCapsuleCollision::GetSegment()
 	D3DXVECTOR3 startPos = *m_pvPosition - vecAxisY * 1.0f;
 	D3DXVECTOR3 endPos = *m_pvPosition + vecAxisY * 1.0f;
 
-	m_Segment = Segment( 
+	m_Segment = Segment(
 		Point( startPos.x, startPos.y, startPos.z ),	// 始点.
 		Point( endPos.x, endPos.y, endPos.z ) );		// 終点.
 

@@ -22,13 +22,13 @@ public:
 	void SetChangeColor( const bool& changed );
 
 	// ”¼Œa‚Ìæ“¾.
-	float GetRadius() const { return m_Radius + m_AdjRadius; }
+	float GetRadius() const { return m_Radius; }
 
 	// ƒZƒOƒƒ“ƒgæ“¾ŠÖ”.
 	Segment GetSegment();
 
 	// ’²®—p‚Ì‹…‘Ì”¼Œa‚Ìİ’è.
-	void SetAdjRadius( const float& radius ){ m_Radius = radius; }
+	void SetAdjRadius( const float& radius ){ m_AdjRadius = radius; }
 	// ’²®—p‚Ì‹…‘Ì”¼Œa‚Ìİ’è.
 	void SetAdjHeight( const float& height ){ m_AdjHeight = height; }
 

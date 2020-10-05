@@ -69,9 +69,12 @@ D3DXMATRIX CCapsuleModel::CreateWVPMatrix( D3DXMATRIX& mWVP )
 	// ワールド行列.
 	D3DXMATRIX mWorld;
 	D3DXMATRIX mRot, mTran, mScale;
-
 	// 回転.
-	D3DXMatrixRotationYawPitchRoll( &mRot, m_vRot.y, m_vRot.x, m_vRot.z );
+	D3DXMATRIX mYaw, mPitch, mRoll;
+	D3DXMatrixRotationX( &mPitch, m_vRot.x );
+	D3DXMatrixRotationY( &mYaw, m_vRot.y );
+	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
+	mRot = mYaw * mPitch * mRoll;
 	// 平行移動.
 	D3DXMatrixTranslation( &mTran, m_vPos.x, m_vPos.y, m_vPos.z );
 	// 拡大縮小行列作成.

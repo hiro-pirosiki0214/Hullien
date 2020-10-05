@@ -97,7 +97,7 @@ void CItemBase::Collision( CActor* pActor )
 	if( m_NowState == ENowState::Drop ) return;
 
 	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
 	// SE‚ğ–Â‚ç‚·.
 	CSoundManager::PlaySE("GetItem");
 	// “–‚½‚Á‚½Û‚ÌŒø‰Ê‚ğ—^‚¦‚é.
@@ -208,13 +208,13 @@ bool CItemBase::ColliderSetting()
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pStaticMesh->GetMesh(),
+	if( FAILED( m_pCollManager->InitCapsule(
 		&m_vPosition,
 		&m_vRotation,
 		&m_vSclae.x,
 		{ 0.0f, 0.0f, 0.0f },
-		0.0f ) )) return false;
+		1.0f,
+		1.0f ) )) return false;
 	return true;
 }
 

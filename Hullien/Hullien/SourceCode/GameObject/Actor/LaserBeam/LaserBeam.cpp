@@ -94,10 +94,10 @@ void CLaserBeam::Collision( CActor* pActor )
 	if( m_IsInAttack == false ) return;
 	if( m_IsEndAttack == true ) return;
 	if( m_pCollManager == nullptr ) return;
-	if( m_pCollManager->GetSphere() == nullptr ) return;
+	if( m_pCollManager->GetCapsule() == nullptr ) return;
 
-	// スフィアの当たり判定.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
+	// カプセルの当たり判定.
+	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
 	
 	// プレイヤーを麻痺にさせる.
 	pActor->SetParalysisTime( [&]( float& time ){ time = m_ParalysisTime; } );
@@ -207,11 +207,12 @@ bool CLaserBeam::CollisionSetting()
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
-	if( FAILED( m_pCollManager->InitSphere(
+	if( FAILED( m_pCollManager->InitCapsule(
 		&m_vPosition,
 		&m_vRotation,
 		&m_vSclae.x,
 		{ 0.0f, 0.0f, 0.0f },
+		1.0f,
 		1.0f ) )) return false;
 
 	return true;

@@ -10,7 +10,7 @@ class CCharacterWidget;
 class CEffectManager;
 class CEffectTimer;
 
-//#define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
+#define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
 
 class CPlayer : public CCharacter
 {
@@ -181,8 +181,6 @@ private:
 
 	// エディット用の描画関数.
 	void EditRender();
-	// デバッグ用の描画.
-	void DebugRender();
 
 	// ウィジェット設定.
 	bool WidgetSetting();

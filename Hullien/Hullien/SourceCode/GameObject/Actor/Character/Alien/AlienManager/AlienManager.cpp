@@ -6,6 +6,7 @@
 
 #include "..\..\..\..\..\Common\DebugText\DebugText.h"
 #include "..\..\..\..\..\Utility\FileManager\FileManager.h"
+#include "..\..\..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
 #include <algorithm>
 
