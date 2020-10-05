@@ -64,7 +64,10 @@ bool CPlayer::Init()
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 #ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
+#if 0
+	// アニメーション再生.
 	SetAttackFrameList();
+#endif	//#if 0
 #else
 	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
@@ -76,10 +79,6 @@ bool CPlayer::Init()
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
 	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
 	m_CameraHeight = m_CameraDefaultHeight = m_Parameter.CameraHeight;
-#if 0
-	// アニメーション再生.
-	SetAttackFrameList();
-#endif	//#if 0
 
 
 	return true;
