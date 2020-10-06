@@ -140,6 +140,7 @@
     <ClCompile Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.cpp" />
     <ClCompile Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\Trajectory\Trajectory.cpp" />
+    <ClCompile Include="SourceCode\Common\Fog\Fog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -284,5 +285,6 @@
     <ClInclude Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.h" />
     <ClInclude Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.h" />
     <ClInclude Include="SourceCode\Common\Shader\Trajectory\Trajectory.h" />
+    <ClInclude Include="SourceCode\Common\Fog\Fog.h" />
   </ItemGroup>
 </Project>

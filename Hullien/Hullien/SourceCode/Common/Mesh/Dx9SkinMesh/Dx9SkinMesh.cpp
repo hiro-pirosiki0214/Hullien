@@ -11,6 +11,7 @@
 #include "..\..\Shader\TranslucentShader\TranslucentShader.h"
 #include "..\..\D3DX\D3DX11.h"
 #include "..\..\SceneTexRenderer\SceneTexRenderer.h"
+#include "..\..\Fog\Fog.h"
 
 //シェーダ名(ディレクトリも含む)
 const char SHADER_NAME[] = "Data\\Shader\\SkinMesh.hlsl";
@@ -100,10 +101,10 @@ HRESULT CDX9SkinMesh::Init(
 	if( FAILED( InitPram( pDevice11, pContext11 ))) return E_FAIL;
 	//シェーダの作成.
 	if( FAILED( InitShader() ) ) return E_FAIL;
-	
+
 	//モデル読み込み.
 	if( FAILED(LoadXMesh(fileName)))return E_FAIL;
-	
+
 
 	return S_OK;
 }
@@ -145,10 +146,10 @@ HRESULT	CDX9SkinMesh::InitShader()
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 
-		{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BONE_INDEX",	0, DXGI_FORMAT_R32G32B32A32_UINT,	0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "BONE_WEIGHT",0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "TEXCOORD",	0, DXGI_FORMAT_R32G32_FLOAT,		0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "BONE_INDEX",	0, DXGI_FORMAT_R32G32B32A32_UINT,	0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	{ "BONE_WEIGHT",0, DXGI_FORMAT_R32G32B32A32_FLOAT,	0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 	UINT numElements = sizeof( layout ) / sizeof( layout[0] );
 
@@ -218,7 +219,7 @@ HRESULT CDX9SkinMesh::ReadSkinInfo(
 	int iNumVertex	= 0;	//頂点数.
 	int iNumBone	= 0;	//ボーン数.
 
-	//頂点数.
+							//頂点数.
 	iNumVertex	= m_pD3dxMesh->GetNumVertices( pContainer );
 	//ボーン数.
 	iNumBone	= m_pD3dxMesh->GetNumBones( pContainer );
@@ -326,6 +327,16 @@ HRESULT CDX9SkinMesh::LoadXMesh( const char* fileName )
 		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
 		return E_FAIL;
 	}
+	// ﾃｸｽﾁｬ作成.
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11, "Data\\Mesh\\Fog.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
+		nullptr, nullptr,
+		&m_pFogTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
+		nullptr)))
+	{
+		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -348,7 +359,7 @@ HRESULT CDX9SkinMesh::CreateIndexBuffer( DWORD dwSize, int* pIndex, ID3D11Buffer
 	{
 		return FALSE;
 	}
-	
+
 	return S_OK;
 }
 
@@ -359,7 +370,7 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	m_mProj		= CCameraManager::GetProjMatrix();
 	m_CameraPos = CCameraManager::GetPosition();
 	m_CameraLookPos = CCameraManager::GetLookPosition();
-	
+
 	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
 		if (pAC == nullptr)
 		{
@@ -405,7 +416,7 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 {
 	MYFRAME* pFrame = (MYFRAME*)p;
 
-//	LPD3DXMESH pD3DXMesh = pFrame->pMeshContainer->MeshData.pMesh;//D3DXﾒｯｼｭ(ここから・・・).
+	//	LPD3DXMESH pD3DXMesh = pFrame->pMeshContainer->MeshData.pMesh;//D3DXﾒｯｼｭ(ここから・・・).
 	m_pMeshForRay= pFrame->pMeshContainer->MeshData.pMesh; //D3DXﾒｯｼｭ(ここから・・・).
 	MYMESHCONTAINER* pContainer = (MYMESHCONTAINER*)pFrame->pMeshContainer;
 
@@ -499,8 +510,8 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		if( pAppMesh->pMaterial[i].TextureName[0] != 0
 			&& FAILED(
 				D3DX11CreateShaderResourceViewFromFileA(
-				m_pDevice11, pAppMesh->pMaterial[i].TextureName,
-				NULL, NULL, &pAppMesh->pMaterial[i].pTexture, NULL )))
+					m_pDevice11, pAppMesh->pMaterial[i].TextureName,
+					NULL, NULL, &pAppMesh->pMaterial[i].pTexture, NULL )))
 		{
 			MessageBox( NULL, "テクスチャ読み込み失敗",
 				"Error", MB_OK );
@@ -510,8 +521,8 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		//さらにインデックスの個数を調べる.
 		int iCount = 0;
 		int* pIndex = new int[pAppMesh->dwNumFace*3]();
-			//とりあえず、メッシュ内のポリゴン数でメモリ確保.
-			//(ここのぽりごんぐるーぷは必ずこれ以下になる).
+		//とりあえず、メッシュ内のポリゴン数でメモリ確保.
+		//(ここのぽりごんぐるーぷは必ずこれ以下になる).
 
 		for( DWORD k=0; k<pAppMesh->dwNumFace; k++ )
 		{
@@ -547,7 +558,7 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 
 	//スキン情報ある？
 	if( pContainer->pSkinInfo == nullptr ){
-	/*	char strDbg[128];
+		/*	char strDbg[128];
 		sprintf_s( strDbg, "ContainerName:[%s]", pContainer->Name );
 		MessageBox( nullptr, strDbg, "Not SkinInfo", MB_OK );*/
 		pAppMesh->bEnableBones = false;
@@ -622,8 +633,8 @@ D3DXMATRIX CDX9SkinMesh::GetCurrentPoseMatrix( SKIN_PARTS_MESH* pParts, int inde
 {
 	D3DXMATRIX ret = 
 		pParts->pBoneArray[index].mBindPose * pParts->pBoneArray[index].mNewPose;
-		//pParts->pBoneArray[index].mBindPose *
-		//((1-m_dAnimTime)*pParts->pBoneArray[index].mOldPose + m_dAnimTime*pParts->pBoneArray[index].mNewPose);
+	//pParts->pBoneArray[index].mBindPose *
+	//((1-m_dAnimTime)*pParts->pBoneArray[index].mOldPose + m_dAnimTime*pParts->pBoneArray[index].mNewPose);
 
 	return ret;
 }
@@ -706,7 +717,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	}
 	m_pContext11->VSSetConstantBuffers(	3, 1, &m_pCBufferPerBone);
 	m_pContext11->PSSetConstantBuffers(	3, 1, &m_pCBufferPerBone);
-	
+
 	//バーテックスバッファをセット.
 	UINT stride = sizeof( MY_SKINVERTEX );
 	UINT offset = 0;
@@ -731,7 +742,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 		CBUFFER_PER_FRAME cb;
 
 		cb.vColor = m_vColor;
-		
+
 		//ｶﾒﾗ位置.
 		D3DXVECTOR3 camPos = CCameraManager::GetPosition();
 		cb.vCamPos = D3DXVECTOR4( camPos.x, camPos.y, camPos.z, 0.0f );
@@ -764,6 +775,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 		D3DXVec4Normalize(&cb.vLightDir, &cb.vLightDir);
 
 		cb.IsShadow.x = m_IsShadow;
+		cb.FogTex = CFog::GetFogTex();
 
 		memcpy_s( pData.pData, pData.RowPitch, (void*)&cb, sizeof(cb) );
 		m_pContext11->Unmap(m_pCBufferPerFrame, 0 );
@@ -799,7 +811,8 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	m_pContext11->PSSetConstantBuffers(0, 1, &m_pCBufferPerMesh);
 
 	// トゥーンマップテクスチャを渡す.
-	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture);
+	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture );
+	m_pContext11->PSSetShaderResources( 6, 1, &m_pFogTexture );
 
 	//マテリアルの数だけ、
 	//それぞれのマテリアルのインデックスバッファを描画.
@@ -961,7 +974,7 @@ HRESULT CDX9SkinMesh::Release()
 		SAFE_DELETE( m_pD3dxMesh );
 	}
 	SAFE_RELEASE(m_pToonTexture);
-
+	SAFE_RELEASE(m_pFogTexture);
 	return S_OK;
 }
 
@@ -1007,7 +1020,7 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 			delete pMeshContainerTmp->pBoneOffsetMatrices;
 			pMeshContainerTmp->pBoneOffsetMatrices = nullptr;
 		}
-		
+
 		if (pMeshContainerTmp->ppBoneMatrix != nullptr)
 		{
 			int iMax = static_cast<int>(pMeshContainerTmp->pSkinInfo->GetNumBones());
@@ -1139,7 +1152,7 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 			delete[] pFrame->pPartsMesh->pMaterial;
 			pFrame->pPartsMesh->pMaterial = nullptr;
 		}
-		
+
 
 		if (pFrame->pPartsMesh->ppIndexBuffer)
 		{

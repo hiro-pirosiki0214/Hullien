@@ -21,7 +21,7 @@ public:
 	CDX9StaticMesh();	// コンストラクタ.
 	~CDX9StaticMesh();	// デストラクタ.
 
-	// 初期化.
+						// 初期化.
 	HRESULT Init(
 		HWND hWnd, 
 		ID3D11Device* pDevice11,
@@ -44,10 +44,10 @@ public:
 private:
 	// メッシュ読み込み.
 	HRESULT LoadXMesh(const char* fileName);
-	
+
 	// シェーダ作成.
 	HRESULT InitShader();
-	
+
 private:
 	//======================================
 	//	構造体.
@@ -77,6 +77,7 @@ private:
 		D3DXMATRIX	mLightWVP[4];
 		D3DXVECTOR4	SpritPos;
 		D3DXVECTOR4 IsShadow;
+		D3DXVECTOR4 FogTex;		// フォグのテクスチャ座標.
 	};
 
 	// 頂点の構造体.
@@ -95,7 +96,7 @@ private:
 		char szTextureName[64];	// テクスチャファイル名.
 		ID3D11ShaderResourceView* pTexture;	// テクスチャ.
 		DWORD dwNumFace;		// そのマテリアルのポリゴン数.
-		// コンストラクタ.
+								// コンストラクタ.
 		MY_MATERIAL()
 			: Ambient(),Diffuse(),Specular(),szTextureName()
 			, pTexture(nullptr),dwNumFace(0)
@@ -107,10 +108,10 @@ private:
 			SAFE_RELEASE(pTexture);
 		}
 	};
-	
+
 	HWND				m_hWnd;		//ｳｨﾝﾄﾞｳﾊﾝﾄﾞﾙ.
 
-	//Dx9.
+									//Dx9.
 	LPDIRECT3DDEVICE9	m_pDevice9;	//Dx9ﾃﾞﾊﾞｲｽｵﾌﾞｼﾞｪｸﾄ.
 
 	ID3D11VertexShader*		m_pVertexShader;	//頂点ｼｪｰﾀﾞ.
@@ -129,7 +130,8 @@ private:
 	LPD3DXMESH			m_pMeshForRay;	//ﾚｲとﾒｯｼｭ用.
 	DWORD				m_NumMaterials;	//ﾏﾃﾘｱﾙ数.
 
-	ID3D11ShaderResourceView*	m_pToonTexture;
+	ID3D11ShaderResourceView*	m_pToonTexture;	// トゥーンテクスチャ.
+	ID3D11ShaderResourceView*	m_pFogTexture;	// フォグテクスチャ.
 
 	MY_MATERIAL*	m_pMaterials;	//ﾏﾃﾘｱﾙ構造体.
 	DWORD			m_NumAttr;		//属性数.
@@ -147,6 +149,6 @@ private:
 	bool ShadowRender( const D3DXMATRIX& mWorld );
 	// 半透明の描画,
 	bool TranslucentRender( const D3DXMATRIX& mWorld );
- };
+};
 
 #endif	// #ifndef DX9_STATIC_MESH_H.

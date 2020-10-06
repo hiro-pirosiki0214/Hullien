@@ -43,6 +43,7 @@ public:
 		D3DXMATRIX	mLightWVP[4];
 		D3DXVECTOR4	SpritPos;
 		D3DXVECTOR4 IsShadow;
+		D3DXVECTOR4 FogTex;		// フォグのテクスチャ座標.
 	};
 
 	//ボーン単位.
@@ -161,7 +162,8 @@ private:
 	ID3D11Buffer*			m_pCBufferPerFrame;		//コンスタントバッファ(フレーム毎).
 	ID3D11Buffer*			m_pCBufferPerBone;		//コンスタントバッファ(ボーン毎).
 
-	ID3D11ShaderResourceView*	m_pToonTexture;
+	ID3D11ShaderResourceView*	m_pToonTexture;	// トゥーンテクスチャ.
+	ID3D11ShaderResourceView*	m_pFogTexture;	// フォグテクスチャ.
 
 	D3DXMATRIX		m_mWorld;
 	D3DXMATRIX		m_mRotation;
@@ -185,7 +187,7 @@ private:
 	D3DXPARSER* m_pD3dxMesh;
 	LPD3DXMESH	m_pMeshForRay;	//ﾚｲとﾒｯｼｭ用.
 
-	//XFileのパス.
+								//XFileのパス.
 	CHAR	m_FilePath[256];
 
 	//アニメーションフレーム.
@@ -199,7 +201,7 @@ private:
 
 	//全てのメッシュを作成する.
 	void BuildAllMesh( D3DXFRAME* pFrame );
-	
+
 	//メッシュを作成する.
 	HRESULT CreateAppMeshFromD3DXMesh( LPD3DXFRAME pFrame );
 

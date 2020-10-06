@@ -18,6 +18,7 @@
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
+#include "..\..\..\Common\Fog\Fog.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -62,6 +63,8 @@ bool CGame::Load()
 //============================.
 void CGame::Update()
 {
+	CFog::Update();	// フォグの更新.
+
 	if (m_pEventManager->GetIsEventEnd() == false)
 	{
 		m_pEventManager->Update();

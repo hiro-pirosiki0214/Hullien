@@ -160,6 +160,7 @@
     <ClCompile Include="SourceCode\Common\DebugText\DebugText.cpp" />
     <ClCompile Include="SourceCode\Common\Effect\Effect.cpp" />
     <ClCompile Include="SourceCode\Common\Effect\EffectManager.cpp" />
+    <ClCompile Include="SourceCode\Common\Fog\Fog.cpp" />
     <ClCompile Include="SourceCode\Common\Font\Font.cpp" />
     <ClCompile Include="SourceCode\Common\Font\FontCreate.cpp" />
     <ClCompile Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="SourceCode\Common\DebugText\DebugText.h" />
     <ClInclude Include="SourceCode\Common\Effect\Effect.h" />
     <ClInclude Include="SourceCode\Common\Effect\EffectManager.h" />
+    <ClInclude Include="SourceCode\Common\Fog\Fog.h" />
     <ClInclude Include="SourceCode\Common\Font\Font.h" />
     <ClInclude Include="SourceCode\Common\Font\FontCreate.h" />
     <ClInclude Include="SourceCode\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h" />

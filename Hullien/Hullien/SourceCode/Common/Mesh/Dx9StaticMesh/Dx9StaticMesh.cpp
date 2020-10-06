@@ -6,6 +6,7 @@
 #include "..\..\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\Shader\TranslucentShader\TranslucentShader.h"
 #include "..\..\SceneTexRenderer\SceneTexRenderer.h"
+#include "..\..\Fog\Fog.h"
 #include <crtdbg.h>	//_ASSERTﾏｸﾛで必要.
 
 //ｼｪｰﾀﾞﾌｧｲﾙ名(ﾃﾞｨﾚｸﾄﾘも含む).
@@ -31,6 +32,7 @@ CDX9StaticMesh::CDX9StaticMesh()
 	, m_NumMaterials(0)
 	, m_pMaterials(nullptr)
 	, m_pToonTexture(nullptr)
+	, m_pFogTexture(nullptr)
 	, m_NumAttr(0)
 	, m_AttrID()
 	, m_EnableTexture(false)
@@ -73,7 +75,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 	if (FAILED(D3DXLoadMeshFromXA(
 		fileName,	//ﾌｧｲﾙ名.
 		D3DXMESH_SYSTEMMEM	//ｼｽﾃﾑﾒﾓﾘに読み込み.
-			| D3DXMESH_32BIT,	//32bit.
+		| D3DXMESH_32BIT,	//32bit.
 		m_pDevice9, nullptr,
 		&pD3DXMtrlBuffer,	//(out)ﾏﾃﾘｱﾙ情報.
 		nullptr,
@@ -101,7 +103,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 
 	D3D11_BUFFER_DESC		bd;	//Dx11ﾊﾞｯﾌｧ構造体.
 	D3D11_SUBRESOURCE_DATA	InitData;//初期化ﾃﾞｰﾀ.
-	//読み込んだ情報から必要な情報を抜き出す.
+									 //読み込んだ情報から必要な情報を抜き出す.
 	D3DXMATERIAL* d3dxMaterials
 		= static_cast<D3DXMATERIAL*>(pD3DXMtrlBuffer->GetBufferPointer());
 	//ﾏﾃﾘｱﾙ数分の領域を確保.
@@ -172,6 +174,16 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		m_pDevice11, "Data\\Mesh\\toon.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
 		nullptr, nullptr,
 		&m_pToonTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
+		nullptr)))
+	{
+		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
+		return E_FAIL;
+	}
+	// ﾃｸｽﾁｬ作成.
+	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11, "Data\\Mesh\\Fog.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
+		nullptr, nullptr,
+		&m_pFogTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
 		nullptr)))
 	{
 		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
@@ -266,11 +278,11 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 
 
 
-	//ﾃｸｽﾁｬ用のｻﾝﾌﾟﾗ構造体.
+						//ﾃｸｽﾁｬ用のｻﾝﾌﾟﾗ構造体.
 	D3D11_SAMPLER_DESC samDesc;
 	ZeroMemory(&samDesc, sizeof(samDesc));
 	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;//ﾘﾆｱﾌｨﾙﾀ(線形補間).
-						//POINT:高速だが粗い.
+													 //POINT:高速だが粗い.
 	samDesc.AddressU
 		= D3D11_TEXTURE_ADDRESS_WRAP;//ﾗｯﾋﾟﾝｸﾞﾓｰﾄﾞ(WRAP:繰り返し).
 	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -334,6 +346,7 @@ void CDX9StaticMesh::Release()
 	//ﾒｯｼｭﾃﾞｰﾀの解放.
 	SAFE_RELEASE(m_pMesh);
 	SAFE_RELEASE(m_pShadowMapSampler);
+	SAFE_RELEASE(m_pFogTexture);
 	SAFE_RELEASE(m_pToonTexture);
 	SAFE_RELEASE(m_pSampleLinear);
 	SAFE_RELEASE(m_pVertexBuffer);
@@ -407,8 +420,8 @@ HRESULT CDX9StaticMesh::InitShader()
 		D3D11_INPUT_ELEMENT_DESC tmp[] =
 		{
 			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0, 0,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,   0,24,D3D11_INPUT_PER_VERTEX_DATA,0}
+		{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
+		{"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,   0,24,D3D11_INPUT_PER_VERTEX_DATA,0}
 		};
 		numElements = sizeof(tmp) / sizeof(tmp[0]);	//要素数算出.
 		memcpy_s( layout, sizeof(layout),
@@ -419,7 +432,7 @@ HRESULT CDX9StaticMesh::InitShader()
 		D3D11_INPUT_ELEMENT_DESC tmp[] =
 		{
 			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0, 0,D3D11_INPUT_PER_VERTEX_DATA,0},
-			{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0}
+		{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0}
 		};
 		numElements = sizeof(tmp) / sizeof(tmp[0]);	//要素数算出.
 		memcpy_s(layout, sizeof(layout),
@@ -488,7 +501,7 @@ HRESULT CDX9StaticMesh::InitShader()
 	cb.StructureByteStride = 0;	//構造体のｻｲｽﾞ(未使用).
 	cb.Usage = D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
 
-	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
+									//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
 	if (FAILED(
 		m_pDevice11->CreateBuffer(&cb,nullptr,&m_pCBufferPerMesh)))
 	{
@@ -504,7 +517,7 @@ HRESULT CDX9StaticMesh::InitShader()
 	cb.StructureByteStride = 0;	//構造体のｻｲｽﾞ(未使用).
 	cb.Usage = D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
 
-	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
+									//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
 	if (FAILED(
 		m_pDevice11->CreateBuffer(&cb,nullptr,&m_pCBufferPerMaterial)))
 	{
@@ -520,7 +533,7 @@ HRESULT CDX9StaticMesh::InitShader()
 	cb.StructureByteStride = 0;	//構造体のｻｲｽﾞ(未使用).
 	cb.Usage = D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
 
-	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
+									//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
 	if (FAILED(
 		m_pDevice11->CreateBuffer(&cb, nullptr, &m_pCBufferPerFrame)))
 	{
@@ -545,7 +558,7 @@ void CDX9StaticMesh::Render()
 	D3DXMatrixScaling(
 		&mScale,	//(out)計算結果.
 		m_vScale.x, m_vScale.y, m_vScale.z);	//x,y,zそれぞれの拡縮値.
-	//Y軸回転行列作成.
+												//Y軸回転行列作成.
 	D3DXMatrixRotationY( &mYaw, m_vRot.y);
 	//X軸回転行列作成.
 	D3DXMatrixRotationX( &mPitch, m_vRot.x);
@@ -556,7 +569,7 @@ void CDX9StaticMesh::Render()
 		&mTran,	//(out)計算結果.
 		m_vPos.x, m_vPos.y, m_vPos.z);	//x,y,z座標.
 
-	//回転行列を作成.
+										//回転行列を作成.
 	mRot = mYaw * mPitch * mRoll;
 
 	//ﾜｰﾙﾄﾞ行列作成.
@@ -571,12 +584,22 @@ void CDX9StaticMesh::Render()
 	m_pContext11->VSSetShader(m_pVertexShader, nullptr, 0);//頂点ｼｪｰﾀﾞ.
 	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
-	// カスケードの数だけループ.
+														  // カスケードの数だけループ.
 	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
 	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
 
+	static D3DXVECTOR4 fogtex = { 0.0f, 0.0f, 0.5f, 0.5f };
+
+	fogtex.x += 0.01f;
+	if (fogtex.x >= 1.0f) {
+		fogtex.x = 0.0f;
+	}
+	fogtex.z += 0.01f;
+	if (fogtex.z >= 1.0f) {
+		fogtex.z = 0.0f;
+	}
 
 	//ｼｪｰﾀﾞのｺﾝｽﾀﾝﾄﾊﾞｯﾌｧに各種ﾃﾞｰﾀを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -623,13 +646,16 @@ void CDX9StaticMesh::Render()
 
 		cb.IsShadow.x = m_IsShadow;
 
+		// フォグのテクスチャ座標.
+		cb.FogTex = CFog::GetFogTex();
+
 		memcpy_s(
 			pData.pData,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧ.
 			pData.RowPitch,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧｻｲｽﾞ.
 			(void*)(&cb),	//ｺﾋﾟｰ元のﾊﾞｯﾌｧ.
 			sizeof(cb));	//ｺﾋﾟｰ元のﾊﾞｯﾌｧｻｲｽﾞ.
 
-		//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え終了時にUnmap.
+							//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え終了時にUnmap.
 		m_pContext11->Unmap(m_pCBufferPerFrame, 0);
 	}
 
@@ -639,8 +665,10 @@ void CDX9StaticMesh::Render()
 	m_pContext11->PSSetConstantBuffers(
 		2, 1, &m_pCBufferPerFrame);	//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
-	// トゥーンマップテクスチャを渡す.
-	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture);
+									// トゥーンマップテクスチャを渡す.
+	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture );
+	// フォグテクスチャを渡す.
+	m_pContext11->PSSetShaderResources( 6, 1, &m_pFogTexture );
 	//ﾒｯｼｭのﾚﾝﾀﾞﾘﾝｸﾞ.
 	D3DXMATRIX mView = CCameraManager::GetViewMatrix();
 	D3DXMATRIX mProj = CCameraManager::GetProjMatrix();
@@ -663,14 +691,14 @@ void CDX9StaticMesh::RenderMesh(
 	{
 		CBUFFER_PER_MESH cb;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ.
 
-		//ﾜｰﾙﾄﾞ行列を渡す.
+								//ﾜｰﾙﾄﾞ行列を渡す.
 		cb.mW = mWorld;
 		D3DXMatrixTranspose(&cb.mW, &cb.mW);
 
 		//ﾜｰﾙﾄﾞ,ﾋﾞｭｰ,ﾌﾟﾛｼﾞｪｸｼｮﾝ行列を渡す.
 		D3DXMATRIX mWVP = mWorld * mView * mProj;
 		D3DXMatrixTranspose(&mWVP, &mWVP);//行列を転置する.
-		//※行列の計算方法がDirectXとGPUで異なるため転置が必要.
+										  //※行列の計算方法がDirectXとGPUで異なるため転置が必要.
 		cb.mWVP = mWVP;
 
 		memcpy_s(
@@ -679,7 +707,7 @@ void CDX9StaticMesh::RenderMesh(
 			(void*)(&cb),	//ｺﾋﾟｰ元のﾊﾞｯﾌｧ.
 			sizeof(cb));	//ｺﾋﾟｰ元のﾊﾞｯﾌｧｻｲｽﾞ.
 
-		//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え終了時にUnmap.
+							//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え終了時にUnmap.
 		m_pContext11->Unmap(m_pCBufferPerMesh, 0);
 	}
 
@@ -689,7 +717,7 @@ void CDX9StaticMesh::RenderMesh(
 	m_pContext11->PSSetConstantBuffers(
 		0, 1, &m_pCBufferPerMesh);	//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
-	//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄをｾｯﾄ.
+									//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄをｾｯﾄ.
 	m_pContext11->IASetInputLayout(m_pVertexLayout);
 
 	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
