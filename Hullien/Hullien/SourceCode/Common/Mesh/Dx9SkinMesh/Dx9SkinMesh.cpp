@@ -775,7 +775,7 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 		D3DXVec4Normalize(&cb.vLightDir, &cb.vLightDir);
 
 		cb.IsShadow.x = m_IsShadow;
-		cb.FogTex = CFog::GetFogTex();
+		cb.Fog = CFog::GetFog();
 
 		memcpy_s( pData.pData, pData.RowPitch, (void*)&cb, sizeof(cb) );
 		m_pContext11->Unmap(m_pCBufferPerFrame, 0 );

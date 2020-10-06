@@ -647,7 +647,7 @@ void CDX9StaticMesh::Render()
 		cb.IsShadow.x = m_IsShadow;
 
 		// フォグのテクスチャ座標.
-		cb.FogTex = CFog::GetFogTex();
+		cb.Fog = CFog::GetFog();
 
 		memcpy_s(
 			pData.pData,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧ.

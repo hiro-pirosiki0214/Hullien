@@ -7,6 +7,7 @@
 
 #include "Parser/CDX9SkinMeshParser.h"
 #include "..\..\Common.h"
+#include "..\..\Fog\Fog.h"
 
 //==================================================================================================
 //
@@ -43,7 +44,7 @@ public:
 		D3DXMATRIX	mLightWVP[4];
 		D3DXVECTOR4	SpritPos;
 		D3DXVECTOR4 IsShadow;
-		D3DXVECTOR4 FogTex;		// フォグのテクスチャ座標.
+		SFog		Fog;
 	};
 
 	//ボーン単位.

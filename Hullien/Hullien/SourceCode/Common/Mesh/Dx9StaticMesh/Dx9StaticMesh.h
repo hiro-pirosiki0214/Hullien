@@ -2,6 +2,7 @@
 #define DX9_STATIC_MESH_H
 
 #include "..\..\Common.h"
+#include "..\..\Fog\Fog.h"
 
 // スタティックメッシュクラス.
 class CDX9StaticMesh : public CCommon
@@ -49,6 +50,10 @@ private:
 	HRESULT InitShader();
 
 private:
+	struct FOG
+	{
+		D3DXVECTOR4 FogTex;		// フォグのテクスチャ座標.
+	};
 	//======================================
 	//	構造体.
 	//======================================
@@ -77,7 +82,7 @@ private:
 		D3DXMATRIX	mLightWVP[4];
 		D3DXVECTOR4	SpritPos;
 		D3DXVECTOR4 IsShadow;
-		D3DXVECTOR4 FogTex;		// フォグのテクスチャ座標.
+		SFog Fog;				// フォグのテクスチャ座標.
 	};
 
 	// 頂点の構造体.

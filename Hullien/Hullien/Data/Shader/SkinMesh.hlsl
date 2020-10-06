@@ -6,16 +6,29 @@
 //定義.
 #define MAX_BONE_MATRICES (255)
 
-//グローバル.
-Texture2D g_Texture : register(t0); //テクスチャーは レジスターt(n).
-Texture2D g_ShadowMap1 : register(t1);
-Texture2D g_ShadowMap2 : register(t2);
-Texture2D g_ShadowMap3 : register(t3);
-Texture2D g_ShadowMap4 : register(t4);
-Texture2D g_ToonMap : register(t5); // toonシェーダー用のテクスチャ.
-Texture2D g_FogTexture : register(t6); // フォグ用のテクスチャ.
-SamplerState g_SamLinear : register(s0); //サンプラーはレジスターs(n).
-SamplerState g_ShadowSamLinear : register(s1);
+//-------------------------------------------------.
+// グローバル変数.
+//-------------------------------------------------.
+// テクスチャ.
+Texture2D g_Texture		: register(t0); //テクスチャーは レジスターt(n).
+Texture2D g_ShadowMap1	: register(t1);	// シャドウテクスチャ.
+Texture2D g_ShadowMap2	: register(t2);	// シャドウテクスチャ.
+Texture2D g_ShadowMap3	: register(t3);	// シャドウテクスチャ.
+Texture2D g_ShadowMap4	: register(t4);	// シャドウテクスチャ.
+Texture2D g_ToonMap		: register(t5); // toonシェーダー用のテクスチャ.
+Texture2D g_FogTexture	: register(t6); // フォグ用のテクスチャ.
+// サンプラ.
+SamplerState g_SamLinear		: register(s0); //サンプラーはレジスターs(n).
+SamplerState g_ShadowSamLinear	: register(s1);
+
+struct FOG
+{
+	float4  FogTex;		// フォグのテクスチャ座標.
+	float4  FogColor;		// フォグの色.
+	float	MinHeight;	// フォグの最小高さ.
+	float	MaxHeight;	// フォグの最大高さ.
+	float	TexScale;		// フォグのテクセルスケール.
+};
 
 //コンスタントバッファ(メッシュごと).
 cbuffer per_mesh : register(b0)
@@ -42,7 +55,7 @@ cbuffer per_frame : register(b2)
 	matrix g_LightWVP[4];
 	float4 g_SpritPos;
 	float4 g_IsShadow;
-	float4 g_FogTex;
+	FOG	g_Fog;
 };
 //ボーンのポーズ行列が入る.
 cbuffer per_bones : register(b3)
@@ -176,6 +189,7 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 {
 	// モデルのテクスチャ色を取得.
 	float4 color = g_Texture.Sample(g_SamLinear, input.Tex);
+	color *= g_Color;
 	
 	// 各ピクセル位置までの距離.
 	float dist = input.Pos.w; // ビュー空間でのZ座標.
@@ -221,6 +235,7 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 		float sm = depthColor.r + (depthColor.g + (depthColor.b + depthColor.a / 256.0f) / 256.0f) / 256.0f;
 		shadowColor = (zValue > sm) ? 0.5f : 1.0f;
 	}
+	if (g_IsShadow.x >= 1.0f) color.xyz *= shadowColor;
 	
 	//-----トゥーン処理------.
 	// ハーフランバート拡散照明によるライティング計算
@@ -232,20 +247,14 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 	color *= toonColor * g_fIntensity.x;
 	
 	//-----高さフォグ処理------.
-	const float4 fogColor = float4(0.5f, 0.5f, 0.5f, 1.0f);
 	// fogテクスチャの座標を取得、計算.
-	const float fogTColor =
-		(g_FogTexture.Sample(g_SamLinear, input.PosW.xz * 0.01f + g_FogTex.xy).r +
-		 g_FogTexture.Sample(g_SamLinear, input.PosW.xz * 0.01f + g_FogTex.zw).r) * 0.5f;
-	const float minHeight = -5.0f;
-	const float maxHeight = 20.0f;
-	float alpha = clamp((input.PosW.y - minHeight) / (maxHeight - minHeight), 0.0f, 1.0f);
-	float4 alphas = 1.0f - (1.0f - alpha) * fogTColor;
+	const float fogColor =
+		(g_FogTexture.Sample(g_SamLinear, input.PosW.xz * g_Fog.TexScale + g_Fog.FogTex.xy).r +
+		 g_FogTexture.Sample(g_SamLinear, input.PosW.xz * g_Fog.TexScale + g_Fog.FogTex.zw).r) * 0.5f;
+	float alpha = clamp((input.PosW.y - g_Fog.MinHeight) / (g_Fog.MaxHeight - g_Fog.MinHeight), 0.0f, 1.0f);
+	float alphas = 1.0f - (1.0f - alpha) * fogColor;
 
-	color = color * alphas + fogColor * (1.0f - alpha);
-	color *= g_Color;
-	if (g_IsShadow.x >= 1.0f)
-		color.xyz *= shadowColor;
+	color = color * alphas + g_Fog.FogColor * (1.0f - alphas);
 	
 	PS_OUTPUT output = (PS_OUTPUT) 0;
 	output.Color = color;
