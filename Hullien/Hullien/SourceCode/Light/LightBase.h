@@ -15,17 +15,13 @@ class CLightBase
 
 	static const int MAX_CASCADE = 4;	// 最大カスケード数.
 
-										// バウンディングボックス(カスケードシャドウに使用).
+	// バウンディングボックス(カスケードシャドウに使用).
 	struct stBBox
 	{
 		D3DXVECTOR3 mini;
 		D3DXVECTOR3 maxi;
 
-		stBBox
-		(
-			D3DXVECTOR3 min,
-			D3DXVECTOR3 max
-		)
+		stBBox( D3DXVECTOR3 min, D3DXVECTOR3 max )
 			: mini ( min )
 			, maxi ( max )
 		{}

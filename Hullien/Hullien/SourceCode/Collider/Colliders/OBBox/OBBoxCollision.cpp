@@ -6,13 +6,14 @@ bool COBBoxCollision::m_IsRender = false;
 #endif	// #ifdef _DEBUG.
 
 COBBoxCollision::COBBoxCollision()
-	: m_vLength			{ 0.0f, 0.0f, 0.0f }
-	, m_vDirection		()
+	: m_vDirection		()
+	, m_vLength			{ 0.0f, 0.0f, 0.0f }
 	, m_vAdjLength		{ 0.0f, 0.0f, 0.0f }
 #ifdef _DEBUG
-	, m_pDebugBox		( std::make_unique<CBoxModel>() )
+	, m_pDebugBox		( nullptr )
 #endif	// #ifdef _DEBUG.
 {
+	m_pDebugBox	= std::make_unique<CBoxModel>();
 }
 
 COBBoxCollision::~COBBoxCollision()

@@ -32,6 +32,8 @@ CLightBase::~CLightBase()
 // カスケード分のシャドウ行列を取得する.
 D3DXMATRIX* CLightBase::GetShadowVP()
 {
+	// ライト方向を取得.
+	m_vDirection = m_vPosition - m_vLookPosition;
 	// ビュー(カメラ)変換.
 	D3DXMatrixLookAtLH( 
 		&m_ViewMatrix,		// (out)viewMarix.
@@ -39,7 +41,7 @@ D3DXMATRIX* CLightBase::GetShadowVP()
 		&m_vLookPosition,	// カメラ注視座標.
 		&VIEW_UP_VECTOR );	// カメラベクトル.
 
-							// プロジェクション(射影)変換.
+	// プロジェクション(射影)変換.
 	D3DXMatrixOrthoLH(
 		&m_ProjMatrix,				// (out)ProjMatrix.
 		600.0f,						// 視野角.
@@ -69,7 +71,7 @@ D3DXMATRIX* CLightBase::GetShadowVP()
 
 		// シャドウマップ行列と分割位置を設定.
 		m_ShadowMatrix[i] = m_ShadowMatrix[i] * crop;
-		m_SplitPos[i]     = m_SplitPositions[ i + 1 ];
+		m_SplitPos[i]     = m_SplitPositions[i+1];
 	}
 
 	return m_ShadowMatrix;

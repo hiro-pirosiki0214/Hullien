@@ -7,15 +7,18 @@ bool CCapsuleCollision::m_IsRender = false;
 #endif	// #ifdef _DEBUG.
 
 CCapsuleCollision::CCapsuleCollision()
-	: m_Radius			()
-	, m_AdjRadius		()
-	, m_Height			()
-	, m_AdjHeight		()
+	: m_Segment			()
+	, m_Radius			( 0.0f )
+	, m_AdjRadius		( 0.0f )
+	, m_Height			( 0.0f )
+	, m_AdjHeight		( 0.0f )
 #ifdef _DEBUG
-	, m_pDebugCapsule	( std::make_unique<CCapsuleModel>() )
+	, m_pDebugCapsule	( nullptr )
 #endif	// #ifdef _DEBUG.
 {
+	m_pDebugCapsule = std::make_unique<CCapsuleModel>();
 }
+
 CCapsuleCollision::~CCapsuleCollision()
 {
 }
@@ -30,7 +33,7 @@ HRESULT CCapsuleCollision::InitModelCapsule( LPD3DXMESH pMesh )
 	GetBoundingBox( pMesh, Max, Min );
 
 	m_Radius = (m_Radius * (*m_pScale)) + m_AdjRadius;
-	m_Height = ((fabsf( Max.y - Min.y ) * (*m_pScale) / 2.0f )) + m_AdjHeight;
+	m_Height = ((fabsf( Max.y - Min.y ) * (*m_pScale) * 0.5f )) + m_AdjHeight;
 	// 半径が0.0fより小さいとだめなので、0.0より少し大きくする.
 	m_Radius = m_Radius <= 0.0f ? 0.001f : m_Radius;
 	// 高さより半径のほうが大きいとカプセルがつぶれるので、
