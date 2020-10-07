@@ -3,13 +3,13 @@
 #include "..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\Actor\Actor.h"
+#include "..\..\Utility\FileManager\FileManager.h"
 
 CMotherShipUFO::CMotherShipUFO()
 	: m_pStaticMesh		( nullptr )
 	, m_pCollManager	( nullptr )
 	, m_Param			()
 {
-	m_vPosition = INIT_POS;
 }
 
 CMotherShipUFO::~CMotherShipUFO()
@@ -19,8 +19,12 @@ CMotherShipUFO::~CMotherShipUFO()
 // ‰Šú‰»ŠÖ”.
 bool CMotherShipUFO::Init()
 {
+	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Param ) == false ) return false;
 	if( GetModel() == false ) return false;
 	if( CollisionSetting() == false ) return false;
+
+	m_vPosition = m_Param.Position;
+
 	return true;
 }
 
@@ -58,7 +62,7 @@ void CMotherShipUFO::Collision( CActor* pActor )
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
 	D3DXVECTOR3 pos = pActor->GetPosition();
-	pos.y += ADD_POS_POWER;	// À•W‚ðã‚É‚ ‚°‚é.
+	pos.y += m_Param.AddPosYPower;	// À•W‚ðã‚É‚ ‚°‚é.
 	pActor->SetPosition( pos );
 }
 
@@ -96,8 +100,8 @@ bool CMotherShipUFO::CollisionSetting()
 		&m_vPosition,
 		&m_vRotation,
 		&m_vSclae.x,
-		{ 0.0f, 0.0f, 0.0f },
-		COLLISION_RADIUS ))){
+		m_Param.SphereAdjPos,
+		m_Param.CollisionRadius ))){
 		return false;
 	}
 	return true;

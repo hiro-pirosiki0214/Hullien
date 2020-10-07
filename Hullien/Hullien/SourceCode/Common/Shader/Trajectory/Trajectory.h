@@ -55,8 +55,7 @@ private:
 	ID3D11ShaderResourceView*	m_pLaserTexture;		// レーザーテクスチャ.
 	ID3D11ShaderResourceView*	m_pLaserHeadTexture;	// レーザーの頭テクスチャ.
 	ID3D11SamplerState*			m_pSampleLinear;		// サンプラ.
-	ID3D11Buffer*				m_pHeightVertexBuffer;	// 高さ頂点バッファ.
-	ID3D11Buffer*				m_pWidthVertexBuffer;	// 幅頂点バッファ.
+	ID3D11Buffer*				m_pVertexBuffer;		// 頂点バッファ.
 	ID3D11Buffer*				m_pHeadVertexbuffer;	// 頭の頂点バッファ.
 	ID3D11BlendState*			m_pNoAlphaBlend;		// アルファブレンド無効.
 	ID3D11BlendState*			m_pAlphaToCoverage;		// アルファカバレージ有効.

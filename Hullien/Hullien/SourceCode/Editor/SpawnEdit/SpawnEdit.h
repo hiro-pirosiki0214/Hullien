@@ -1,25 +1,27 @@
 #ifndef SPAWN_EDIT_H
 #define SPAWN_EDIT_H
 
-#include "..\..\Utility\ImGuiManager\ImGuiManager.h"
-#include <vector>
+#include "..\EditBase.h"
 
 class CDX9StaticMesh;
 struct stSpawnUFOParam;
 
-class CSpawnEdit
+class CSpawnEdit : CEditBase
 {
-	const ImVec2 WINDOW_SIZE		= { 510.0f, WND_H-70.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION	= { 0.0f, 70.0f };		// 描画座標.
 	const char* FILE_PATH = "Data\\GameParam\\Alien\\SpaenParam\\SpaenParam.bin";
+	const char* MODEL_NAME = "ufo_mini";
 public:
 	CSpawnEdit();
 	~CSpawnEdit();
 
 	// 初期化関数.
-	bool Init();
+	virtual bool Init() override;
+	// 更新関数.
+	virtual void Update() override;
 	// 描画関数.
-	void Render();
+	virtual void Render() override;
+	// モデルの描画.
+	virtual void ModelRender() override;
 
 private:
 	// ファイルの読み込み.
@@ -36,7 +38,6 @@ private:
 	std::shared_ptr<CDX9StaticMesh> m_pStaticMesh;
 	bool m_IsSucceeded;
 	int m_SucceedRenderCount;
-	int m_Index;
 };
 
 #endif	// #ifndef SPAWN_EDIT_H.

@@ -8,8 +8,7 @@ CTrajectory::CTrajectory()
 	: m_pLaserTexture		( nullptr )
 	, m_pLaserHeadTexture	( nullptr )
 	, m_pSampleLinear		( nullptr )
-	, m_pHeightVertexBuffer	( nullptr )
-	, m_pWidthVertexBuffer	( nullptr )
+	, m_pVertexBuffer		( nullptr )
 	, m_pHeadVertexbuffer	( nullptr )
 	, m_pNoAlphaBlend		( nullptr )
 	, m_pAlphaToCoverage	( nullptr )
@@ -44,8 +43,7 @@ HRESULT CTrajectory::Release()
 	SAFE_RELEASE( m_pLaserHeadTexture );
 	SAFE_RELEASE( m_pLaserTexture );
 	SAFE_RELEASE( m_pHeadVertexbuffer )
-	SAFE_RELEASE( m_pWidthVertexBuffer );
-	SAFE_RELEASE( m_pHeightVertexBuffer );
+	SAFE_RELEASE( m_pVertexBuffer );
 	SAFE_RELEASE( m_pVertexShader );
 	SAFE_RELEASE( m_pPixelShader );
 	SAFE_RELEASE( m_pVertexLayout );
@@ -128,7 +126,7 @@ void CTrajectory::Render()
 
 	stride = sizeof(VERTEX); // データの間隔.
 	offset = 0;
-	m_pContext11->IASetVertexBuffers( 0, 1, &m_pHeightVertexBuffer, &stride, &offset );
+	m_pContext11->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
 	m_pContext11->Draw( m_VertexCount, 0 );
 
 	SetCoverage( false );
@@ -182,7 +180,7 @@ void CTrajectory::CreateVertexBuffer( const std::vector<D3DXVECTOR3>& height )
 	if( FAILED( m_pDevice11->CreateBuffer(
 		&bd, 
 		&InitData,
-		&m_pHeightVertexBuffer ))){
+		&m_pVertexBuffer ))){
 		ERROR_MESSAGE( "頂点ﾊﾞｯﾌｧ作成失敗" );
 		return;
 	}
@@ -366,7 +364,7 @@ HRESULT CTrajectory::InitBlend()
 	ZeroMemory( &BlendDesc, sizeof( BlendDesc ) );
 
 	BlendDesc.IndependentBlendEnable				= false;	
-	BlendDesc.AlphaToCoverageEnable					= false;
+	BlendDesc.AlphaToCoverageEnable					= true;
 	BlendDesc.RenderTarget[0].BlendEnable			= true;
 	BlendDesc.RenderTarget[0].SrcBlend				= D3D11_BLEND_SRC_ALPHA;
 	BlendDesc.RenderTarget[0].DestBlend				= D3D11_BLEND_INV_SRC_ALPHA;

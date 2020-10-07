@@ -9,7 +9,6 @@ CSpawnEdit::CSpawnEdit()
 	, m_pStaticMesh			( nullptr )
 	, m_IsSucceeded			( false )
 	, m_SucceedRenderCount	( 0 )
-	, m_Index				( 0 )
 {
 }
 
@@ -23,21 +22,20 @@ bool CSpawnEdit::Init()
 	if( FileReading() == false ) return false;
 	if( m_pStaticMesh != nullptr ) return true;
 	if( m_pStaticMesh == nullptr ){
-		m_pStaticMesh = CMeshResorce::GetStatic("SpawnPoint");
+		m_pStaticMesh = CMeshResorce::GetStatic( MODEL_NAME );
 	}
 	if( m_pStaticMesh == nullptr ) return false;
 	return true;
 }
 
+// 更新関数.
+void CSpawnEdit::Update()
+{
+}
+
 // 描画関数.
 void CSpawnEdit::Render()
 {
-	if( m_pStaticMesh == nullptr ) return;
-	if( m_SpawnPramList.empty() == false ){
-		m_pStaticMesh->SetPosition( m_SpawnPramList[m_Index].Position );
-		m_pStaticMesh->SetScale( 0.5f );
-		m_pStaticMesh->Render();
-	}
 
 	ImGui::SetNextWindowSize( WINDOW_SIZE );
 	ImGui::SetNextWindowPos( RENDER_POSITION );
@@ -65,6 +63,20 @@ void CSpawnEdit::Render()
 	}
 	ImGui::PopItemWidth();
 	ImGui::End();
+}
+
+// モデルの描画.
+void CSpawnEdit::ModelRender()
+{
+	// モデルの描画.
+	if( m_pStaticMesh == nullptr ) return;
+	if( m_SpawnPramList.empty() == false ){
+		for( const auto& p : m_SpawnPramList ){
+			m_pStaticMesh->SetPosition( p.Position );
+			m_pStaticMesh->SetScale( 1.0f );
+			m_pStaticMesh->Render();
+		}
+	}
 }
 
 // ファイルの読み込み.
@@ -97,21 +109,18 @@ void CSpawnEdit::IndexRender()
 	if( ImGui::Button(u8"増やす") ) m_SpawnPramList.emplace_back();
 	ImGui::SameLine();
 	if( ImGui::Button(u8"減らす") ) m_SpawnPramList.pop_back();
-
-	ImGui::Separator();
-
-	if( ImGui::Button(u8"読込") ) m_IsSucceeded = FileReading();
-	ImGui::SameLine();
-	if( ImGui::Button(u8"保存") ) m_IsSucceeded = FileWriting();
-	ImGui::SameLine();
-	if( m_IsSucceeded == true ){
-		ImGui::Text( u8"成功" );
-		m_SucceedRenderCount++;
-		if( m_SucceedRenderCount == 60 ){
-			m_SucceedRenderCount = 0;
-			m_IsSucceeded = false;
-		}
+	static CImGuiManager::SSuccess s_Success;
+	if( ImGui::Button(u8"読込") == true ){
+		// データの読み込み.
+		s_Success.IsSucceeded =  FileReading();
 	}
+	ImGui::SameLine();
+	if( ImGui::Button(u8"保存") == true ){
+		// データの書き込み.
+		s_Success.IsSucceeded = FileWriting();
+	}
+	ImGui::SameLine();
+	s_Success.Render();	// 成功かどうかを描画.
 }
 
 // スポーン情報の描画.

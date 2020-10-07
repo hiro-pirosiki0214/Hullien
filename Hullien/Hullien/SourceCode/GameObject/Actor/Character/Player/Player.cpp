@@ -64,7 +64,7 @@ bool CPlayer::Init()
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 #ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
-#if 0
+#if 1
 	// アニメーション再生.
 	SetAttackFrameList();
 #endif	//#if 0
@@ -229,6 +229,7 @@ void CPlayer::AttackController()
 	// 攻撃カウントが最大以上なら終了.
 	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
 	CSoundManager::NoMultipleSEPlay("PlayerAttackSE");
+
 	m_AttackComboCount++;	// 攻撃カウントを加算.
 	// 攻撃データがキューに追加されたら終了.
 	if( IsPushAttack() == true ) return;
@@ -442,7 +443,7 @@ void CPlayer::AttackAnimation()
 			// これが最後の攻撃なので、攻撃カウントを0にする.
 			m_AttackComboCount = 0;	
 			// アニメーションを待機に設定.
-			SetAnimation( enAnimNo::Dead );
+			SetAnimationBlend( enAnimNo::Wait );
 			return;
 		}
 		// 新しくアニメーションをセットする.
@@ -452,7 +453,16 @@ void CPlayer::AttackAnimation()
 }
 
 // アニメーション設定.
-void CPlayer::SetAnimation( const enAnimNo& animNo )
+void CPlayer::SetAnimation( const EAnimNo& animNo )
+{
+	if( m_pSkinMesh == nullptr ) return;
+	if( m_NowAnimNo == m_OldAnimNo ) return;
+	m_OldAnimNo = m_NowAnimNo;
+	m_NowAnimNo = animNo;
+	m_pSkinMesh->ChangeAnimSet( static_cast<int>(m_NowAnimNo) );
+}
+
+void CPlayer::SetAnimationBlend( const EAnimNo& animNo )
 {
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_NowAnimNo == m_OldAnimNo ) return;
@@ -465,9 +475,9 @@ void CPlayer::SetAnimation( const enAnimNo& animNo )
 void CPlayer::SetAttackFrameList()
 {
 	if( m_pSkinMesh == nullptr ) return;
-	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(3) );
-	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(4) );
-	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(1) );
+	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(static_cast<int>(CPlayer::enAnimNo::Attack1)) );
+	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(static_cast<int>(CPlayer::enAnimNo::Attack2)) );
+	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(static_cast<int>(CPlayer::enAnimNo::Attack3)) );
 }
 
 // 攻撃の追加ができたか.
@@ -487,9 +497,9 @@ bool CPlayer::IsPushAttack()
 	{
 	case EAttackNo::EAttackNo_One:	// 攻撃1.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
-		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait1;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_One-1];
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(0);
+		tmpAttackData.AnimNo = CPlayer::enAnimNo::Attack1;
+		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_One-1]-0.5;
+		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( static_cast<int>(CPlayer::enAnimNo::Attack1) )-0.5;
 		// 最初はアニメーションを設定する.
 		SetAnimation( tmpAttackData.AnimNo );
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
@@ -497,17 +507,17 @@ bool CPlayer::IsPushAttack()
 		break;
 	case EAttackNo::EAttackNo_Two:	// 攻撃2.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
-		tmpAttackData.AnimNo = CPlayer::enAnimNo::Happy;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Two-1];
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(4);
+		tmpAttackData.AnimNo = CPlayer::enAnimNo::Attack2;
+		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Two-1]-0.5;
+		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( static_cast<int>(CPlayer::enAnimNo::Attack2) )-0.5;
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;
 	case EAttackNo::EAttackNo_Three:// 攻撃3.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
-		tmpAttackData.AnimNo = CPlayer::enAnimNo::Wait;
+		tmpAttackData.AnimNo = CPlayer::enAnimNo::Attack3;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Three-1];
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod(1);
+		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( static_cast<int>(CPlayer::enAnimNo::Attack3) );
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;
@@ -604,7 +614,6 @@ bool CPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
-
 	if( FAILED( m_pCollManager->InitCapsule( 
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,

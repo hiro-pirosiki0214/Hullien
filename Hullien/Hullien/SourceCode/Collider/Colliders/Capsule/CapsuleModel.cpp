@@ -106,8 +106,8 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 	// 頂点座標作成
 	// =============================
 	int vertCount = (divideH * divideV + 2);
-	D3DXVECTOR3* vertices = new D3DXVECTOR3[vertCount];
 
+	std::vector<D3DXVECTOR3> vertices(vertCount);
 	// 中心角
 	float centerEulerRadianH = 2.0f * 3.14f / (float) divideH;
 	float centerEulerRadianV = 2.0f * 3.14f / (float) divideV;
@@ -117,6 +117,7 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 	// 天面
 	vertices[cnt++] = D3DXVECTOR3( 0, radius+offsetHeight, 0 );
 
+	//--------------------------------------------.
 	// カプセル上部
 	for( int vv = 0; vv < divideV / 2; vv++ ){
 		float vRadian = (float)(vv + 1) * centerEulerRadianV / 2.0f;
@@ -136,6 +137,7 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 		}
 	}
 
+	//--------------------------------------------.
 	// カプセル下部
 	int offset = divideV / 2;
 	for( int vv = 0; vv < divideV / 2; vv++ ){
@@ -159,15 +161,16 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 	// 底面
 	vertices[cnt] = D3DXVECTOR3( 0, -radius-offsetHeight, 0 );
 
-	// =============================
+	//=============================
 	// 頂点インデックス作成
-	// =============================
+	//=============================
 	int topAndBottomTriCount = divideH * 2;
 	// 側面三角形の数
 	int aspectTriCount = divideH * (divideV - 2 + 1) * 2;
 
-	int* indices = new int[(topAndBottomTriCount + aspectTriCount) * 3];
+	std::vector<int> indices((topAndBottomTriCount + aspectTriCount) * 3);
 
+	//--------------------------------------------.
 	//天面
 	int offsetIndex = 0;
 	cnt = 0;
@@ -247,6 +250,7 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 		}
 	}
 
+	//--------------------------------------------.
 	// 底面Index
 	offsetIndex = vertCount - 1 - divideH;
 	lap1stIndex = offsetIndex;
@@ -284,7 +288,7 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 
 	//ｻﾌﾞﾘｿｰｽﾃﾞｰﾀ構造体.
 	D3D11_SUBRESOURCE_DATA InitData;
-	InitData.pSysMem = vertices;
+	InitData.pSysMem = &vertices[0];
 
 	//頂点ﾊﾞｯﾌｧの作成.
 	if( FAILED( m_pDevice11->CreateBuffer(
@@ -292,7 +296,6 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 		_ASSERT_EXPR( false, L"頂点ﾊﾞｯﾌｧ作成失敗" );
 		return E_FAIL;
 	}
-
 	D3D11_BUFFER_DESC id;
 	id.Usage				= D3D11_USAGE_DEFAULT;	   // 使用方法(デフォルト).
 	id.ByteWidth			= sizeof(WORD)*index_num*2;  // 頂点のサイズ.
@@ -302,7 +305,7 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 	id.StructureByteStride	= 0;					   // 構造体のサイズ(未使用).
 
 	D3D11_SUBRESOURCE_DATA IndexData;
-	IndexData.pSysMem			= indices;
+	IndexData.pSysMem			= &indices[0];
 	IndexData.SysMemPitch		= 0;
 	IndexData.SysMemSlicePitch	= 0;
 
@@ -311,6 +314,5 @@ HRESULT CCapsuleModel::InitModel( const float& fRadius, const float& fHeight )
 		_ASSERT_EXPR( false, L"インデックスﾊﾞｯﾌｧ作成失敗" );
 		return E_FAIL;
 	}
-
 	return S_OK;
 }

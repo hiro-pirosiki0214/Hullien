@@ -26,7 +26,6 @@ CCapsuleCollision::~CCapsuleCollision()
 HRESULT CCapsuleCollision::InitModelCapsule( LPD3DXMESH pMesh )
 {
 	GetBoundingSphere( pMesh, m_Radius );
-
 	D3DXVECTOR3 Max, Min;
 	GetBoundingBox( pMesh, Max, Min );
 

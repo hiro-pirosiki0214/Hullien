@@ -28,9 +28,7 @@ public:
 
 private:
 	const char* MODEL_NAME = "ufo";	// モデル名.
-	const D3DXVECTOR3 INIT_POS = { 30.0f, 10.0f, 0.0f };
-	const float COLLISION_RADIUS = 5.0f;
-	const float ADD_POS_POWER = 0.1f;
+	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Alien\\MotherShipUFOParam\\MotherShipUFOParam.bin";
 //	const SMotherShipUFOParam*	pPRAMETER;	// パラメータ(外部からポインタで受け取る).
 
 public:

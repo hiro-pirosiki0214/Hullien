@@ -80,6 +80,7 @@ void CEditor::Update()
 		m_pGirlEdit->Update();
 		break;
 	case EEditScenes::SpawnEdit:
+		m_pSpawnEdit->Update();
 		break;
 	case EEditScenes::AlienParam:
 		break;
@@ -130,6 +131,7 @@ void CEditor::ModelRender()
 		m_pGirlEdit->ModelRender();
 		break;
 	case EEditScenes::SpawnEdit:
+		m_pSpawnEdit->ModelRender();
 		break;
 	case EEditScenes::AlienParam:
 		break;
@@ -162,6 +164,7 @@ void CEditor::ModelRender()
 		m_pGirlEdit->ModelRender();
 		break;
 	case EEditScenes::SpawnEdit:
+		m_pSpawnEdit->ModelRender();
 		break;
 	case EEditScenes::AlienParam:
 		break;
@@ -197,6 +200,7 @@ void CEditor::ModelRender()
 		m_pGirlEdit->ModelRender();
 		break;
 	case EEditScenes::SpawnEdit:
+		m_pSpawnEdit->ModelRender();
 		break;
 	case EEditScenes::AlienParam:
 		break;

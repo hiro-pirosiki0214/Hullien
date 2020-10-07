@@ -25,14 +25,12 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_GameObjManager	( nullptr )
 	, m_WidgetManager	( nullptr )
 	, m_ContinueWidget	( nullptr )
-//	, m_pSkyDome		( nullptr )
 	, m_ChangeSceneState( EChangeSceneState::Clear )
 	, m_IsChangeScene	( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
 	m_ContinueWidget		= std::make_unique<CContinueWidget>();
-//	m_pSkyDome				= std::make_unique<CSkyDome>();
 	m_pEventManager			= std::make_unique<CEventManager>();
 	CFade::SetFadeOut();
 }
@@ -49,7 +47,6 @@ bool CGame::Load()
 	if( m_GameObjManager->Init() == false )	return false;
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
-//	if( m_pSkyDome->Init() == false )		return false;
 	
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
 	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);

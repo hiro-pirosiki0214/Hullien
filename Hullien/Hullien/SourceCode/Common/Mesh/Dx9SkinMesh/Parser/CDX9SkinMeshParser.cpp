@@ -650,6 +650,7 @@ void D3DXPARSER::ChangeAnimSet(int index, LPD3DXANIMATIONCONTROLLER pAC)
 	pTmpAC->SetTrackDesc( 0, &TrackDesc );
 	pTmpAC->SetTrackAnimationSet( 0, m_pAnimSet[index] );
 	pTmpAC->SetTrackEnable( 0, true );
+	pTmpAC->SetTrackEnable( 1, false );
 }
 
 

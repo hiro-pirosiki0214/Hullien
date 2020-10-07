@@ -10,13 +10,13 @@ class CCharacterWidget;
 class CEffectManager;
 class CEffectTimer;
 
-#define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
+//#define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
 
 class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Player\\Player.bin";
-	const char*	MODEL_NAME			= "kaitoslash1_s";	// モデル名.
+	const char*	MODEL_NAME			= "Kaito_s";	// モデル名.
 	const char* MODEL_TEMP_NAME		= "kaito";		// 仮モデル名.
 
 	// 使用攻撃エフェクト名.
@@ -33,13 +33,13 @@ class CPlayer : public CCharacter
 	{
 		None = -1,
 
-		Dead = 0,
-		Wait,
-		Walk,
-		Wait1,
-		Happy,
+		Wait,		// 待機.
+		Walk,		// 走り.
+		Attack1,	// 攻撃1.
+		Attack2,	// 攻撃2.
+		Attack3 = Walk,	// 攻撃3.
 
-		Max = Happy,
+		Max = Attack2,
 	} typedef EAnimNo;
 
 	// 攻撃番号,
@@ -157,6 +157,7 @@ private:
 	void AttackAnimation();
 	// アニメーション設定.
 	void SetAnimation( const EAnimNo& animNo );
+	void SetAnimationBlend( const EAnimNo& animNo );
 
 	// 攻撃アニメーションフレームリストの設定.
 	void SetAttackFrameList();
