@@ -5,6 +5,7 @@
 CGroundStage::CGroundStage()
 	: m_pStaticMesh		( nullptr )
 {
+	m_vPosition.y = POSITION_Y;
 }
 
 CGroundStage::~CGroundStage()

@@ -1,6 +1,7 @@
 #include "SkyDome.h"
 #include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
 CSkyDome::CSkyDome()
 	: m_StaticMesh	( nullptr )
@@ -27,6 +28,7 @@ void CSkyDome::Update()
 // •`‰æŠÖ”.
 void CSkyDome::Render()
 {
+	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ) return;
 	if( m_StaticMesh == nullptr ) return;
 
 	m_StaticMesh->SetPosition( m_vPosition );

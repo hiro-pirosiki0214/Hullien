@@ -5,11 +5,13 @@
 #include "..\Barrier\Barrier.h"
 #include "..\Item\ItemManager\ItemManager.h"
 #include "..\..\GroundStage\GroundStage.h"
+#include "..\..\SkyDome\SkyDome.h"
 #include "..\..\MotherShipUFO\MotherShipUFO.h"
 #include "..\..\Widget\SceneWidget\GameWidget\Warning\Warning.h"
 
 CGameActorManager::CGameActorManager()
-	: m_pGroundStage	( nullptr )
+	: m_pSkyDome		( nullptr )
+	, m_pGroundStage	( nullptr )
 	, m_pPlayer			( nullptr )
 	, m_pGirl			( nullptr )
 	, m_pMotherShipUFO	( nullptr )
@@ -19,6 +21,7 @@ CGameActorManager::CGameActorManager()
 	, m_ObjPositionList	()
 	, m_ObjPosListCount	( 0 )
 {
+	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_shared<CGroundStage>();
 	m_pPlayer			= std::make_shared<CPlayer>();
 	m_pGirl				= std::make_shared<CGirl>();
@@ -35,6 +38,7 @@ CGameActorManager::~CGameActorManager()
 // 初期化関数.
 bool CGameActorManager::Init()
 {
+	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;	// 地面の初期化.
 	if( m_pPlayer->Init()			== false ) return false;	// プレイヤーの初期化.
 	if( m_pGirl->Init()				== false ) return false;	// 女の子の初期化.
@@ -53,6 +57,8 @@ void CGameActorManager::Update()
 {
 	m_ObjPosListCount = 0;		// カウントの初期化.
 	m_ObjPositionList.clear();	// リストの初期化.
+
+	m_pSkyDome->SetPosition( m_pPlayer->GetPosition() );
 
 	// プレイヤーの更新.
 	m_pPlayer->Update();
@@ -113,6 +119,7 @@ void CGameActorManager::Update()
 // 描画関数.
 void CGameActorManager::Render()
 {
+	m_pSkyDome->Render();
 	m_pGroundStage->Render();	// ステージの描画.
 	m_pPlayer->Render();		// プレイヤーの描画.
 	m_pGirl->Render();			// 女の子の描画.

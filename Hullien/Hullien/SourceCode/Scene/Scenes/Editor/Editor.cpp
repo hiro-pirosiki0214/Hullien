@@ -15,6 +15,7 @@
 #include "..\..\..\GameObject\GroundStage\GroundStage.h"
 #include "..\..\..\Camera\EditCamera\EditCamera.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\..\Common\Fog\Fog.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
@@ -69,6 +70,7 @@ bool CEditor::Load()
 // çXêVä÷êî.
 void CEditor::Update()
 {
+	CFog::Update();
 	switch( m_NowEditScene )
 	{
 	case EEditScenes::PlayerEdit:

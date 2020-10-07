@@ -7,6 +7,7 @@
 #include <vector>
 
 class CGameObject;
+class CSkyDome;			// 背景クラス.
 class CGroundStage;		// 地面クラス.
 class CPlayer;			// プレイヤークラス.
 class CGirl;			// 女の子クラス.
@@ -44,13 +45,15 @@ private:
 	void SetPositionList( CGameObject* pObj );
 
 private:
-	std::shared_ptr<CGroundStage>	m_pGroundStage;
-	std::shared_ptr<CPlayer>		m_pPlayer;
-	std::shared_ptr<CGirl>			m_pGirl;
-	std::unique_ptr<CMotherShipUFO>	m_pMotherShipUFO;
-	std::shared_ptr<CAlienManager>	m_pAlienManager;
-	std::shared_ptr<CItemManager>	m_pItemManager;
-	std::shared_ptr<CBarrier>		m_pBarrier;
+	std::unique_ptr<CSkyDome>		m_pSkyDome;			// 背景.
+	std::shared_ptr<CGroundStage>	m_pGroundStage;		// 地面.
+	std::shared_ptr<CPlayer>		m_pPlayer;			// プレイヤー.
+	std::shared_ptr<CGirl>			m_pGirl;			// 女の子.
+	std::unique_ptr<CMotherShipUFO>	m_pMotherShipUFO;	// マザーシップUFO.
+	std::shared_ptr<CAlienManager>	m_pAlienManager;	// 宇宙人マネージャー.
+	std::shared_ptr<CItemManager>	m_pItemManager;		// アイテムマネージャー.
+	std::shared_ptr<CBarrier>		m_pBarrier;			// バリア.
+
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;
 };
