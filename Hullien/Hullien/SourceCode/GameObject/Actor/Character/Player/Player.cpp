@@ -516,8 +516,8 @@ bool CPlayer::IsPushAttack()
 	case EAttackNo::EAttackNo_Three:// UŒ‚3.
 #ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
 		tmpAttackData.AnimNo = CPlayer::enAnimNo::Attack3;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Three-1];
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( static_cast<int>(CPlayer::enAnimNo::Attack3) );
+		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[EAttackNo::EAttackNo_Three-1]-0.5;
+		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( static_cast<int>(CPlayer::enAnimNo::Attack3) )-0.5;
 #endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;

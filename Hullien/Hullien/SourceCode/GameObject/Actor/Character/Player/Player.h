@@ -37,7 +37,7 @@ class CPlayer : public CCharacter
 		Walk,		// ‘–‚è.
 		Attack1,	// UŒ‚1.
 		Attack2,	// UŒ‚2.
-		Attack3 = Walk,	// UŒ‚3.
+		Attack3 = Attack1,	// UŒ‚3.
 
 		Max = Attack2,
 	} typedef EAnimNo;
