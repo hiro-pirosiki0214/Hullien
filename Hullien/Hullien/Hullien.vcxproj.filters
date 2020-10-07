@@ -126,7 +126,6 @@
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
-    <ClCompile Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\Camera\EvevtCamera\EvevtCamera.cpp" />
     <ClCompile Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.cpp" />
@@ -141,6 +140,13 @@
     <ClCompile Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\Trajectory\Trajectory.cpp" />
     <ClCompile Include="SourceCode\Common\Fog\Fog.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventCharacter.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventAlien\EventAlien.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventAlien\EventAlien_A\EventAlien_A.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventGirl\EventGirl.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventPlayer\EventPlayer.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -269,7 +275,6 @@
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
-    <ClInclude Include="SourceCode\GameObject\Actor\Character\EventPlayer\EventPlayer.h" />
     <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
     <ClInclude Include="SourceCode\GameObject\MotherShipUFO\MotherShipUFO.h" />
     <ClInclude Include="SourceCode\Common\Shader\ShadowMap\ShadowMap.h" />
@@ -286,5 +291,12 @@
     <ClInclude Include="SourceCode\Common\SceneTexRenderer\SceneTexRenderer.h" />
     <ClInclude Include="SourceCode\Common\Shader\Trajectory\Trajectory.h" />
     <ClInclude Include="SourceCode\Common\Fog\Fog.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\EventCharacter\EventCharacter.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\EventCharacter\EventAlien\EventAlien.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\EventCharacter\EventAlien\EventAlien_A\EventAlien_A.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\EventCharacter\EventGirl\EventGirl.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\EventCharacter\EventPlayer\EventPlayer.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.h" />
   </ItemGroup>
 </Project>

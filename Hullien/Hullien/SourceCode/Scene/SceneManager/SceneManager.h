@@ -46,6 +46,9 @@ public:
 	void SethWnd(HWND hWnd) { m_hWnd = hWnd; }
 	HWND GethWnd(){ return m_hWnd; }
 
+	// リトライしたか.
+	bool GetRetry() const { return m_IsRetry; }
+
 private:
 	// エディットシーンに変更.
 	void ChangeEditScene();
@@ -58,6 +61,7 @@ private:
 	bool	m_IsLoadEnd;	// ロードが終了したか.
 	bool	m_IsGameOver;	// ゲームオーバーか.
 	bool	m_IsGameEnd;	// ゲームを終了したか.
+	bool	m_IsRetry;		// リトライしたか.
 };
 
 #endif // #ifndef SCENE_MANAGER_H.

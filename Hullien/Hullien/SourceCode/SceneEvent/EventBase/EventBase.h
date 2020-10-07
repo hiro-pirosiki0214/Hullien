@@ -23,13 +23,20 @@ public:
 	virtual void Update() = 0;
 	// 描画関数.
 	virtual void Render() = 0;
+	// 描画関数.
+	virtual void SpriteRender() = 0;
 	// イベントの終了を取得.
 	bool GetIsEventEnd() const { return m_IsEventEnd; };
 
 protected:
-	bool	m_IsEventEnd;	// イベントが終了したか.
+	// 次のシーンに進める.
+	virtual void NextStep() = 0;
+	// スキップ.
+	virtual void Skip() = 0;
 
-private:
+protected:
+	bool	m_IsEventEnd;	// イベントが終了したか.
+	bool	m_IsSkip;		// スキップしたか.
 };
 
 #endif	//#ifndef SCENE_EVENT_BASE_H.

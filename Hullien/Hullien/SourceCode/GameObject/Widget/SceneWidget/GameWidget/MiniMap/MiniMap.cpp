@@ -3,6 +3,7 @@
 #include "..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\Actor\ActorManager\GameActorManager.h"
+#include "..\..\..\..\..\Common\DebugText\DebugText.h"
 
 /**********************************
 *	ミニマップクラス.
@@ -49,8 +50,9 @@ void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 		// Noneならば処理しない.
 		if (obj.first == EObjectTag::None) continue;
 		// 位置情報の更新.
-		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - obj.second.x;
-		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + obj.second.z;
+		if (m_IconList[objCount].Pos == obj.second) return;
+		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - (obj.second.x * 0.25f);
+		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + (obj.second.z * 0.25f);
 		objCount++;
 	}
 }

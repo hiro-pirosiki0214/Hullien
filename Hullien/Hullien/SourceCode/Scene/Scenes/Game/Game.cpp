@@ -25,7 +25,8 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_GameObjManager	( nullptr )
 	, m_WidgetManager	( nullptr )
 	, m_ContinueWidget	( nullptr )
-	, m_ChangeSceneState( EChangeSceneState::Clear )
+	, m_NowEventScene	( EEventSceneState::GameStart )
+	, m_NextSceneState	( ENextSceneState::None )
 	, m_IsChangeScene	( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
@@ -48,6 +49,15 @@ bool CGame::Load()
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
 	
+	if (m_pSceneManager->GetRetry() == false)
+	{
+		m_NowEventScene = EEventSceneState::GameStart;
+	}
+	else
+	{
+		m_NowEventScene = EEventSceneState::Game;
+	}
+
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
 	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
@@ -62,64 +72,39 @@ void CGame::Update()
 {
 	CFog::Update();	// フォグの更新.
 
-	if (m_pEventManager->GetIsEventEnd() == false)
+	switch (m_NowEventScene)
 	{
+	case EEventSceneState::Game:
+		GameUpdate();
+		break;
+	case EEventSceneState::Continue:
+		ContinueUpdate();
+		break;
+	case EEventSceneState::GameStart:
+	case EEventSceneState::GameOver_Girl:
+	case EEventSceneState::GameOver_Player:
+	case EEventSceneState::Clear:
 		m_pEventManager->Update();
+		break;
+	default:
+		break;
 	}
-	else
-	{
 
-		if (m_GameObjManager->IsDanger() == false)
-		{
-			CSoundManager::ThreadPlayBGM("GameBGM");
-			CSoundManager::FadeInBGM("GameBGM");
-			CSoundManager::FadeOutBGM("DangerBGM");
-		}
-		else
-		{
-			CSoundManager::ThreadPlayBGM("DangerBGM");
-			CSoundManager::FadeInBGM("DangerBGM");
-			CSoundManager::FadeOutBGM("GameBGM");
-		}
+	// イベントシーンの切り替え.
+	ChangeEventScene();
 
-
-		if (m_GameObjManager->IsGameOver() == false)
-		{
-			m_GameObjManager->Update();
-			m_WidgetManager->Update(m_GameObjManager.get());
-		}
-		else
-		{
-			if (CFade::GetIsFade() == true) return;
-			UpdateContinue();
-		}
 
 #if 0	// 次のシーンへ移動.
-		if (GetAsyncKeyState(VK_RETURN) & 0x0001
-			|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
-		{
-			if (CFade::GetIsFade() == true) return;
-			SetChangeScene(EChangeSceneState::Clear);
-		}
-#else 
-		if (m_WidgetManager->IsGameFinish() == true)
-		{
-			if (m_IsChangeScene == false)
-			{
-				m_pEventManager->NextEventMove();
-				m_IsChangeScene = true;
-			}
-			if (m_pEventManager->GetIsEventEnd() == true
-				&& m_ChangeSceneState == EChangeSceneState::None)
-			{
-				SetChangeScene(EChangeSceneState::Clear);
-			}
-
-		}
-#endif	// #if 0.
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
+	{
+		if (CFade::GetIsFade() == true) return;
+		SetChangeScene(EChangeSceneState::Clear);
 	}
-
-	ChangeScene();
+#else 
+	// 次のシーンへ移動.
+	NextSceneMove();
+#endif	// #if 0.
 }
 
 //============================.
@@ -127,21 +112,26 @@ void CGame::Update()
 //============================.
 void CGame::Render()
 {
-	if (m_pEventManager->GetIsEventEnd() == false) return;
-
-	// モデルの描画.
-	ModelRender();
-
-	m_GameObjManager->SpriteRender();
-	m_WidgetManager->Render();
-
-	if (m_GameObjManager->IsGameOver() == true)
+	switch (m_NowEventScene)
 	{
-		//プレイヤーの体力が0になったか取得.
-		// コンテニュー.
+	case EEventSceneState::Game:
+		ModelRender();
+		m_GameObjManager->SpriteRender();
+		m_WidgetManager->Render();
+		break;
+	case EEventSceneState::Continue:
+		m_pEventManager->Render();
 		m_ContinueWidget->Render();
+		break;
+	case EEventSceneState::GameStart:
+	case EEventSceneState::GameOver_Girl:
+	case EEventSceneState::GameOver_Player:
+	case EEventSceneState::Clear:
+		m_pEventManager->Render();
+		break;
+	default:
+		break;
 	}
-
 	CEditRenderer::PushRenderProc( 
 		[&]()
 		{
@@ -191,34 +181,51 @@ void CGame::ModelRender()
 	CSceneTexRenderer::Render();
 }
 
-//============================.
-// コンテニュー処理関数.
-//============================.
-void CGame::UpdateContinue()
+// ゲーム処理関数.
+void CGame::GameUpdate()
 {
-	//プレイヤーの体力が0になったか取得.
-	// コンテニュー.
+	if (m_GameObjManager->IsDanger() == false)
+	{
+		CSoundManager::ThreadPlayBGM("GameBGM");
+		CSoundManager::FadeInBGM("GameBGM");
+		CSoundManager::FadeOutBGM("DangerBGM");
+	}
+	else
+	{
+		CSoundManager::ThreadPlayBGM("DangerBGM");
+		CSoundManager::FadeInBGM("DangerBGM");
+		CSoundManager::FadeOutBGM("GameBGM");
+	}
+
+
+	m_GameObjManager->Update();
+	m_WidgetManager->Update(m_GameObjManager.get());
+}
+
+// コンテニュー処理関数.
+void CGame::ContinueUpdate()
+{
 	m_ContinueWidget->Update();
 
 	if (m_ContinueWidget->GetIsDrawing() == true) return;
 	switch (m_ContinueWidget->GetSelectState())
 	{
 	case CContinueWidget::ESelectState::Yes:
-		if (GetAsyncKeyState(VK_RETURN) & 0x0001 
-			|| CXInput::B_Button() == CXInput::enSEPARATED)
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000
+			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
 			if (m_IsChangeScene == true) return;
 			CSoundManager::PlaySE("DeterminationSE");
-			SetChangeScene(EChangeSceneState::Game);
+			m_NextSceneState = ENextSceneState::Game;
 		}
 		break;
 	case CContinueWidget::ESelectState::No:
-		if (GetAsyncKeyState(VK_RETURN) & 0x0001
-			|| CXInput::B_Button() == CXInput::enSEPARATED)
+		if (GetAsyncKeyState(VK_RETURN) & 0x8000
+			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
 			if (m_IsChangeScene == true) return;
 			CSoundManager::PlaySE("End");
-			SetChangeScene( EChangeSceneState::GameOver );
+			m_NextSceneState = ENextSceneState::GameOver;
 		}
 		break;
 	default:
@@ -226,47 +233,66 @@ void CGame::UpdateContinue()
 	}
 }
 
-//============================.
 // シーン切り替え関数.
-//============================.
-void CGame::ChangeScene()
+void CGame::ChangeEventScene()
 {
-	// フェードイン状態かつフェード中なら処理しない.
-	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
-	if (CFade::GetIsFade() == true) return;
+	if (m_NowEventScene == EEventSceneState::Game)
+	{
+		// ゲームオーバーの場合.
+		if (m_GameObjManager->IsGameOver() == true)
+		{
+			if (m_GameObjManager->IsGirlAbduct() == true)
+			{
+				m_NowEventScene = EEventSceneState::GameOver_Girl;
+			}
+			else
+			{
+				m_NowEventScene = EEventSceneState::GameOver_Player;
+			}
+			m_pEventManager->OnGameOver();
+			m_pEventManager->NextEventMove();
+		}
 
-	// どのシーンに遷移するか.
-	SelectScene();
+		// ゲームクリアの場合.
+		if (m_WidgetManager->IsGameFinish() == true)
+		{
+			m_NowEventScene = EEventSceneState::Clear;
+			m_pEventManager->NextEventMove();
+		}
+	}
+
+	// イベントが終了していれば更新.
+	if (m_pEventManager->GetIsEventEnd() == false) return;
+	switch (m_NowEventScene)
+	{
+	case EEventSceneState::GameStart:
+		m_NowEventScene = EEventSceneState::Game;
+		break;
+	case EEventSceneState::GameOver_Girl:
+	case EEventSceneState::GameOver_Player:
+		m_NowEventScene = EEventSceneState::Continue;
+		break;
+	case EEventSceneState::Clear:
+		m_NextSceneState = ENextSceneState::Clear;
+		break;
+	default:
+		break;
+	}
 }
 
-//============================.
-// シーンの選択.
-//============================.
-void CGame::SelectScene()
+// 次のシーンに移行.
+void CGame::NextSceneMove()
 {
-	if (m_GameObjManager->IsDanger() == false)
+	switch (m_NextSceneState)
 	{
-		CSoundManager::StopBGMThread("GameBGM");
-	}
-	else
-	{
-		CSoundManager::StopBGMThread("DangerBGM");
-	}
-
-	switch (m_ChangeSceneState)
-	{
-	case EChangeSceneState::Game:
-		// リトライ処理.
+	case ENextSceneState::Game:
 		m_pSceneManager->RetryGame();
 		break;
-	case EChangeSceneState::Clear:
-		// 次のシーンへ移行.
+	case ENextSceneState::Clear:
 		m_pSceneManager->NextSceneMove();
 		break;
-	case EChangeSceneState::GameOver:
-		// ゲームオーバーの設定.
+	case ENextSceneState::GameOver:
 		m_pSceneManager->OnGameOver();
-		// 次のシーンへ移行.
 		m_pSceneManager->NextSceneMove();
 		break;
 	default:
@@ -274,12 +300,3 @@ void CGame::SelectScene()
 	}
 }
 
-//============================.
-// シーン切り替え設定関数.
-//============================.
-void CGame::SetChangeScene( const EChangeSceneState& changeState )
-{
-	m_ChangeSceneState = changeState;
-	CFade::SetFadeIn();
-	m_IsChangeScene = true;
-}

@@ -9,6 +9,7 @@ CMotherShipUFO::CMotherShipUFO()
 	: m_pStaticMesh		( nullptr )
 	, m_pCollManager	( nullptr )
 	, m_Param			()
+	, m_IsDisp			( true )
 {
 }
 
@@ -39,6 +40,7 @@ void CMotherShipUFO::Render()
 	// ‰æ–ÊŠO‚È‚çI—¹.
 	if( IsDisplayOut() == true ) return;
 	if( m_pStaticMesh == nullptr ) return;
+	if( m_IsDisp == false ) return;
 
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );

@@ -3,6 +3,7 @@
 
 #include "..\Actor.h"
 class CEffectManager;	// エフェクトクラス.
+class CEventActor;
 
 class CBarrier : public CActor
 {
@@ -27,6 +28,8 @@ public:
 	virtual void Collision( CActor* pActor ) override;
 	// 相手座標の設定関数.
 	virtual void SetTargetPos( CActor& pActor ) override;
+	// 動作状態か.
+	bool IsActive() const { return m_IsActive; }
 
 private:
 	// モデルの取得.

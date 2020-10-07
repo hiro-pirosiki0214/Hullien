@@ -5,6 +5,7 @@
 **/
 CEventBase::CEventBase()
 	: m_IsEventEnd	( false )
+	, m_IsSkip		( false )
 {
 }
 

@@ -15,15 +15,30 @@ class CEventManager;		//イベント管理クラス.
 class CGame : public CSceneBase
 {
 private:
-	// シーン切り替え状態.
-	enum class enChangeSceneState
+	// シーンの状態.
+	enum class enEventSceneState
 	{
-		None, 
+		None,
+
+		GameStart,			// ゲームスタート.
+		Game,				// ゲーム中.
+		GameOver_Player,	// プレイヤーが死んだ場合.
+		GameOver_Girl,		// 女の子が連れ去られた場合.
+		Continue,			// コンテニュー.
+		Clear,				// クリア.
+
+		Max,
+	}typedef EEventSceneState;
+
+	// シーン切り替え状態.
+	enum class enNextSceneState
+	{
+		None,
 
 		Game,			//ゲーム.
 		Clear,			//クリア.
 		GameOver,		//ゲームオーバー.
-	}typedef EChangeSceneState;
+	}typedef ENextSceneState;
 
 public:
 	CGame( CSceneManager* pSceneManager );
@@ -39,24 +54,22 @@ public:
 private:
 	// モデルの描画.
 	void ModelRender();
-	// フェード初期化関数.
-	bool InitFade();	
+	// ゲーム処理関数.
+	void GameUpdate();
 	// コンテニュー処理関数.
-	void UpdateContinue();
+	void ContinueUpdate();
 	// シーン切り替え関数.
-	void ChangeScene();
-	// シーンの選択.
-	void SelectScene();
-	// シーン切り替え設定関数.
-	void SetChangeScene( const EChangeSceneState& changeState );
-
+	void ChangeEventScene();
+	// 次のシーンに移行.
+	void NextSceneMove();
 
 private:
 	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.
 	std::unique_ptr<CGameWidgetManager>	m_WidgetManager; 	// ゲームUI管理クラス.
 	std::unique_ptr<CContinueWidget>	m_ContinueWidget;	// コンテニューUIクラス.
 	std::unique_ptr<CEventManager>		m_pEventManager; 	//	イベント管理クラス.
-	EChangeSceneState					m_ChangeSceneState;	// シーン切り替え状態.
+	EEventSceneState					m_NowEventScene;	// 現在のイベントシーン.
+	ENextSceneState						m_NextSceneState;	// 次のシーン状態.
 	bool								m_IsChangeScene;	// シーン切り替えが可能か.
 
 };

@@ -13,8 +13,8 @@ CContinueWidget::CContinueWidget()
 	, m_pCursor				( nullptr )
 	, m_TextAlpha			( 0.0f )
 	, m_IsDrawing			( true )
-	, m_SelectState		( ESelectState::Yes )
-	, m_OldSelectState	( ESelectState::Yes )
+	, m_SelectState			( ESelectState::Yes )
+	, m_OldSelectState		( ESelectState::Yes )
 	, m_DrawTurn			( EDrawTurn::BackGround )
 {
 	m_pCursor = std::make_shared<CCursor>();
@@ -47,7 +47,7 @@ void CContinueWidget::Update()
 		break;
 	case CSceneWidget::EDrawingState::Finish:
 		// ƒJ[ƒ\ƒ‹‚ÌÝ’è.
-		if (m_pCursor == nullptr) return;
+		if (m_pCursor->Init() == false) return;
 		CursorSetting();
 		break;
 	default:

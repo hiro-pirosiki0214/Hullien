@@ -45,6 +45,8 @@ public:
 	void Collision( CActor* pActor );
 	// パラメータの設定.
 	void SetParameter( const SMotherShipUFOParam& param );
+	// 描画フラグ設定関数.
+	void SetDisp(const bool& disp) { m_IsDisp = disp; }
 
 private:
 	// モデルの取得.
@@ -53,9 +55,10 @@ private:
 	bool CollisionSetting();
 
 private:
-	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;	// スタティックメッシュ.
+	std::shared_ptr<CDX9StaticMesh>		m_pStaticMesh;	// スタティックメッシュ.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;	// 当たり判定クラス.
-	SMotherShipUFOParam	m_Param;
+	SMotherShipUFOParam					m_Param;
+	bool								m_IsDisp;		//描画しているか.
 };
 
 #endif	// #ifndef MOTHER_SHIP_UFO_H.

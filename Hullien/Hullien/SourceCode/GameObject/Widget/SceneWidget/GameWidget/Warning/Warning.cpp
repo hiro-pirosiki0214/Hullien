@@ -36,11 +36,6 @@ void CWarning::Render()
 {
 	if ( m_pSprite.size() == 0 ) return;
 	// 表示フラグが立っていなければ描画しない.
-	for (auto s : m_pSprite)
-	{
-		s->SetPosition(m_vPosition);
-	}
-
 	if (m_IsGirlOffScreen == false)
 	{
 		// 警告サイン.
@@ -67,6 +62,7 @@ bool CWarning::SpriteSetting()
 // スプライトの描画関数.
 void CWarning::RenderDangerSign()
 {
+	m_pSprite[DANGER_SIGN]->SetPosition(m_vPosition);
 	m_pSprite[DANGER_SIGN]->Render(true);	// ビルボードにする.
 }
 
@@ -88,6 +84,7 @@ void CWarning::RenderDangerArrow()
 	}
 
 	m_vPosition.y = ARROWPOSITION_Y;
+	m_pSprite[DANGER_ARROW]->SetPosition( m_vPosition);
 	m_pSprite[DANGER_ARROW]->SetRotation(m_vRotation);
 	m_pSprite[DANGER_ARROW]->SetDeprh(false);
 	m_pSprite[DANGER_ARROW]->RenderUI();

@@ -45,12 +45,12 @@ public: //------- 関数 -------.
 protected: //------- 変数 -------.
 	D3DXVECTOR3	m_vPosition;		// カメラ位置.
 	D3DXVECTOR3	m_vLookPosition;	// カメラ注視位置.
+	float m_ViewingAngle;			// 視野角.
 
 private: //------- 変数 -------.
 	D3DXMATRIX m_ViewMatrix;		// ビュー行列.
 	D3DXMATRIX m_ProjMatrix;		// プロジェクション行列.
 
-	float m_ViewingAngle;			// 視野角.
 	float m_MaxClippingDistance;	// 最大クリッピング距離.
 	float m_MinClippingDistance;	// 最小クリッピング距離.
 };

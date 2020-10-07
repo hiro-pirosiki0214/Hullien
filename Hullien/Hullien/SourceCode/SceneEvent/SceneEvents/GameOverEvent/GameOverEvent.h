@@ -18,8 +18,15 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// スプライト描画関数.
+	virtual void SpriteRender() override;
 
 private:
+	// 次のシーンに進める.
+	virtual void NextStep() override;
+	// スキップ.
+	virtual void Skip() override;
+
 };
 
 #endif	//#ifndef GAMEOVER_EVENT_H.

@@ -39,7 +39,7 @@ void CCamera::InitViewProj()
 	static float p = 4.0f;
 	if( GetAsyncKeyState('V') & 0x8000 ) p -= 0.01f;
 	if( GetAsyncKeyState('B') & 0x8000 ) p += 0.01f;
-	m_ViewingAngle = static_cast<float>(D3DX_PI/p);
+//	m_ViewingAngle = static_cast<float>(D3DX_PI/p);
 	//{
 	//	static float w = FLOAT_WND_W;
 	//	static float h = FLOAT_WND_H;

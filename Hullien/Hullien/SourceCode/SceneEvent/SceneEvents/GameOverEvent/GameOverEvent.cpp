@@ -8,6 +8,8 @@
 **/
 CGameOverEvent::CGameOverEvent()
 {
+	m_IsSkip = false;
+	m_IsEventEnd = false;
 }
 
 CGameOverEvent::~CGameOverEvent()
@@ -35,4 +37,18 @@ void CGameOverEvent::Render()
 {
 	CDebugText::SetPosition({ 0.0f, 80.0f + CDebugText::GetScale() * 0 ,0.0f });
 	CDebugText::Render("- GameOverEvent -");
+}
+
+void CGameOverEvent::SpriteRender()
+{
+}
+
+// 次のシーンに進める.
+void CGameOverEvent::NextStep()
+{
+}
+
+// スキップ.
+void CGameOverEvent::Skip()
+{
 }

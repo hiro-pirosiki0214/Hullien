@@ -10,18 +10,18 @@
 class CContinueWidget : public CSceneWidget
 {
 public:
-	const char* SPRITE_BACK						= "CBackGround";	//背景
-	const char* SPRITE_CONTINUE				= "continuesize";		//コンテニュー.
-	const char* SPRITE_YES							= "yessize";			//イエス
-	const char* SPRITE_NO							= "nosize";				//ノー.
-	const int BACKGROUND							= 0;						//背景配列番号.
-	const int YES											= 1;						//イエス配列番号.
-	const int NO											= 2;						//ノー配列番号.
-	const float BACKGROUND_ALPHA				= 0.7f;					//背景透過値.
-	const float BACKGROUND_ALPHA_SPEED	= 0.005f;					//背景透過速度.
-	const float TEXT_ALPHA_SPEED				= 0.005f;					//文字透過速度.
+	const char* SPRITE_BACK				= "CBackGround";	//背景
+	const char* SPRITE_CONTINUE			= "continuesize";	//コンテニュー.
+	const char* SPRITE_YES				= "yessize";		//イエス
+	const char* SPRITE_NO				= "nosize";			//ノー.
+	const int BACKGROUND				= 0;				//背景配列番号.
+	const int YES						= 1;				//イエス配列番号.
+	const int NO						= 2;				//ノー配列番号.
+	const float BACKGROUND_ALPHA		= 0.7f;				//背景透過値.
+	const float BACKGROUND_ALPHA_SPEED	= 0.005f;			//背景透過速度.
+	const float TEXT_ALPHA_SPEED		= 0.005f;			//文字透過速度.
 
-	//選択状態.
+																			//選択状態.
 	enum class enSelectState
 	{
 		Yes,		//イエス.
