@@ -36,4 +36,75 @@ struct stPlayerParam : public CCharacter::SParameter
 	{}
 } typedef SPlayerParam;
 
+namespace player
+{
+// アニメーション番号.
+enum enAnimNo
+{
+	EAnimNo_None = -1,
+
+	EAnimNo_Wait,		// 待機.
+	EAnimNo_Walk,		// 走り.
+	EAnimNo_Attack1,	// 攻撃1.
+	EAnimNo_Attack2,	// 攻撃2.
+	EAnimNo_Attack3 = EAnimNo_Attack1,	// 攻撃3.
+
+	EAnimNo_Max = EAnimNo_Attack2,
+} typedef EAnimNo;
+
+// 攻撃番号,
+enum enAttackNo
+{
+	EAttackNo_None,
+
+	EAttackNo_One,
+	EAttackNo_Two, 
+	EAttackNo_Three,
+
+	EAttackNo_Max = EAttackNo_Three,
+} typedef EAttackNo;
+
+// 効果時間計測番号.
+enum enEffectTimerNo
+{
+	EEffectTimerNo_None,
+
+	EEffectTimerNo_SPRecovery = 0,	// 特殊能力回復.
+	EEffectTimerNo_Attack,			// 攻撃力.
+	EEffectTimerNo_MoveSpeedUp,		// 移動速度.
+	EEffectTimerNo_Paralysis,		// 麻痺.
+
+	EEffectTimerNo_Max,
+} typedef EEffectTimerNo;
+
+// 使用エフェクト番号.
+enum enEffectNo
+{
+	enEffectNo_AttackOne,		// 攻撃1.
+	enEffectNo_AttackTwo,		// 攻撃2.
+	enEffectNo_AttackThree,		// 攻撃3.
+	enEffectNo_SP,				// 特殊能力.
+	enEffectNo_Avoidance,		// 回避.
+
+	enEffectNo_Max,
+} typedef EEffectNo;
+
+// 攻撃用データ.
+struct stAttackData
+{
+	EAnimNo		AnimNo;				// アニメーション番号.
+	double		Frame;				// 経過フレーム.
+	double		EnabledEndFrame;	// 有効終了フレーム.
+	double		EndFrame;			// 終了フレーム.
+
+	stAttackData()
+		: AnimNo			( EAnimNo_None )
+		, Frame				( 0.0 )
+		, EnabledEndFrame	( 1.0 )
+		, EndFrame			( 2.0 )
+	{}
+} typedef SAttackData;
+
+};	// namespace PLAYER.
+
 #endif	// #ifndef PLAYER_PARAM_H.

@@ -28,72 +28,8 @@ class CPlayer : public CCharacter
 	// 回避エフェクト名.
 	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
 
-	// アニメーション番号.
-	enum class enAnimNo
-	{
-		None = -1,
-
-		Wait,		// 待機.
-		Walk,		// 走り.
-		Attack1,	// 攻撃1.
-		Attack2,	// 攻撃2.
-		Attack3 = Attack1,	// 攻撃3.
-
-		Max = Attack2,
-	} typedef EAnimNo;
-
-	// 攻撃番号,
-	enum enAttackNo
-	{
-		EAttackNo_None,
-
-		EAttackNo_One,
-		EAttackNo_Two, 
-		EAttackNo_Three,
-
-		EAttackNo_Max = EAttackNo_Three,
-	} typedef EAttackNo;
-
-	// 効果時間計測番号.
-	enum enEffectTimerNo
-	{
-		EEffectTimerNo_None,
-
-		EEffectTimerNo_SPRecovery = 0,	// 特殊能力回復.
-		EEffectTimerNo_Attack,			// 攻撃力.
-		EEffectTimerNo_MoveSpeedUp,		// 移動速度.
-		EEffectTimerNo_Paralysis,		// 麻痺.
-
-		EEffectTimerNo_Max,
-	} typedef EEffectTimerNo;
-
-	// 使用エフェクト番号.
-	enum enEffectNo
-	{
-		enEffectNo_AttackOne,		// 攻撃1.
-		enEffectNo_AttackTwo,		// 攻撃2.
-		enEffectNo_AttackThree,		// 攻撃3.
-		enEffectNo_SP,				// 特殊能力.
-		enEffectNo_Avoidance,		// 回避.
-
-		enEffectNo_Max,
-	} typedef EEffectNo;
-
-	// 攻撃用データ.
-	struct stAttackData
-	{
-		EAnimNo		AnimNo;				// アニメーション番号.
-		double		Frame;				// 経過フレーム.
-		double		EnabledEndFrame;	// 有効終了フレーム.
-		double		EndFrame;			// 終了フレーム.
-
-		stAttackData()
-			: AnimNo			( EAnimNo::None )
-			, Frame				( 0.0 )
-			, EnabledEndFrame	( 1.0 )
-			, EndFrame			( 2.0 )
-		{}
-	} typedef SAttackData;
+	const float MOVE_SPEED_MUL_VALUE_ADD	= 0.035f;	// 掛け合わせる移動量の加算値.
+	const float MOVE_SPEED_MUL_VALUE_MAX	= 1.0f;		// 掛け合わせる移動量の最大値.
 
 public:
 	CPlayer();
@@ -143,6 +79,8 @@ private:
 	void AttackCollision( CActor* pActor );
 	// 攻撃ヒット時のカメラ動作.
 	void AttackHitCameraUpdate();
+	// 特殊能力時のカメラ動作.
+	void SPCameraUpdate();
 
 	// 特殊能力回復更新関数.
 	void SpecialAbilityUpdate();
@@ -156,8 +94,8 @@ private:
 	// 攻撃アニメーション.
 	void AttackAnimation();
 	// アニメーション設定.
-	void SetAnimation( const EAnimNo& animNo );
-	void SetAnimationBlend( const EAnimNo& animNo );
+	void SetAnimation( const player::EAnimNo& animNo );
+	void SetAnimationBlend( const player::EAnimNo& animNo );
 
 	// 攻撃アニメーションフレームリストの設定.
 	void SetAttackFrameList();
@@ -187,16 +125,20 @@ private:
 	bool WidgetSetting();
 
 private:
-	std::shared_ptr<CRotLookAtCenter>				m_pCamera;		// カメラクラス.
-	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;		// Widgetクラス.
+	std::shared_ptr<CRotLookAtCenter>				m_pCamera;				// カメラクラス.
+	std::shared_ptr<CCamera>						m_pSPCamera;			// 特殊能力カメラクラス.
+	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;				// Widgetクラス.
 	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
-	D3DXVECTOR3	m_OldPosition;		// 前回の座標.
-	EAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
-	EAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
-	int						m_AttackComboCount;			// 攻撃コンボカウント.
-	std::vector<double>		m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
-	std::queue<SAttackData>	m_AttackDataQueue;			// 攻撃データのキュー.
-	D3DXVECTOR3				m_AttackPosition;			// 攻撃用当たり判定座標.
+	D3DXVECTOR3		m_OldPosition;			// 前回の座標.
+	D3DXVECTOR3		m_GirlPosition;			// 女の子の座標.
+	player::EAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
+	player::EAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
+
+	int								m_AttackComboCount;			// 攻撃コンボカウント.
+	std::vector<double>				m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
+	std::queue<player::SAttackData>	m_AttackDataQueue;			// 攻撃データのキュー.
+	D3DXVECTOR3						m_AttackPosition;			// 攻撃用当たり判定座標.
+
 	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
@@ -210,8 +152,12 @@ private:
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
+	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
+
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.
+	D3DXVECTOR3		m_CameraLookPosition;		// カメラの視点座標.
+	float			m_CameraCount;
 
 	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
 	float			m_CameraShakeCount;			// カメラの揺れカウント.
@@ -219,7 +165,7 @@ private:
 	float			m_CameraShakeCountAdd;		// カメラの揺れカウント加算値.
 	std::vector<std::shared_ptr<CEffectTimer>>	m_pEffectTimers;	// 効果時間計測クラス.
 	
-	bool				m_IsAttackSE;				//攻撃SEを鳴らすか.
+	bool			m_IsAttackSE;				//攻撃SEを鳴らすか.
 
 };
 

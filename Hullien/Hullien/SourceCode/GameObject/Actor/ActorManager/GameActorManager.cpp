@@ -61,7 +61,8 @@ void CGameActorManager::Update()
 	m_pSkyDome->SetPosition( m_pPlayer->GetPosition() );
 
 	// プレイヤーの更新.
-	m_pPlayer->Update();
+	m_pPlayer->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
+	m_pPlayer->Update();						// 更新.
 	SetPositionList( m_pPlayer.get() );	// 座標リストの設定.
 
 	// バリアを使えるか.
