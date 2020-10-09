@@ -21,8 +21,8 @@ class CPlayer : public CCharacter
 
 	// 使用攻撃エフェクト名.
 	const char* ATTACK_ONE_EFFECT_NAME		= "slash_effect";
-	const char* ATTACK_TWO_EFFECT_NAME		= "barrier";
-	const char* ATTACK_THREE_EFFECT_NAME	= "uvtest";
+	const char* ATTACK_TWO_EFFECT_NAME		= "slash_effect";
+	const char* ATTACK_THREE_EFFECT_NAME	= "slash_effect";
 	// 特殊能力エフェクト名.
 	const char* SPECIAL_ABILITY_EFFECT_NAME	= "uvtest";
 	// 回避エフェクト名.
@@ -30,6 +30,13 @@ class CPlayer : public CCharacter
 
 	const float MOVE_SPEED_MUL_VALUE_ADD	= 0.035f;	// 掛け合わせる移動量の加算値.
 	const float MOVE_SPEED_MUL_VALUE_MAX	= 1.0f;		// 掛け合わせる移動量の最大値.
+
+	const float CAMERA_COUNT_MAX		= 100.0f;
+	const float CAMERA_BACK_DIRECTION_X	= 20.0f;
+	const float CAMERA_BACK_DIRECTION_Y	= 10.0f;
+	const float CAMERA_BACK_HEIGHT		= 8.0f;
+	const float CAMERA_BACK_LERP_VALUE	= 0.1f;
+	const float CAMERA_RETURN_COUNT_ADD	= 0.001f;
 
 public:
 	CPlayer();
@@ -163,13 +170,10 @@ private:
 	D3DXVECTOR3		m_CameraNextPosition;		// カメラの座標.
 	D3DXVECTOR3		m_CameraPosition;			// カメラの座標.
 	D3DXVECTOR3		m_CameraLookPosition;		// カメラの視点座標.
-	float			m_CameraCount;
-	float			m_CameraReturnCount;
-	float			m_CameraLerp;
-
-
-
-	int SPCameraStep = 0;
+	float			m_CameraCount;				// カメラのカウント.
+	float			m_CameraReturnCount;		// カメラの戻るカウント.
+	float			m_CameraLerp;				// カメラ移動の補間値.
+	int SPCameraStep = 0;	// 特殊能力のカメラ遷移番号.
 
 	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
 	float			m_CameraShakeCount;			// カメラの揺れカウント.

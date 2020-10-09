@@ -48,7 +48,7 @@ CPlayer::CPlayer()
 	, m_CameraHeight				( 0.0f )
 	, m_CameraPosition				( 0.0f, 0.0f, 0.0f )
 	, m_CameraLookPosition			( 0.0f, 0.0f, 0.0f )
-	, m_CameraCount					( 100.0f )
+	, m_CameraCount					( CAMERA_COUNT_MAX )
 	, m_CameraLerp					( 0.0f )
 	, m_IsAttackHitCamera			( false )
 	, m_CameraShakeCount			( 0.0f )
@@ -502,13 +502,12 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 		// カメラの座標を設定する.
 		m_CameraNextPosition = m_vPosition;
-		m_CameraNextPosition.x += sinf( targetRot ) * 20.0f;
-		m_CameraNextPosition.z += cosf( targetRot ) * 10.0f;
-		m_CameraNextPosition.y = 8.0f;
+		m_CameraNextPosition.x += sinf( targetRot ) * CAMERA_BACK_DIRECTION_X;
+		m_CameraNextPosition.z += cosf( targetRot ) * CAMERA_BACK_DIRECTION_Y;
+		m_CameraNextPosition.y = CAMERA_BACK_HEIGHT;
 		// プレイヤーの後ろに移動.
-		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, 0.1f );
-		float l = fabsf( D3DXVec3Length( &m_CameraPosition ) - D3DXVec3Length( &m_CameraNextPosition ) );
-		if( l < 0.01f ){
+		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, CAMERA_BACK_LERP_VALUE );
+		if( fabsf(D3DXVec3Length(&m_CameraPosition) - D3DXVec3Length(&m_CameraNextPosition)) < 0.01f ){
 			m_IsUsableSP = true;	// 特殊能力を使う.
 			SPCameraStep = 2;
 		}
@@ -525,7 +524,7 @@ void CPlayer::SPCameraUpdate()
 		m_CameraLookPosition.y = m_CameraLookPosition.y + static_cast<float>(sin(D3DX_PI * 2.0 / 20.0 * m_CameraCount) * (m_CameraCount * 0.01));
 		
 		if( m_CameraCount <= 0 ){
-			m_CameraCount = 100.0f;
+			m_CameraCount = CAMERA_COUNT_MAX;
 			m_CameraNextPosition = m_pCamera->GetPosition();
 			m_CameraReturnCount = 0.0f;
 			SPCameraStep = 3;
@@ -537,7 +536,7 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 		// カメラをもとの位置に戻す.
 		//-------------------------------------.
-		m_CameraReturnCount += 0.001f;
+		m_CameraReturnCount += CAMERA_RETURN_COUNT_ADD;
 		if( m_CameraReturnCount >= 0.1f ) m_CameraReturnCount = 1.0f;
 
 		m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
