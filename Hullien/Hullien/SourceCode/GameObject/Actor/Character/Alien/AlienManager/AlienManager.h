@@ -27,6 +27,8 @@ public:
 	void Update( std::function<void(CActor*)> updateProc );
 	// 描画関数.
 	void Render();
+	// エフェクト描画関数.
+	void EffectRender();
 	// スプライト描画関数.
 	void SpriteRender();
 	// マザーシップの座標を設定.

@@ -127,8 +127,12 @@ void CGameActorManager::Render()
 	m_pAlienManager->Render();	// 宇宙人達の描画.
 	m_pMotherShipUFO->Render();	// マザーシップの描画.
 	m_pItemManager->Render();	// アイテムの描画.
-	m_pBarrier->Render();		// バリアの描画.
-
+//	m_pBarrier->Render();		// バリアの描画.
+	
+	// エフェクトの描画.
+	m_pPlayer->EffectRender();			// プレイヤーのエフェクト描画.
+	m_pAlienManager->EffectRender();	// 宇宙人のエフェクト描画.
+	m_pBarrier->EffectRender();			// バリアエフェクト描画.
 	// 仮　後で移動.
 	m_pAlienManager->SpriteRender();	// スプライトの描画.
 }

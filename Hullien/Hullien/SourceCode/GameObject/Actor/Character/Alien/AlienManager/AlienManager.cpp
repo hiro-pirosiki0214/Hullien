@@ -93,6 +93,11 @@ void CAlienManager::Render()
 	for( auto& a : m_AilenList ) a->Render();
 	// スポーンUFOの描画.
 	for( auto& s : m_SpawnUFOList ) s.Render();
+}
+
+// エフェクト描画関数.
+void CAlienManager::EffectRender()
+{
 	// 爆発の描画.
 	for( auto& e : m_ExplosionList ) e.Render();
 }

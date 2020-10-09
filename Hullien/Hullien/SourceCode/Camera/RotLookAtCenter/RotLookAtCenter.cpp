@@ -33,7 +33,7 @@ void CRotLookAtCenter::RotationLookAtObject( const D3DXVECTOR3& vLookPos, const 
 	pos.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
 	pos.y = m_vPosition.y;
 	pos.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
-	// lerp減衰.
+	// lerp減衰. ( out, 現在の座標, 本来到達している座標, 補正値 ).
 	D3DXVec3Lerp( &m_vPosition, &m_vPosition, &pos, attenRate );
 }
 
@@ -63,6 +63,17 @@ void CRotLookAtCenter::DegreeVerticalMove( const float& movePower )
 	CVector::OverflowDegree( m_vDegree.y, 
 		m_VerticalMax, m_VerticalMax, 
 		m_VerticalMin, m_VerticalMin );
+}
+
+// カメラ座標取得関数.
+D3DXVECTOR3 CRotLookAtCenter::GetPosition() const
+{
+	D3DXVECTOR3 pos;	// 本来の座標.
+	// カメラ位置を算出.
+	pos.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
+	pos.y = m_vPosition.y;
+	pos.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
+	return pos;
 }
 
 //-------------------------------.

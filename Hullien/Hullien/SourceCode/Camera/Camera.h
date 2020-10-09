@@ -31,7 +31,7 @@ public: //------- 関数 -------.
 	// プロジェクション行列取得関数.
 	D3DXMATRIX GetProjMatrix() const { return m_ProjMatrix; }
 	// カメラ座標取得関数.
-	D3DXVECTOR3 GetPosition()		const { return m_vPosition; }
+	virtual D3DXVECTOR3 GetPosition()		const { return m_vPosition; }
 	// カメラ注視座標取得関数.
 	D3DXVECTOR3 GetLookPosition()	const { return m_vLookPosition; }
 	// カメラ座標設定関数.

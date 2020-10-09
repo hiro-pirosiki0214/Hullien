@@ -66,9 +66,9 @@ void CSpawnUFO::Render()
 	if( IsDisplayOut() == true ) return;
 	if( m_pStaticMesh == nullptr ) return;
 	if( m_IsDisp == false ) return;
-
+	m_vPosition.y = 0.0f;
 	m_pStaticMesh->SetPosition( m_vPosition );
-	m_pStaticMesh->SetScale( m_vSclae);
+	m_pStaticMesh->SetScale( m_vSclae );
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );

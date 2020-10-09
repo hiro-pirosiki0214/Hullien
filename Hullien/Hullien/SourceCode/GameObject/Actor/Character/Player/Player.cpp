@@ -37,7 +37,8 @@ CPlayer::CPlayer()
 	, m_Parameter					()
 	, m_LifePoint					( 0.0f )
 	, m_SpecialAbility				( 0.0f )
-	, m_HasUsableSP					( false )
+	, m_IsYButtonPressed			( false )
+	, m_IsUsableSP					( false )
 	, m_SpecialAbilityValue			( 0.0f )
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
@@ -45,8 +46,10 @@ CPlayer::CPlayer()
 	, m_MoveSpeedMulValue			( 0.0f )
 	, m_CameraDefaultHeight			( 0.0f )
 	, m_CameraHeight				( 0.0f )
+	, m_CameraPosition				( 0.0f, 0.0f, 0.0f )
 	, m_CameraLookPosition			( 0.0f, 0.0f, 0.0f )
-	, m_CameraCount					( 50.0f )
+	, m_CameraCount					( 100.0f )
+	, m_CameraLerp					( 0.0f )
 	, m_IsAttackHitCamera			( false )
 	, m_CameraShakeCount			( 0.0f )
 	, m_CameraShakeTieme			( 10.0f )
@@ -86,7 +89,7 @@ bool CPlayer::Init()
 	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
 	m_CameraHeight = m_CameraDefaultHeight = m_Parameter.CameraHeight;
 	m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
-
+	m_CameraLerp = m_Parameter.CameraLerpValue;
 	return true;
 }
 
@@ -103,21 +106,22 @@ void CPlayer::Update()
 		Move();					// 移動.
 		AvoidMove();			// 回避動作.
 	} else {
-		ParalysisUpdate();	// 麻痺時の更新.
+		ParalysisUpdate();		// 麻痺時の更新.
 	}
+	CameraController();			// カメラ操作.
 	AttackHitCameraUpdate();	// 攻撃ヒット時のカメラ動作.
 	SPCameraUpdate();			// 特殊能力時のカメラ動作.
 	SpecialAbilityUpdate();		// 特殊能力回復更新.
 	AttackUpUpdate();			// 攻撃力UP更新.
 	MoveSpeedUpUpdate();		// 移動速度UP更新.
 
-	CameraController();	// カメラ操作.
+
 	// プレイヤーを注視して回転.
-	m_pCamera->RotationLookAtObject( m_CameraLookPosition, m_Parameter.CameraLerpValue );
+	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
 	m_pCamera->SetHeight( m_CameraHeight );	// 高さの設定.
-
-	if( m_HasUsableSP == false ){
+	if( m_IsYButtonPressed == false ){
+		m_CameraLerp = m_Parameter.CameraLerpValue;
 		// カメラをマネージャーに設定.
 		CCameraManager::SetCamera( m_pCamera );
 	} else {
@@ -136,7 +140,6 @@ void CPlayer::Update()
 void CPlayer::Render()
 {
 	MeshRender();	// メッシュの描画.
-	EffectRender();	// エフェクトの描画.
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -191,9 +194,9 @@ void CPlayer::SpriteRender()
 // 特殊能力を使っているか.
 bool CPlayer::IsSpecialAbility()
 {
-	if( m_HasUsableSP == false ) return false;
+	if( m_IsUsableSP  == false ) return false;
 	// 特殊能力が使えるなら.
-//	m_HasUsableSP = false;	// 初期化して.
+	m_IsUsableSP = false;	// 初期化して.
 	return true;			// trueを返す.
 }
 
@@ -219,6 +222,7 @@ void CPlayer::Controller()
 // カメラ操作.
 void CPlayer::CameraController()
 {
+	if( m_IsYButtonPressed == true ) return;
 	// カメラの回転移動.
 	// 横方向.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
@@ -226,8 +230,10 @@ void CPlayer::CameraController()
 	if( CXInput::RThumbX_Axis() <= IDLE_THUMB_MIN ) 
 		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// 左方向.
 
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000 && GetAsyncKeyState(VK_RIGHT) & 0x8000) m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);
-	if (GetAsyncKeyState(VK_SHIFT)  & 0x8000 && GetAsyncKeyState(VK_LEFT) & 0x8000)	m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);
+	if (GetAsyncKeyState(VK_SHIFT) & 0x8000 && GetAsyncKeyState(VK_RIGHT) & 0x8000) 
+		m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);
+	if (GetAsyncKeyState(VK_SHIFT)  & 0x8000 && GetAsyncKeyState(VK_LEFT) & 0x8000)	
+		m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);
 }
 
 // 攻撃操作関数.
@@ -235,6 +241,8 @@ void CPlayer::AttackController()
 {
 	// 回避中なら終了.
 	if( m_IsDuringAvoid == true ) return;
+	// Yボタン：特殊能力を使っていたら.
+	if( m_IsYButtonPressed == true ) return;
 	// Xボタンを押した瞬間じゃなければ終了.
 	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
 	// 攻撃カウントが最大以上なら終了.
@@ -251,12 +259,20 @@ void CPlayer::AttackController()
 // 特殊能力操作関数.
 void CPlayer::SPController()
 {
+	// 回避中なら終了.
+	if( m_IsDuringAvoid == true ) return;
+	// 攻撃中は移動しない.
+	if( m_AttackComboCount > 0 ) return;
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
 	// Yボタンが押された瞬間じゃなければ終了.
 	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
 
+	m_CameraPosition = m_pCamera->GetPosition();
 	m_SpecialAbility = 0.0f;
-	m_HasUsableSP = true;
+	m_IsYButtonPressed = true;
+
+	if( m_NowAnimNo == player::EAnimNo_Wait )		return;	// 既に待機モーションなら終了.
+	SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
 }
 
 // 回避操作関数.
@@ -264,6 +280,8 @@ void CPlayer::AvoidController()
 {
 	// 回避中なら終了.
 	if( m_IsDuringAvoid == true ) return;
+	// Yボタン：特殊能力を使っていたら.
+	if( m_IsYButtonPressed == true ) return;
 
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
@@ -287,6 +305,8 @@ void CPlayer::Move()
 	if( m_IsDuringAvoid == true ) return;
 	// 攻撃中は移動しない.
 	if( m_AttackComboCount > 0 ) return;
+	// Yボタン：特殊能力を使っていたら.
+	if( m_IsYButtonPressed == true ) return;
 
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
@@ -432,31 +452,113 @@ void CPlayer::AttackHitCameraUpdate()
 void CPlayer::SPCameraUpdate()
 {
 	// 特殊能力が使えないなら終了.
-	if( m_HasUsableSP == false ){
+	if( m_IsYButtonPressed == false ){
 		m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 		return;
 	}
-	m_CameraLookPosition = m_GirlPosition;
-	// カメラの揺れ.
-	m_CameraLookPosition.x = m_CameraLookPosition.x + static_cast<float>(sin(D3DX_PI * 2.0 / 10.0 * m_CameraCount) * (m_CameraCount * 0.01));
-	m_CameraLookPosition.y = m_CameraLookPosition.y + static_cast<float>(sin(D3DX_PI * 2.0 / 20.0 * m_CameraCount) * (m_CameraCount * 0.01));
-	if( m_CameraCount > 0 ){
-		m_CameraCount--;
-	} else {
-		m_HasUsableSP = false;
-		m_CameraCount = 50.0f;
+
+	m_CameraLookPosition = m_GirlPosition;		// 女の子を視点にする.
+	D3DXVECTOR3 vec = m_vPosition - m_CameraLookPosition;	// 現在の座標と女の子の座標とのベクトルを取得する.
+	float targetRot = atan2f( vec.x, vec.z );	// 回転値を設定する.
+
+	switch( SPCameraStep )
+	{
+	case 0:
+	{
+		//-------------------------------------.
+		// プレイヤーを女の子のほうへ向ける.
+		//-------------------------------------.
+		// 自身のベクトルを用意.
+		D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
+		myVector.x = sinf( m_vRotation.y );
+		myVector.z = cosf( m_vRotation.y );
+		// 目的のベクトルを用意.
+		D3DXVECTOR3 targetVec = { 0.0f, 0.0f, 0.0f };
+		targetVec.x = sinf( targetRot );
+		targetVec.z = cosf( targetRot );
+		// ベクトルの長さを求める.
+		float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
+		float targetLenght = sqrtf(targetVec.x*targetVec.x + targetVec.z*targetVec.z);
+
+		// 内積を求める.
+		float dot = myVector.x*targetVec.x + myVector.z*targetVec.z;
+		dot = acosf( dot / ( myLenght * targetLenght ));
+		const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(20.0));
+
+		if( ( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ) ||	// 内積が許容範囲なら.
+			( std::isfinite( dot ) ) == false ){						// 内積の値が計算できない値なら.
+		} else {
+			const float ROTATIONAL_SPEED = 0.3f;	// 回転速度.
+			// 目的のベクトルと、自分のベクトルの外積を求める.
+			float cross = myVector.x*targetVec.z - myVector.z*targetVec.x;
+			// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
+			m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
+		}
 	}
+	case 1:
+	{
+		//-------------------------------------.
+		// カメラをプレイヤーの後ろに移動させる.
+		//-------------------------------------.
+		// カメラの座標を設定する.
+		m_CameraNextPosition = m_vPosition;
+		m_CameraNextPosition.x += sinf( targetRot ) * 20.0f;
+		m_CameraNextPosition.z += cosf( targetRot ) * 10.0f;
+		m_CameraNextPosition.y = 8.0f;
+		// プレイヤーの後ろに移動.
+		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, 0.1f );
+		float l = fabsf( D3DXVec3Length( &m_CameraPosition ) - D3DXVec3Length( &m_CameraNextPosition ) );
+		if( l < 0.01f ){
+			m_IsUsableSP = true;	// 特殊能力を使う.
+			SPCameraStep = 2;
+		}
+	}
+		break;
+	case 2:
+	{
+		//-------------------------------------.
+		// カメラを揺らす.
+		//-------------------------------------.
+		m_CameraCount--;	// カウントの減算.
+		// カメラの揺れ.
+		m_CameraLookPosition.x = m_CameraLookPosition.x + static_cast<float>(sin(D3DX_PI * 2.0 / 10.0 * m_CameraCount) * (m_CameraCount * 0.01));
+		m_CameraLookPosition.y = m_CameraLookPosition.y + static_cast<float>(sin(D3DX_PI * 2.0 / 20.0 * m_CameraCount) * (m_CameraCount * 0.01));
+		
+		if( m_CameraCount <= 0 ){
+			m_CameraCount = 100.0f;
+			m_CameraNextPosition = m_pCamera->GetPosition();
+			m_CameraReturnCount = 0.0f;
+			SPCameraStep = 3;
+		}
+	}
+		break;
+	case 3:
+	{
+		//-------------------------------------.
+		// カメラをもとの位置に戻す.
+		//-------------------------------------.
+		m_CameraReturnCount += 0.001f;
+		if( m_CameraReturnCount >= 0.1f ) m_CameraReturnCount = 1.0f;
+
+		m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
+		// プレイヤーの後ろに移動.
+		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, m_CameraReturnCount );
+		if( m_CameraReturnCount >= 0.5f ){
+			m_pCamera->SetLookPosition( m_CameraLookPosition );
+			m_pCamera->SetPosition( m_CameraPosition );
+			SPCameraStep		= 0;
+			m_IsYButtonPressed	= false;
+			m_CameraReturnCount = 0.0f;
+			m_CameraLerp		= 0.0f;
+		}
+	}
+		break;
+	default:
+		break;
+	}
+	// 特殊能力カメラ用の座標と視点座標を設定.
 	m_pSPCamera->SetLookPosition( m_CameraLookPosition );
-	D3DXVECTOR3 pos = m_vPosition;
-
-	D3DXVECTOR3 vec = m_vPosition - m_CameraLookPosition;
-	float targetRot = atan2f( vec.x, vec.z );
-	pos.x += sinf( targetRot ) * 20.0f;
-	pos.z += cosf( targetRot ) * 10.0f;
-	pos.y = 5.0f;
-
-	m_vRotation.y = targetRot;
-	m_pSPCamera->SetPosition( pos );
+	m_pSPCamera->SetPosition( m_CameraPosition );
 }
 
 // 特殊能力回復更新関数.

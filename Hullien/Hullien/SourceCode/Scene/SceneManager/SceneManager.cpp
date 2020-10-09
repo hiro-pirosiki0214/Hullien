@@ -5,6 +5,7 @@
 #include "..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\XAudio2\SoundManager.h"
+#include "..\..\Camera\CameraManager\CameraManager.h"
 
 CSceneManager::CSceneManager()
 	: m_hWnd		( nullptr )
@@ -42,6 +43,7 @@ void CSceneManager::Update()
 		// ƒQ[ƒ€I—¹‚µ‚Ä‚È‚¯‚ê‚Î•`‰æ‚·‚é.
 		if( m_IsGameEnd == false ){
 			if( m_IsLoadEnd == false ) return;
+			CCameraManager::InitViewProj();
 			m_pScene->Render();	// ƒV[ƒ“‚Ì•`‰æ.
 			if( m_IsLoadEnd == false ) return;
 			CEditRenderer::Render();

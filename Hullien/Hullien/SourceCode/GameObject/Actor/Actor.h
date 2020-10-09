@@ -12,6 +12,8 @@ public:
 	CActor();
 	virtual ~CActor();
 
+	// エフェクトの描画.
+	virtual void EffectRender(){}
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) = 0;
 

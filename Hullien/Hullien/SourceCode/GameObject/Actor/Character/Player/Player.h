@@ -20,8 +20,8 @@ class CPlayer : public CCharacter
 	const char* MODEL_TEMP_NAME		= "kaito";		// 仮モデル名.
 
 	// 使用攻撃エフェクト名.
-	const char* ATTACK_ONE_EFFECT_NAME		= "uvtest";
-	const char* ATTACK_TWO_EFFECT_NAME		= "uvtest";
+	const char* ATTACK_ONE_EFFECT_NAME		= "slash_effect";
+	const char* ATTACK_TWO_EFFECT_NAME		= "barrier";
 	const char* ATTACK_THREE_EFFECT_NAME	= "uvtest";
 	// 特殊能力エフェクト名.
 	const char* SPECIAL_ABILITY_EFFECT_NAME	= "uvtest";
@@ -41,6 +41,8 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override; 
+	// エフェクト描画関数.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// 相手座標の設定関数.
@@ -72,8 +74,7 @@ private:
 	// 回避動作関数.
 	void AvoidMove();
 
-	// エフェクト描画関数.
-	void EffectRender();
+	
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
@@ -146,7 +147,8 @@ private:
 	SPlayerParam	m_Parameter;			// パラメーター.
 	float			m_LifePoint;			// 体力.
 	float			m_SpecialAbility;		// 特殊能力.
-	bool			m_HasUsableSP;			// 特殊能力を使えるか.
+	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
+	bool			m_IsUsableSP;			// 特殊能力を使ったか.
 
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
@@ -156,8 +158,18 @@ private:
 
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.
+
+
+	D3DXVECTOR3		m_CameraNextPosition;		// カメラの座標.
+	D3DXVECTOR3		m_CameraPosition;			// カメラの座標.
 	D3DXVECTOR3		m_CameraLookPosition;		// カメラの視点座標.
 	float			m_CameraCount;
+	float			m_CameraReturnCount;
+	float			m_CameraLerp;
+
+
+
+	int SPCameraStep = 0;
 
 	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
 	float			m_CameraShakeCount;			// カメラの揺れカウント.

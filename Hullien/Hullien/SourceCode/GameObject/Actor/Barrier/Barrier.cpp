@@ -81,9 +81,6 @@ void CBarrier::Render()
 	m_StaticMesh->Render();
 	m_StaticMesh->SetBlend( false );
 
-	// エフェクトを描画.
-	m_pEffect->Render();
-
 #if _DEBUG
 	m_pCollManager->DebugRender();
 	m_ResizeCollTime++;
@@ -97,6 +94,13 @@ void CBarrier::Render()
 		&m_CollSphereRadius,
 		{ 0.0f, 0.0f, 0.0f },
 		m_CollSphereRadius );
+}
+
+// エフェクト描画関数.
+void CBarrier::EffectRender()
+{
+	// エフェクトを描画.
+	m_pEffect->Render();
 }
 
 // 当たり判定関数.

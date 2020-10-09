@@ -42,13 +42,14 @@ void CAlienA::Render()
 	if( IsDisplayOut() == true ) return;
 #ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
-
+	
 	m_pSkinMesh->SetPosition( m_vPosition );
 	D3DXVECTOR3 rot = m_vRotation;
 	rot.y += static_cast<float>(D3DX_PI);
 	m_pSkinMesh->SetRotation( rot );
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
+	m_pSkinMesh->SetAnimSpeed( 0.01 );
 	AlphaBlendSetting();
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();

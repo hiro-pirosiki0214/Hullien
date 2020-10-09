@@ -71,8 +71,7 @@ HRESULT CEffect::Create( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext1
 	//描画用ｲﾝｽﾀﾝｽの生成.
 	m_pRenderer
 		= ::EffekseerRendererDX11::Renderer::Create(
-			pDevice11, pContext11, RENDER_SPRITE_MAX);
-
+			pDevice11, pContext11, RENDER_SPRITE_MAX );
 	//ｴﾌｪｸﾄ管理用ｲﾝｽﾀﾝｽの生成.
 	m_pManager
 		= ::Effekseer::Manager::Create(EFFECT_INSTANCE_MAX);
@@ -82,11 +81,13 @@ HRESULT CEffect::Create( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext1
 	m_pManager->SetRibbonRenderer(m_pRenderer->CreateRibbonRenderer());
 	m_pManager->SetRingRenderer(m_pRenderer->CreateRingRenderer());
 	m_pManager->SetModelRenderer(m_pRenderer->CreateModelRenderer());
+	m_pManager->SetTrackRenderer(m_pRenderer->CreateTrackRenderer());
 
 	//描画用ｲﾝｽﾀﾝｽからﾃｸｽﾁｬの読み込み機能を設定.
 	//独自拡張可能、現在はﾌｧｲﾙから読み込んでいる.
 	m_pManager->SetTextureLoader(m_pRenderer->CreateTextureLoader());
 	m_pManager->SetModelLoader(m_pRenderer->CreateModelLoader());
+	m_pManager->SetMaterialLoader(m_pRenderer->CreateMaterialLoader());
 
 #ifdef ENABLE_XAUDIO2
 	//音の再生用ｲﾝｽﾀﾝｽの生成.
