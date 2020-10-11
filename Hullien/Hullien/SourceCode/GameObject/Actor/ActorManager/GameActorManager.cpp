@@ -8,6 +8,7 @@
 #include "..\..\SkyDome\SkyDome.h"
 #include "..\..\MotherShipUFO\MotherShipUFO.h"
 #include "..\..\Widget\SceneWidget\GameWidget\Warning\Warning.h"
+#include "..\..\Arm\Arm.h"
 
 CGameActorManager::CGameActorManager()
 	: m_pSkyDome		( nullptr )
@@ -18,6 +19,7 @@ CGameActorManager::CGameActorManager()
 	, m_pAlienManager	( nullptr )
 	, m_pItemManager	( nullptr )
 	, m_pBarrier		( nullptr )
+	, m_pArm			( nullptr )
 	, m_ObjPositionList	()
 	, m_ObjPosListCount	( 0 )
 {
@@ -29,6 +31,7 @@ CGameActorManager::CGameActorManager()
 	m_pAlienManager		= std::make_shared<CAlienManager>();
 	m_pItemManager		= std::make_shared<CItemManager>();
 	m_pBarrier			= std::make_shared<CBarrier>();
+	m_pArm = std::make_shared<CArm>();
 }
 
 CGameActorManager::~CGameActorManager()
@@ -45,7 +48,7 @@ bool CGameActorManager::Init()
 	if( m_pMotherShipUFO->Init()	== false ) return false;	// マザーシップの初期化.
 	if( m_pAlienManager->Init()		== false ) return false;	// 宇宙人管理の初期化.
 	if( m_pItemManager->Init()		== false ) return false;	// アイテム管理の初期化.
-
+	if( m_pArm->Init() == false ) return false; 
 	// マザーシップの座標取取得.
 	m_pAlienManager->SetMotherShipUFOPos( m_pMotherShipUFO->GetPosition() );
 
@@ -115,6 +118,7 @@ void CGameActorManager::Update()
 			SetPositionList( pActor );				// 座標リストの設定.
 			pActor->Collision( m_pPlayer.get() );	// アイテムの当たり判定.
 		} );
+	m_pArm->Update();
 }
 
 // 描画関数.
@@ -128,7 +132,8 @@ void CGameActorManager::Render()
 	m_pMotherShipUFO->Render();	// マザーシップの描画.
 	m_pItemManager->Render();	// アイテムの描画.
 //	m_pBarrier->Render();		// バリアの描画.
-	
+	m_pArm->Render();
+
 	// エフェクトの描画.
 	m_pPlayer->EffectRender();			// プレイヤーのエフェクト描画.
 	m_pAlienManager->EffectRender();	// 宇宙人のエフェクト描画.

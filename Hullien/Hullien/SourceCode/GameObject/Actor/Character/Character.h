@@ -3,12 +3,16 @@
 
 #include "..\Actor.h"
 
-//#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
+#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
 
 class CCharacter : public CActor
 {
 protected:
+#ifndef IS_TEMP_MODEL_RENDER
 	const float INIT_POSITION_ADJ_HEIGHT = 0.0f;	// 調整用座標の高さ.
+#else
+	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;	// 調整用座標の高さ.
+#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 
 public:
 	// キャラクターパラメータ.

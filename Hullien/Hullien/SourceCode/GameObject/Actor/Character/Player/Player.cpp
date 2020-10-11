@@ -432,9 +432,9 @@ void CPlayer::AttackCollision( CActor* pActor )
 //	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
 //	m_AttackPosition.y = 5.0f;
 //	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
-
+#ifndef IS_TEMP_MODEL_RENDER
 	m_pSkinMesh->GetPosFromBone( "kaito_rifa_2_L_ude_1", &m_AttackPosition );
-
+#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	// 球体の当たり判定.
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
@@ -625,20 +625,24 @@ void CPlayer::AttackAnimation()
 // アニメーション設定.
 void CPlayer::SetAnimation( const player::EAnimNo& animNo )
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_NowAnimNo == m_OldAnimNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo );
+#endif	// #ifndef IS_TEMP_MODEL_RENDER
 }
 
 void CPlayer::SetAnimationBlend( const player::EAnimNo& animNo )
 {
+#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_NowAnimNo == m_OldAnimNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimBlend( m_NowAnimNo, m_OldAnimNo );
+#endif	// #ifndef IS_TEMP_MODEL_RENDER
 }
 
 // 攻撃アニメーションフレームの設定.
@@ -666,7 +670,7 @@ bool CPlayer::IsPushAttack()
 	switch( m_AttackComboCount )
 	{
 	case player::EAttackNo_One:	// 攻撃1.
-#ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
+#ifndef IS_TEMP_MODEL_RENDER
 		tmpAttackData.AnimNo = player::EAnimNo_Attack1;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_One-1]-0.5;
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack1 )-0.5;
@@ -676,7 +680,7 @@ bool CPlayer::IsPushAttack()
 		
 		break;
 	case player::EAttackNo_Two:	// 攻撃2.
-#ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
+#ifndef IS_TEMP_MODEL_RENDER
 		tmpAttackData.AnimNo = player::EAnimNo_Attack2;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_Two-1]-0.5;
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack2 )-0.5;
@@ -684,7 +688,7 @@ bool CPlayer::IsPushAttack()
 
 		break;
 	case player::EAttackNo_Three:// 攻撃3.
-#ifndef INTERMEDIATE_ANNOUCEMENT_ATTACK
+#ifndef IS_TEMP_MODEL_RENDER
 		tmpAttackData.AnimNo = player::EAnimNo_Attack3;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_Three-1]-0.5;
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack3 )-0.5;
@@ -753,7 +757,6 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->SetTime( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->Set();
 	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
-
 }
 
 // 当たり判定の設定.

@@ -10,8 +10,6 @@ class CCharacterWidget;
 class CEffectManager;
 class CEffectTimer;
 
-//#define INTERMEDIATE_ANNOUCEMENT_ATTACK // 中間発表用の攻撃.
-
 class CPlayer : public CCharacter
 {
 	// パラメータのファイルパス.
