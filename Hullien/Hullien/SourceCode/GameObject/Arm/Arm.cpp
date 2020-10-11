@@ -48,8 +48,9 @@ void CArm::Render()
 	m_vRotation.y += 0.001f;
 
 	D3DXVECTOR3 pos = m_vPosition;
-	pos.x -= sinf( m_vRotation.y ) * 2.0f;
-	pos.z -= cosf( m_vRotation.y ) * 2.0f;
+	const float LENGHT = 2.0f;
+	pos.x -= sinf( m_vRotation.y ) * LENGHT;
+	pos.z -= cosf( m_vRotation.y ) * LENGHT;
 
 	m_pSkinMesh->SetPosition( pos );
 	m_pSkinMesh->SetRotation( m_vRotation );
