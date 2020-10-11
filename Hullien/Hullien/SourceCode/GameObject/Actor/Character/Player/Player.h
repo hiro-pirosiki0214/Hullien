@@ -28,15 +28,22 @@ class CPlayer : public CCharacter
 	// 回避エフェクト名.
 	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
 
+	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(7.0));
+	const float ROTATIONAL_SPEED = 0.2f;	// 回転速度.
+
 	const float MOVE_SPEED_MUL_VALUE_ADD	= 0.035f;	// 掛け合わせる移動量の加算値.
 	const float MOVE_SPEED_MUL_VALUE_MAX	= 1.0f;		// 掛け合わせる移動量の最大値.
 
-	const float CAMERA_COUNT_MAX		= 100.0f;
-	const float CAMERA_BACK_DIRECTION_X	= 20.0f;
-	const float CAMERA_BACK_DIRECTION_Y	= 10.0f;
-	const float CAMERA_BACK_HEIGHT		= 8.0f;
-	const float CAMERA_BACK_LERP_VALUE	= 0.1f;
-	const float CAMERA_RETURN_COUNT_ADD	= 0.001f;
+	const float TWO = 2.0f;
+	const float CAMERA_COUNT_MAX			= 100.0f;
+	const float CAMERA_BACK_DIRECTION_X		= 20.0f;
+	const float CAMERA_BACK_DIRECTION_Y		= 10.0f;
+	const float CAMERA_BACK_HEIGHT			= 8.0f;
+	const float CAMERA_BACK_LERP_VALUE		= 0.1f;
+	const float CAMERA_FREQUENCY_LOOKPOS	= 15.0f;	// カメラ注視位置の周波数.
+	const float CAMERA_AMPLITUDE_LOOKPOS	= 0.01f;	// カメラ注視位置の振幅.
+	const float CAMERA_RETURN_COUNT_ADD		= 0.001f;
+	const float CAMERA_RETURN_COUNT_MAX		= 0.1f;
 
 public:
 	CPlayer();
@@ -81,7 +88,8 @@ private:
 	// 回避動作関数.
 	void AvoidMove();
 
-	
+	// 目的の座標へ回転.
+	bool TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian );
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
@@ -173,11 +181,11 @@ private:
 	float			m_CameraCount;				// カメラのカウント.
 	float			m_CameraReturnCount;		// カメラの戻るカウント.
 	float			m_CameraLerp;				// カメラ移動の補間値.
-	int SPCameraStep = 0;	// 特殊能力のカメラ遷移番号.
+	int				m_NowSPCameraStete;			// 特殊能力のカメラ状態.
 
 	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
 	float			m_CameraShakeCount;			// カメラの揺れカウント.
-	float			m_CameraShakeTieme;			// カメラの揺れ時間.
+	float			m_CameraShakeTime;			// カメラの揺れ時間.
 	float			m_CameraShakeCountAdd;		// カメラの揺れカウント加算値.
 	std::vector<std::shared_ptr<CEffectTimer>>	m_pEffectTimers;	// 効果時間計測クラス.
 	

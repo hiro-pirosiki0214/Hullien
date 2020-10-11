@@ -50,9 +50,10 @@ CPlayer::CPlayer()
 	, m_CameraLookPosition			( 0.0f, 0.0f, 0.0f )
 	, m_CameraCount					( CAMERA_COUNT_MAX )
 	, m_CameraLerp					( 0.0f )
+	, m_NowSPCameraStete			( player::ESPCameraState_Start )
 	, m_IsAttackHitCamera			( false )
 	, m_CameraShakeCount			( 0.0f )
-	, m_CameraShakeTieme			( 10.0f )
+	, m_CameraShakeTime				( 10.0f )
 	, m_CameraShakeCountAdd			( 1.0f )
 	, m_pEffectTimers				( player::EEffectTimerNo_Max )
 	, m_IsAttackSE					( false )
@@ -330,23 +331,7 @@ void CPlayer::Move()
 	targetVec.x = sinf( targetRot );
 	targetVec.z = cosf( targetRot );
 
-	// 自身のベクトルを用意.
-	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
-	myVector.x = sinf( m_vRotation.y );
-	myVector.z = cosf( m_vRotation.y );
-
-	// ベクトルの長さを求める.
-	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
-	float targetLenght = sqrtf(targetVec.x*targetVec.x + targetVec.z*targetVec.z);
-
-	// 内積を求める.
-	float dot = myVector.x*targetVec.x + myVector.z*targetVec.z;
-	dot = acosf( dot / ( myLenght * targetLenght ));
-	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(20.0));
-	
-	if( ( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ) ||	// 内積が許容範囲なら.
-		( std::isfinite( dot ) ) == false ){						// 内積の値が計算できない値なら.
-
+	if( TargetRotation( targetVec, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == true ){
 		// ターゲットの回転を取得.
 		m_vRotation.y = targetRot;
 
@@ -360,12 +345,6 @@ void CPlayer::Move()
 		if( m_NowAnimNo == player::EAnimNo_Attack3 )	return;	//	アニメーションを設定せずに終了.
 		if( m_NowAnimNo == player::EAnimNo_Walk )		return;	// 既に移動モーションなら終了.
 		SetAnimationBlend( player::EAnimNo_Walk );
-	} else {
-		const float ROTATIONAL_SPEED = 0.3f;	// 回転速度.
-		// 目的のベクトルと、自分のベクトルの外積を求める.
-		float cross = myVector.x*targetVec.z - myVector.z*targetVec.x;
-		// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
-		m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
 	}
 }
 
@@ -394,6 +373,35 @@ void CPlayer::AvoidMove()
 	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
 	m_vRotation.z = 0.0f;		// 回転　アニメーション設定後消す.
+}
+
+// 目的の座標へ回転.
+bool CPlayer::TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian )
+{
+	// 自身のベクトルを用意.
+	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
+	myVector.x = sinf( m_vRotation.y );
+	myVector.z = cosf( m_vRotation.y );
+
+	// ベクトルの長さを求める.
+	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
+	float targetLenght = sqrtf(targetVec.x*targetVec.x + targetVec.z*targetVec.z);
+
+	// 内積を求める.
+	float dot = myVector.x*targetVec.x + myVector.z*targetVec.z;
+	dot = acosf( ( myLenght * targetLenght ) * dot );
+
+	if( ( -ToleranceRadian < dot && dot < ToleranceRadian ) ||	// 内積が許容範囲なら.
+		( std::isfinite( dot ) ) == false ){					// 内積の値が計算できない値なら.
+		return true;	// 回転終了.
+	} else {
+		// 目的のベクトルと、自分のベクトルの外積を求める.
+		float cross = myVector.x*targetVec.z - myVector.z*targetVec.x;
+		// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
+		m_vRotation.y += cross < 0.0f ? rotSpeed : -rotSpeed;
+
+		return false;	// 回転中.
+	}
 }
 
 // エフェクト描画関数.
@@ -442,7 +450,7 @@ void CPlayer::AttackHitCameraUpdate()
 	if( m_IsAttackHitCamera == false ) return;
 	m_CameraShakeCount += m_CameraShakeCountAdd;
 	m_CameraHeight = m_CameraDefaultHeight + sinf( m_CameraShakeCount ) * (m_AttackComboCount*0.1f);
-	if( m_CameraShakeCount <= m_CameraShakeTieme ) return;
+	if( m_CameraShakeCount <= m_CameraShakeTime ) return;
 	m_CameraShakeCount = 0.0f;
 	m_CameraHeight = m_CameraDefaultHeight;
 	m_IsAttackHitCamera = false;
@@ -461,41 +469,27 @@ void CPlayer::SPCameraUpdate()
 	D3DXVECTOR3 vec = m_vPosition - m_CameraLookPosition;	// 現在の座標と女の子の座標とのベクトルを取得する.
 	float targetRot = atan2f( vec.x, vec.z );	// 回転値を設定する.
 
-	switch( SPCameraStep )
+	switch( m_NowSPCameraStete )
 	{
-	case 0:
+	case player::ESPCameraState_TargetRotation:
 	{
 		//-------------------------------------.
 		// プレイヤーを女の子のほうへ向ける.
 		//-------------------------------------.
-		// 自身のベクトルを用意.
-		D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
-		myVector.x = sinf( m_vRotation.y );
-		myVector.z = cosf( m_vRotation.y );
 		// 目的のベクトルを用意.
 		D3DXVECTOR3 targetVec = { 0.0f, 0.0f, 0.0f };
 		targetVec.x = sinf( targetRot );
 		targetVec.z = cosf( targetRot );
-		// ベクトルの長さを求める.
-		float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
-		float targetLenght = sqrtf(targetVec.x*targetVec.x + targetVec.z*targetVec.z);
-
-		// 内積を求める.
-		float dot = myVector.x*targetVec.x + myVector.z*targetVec.z;
-		dot = acosf( dot / ( myLenght * targetLenght ));
-		const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(20.0));
-
-		if( ( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ) ||	// 内積が許容範囲なら.
-			( std::isfinite( dot ) ) == false ){						// 内積の値が計算できない値なら.
+		
+		if( TargetRotation( targetVec, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == true ){
+			m_vRotation.y = atan2f( targetVec.x, targetVec.z );
+			m_NowSPCameraStete = player::ESPCameraState_PlayerBack;
 		} else {
-			const float ROTATIONAL_SPEED = 0.3f;	// 回転速度.
-			// 目的のベクトルと、自分のベクトルの外積を求める.
-			float cross = myVector.x*targetVec.z - myVector.z*targetVec.x;
-			// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
-			m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
+			m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 		}
+		break;
 	}
-	case 1:
+	case player::ESPCameraState_PlayerBack:
 	{
 		//-------------------------------------.
 		// カメラをプレイヤーの後ろに移動させる.
@@ -509,46 +503,47 @@ void CPlayer::SPCameraUpdate()
 		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, CAMERA_BACK_LERP_VALUE );
 		if( fabsf(D3DXVec3Length(&m_CameraPosition) - D3DXVec3Length(&m_CameraNextPosition)) < 0.01f ){
 			m_IsUsableSP = true;	// 特殊能力を使う.
-			SPCameraStep = 2;
+			m_NowSPCameraStete = player::ESPCameraState_CameraShake;
 		}
 	}
 		break;
-	case 2:
+	case player::ESPCameraState_CameraShake:
 	{
 		//-------------------------------------.
 		// カメラを揺らす.
 		//-------------------------------------.
 		m_CameraCount--;	// カウントの減算.
 		// カメラの揺れ.
-		m_CameraLookPosition.x = m_CameraLookPosition.x + static_cast<float>(sin(D3DX_PI * 2.0 / 10.0 * m_CameraCount) * (m_CameraCount * 0.01));
-		m_CameraLookPosition.y = m_CameraLookPosition.y + static_cast<float>(sin(D3DX_PI * 2.0 / 20.0 * m_CameraCount) * (m_CameraCount * 0.01));
+		const float SHAKE_VALUE = sinf(static_cast<float>(D3DX_PI) * TWO / CAMERA_FREQUENCY_LOOKPOS * m_CameraCount) * (m_CameraCount * CAMERA_AMPLITUDE_LOOKPOS);
+		m_CameraLookPosition.x += SHAKE_VALUE;
+		m_CameraLookPosition.y += SHAKE_VALUE;
 		
 		if( m_CameraCount <= 0 ){
-			m_CameraCount = CAMERA_COUNT_MAX;
-			m_CameraNextPosition = m_pCamera->GetPosition();
-			m_CameraReturnCount = 0.0f;
-			SPCameraStep = 3;
+			m_CameraCount			= CAMERA_COUNT_MAX;
+			m_CameraNextPosition	= m_pCamera->GetPosition();
+			m_CameraReturnCount		= 0.0f;
+			m_NowSPCameraStete		= player::ESPCameraState_CameraReturn;
 		}
 	}
 		break;
-	case 3:
+	case player::ESPCameraState_CameraReturn:
 	{
 		//-------------------------------------.
 		// カメラをもとの位置に戻す.
 		//-------------------------------------.
 		m_CameraReturnCount += CAMERA_RETURN_COUNT_ADD;
-		if( m_CameraReturnCount >= 0.1f ) m_CameraReturnCount = 1.0f;
+		if( m_CameraReturnCount >= CAMERA_RETURN_COUNT_MAX ) m_CameraReturnCount = 1.0f;
 
 		m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 		// プレイヤーの後ろに移動.
 		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, m_CameraReturnCount );
-		if( m_CameraReturnCount >= 0.5f ){
+		if( m_CameraReturnCount >= CAMERA_RETURN_COUNT_MAX ){
 			m_pCamera->SetLookPosition( m_CameraLookPosition );
 			m_pCamera->SetPosition( m_CameraPosition );
-			SPCameraStep		= 0;
 			m_IsYButtonPressed	= false;
 			m_CameraReturnCount = 0.0f;
 			m_CameraLerp		= 0.0f;
+			m_NowSPCameraStete	= player::ESPCameraState_Start;
 		}
 	}
 		break;

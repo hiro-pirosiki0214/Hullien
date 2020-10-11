@@ -89,6 +89,23 @@ enum enEffectNo
 	enEffectNo_Max,
 } typedef EEffectNo;
 
+// 特殊能力のカメラ状態.
+enum enSPCameraState
+{
+	ESPCameraState_None,
+
+	ESPCameraState_TargetRotation,	// 目的の座標へ回転.
+	ESPCameraState_PlayerBack,		// カメラをプレイヤーの後ろに移動.
+	ESPCameraState_CameraShake,		// カメラを揺らす.
+	ESPCameraState_CameraReturn,	// カメラを元の位置に戻す.
+	
+	ESPCameraState_Max,
+
+	ESPCameraState_Start	= ESPCameraState_TargetRotation,	// 始まり.
+	ESPCameraState_End		= ESPCameraState_CameraReturn,		// 終了.
+
+} typedef ESPCameraState;
+
 // 攻撃用データ.
 struct stAttackData
 {
