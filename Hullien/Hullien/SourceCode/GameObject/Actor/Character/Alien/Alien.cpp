@@ -40,13 +40,13 @@ void CAlien::SetTargetPos( CActor& actor )
 }
 
 // ÉâÉCÉtåvéZä÷êî.
-void CAlien::LifeCalculation( const std::function<void(float&)>& proc )
+void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 {
 	if( m_NowState == EAlienState::Spawn ) return;
 	if( m_NowState == EAlienState::Death ) return;
 	if( m_NowState == EAlienState::Fright ) return;
-
-	proc( m_LifePoint );
+	bool isAttack = false;
+	proc( m_LifePoint, isAttack );
 	m_NowState = EAlienState::Fright;
 	if( m_LifePoint > 0.0f ) return;
 	m_NowState = EAlienState::Death;

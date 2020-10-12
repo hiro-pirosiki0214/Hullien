@@ -130,7 +130,7 @@ public:
 	virtual bool Spawn( const SAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
 
 	// ライフ計算関数.
-	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
 	// モデルのアルファ値の取得.
 	float GetModelAplha() const { return m_ModelAlpha; }
 	// 連れ去っているかどうか.

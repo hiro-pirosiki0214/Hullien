@@ -76,6 +76,9 @@ public:
 	// カメラの方向.
 	float GetCameraRadianX();
 
+	// ベクトルの取得.
+	virtual void SetVector( const D3DXVECTOR3& vec ){ m_HitVector = vec; }
+
 private:
 	// 操作関数.
 	void Controller();
@@ -92,6 +95,8 @@ private:
 	virtual void Move() override;
 	// 回避動作関数.
 	void AvoidMove();
+	// ノックバック動作関数.
+	void KnockBack();
 
 	// 目的の座標へ回転.
 	bool TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian );
@@ -124,7 +129,7 @@ private:
 	bool IsPushAttack();
 
 	// ライフ計算関数.
-	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
 	// 特殊能力回復時間、効力時間設定関数.
 	virtual void SetSPEffectTime( const std::function<void(float&,float&)>& ) override;
 	// 攻撃力、効力時間設定関数.
@@ -167,6 +172,7 @@ private:
 	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
+	D3DXVECTOR3		m_HitVector;		// 衝突時のベクトル.
 
 	SPlayerParam	m_Parameter;			// パラメーター.
 	float			m_LifePoint;			// 体力.
@@ -179,6 +185,8 @@ private:
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
 	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
+
+	bool			m_IsKnockBack;				// ノックバックするか.
 
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.

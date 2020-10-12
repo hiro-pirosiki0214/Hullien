@@ -59,13 +59,11 @@ void CLifeRecoveryItem::SetTargetPos( CActor& pActor )
 void CLifeRecoveryItem::GiveEffect( CActor* pActor )
 {
 	if( pLIFE_RECOVERY_VALUE == nullptr ) return;
-	// 回復関数.
-	auto lifeRecovery = [&]( float& life )
+	// コールバック関数 : 対象の体力を回復する..
+	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
 	{
 		life += *pLIFE_RECOVERY_VALUE;
-	};
-	// コールバック関数.
-	pActor->LifeCalculation( lifeRecovery );	// 対象の体力を回復する.
+	});
 }
 
 // エフェクトの設定.

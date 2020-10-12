@@ -245,7 +245,12 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
 	// ƒvƒŒƒCƒ„[‚Ì‘Ì—Í‚ðŒ¸‚ç‚·.
-	pActor->LifeCalculation( [&]( float& life ){ life -= m_Parameter.AttackPower; });
+	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
+	{ 
+		life -= m_Parameter.AttackPower;
+		isAttack = true;
+	});
+	pActor->SetVector( m_MoveVector );
 	CSoundManager::NoMultipleSEPlay("PlayerVoiceHit");
 }
 
@@ -322,7 +327,7 @@ bool CAlienB::ColliderSetting()
 		&m_vRotation,
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius,
+		-1.0f,
 		0.0f ) )) return false;
 
 	return true;

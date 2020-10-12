@@ -8,13 +8,7 @@
 */
 class CGroundStage : public CGameObject
 {
-#if 1
-	const char* MODEL_NAME = "ground";	// モデルの名前.
-	const float POSITION_Y	= 0.0f;
-#else
 	const char* MODEL_NAME = "moon";	// モデルの名前.
-	const float POSITION_Y	= -30.0f;
-#endif
 public:
 	CGroundStage();
 	virtual ~CGroundStage();

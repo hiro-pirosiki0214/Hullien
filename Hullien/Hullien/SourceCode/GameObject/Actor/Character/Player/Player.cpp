@@ -44,6 +44,7 @@ CPlayer::CPlayer()
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
 	, m_MoveSpeedMulValue			( 0.0f )
+	, m_IsKnockBack					( false )
 	, m_CameraDefaultHeight			( 0.0f )
 	, m_CameraHeight				( 0.0f )
 	, m_CameraPosition				( 0.0f, 0.0f, 0.0f )
@@ -103,6 +104,7 @@ void CPlayer::Update()
 		AttackAnimation();		// 攻撃アニメーション.
 		Move();					// 移動.
 		AvoidMove();			// 回避動作.
+		KnockBack();			// ノックバック動作関数.
 	} else {
 		ParalysisUpdate();		// 麻痺時の更新.
 	}
@@ -210,6 +212,7 @@ float CPlayer::GetCameraRadianX()
 // 操作関数.
 void CPlayer::Controller()
 {
+	if( m_IsKnockBack == true ) return;	// ノックバック中なら終了.
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
@@ -240,6 +243,8 @@ void CPlayer::CameraController()
 // 攻撃操作関数.
 void CPlayer::AttackController()
 {
+	// ノックバック中なら終了.
+	if( m_IsKnockBack == true ) return;
 	// 回避中なら終了.
 	if( m_IsDuringAvoid == true ) return;
 	// Yボタン：特殊能力を使っていたら.
@@ -252,12 +257,13 @@ void CPlayer::AttackController()
 	// 攻撃データがキューに追加されたら終了.
 	if( IsPushAttack() == true ) return;
 	m_AttackComboCount--;	// 攻撃カウントを減算.
-
 }
 
 // 特殊能力操作関数.
 void CPlayer::SPController()
 {
+	// ノックバック中なら終了.
+	if( m_IsKnockBack == true ) return;
 	// 回避中なら終了.
 	if( m_IsDuringAvoid == true ) return;
 	// 攻撃中は移動しない.
@@ -270,19 +276,23 @@ void CPlayer::SPController()
 	m_SpecialAbility = 0.0f;
 	m_IsYButtonPressed = true;
 
-	if( m_NowAnimNo == player::EAnimNo_Wait )		return;	// 既に待機モーションなら終了.
+	if( m_NowAnimNo == player::EAnimNo_Wait ) return;	// 既に待機モーションなら終了.
 	SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
 }
 
 // 回避操作関数.
 void CPlayer::AvoidController()
 {
+	// ノックバック中なら終了.
+	if( m_IsKnockBack == true ) return;
 	// 回避中なら終了.
 	if( m_IsDuringAvoid == true ) return;
 	// Yボタン：特殊能力を使っていたら.
 	if( m_IsYButtonPressed == true ) return;
 	// 攻撃中は発動しない.
 	if( m_AttackComboCount > 0 ) return;
+	// 既に回避アニメーションだったら終了.
+	if( m_NowAnimNo == player::EAnimNo_Avoid ) return;
 
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
@@ -295,6 +305,7 @@ void CPlayer::AvoidController()
 	CSoundManager::PlaySE("PlayerAvoidMove");
 	CSoundManager::PlaySE("PlayerVoiceAvoidMove");
 	m_pEffects[player::enEffectNo_Avoidance]->Play( m_vPosition );
+	
 	// 回避アニメーションの設定.
 	SetAnimationBlend( player::EAnimNo_Avoid );
 }
@@ -302,6 +313,8 @@ void CPlayer::AvoidController()
 // 移動関数.
 void CPlayer::Move()
 {
+	// ノックバック中なら終了.
+	if( m_IsKnockBack == true ) return;
 	// 回避中なら終了.
 	if( m_IsDuringAvoid == true ) return;
 	// 攻撃中は移動しない.
@@ -351,6 +364,8 @@ void CPlayer::Move()
 // 回避動作関数.
 void CPlayer::AvoidMove()
 {
+	// ノックバック中なら終了.
+	if( m_IsKnockBack == true ) return;
 	// 回避中じゃなければ終了.
 	if( m_IsDuringAvoid == false ) return;
 
@@ -369,6 +384,23 @@ void CPlayer::AvoidMove()
 	// 移動距離が一定以下なら終了.
 	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
+}
+
+// ノックバック動作関数.
+void CPlayer::KnockBack()
+{
+	if( m_IsKnockBack == false ) return;
+
+	m_vPosition.x += m_HitVector.x*0.5f;
+	m_vPosition.z += m_HitVector.z*0.5f;
+	m_vRotation.y = atan2( m_HitVector.x, m_HitVector.z );
+
+	static float time = 0.0f;
+	time += 8.0f;
+	if( time >= m_Parameter.InvincibleTime*FPS ){
+		time = 0.0f;
+		m_IsKnockBack = false;
+	}
 }
 
 // 目的の座標へ回転.
@@ -434,7 +466,7 @@ void CPlayer::AttackCollision( CActor* pActor )
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
 	// 攻撃関数.
-	auto attackProc = [&]( float& life ){ life -= 10.0f; };
+	auto attackProc = [&]( float& life, const bool& isAttack ){ life -= 10.0f; };
 	pActor->LifeCalculation( attackProc );
 	if (m_IsAttackSE == false)
 	{
@@ -701,11 +733,22 @@ bool CPlayer::IsPushAttack()
 }
 
 // ライフ計算関数.
-void CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
+void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 {	
-	proc( m_LifePoint );
+	if( m_IsDuringAvoid == true ) return;	// 回避中なら終了.
+	if( m_IsKnockBack == true ) return;		// ノックバック中なら終了.
+
+	bool isAttack = false;
+	proc( m_LifePoint, isAttack );
+	if( isAttack == true ){
+		m_IsKnockBack = true;
+		if( m_NowAnimNo != player::EAnimNo_Damage ){
+			SetAnimation( player::EAnimNo_Damage );
+		}
+	}
 	if( m_LifePoint < m_Parameter.LifeMax ) return;
 	m_LifePoint = m_Parameter.LifeMax;
+	
 }
 
 // 特殊能力回復時間、効力時間設定関数.
@@ -774,7 +817,7 @@ bool CPlayer::ColliderSetting()
 		&m_vRotation,
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
-		-5.0f,
+		-18.0f,
 		0.0f ) )) return false;
 
 	// 攻撃用の当たり判定初期化.

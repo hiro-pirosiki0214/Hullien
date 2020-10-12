@@ -18,7 +18,7 @@ public:
 	virtual void Collision( CActor* pActor ) = 0;
 
 	// ライフ計算関数.
-	virtual void LifeCalculation( const std::function<void(float&)>& ){}
+	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ){}
 	// 特殊能力回復時間、効力時間設定関数.
 	virtual void SetSPEffectTime( const std::function<void(float&,float&)>& ){}
 	// 攻撃力、効力時間設定関数.
@@ -29,6 +29,8 @@ public:
 	virtual void SetParalysisTime( const std::function<void(float&)>& ){}
 	// 相手座標の設定関数.
 	virtual void SetTargetPos( CActor& actor ){}
+	// ベクトルの取得.
+	virtual void SetVector( const D3DXVECTOR3& vec ){};
 
 	// 当たり判定取得関数.
 	CCollisionManager* GetCollManager(){ return m_pCollManager.get(); }

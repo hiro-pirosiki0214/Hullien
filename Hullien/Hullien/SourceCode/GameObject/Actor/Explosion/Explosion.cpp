@@ -83,9 +83,12 @@ void CExplosion::Collision( CActor* pActor )
 	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
-	// UŒ‚ŠÖ”.
-	auto attackProc = [&]( float& life ){ life -= m_Param.AttackPower; };
-	pActor->LifeCalculation( attackProc );	// ‘ÎÛ‚Ì‘Ì—Í‚ğŒ¸‚ç‚·.
+	// ‘ÎÛ‚Ì‘Ì—Í‚ğŒ¸‚ç‚·.
+	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
+	{ 
+		life -= m_Param.AttackPower; 
+		isAttack = true;
+	});
 }
 
 // ‘ŠèÀ•W‚Ìİ’èŠÖ”.

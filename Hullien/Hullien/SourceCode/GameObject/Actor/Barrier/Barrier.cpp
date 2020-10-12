@@ -99,8 +99,26 @@ void CBarrier::Render()
 // エフェクト描画関数.
 void CBarrier::EffectRender()
 {
+	if( m_IsActive == false ) return;		// 動作してなければ終了.
+	if( m_StaticMesh == nullptr ) return;
+	if( m_pCollManager == nullptr ) return;
+
 	// エフェクトを描画.
 	m_pEffect->Render();
+
+#if _DEBUG
+	m_pCollManager->DebugRender();
+	m_ResizeCollTime++;
+	if( m_ResizeCollTime < 15.0f ) return;
+	m_ResizeCollTime = 0.0f;
+#endif	// #if _DEBUG.
+	// 当たり判定のサイズを変更.
+	m_pCollManager->InitSphere(
+		&m_vPosition,
+		&m_vRotation,
+		&m_CollSphereRadius,
+		{ 0.0f, 0.0f, 0.0f },
+		m_CollSphereRadius );
 }
 
 // 当たり判定関数.
