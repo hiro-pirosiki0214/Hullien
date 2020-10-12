@@ -26,6 +26,13 @@ class CPlayer : public CCharacter
 	// 回避エフェクト名.
 	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
 
+	// 足のボーン名.
+	const char* RIGHT_FOOT = "kaito_rifa_2_R_asi_4";
+	const char* LEFT_FOOT = "kaito_rifa_2_L_asi_4";
+
+	// 声の音量.
+	const float VOICE_VOLUME = 1.5f;
+
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(7.0));
 	const float ROTATIONAL_SPEED = 0.2f;	// 回転速度.
 
@@ -135,6 +142,10 @@ private:
 	// エディット用の描画関数.
 	void EditRender();
 
+	// サウンドの設定.
+	bool SoundSetting();
+	// 音量の設定.
+	void VolumeSetting(const char* soung, float volume);
 	// ウィジェット設定.
 	bool WidgetSetting();
 

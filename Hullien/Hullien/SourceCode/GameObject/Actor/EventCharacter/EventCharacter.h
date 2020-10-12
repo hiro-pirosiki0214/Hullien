@@ -5,6 +5,8 @@
 
 #define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
 
+class CCollisionManager;
+
 /***************************************
 *	イベント用キャラクタクラス.
 **/
@@ -32,7 +34,7 @@ public:
 		bool		IsDisp;				// 描画するか.
 
 		stOptionalState()
-			: vPosition			( {0.0f,4.0f,0.0f} )
+			: vPosition			( {0.0f,0.0f,0.0f} )
 			, vRotation			( {0.0f,0.0f,0.0f} )
 			, vScale			( {1.0f,1.0f,1.0f} )
 			, ModelAlpha		( 1.0f )
@@ -80,7 +82,7 @@ public:
 	virtual void Move() = 0;
 
 	// 情報設定関数.
-	void SetOptionalState(SOptionalState state);
+	virtual void SetOptionalState(const SOptionalState& state);
 
 	// 座標別位置設定関数.
 	void SetPositionX(const float& vPos_x);
@@ -112,6 +114,10 @@ protected:
 	void MeshRender();
 	// モデルの取得関数.
 	bool GetModel(const char* modelName);
+	// 足音.
+	void FootStep(const char* rightfoot, const char* leftfoot);
+	// 足音用当たり判定の設定.
+	bool FootStepCollisionSetting();
 
 protected:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// スキンメッシュ.
@@ -121,6 +127,13 @@ protected:
 
 	SCharacterParam	m_Parameter;					// パラメータ.
 	EMoveState		m_NowMoveState;					// 現在の移動状態.
+
+private:
+	std::vector<std::shared_ptr<CCollisionManager>> m_pFootCollision;
+	std::shared_ptr<CCollisionManager>				m_pGroundCollision;
+	D3DXVECTOR3 m_vGroundPosition;	// 地面の位置.
+	D3DXVECTOR3 m_vRightPosition;	// 右足の位置.
+	D3DXVECTOR3 m_vLeftPosition;	// 左足の位置.
 };
 
 #endif	//#ifndef EVENT_CHARACTER_H.

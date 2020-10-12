@@ -6,7 +6,7 @@
 *	フェードクラス.
 **/
 CFade::CFade()
-	: m_IsFade(true)
+	: m_IsFade(false)
 	, m_FadeState(EFadeState::Finish)
 {
 	m_AlphaSpeed = 0.01f;

@@ -246,7 +246,7 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
 	// プレイヤーの体力を減らす.
 	pActor->LifeCalculation( [&]( float& life ){ life -= m_Parameter.AttackPower; });
-	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
+	CSoundManager::NoMultipleSEPlay("PlayerVoiceHit");
 }
 
 // プレイヤーを狙うか判定.

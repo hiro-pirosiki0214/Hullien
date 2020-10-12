@@ -10,7 +10,6 @@
 **/
 CEventManager::CEventManager()
 	: m_pEventBase		( nullptr )
-	, m_pSkyDome		( nullptr )
 	, m_NowEvent		( EEvent::Start )
 	, m_NextEvent		( EEvent::Start )
 	, m_IsLoadEnd		( false )
@@ -19,7 +18,6 @@ CEventManager::CEventManager()
 	, m_IsEventEnd		( false ) 
 {
 	NextEventMove();
-	m_pSkyDome = std::make_shared<CSkyDome>();
 }
 
 CEventManager::~CEventManager()
@@ -34,7 +32,6 @@ void CEventManager::Update()
 	if (m_IsLoadEnd == false)
 	{
 		m_IsLoadEnd = m_pEventBase->Load();
-		m_pSkyDome->Init();
 	}
 	else
 	{
@@ -105,16 +102,17 @@ void CEventManager::ModelRender()
 	//--------------------------------------------.
 	// 描画パス2.
 	//--------------------------------------------.
-	// G-Bufferにcolor, normal, depthを書き込む.
-
+	// エフェクト用のスプライトなどを書き込む.
 	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Trans );
 	CSceneTexRenderer::SetTransBuffer();
-	m_pSkyDome->Render();
 	m_pEventBase->Render();
 
+	//--------------------------------------------.
+	// 描画パス3.
+	//--------------------------------------------.
+	// G-Bufferにcolor, normal, depthを書き込む.
 	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::GBuffer );
 	CSceneTexRenderer::SetGBuffer();
-	m_pSkyDome->Render();
 	m_pEventBase->Render();
 
 	//--------------------------------------------.

@@ -3,8 +3,6 @@
 
 #include "..\EventBase\EventBase.h"
 
-class CSkyDome;			// 背景.
-
 // イベントの種類.
 enum class enEventNo
 {
@@ -48,7 +46,6 @@ private:
 
 private:
 	std::shared_ptr<CEventBase>			m_pEventBase;		// イベント元クラス.
-	std::shared_ptr<CSkyDome>			m_pSkyDome;			
 	EEvent								m_NowEvent;			// 現在のイベント.	
 	EEvent								m_NextEvent;		// 次のイベント.
 	bool								m_IsLoadEnd;		// ロードが終了したか.

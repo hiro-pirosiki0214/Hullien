@@ -47,7 +47,7 @@ void CBarrier::Update()
 {
 	if( m_IsActive == false ) return;	// “®ì‚µ‚Ä‚È‚¯‚ê‚ÎI—¹.
 	if( m_CollSphereRadius <= COLLISION_SPHERE_RDIUS_MAX ){
-		CSoundManager::NoMultipleSEPlay("VolumeUp");
+		CSoundManager::NoMultipleSEPlay("BarrierInvocating");
 		m_CollSphereRadius += COLLISION_SPHERE_RDIUS_ADD_VALUE;	// “–‚½‚è”¼Œa‚Ì‰ÁZ.
 		return;
 	}

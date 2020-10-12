@@ -51,15 +51,15 @@ private:
 	bool SpriteSetting();
 
 private:
-	std::shared_ptr<CSprite> m_pSprite;	//スプライトクラス.
-	EFadeState m_FadeState;					//フェードの状態.
-	float m_Alpha;									//透過値.
+	std::shared_ptr<CSprite> m_pSprite;			//スプライトクラス.
+	EFadeState m_FadeState;						//フェードの状態.
+	float m_Alpha;								//透過値.
 	float m_AlphaSpeed;							//透過速度.
-	bool m_IsFade;									//フェード中か.
+	bool m_IsFade;								//フェード中か.
 
 	//コピー・ムーブコンストラクタ、代入演算子の削除.
-	CFade(const CFade &)						= delete;
-	CFade(CFade &&)							= delete;
+	CFade(const CFade &)				= delete;
+	CFade(CFade &&)						= delete;
 	CFade& operator = (const CFade &)	= delete;
 	CFade& operator =(CFade &&)			= delete;
 

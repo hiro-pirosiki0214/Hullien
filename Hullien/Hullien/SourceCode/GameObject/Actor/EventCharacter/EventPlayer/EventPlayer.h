@@ -16,27 +16,34 @@ class CEventPlayer : public CEventCharacter
 	const char*	MODEL_NAME = "kaito_s";	// モデル名.
 	const char* MODEL_TEMP_NAME = "kaito";	// 仮モデル名.
 
-											// アニメーション番号.
+	// 足のボーン名.
+	const char* RIGHT_FOOT = "kaito_rifa_2_R_asi_4";
+	const char* LEFT_FOOT = "kaito_rifa_2_L_asi_4";
+
+	// 声の音量.
+	const float VOICE_VOLUME = 1.5f;
+
+public:
+	// アニメーション番号.
 	enum class enAnimNo
 	{
 		None = -1,
 
-		Dead = 0,
-		Wait,
-		Walk,
-		Wait1,
-		Happy,
+		Wait,		// 待機.
+		Walk,		// 走り.
+		Attack1,	// 攻撃1.
+		Attack2,	// 攻撃2.
+		Attack3,	// 攻撃3.
 
-		Max = Happy,
+		Max = Attack3,
 	} typedef EAnimNo;
 
-public:
 	enum class enPlayerState
 	{
 		None = 0,
 
-		Move,				//移動.
-		Wait,				//待機.
+		Move,			//移動.
+		Wait,			//待機.
 		SpecialAbility,	//特殊能力.
 	} typedef EPlayerState;
 
@@ -71,7 +78,10 @@ private:
 	bool ColliderSetting();
 	// エフェクトの設定.
 	bool EffectSetting();
-
+	// サウンドの設定.
+	bool SoundSetting();
+	// 音量の設定.
+	void VolumeSetting(const char* soung, float volume);
 
 private:
 	std::shared_ptr<CCollisionManager>	m_pAttackCollManager;	// 攻撃用の当たり判定.

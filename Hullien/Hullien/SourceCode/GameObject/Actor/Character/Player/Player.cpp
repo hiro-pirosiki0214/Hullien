@@ -75,9 +75,12 @@ bool CPlayer::Init()
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	// アニメーション再生.
 	SetAttackFrameList();
+	// 足音用当たり判定の設定.
+	if( FootStepCollisionSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
 	if( WidgetSetting() == false ) return false;
 	if( EffectSetting() == false ) return false;
+	if( SoundSetting() == false ) return false;
 	m_MoveSpeed		= m_Parameter.MoveSpeed;	// 移動速度の設定.
 	m_AttackPower	= m_Parameter.AttackPower;	// 攻撃力の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
@@ -129,6 +132,9 @@ void CPlayer::Update()
 		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
 		CSoundManager::NoMultipleSEPlay("HP");
 	}
+
+	// 足音.
+	FootStep(RIGHT_FOOT, LEFT_FOOT);
 }
 
 // 描画関数.
@@ -242,8 +248,6 @@ void CPlayer::AttackController()
 	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
 	// 攻撃カウントが最大以上なら終了.
 	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
-	CSoundManager::NoMultipleSEPlay("PlayerAttackSE");
-
 	m_AttackComboCount++;	// 攻撃カウントを加算.
 	// 攻撃データがキューに追加されたら終了.
 	if( IsPushAttack() == true ) return;
@@ -261,7 +265,7 @@ void CPlayer::SPController()
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
 	// Yボタンが押された瞬間じゃなければ終了.
 	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
-
+	CSoundManager::NoMultipleSEPlay("PlayerVoiceSpecial");
 	m_CameraPosition = m_pCamera->GetPosition();
 	m_SpecialAbility = 0.0f;
 	m_IsYButtonPressed = true;
@@ -286,7 +290,8 @@ void CPlayer::AvoidController()
 	m_IsDuringAvoid = true;
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
 	m_OldPosition = m_vPosition;	// 現在の座標を設定.
-	CSoundManager::NoMultipleSEPlay("AvoidMove");
+	CSoundManager::PlaySE("PlayerAvoidMove");
+	CSoundManager::PlaySE("PlayerVoiceAvoidMove");
 	m_pEffects[player::enEffectNo_Avoidance]->Play( m_vPosition );
 	// 回避アニメーションを設定するなら ここ.
 	//
@@ -434,6 +439,11 @@ void CPlayer::AttackCollision( CActor* pActor )
 	// 攻撃関数.
 	auto attackProc = [&]( float& life ){ life -= 10.0f; };
 	pActor->LifeCalculation( attackProc );
+	if (m_IsAttackSE == false)
+	{
+		CSoundManager::PlaySE("PlayerAttackHit");
+		m_IsAttackSE = true;
+	}
 	m_IsAttackHitCamera = true;
 }
 
@@ -611,6 +621,10 @@ void CPlayer::AttackAnimation()
 		}
 		// 新しくアニメーションをセットする.
 		SetAnimation( m_AttackDataQueue.front().AnimNo );
+		// 攻撃SEを鳴らす.
+		CSoundManager::PlaySE("PlayerAttack");
+		if(m_AttackComboCount == 2) CSoundManager::PlaySE("PlayerVoiceAttack2");
+		if(m_AttackComboCount == 3)	CSoundManager::PlaySE("PlayerVoiceAttack3");
 	}
 	m_AttackDataQueue.front().Frame += 0.01;	// フレームの更新.
 }
@@ -664,7 +678,8 @@ bool CPlayer::IsPushAttack()
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack1 )-0.5;
 		// 最初はアニメーションを設定する.
 		SetAnimation( tmpAttackData.AnimNo );
-		
+		CSoundManager::PlaySE("PlayerAttack");
+		CSoundManager::PlaySE("PlayerVoiceAttack1");
 		break;
 	case player::EAttackNo_Two:	// 攻撃2.
 		tmpAttackData.AnimNo = player::EAnimNo_Attack2;
@@ -739,7 +754,7 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 	proc( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->SetTime( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->Set();
-	CSoundManager::NoMultipleSEPlay("PlayerHitSE");
+	CSoundManager::NoMultipleSEPlay("PlayerVoiceParalysis");
 }
 
 // 当たり判定の設定.
@@ -800,6 +815,27 @@ bool CPlayer::EffectSetting()
 
 	return true;
 }
+
+// サウンドの設定.
+bool CPlayer::SoundSetting()
+{
+	VolumeSetting("PlayerVoiceAvoidMove", VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceHit",		  VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceParalysis", VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceAttack1", VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceAttack2", VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceAttack3", VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceSpecial", VOICE_VOLUME);
+	return true;
+}
+
+// 音量の設定.
+void CPlayer::VolumeSetting(const char * soung, float volume)
+{
+	CSoundManager::SetAnotherSEVolume(soung, volume);
+	CSoundManager::SetUseAnotherSEVolumeFlag(soung, true);
+}
+
 
 // エディット用の描画関数.
 void CPlayer::EditRender()

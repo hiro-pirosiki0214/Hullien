@@ -2,6 +2,8 @@
 #include "..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 /***************************************
 *	イベント用キャラクタクラス.
@@ -11,8 +13,13 @@ CEventCharacter::CEventCharacter()
 #ifdef IS_TEMP_MODEL_RENDER
 	, m_pTempStaticMesh( nullptr )
 #endif
-	, m_Parameter					()
-	, m_NowMoveState				( EMoveState::None )
+	, m_Parameter				()
+	, m_NowMoveState			( EMoveState::None )
+	, m_pFootCollision			()
+	, m_pGroundCollision		( nullptr )
+	, m_vGroundPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
+	, m_vRightPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
+	, m_vLeftPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
 {
 	m_vPosition.y = INIT_POSITION_ADJ_HEIGHT;
 }
@@ -22,7 +29,7 @@ CEventCharacter::~CEventCharacter()
 }
 
 // 情報設定関数.
-void CEventCharacter::SetOptionalState(SOptionalState state)
+void CEventCharacter::SetOptionalState(const SOptionalState& state)
 {
 	m_vPosition = state.vPosition;
 	m_vRotation = state.vRotation;
@@ -76,6 +83,63 @@ bool CEventCharacter::GetModel(const char * modelName)
 	if (m_pTempStaticMesh == nullptr) return false;
 	return true;
 #endif	// #ifndef IS_MODEL_RENDER.
+}
+
+// 足音.
+void CEventCharacter::FootStep(const char* rightfoot, const char* leftfoot)
+{
+	if( m_pSkinMesh == nullptr ) return;
+	m_vGroundPosition = m_vPosition;
+	m_vGroundPosition.y = 0.0f;
+	m_pSkinMesh->GetPosFromBone(leftfoot, &m_vLeftPosition);
+	m_pSkinMesh->GetPosFromBone(rightfoot, &m_vRightPosition);
+
+	if (m_pFootCollision[0]->IsShereToShere(m_pGroundCollision.get()) == true
+		|| m_pFootCollision[1]->IsShereToShere(m_pGroundCollision.get()) == true )
+	{
+		CSoundManager::NoMultipleSEPlay("Walk");
+	}
+
+	m_pGroundCollision->DebugRender();
+	m_pFootCollision[0]->DebugRender();
+	m_pFootCollision[1]->DebugRender();
+}
+
+// 当たり判定の設定.
+bool CEventCharacter::FootStepCollisionSetting()
+{
+#ifndef IS_TEMP_MODEL_RENDER
+	// 地面の当たり判定.
+	if (m_pGroundCollision != nullptr) return true;
+	if (m_pGroundCollision == nullptr)
+	{
+		m_pGroundCollision = std::make_shared<CCollisionManager>();
+	}
+	if (FAILED(m_pGroundCollision->InitSphere(
+		&m_vGroundPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		0.5f))) return false;
+
+	// 足の当たり判定.
+	if(m_pFootCollision.size() != 0) return true;
+	m_pFootCollision.emplace_back(std::make_shared<CCollisionManager>());
+	m_pFootCollision.emplace_back(std::make_shared<CCollisionManager>());
+	if (FAILED(m_pFootCollision[0]->InitSphere(
+		&m_vRightPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		0.5f))) return false;
+	if (FAILED(m_pFootCollision[1]->InitSphere(
+		&m_vLeftPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		m_Parameter.SphereAdjPos,
+		0.5f))) return false;
+#endif
+	return true;
 }
 
 /******************************************************

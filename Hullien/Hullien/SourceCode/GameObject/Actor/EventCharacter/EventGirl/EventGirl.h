@@ -11,7 +11,7 @@ class CEventGirl : public CEventCharacter
 	const char* MODEL_NAME = "Towa_s";	// モデル名.
 	const char* MODEL_TEMP_NAME = "yuri-dy";	// 仮モデル名.
 
-												// パラメータ.
+	// パラメータ.
 	struct stGirlParam : public SCharacterParam
 	{
 		float		SearchCollRadius;	// 索敵用のスフィアの半径.
@@ -52,6 +52,8 @@ public:
 	virtual void SetTargetPos(CActor& actor) override;
 	// 女の子が危険な状態か.
 	bool GetIsDanger() const { return m_IsDanger; }
+	// 情報設定関数.
+	virtual void SetOptionalState(const SOptionalState& state) override;
 
 	// 女の子の状態設定関数.
 	void SetNowState(const ENowState& state) { m_NowState = state; }

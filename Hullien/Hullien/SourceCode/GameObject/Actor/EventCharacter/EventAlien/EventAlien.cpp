@@ -1,5 +1,6 @@
 #include "EventAlien.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"	
 
 /****************************************
 *	イベント用宇宙人クラス.
@@ -59,6 +60,7 @@ void CEventAlien::Spawning()
 {
 	if (m_Parameter.IsDisp == false)
 	{
+		CSoundManager::PlaySE("EventAlienApp");
 		m_Parameter.IsDisp = true;	
 		m_Parameter.vScale = {0.0f,0.0f,0.0f};
 	}

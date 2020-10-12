@@ -15,9 +15,9 @@ CEventGirl::CEventGirl()
 	, m_NowState			( ENowState::None )
 	, m_IsDanger			( false )
 {
-	m_ObjectTag = EObjectTag::Girl;
-	m_NowState = ENowState::Move;
-	m_NowMoveState = EMoveState::Move;
+	m_ObjectTag		= EObjectTag::Girl;
+	m_NowState		= ENowState::Move;
+	m_NowMoveState	= EMoveState::Move;
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
 }
 
@@ -90,6 +90,20 @@ void CEventGirl::SetTargetPos(CActor& actor)
 {
 	m_vPosition = actor.GetPosition();
 	m_NowState = ENowState::Abduct;
+}
+
+// èÓïÒê›íËä÷êî.
+void CEventGirl::SetOptionalState(const SOptionalState & state)
+{
+	m_vPosition = state.vPosition;
+	m_vRotation = state.vRotation;
+	m_vSclae = state.vScale;
+	m_Parameter.ModelAlpha = state.ModelAlpha;
+	m_Parameter.MoveSpeed = state.MoveSpeed;
+	m_Parameter.RotationalSpeed = state.RotationalSpeed;
+	m_Parameter.ScaleSpeed = state.ScaleSpeed;
+	m_Parameter.AlphaSpeed = state.AlphaSpeed;
+	m_Parameter.IsDisp = state.IsDisp;
 }
 
 // à⁄ìÆä÷êî.

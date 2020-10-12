@@ -8,7 +8,6 @@ CGameOver::CGameOver( CSceneManager* pSceneManager )
 	, m_pGameOverWidget	( nullptr )
 {
 	m_pGameOverWidget = std::make_unique<CGameOverWidget>();
-	CFade::SetFadeOut();
 }
 
 CGameOver::~CGameOver()
@@ -20,6 +19,7 @@ CGameOver::~CGameOver()
 //============================.
 bool CGameOver::Load()
 {
+	CFade::SetFadeOut();
 	if (m_pGameOverWidget->Init() == false) return false;
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
 	CSoundManager::SetBGMVolume("GameOverBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);

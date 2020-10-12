@@ -52,6 +52,10 @@ protected:
 		m_HasFinishedParamSetting = true;
 		return true;
 	}
+	// 足音.
+	void FootStep(const char* rightfoot, const char* leftfoot);
+	// 足音用当たり判定の設定.
+	bool FootStepCollisionSetting();
 
 protected:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// スキンメッシュ.
@@ -60,6 +64,13 @@ protected:
 	int	m_InvincibleCount;		// 無敵カウント.
 
 	bool m_HasFinishedParamSetting;	// パラメーターの設定が終わったか.
+
+private:
+	std::vector<std::shared_ptr<CCollisionManager>> m_pFootCollision;
+	std::shared_ptr<CCollisionManager>				m_pGroundCollision;
+	D3DXVECTOR3 m_vGroundPosition;	// 地面の位置.
+	D3DXVECTOR3 m_vRightPosition;	// 右足の位置.
+	D3DXVECTOR3 m_vLeftPosition;	// 左足の位置.
 };
 
 #endif	// #ifndef CHARACTER_H.

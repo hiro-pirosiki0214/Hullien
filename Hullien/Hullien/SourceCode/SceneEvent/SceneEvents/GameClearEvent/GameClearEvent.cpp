@@ -7,7 +7,9 @@
 #include "..\..\..\GameObject\Actor\EventCharacter\EventAlien\EventAlien_A\EventAlien_A.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\GameObject\Widget\EventWidget\EventWidget.h"
+#include "..\..\..\GameObject\SkyDome\SkyDome.h"
 
+#include "..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Common\DebugText\DebugText.h"
 
@@ -20,8 +22,8 @@ CGameClearEvent::CGameClearEvent()
 	, m_pPlayer				( nullptr )
 	, m_pGirl				( nullptr )
 	, m_pEventCamera		( nullptr )
-	, m_pEventManager		( nullptr )
 	, m_pEventWidget		( nullptr )
+	, m_pSkyDome			( nullptr )
 	, m_stPlayer			()
 	, m_stGirl				()
 	, m_stAlien				()
@@ -43,6 +45,7 @@ CGameClearEvent::CGameClearEvent()
 	m_pAlienA		= std::make_shared<CEventAlienA>();
 	m_pEventCamera	= std::make_shared<CEventCamera>();
 	m_pEventWidget  = std::make_shared<CEventWidget>();
+	m_pSkyDome		= std::make_shared<CSkyDome>();
 }
 
 CGameClearEvent::~CGameClearEvent()
@@ -52,6 +55,10 @@ CGameClearEvent::~CGameClearEvent()
 // 読み込み関数.
 bool CGameClearEvent::Load()
 {
+	CFade::SetFadeOut();
+	CSoundManager::ThreadPlayBGM("ClearEventBGM");
+	CSoundManager::FadeInBGM("ClearEventBGM");
+
 	if( m_pGroundStage->Init() == false )	return false;	// ステージの初期化.
 	if( SpawnUFOInit() == false )			return false;	// UFOの初期化.
 	if( PlayerInit() == false )				return false;	// プレイヤーの初期化.
@@ -59,11 +66,11 @@ bool CGameClearEvent::Load()
 	if( AlienInit() == false )				return false;	// 宇宙人の初期化.
 	if( CameraInit() == false )				return false;	// カメラの初期化.
 	if( m_pEventWidget->Init() == false )	return false;	// UIの初期化.
+	if( m_pSkyDome->Init() == false )		return false;	// 背景.
 
 	m_IsEventEnd = false;
 	m_IsSkip = false;
 	m_Speed = static_cast<float>(D3DX_PI) * 0.05f;
-	CFade::SetFadeOut();
 
 	return true;
 }
@@ -74,6 +81,8 @@ void CGameClearEvent::Update()
 #if 0
 	DebugOperation();
 #endif
+
+	m_pSkyDome->SetPosition(m_stPlayer.vPosition);
 
 	// アクタの更新.
 	ActorUpdate();
@@ -93,6 +102,7 @@ void CGameClearEvent::Update()
 // 描画関数.
 void CGameClearEvent::Render()
 {
+	m_pSkyDome->Render();		// 背景の描画.
 	m_pGroundStage->Render();	// ステージの描画.
 	m_pSpawnUFO->Render();		// UFOの描画.
 	m_pPlayer->Render();		// プレイヤーの描画.
@@ -234,8 +244,7 @@ void CGameClearEvent::Skip()
 	if(m_IsSkip == true) return;
 
 	CFade::SetFadeIn();
-	int step = static_cast<int>(EEventStep::NextScene) - 1;
-	m_EventStep = static_cast<EEventStep>(step);
+	m_EventStep = EEventStep::Skip;
 	NextStep();
 
 	m_IsSkip = true;
@@ -254,10 +263,12 @@ void CGameClearEvent::ScaleDownActor(D3DXVECTOR3& scale, const float& speed)
 void CGameClearEvent::RunTowardsUFO()
 {
 	m_stCamera.vLookPosition = m_stPlayer.vPosition;
+	m_stCamera.vLookPosition.y = m_stPlayer.vPosition.y + 3.0f;
 	m_stPlayer.vPosition.z -= m_stPlayer.MoveSpeed;
 	m_stGirl.vPosition.z -= m_stGirl.MoveSpeed;
 
 	if (m_stPlayer.vPosition.z > m_vUFOPosition.z) return;
+	m_pPlayer->SetAnimation(CEventPlayer::EAnimNo::Wait);
 	NextStep();
 }
 
@@ -416,7 +427,10 @@ void CGameClearEvent::MoveUFO()
 // 次のシーンに移動.
 void CGameClearEvent::NextScene()
 {
+	CSoundManager::FadeInBGM("ClearEventBGM");
+
 	if (CFade::GetIsFade() == true) return;
+	CSoundManager::StopBGMThread("ClearEventBGM");
 	m_IsEventEnd = true;
 }
 

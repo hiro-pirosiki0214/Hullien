@@ -13,10 +13,12 @@ class CEventAlienA;				// イベント用宇宙人Aクラス.
 class CEventCamera;				// イベント用カメラクラス.
 class CEventManager;			// イベント管理クラス.
 class CEventWidget;				// イベントのUIクラス.
+class CSkyDome;					// 背景.
 
-								/************************************
-								*	クリアイベントクラス.
-								**/
+
+/************************************
+*	クリアイベントクラス.
+**/
 class CGameClearEvent : public CEventBase
 {
 	const D3DXVECTOR3 SCALE_DEFAULT				= D3DXVECTOR3(1.0f, 1.0f, 1.0f);		//標準拡大値.
@@ -92,6 +94,8 @@ private:
 
 		Max,
 		Start = RunTowards_UFO,
+		Skip = NextScene - 1,
+
 	}typedef EEventStep;
 
 public:
@@ -144,7 +148,7 @@ private:
 	void NextScene();			// 次のシーンに移動.
 
 
-								// 以下デバッグ用.
+	// 以下デバッグ用.
 	void DebugRender();
 	void DebugOperation();
 
@@ -155,7 +159,7 @@ private:
 	std::shared_ptr<CEventGirl>				m_pGirl;
 	std::shared_ptr<CEventAlienA>			m_pAlienA;
 	std::shared_ptr<CEventCamera>			m_pEventCamera;
-	std::shared_ptr<CEventManager>			m_pEventManager;
+	std::shared_ptr<CSkyDome>				m_pSkyDome;
 	std::shared_ptr<CEventWidget>			m_pEventWidget;
 	CEventCharacter::SOptionalState			m_stPlayer;			//プレイヤーの情報.
 	CEventCharacter::SOptionalState			m_stGirl;			//女の子の情報.
