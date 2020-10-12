@@ -8,6 +8,8 @@
 #include "..\..\..\..\Common\DebugText\DebugText.h"
 #include "..\..\..\..\Utility\FileManager\FileManager.h"
 
+#define IS_TEMP_MODEL_RENDER
+
 CGirl::CGirl()
 	: m_Parameter			()
 	, m_pSearchCollManager	( nullptr )
@@ -18,12 +20,14 @@ CGirl::CGirl()
 	, m_CameraRadianX		( 0.0f )
 	, m_IsDanger			( false )
 	, m_IsOnlyFirst			( false )
+	, m_pStaticMesh			( nullptr )
 {
 	m_ObjectTag		= EObjectTag::Girl;
 	m_NowState		= ENowState::Protected;
 	m_NowMoveState	= EMoveState::Wait;
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
 	m_pWarning		= std::make_unique<CWarning>();
+	m_vPosition.y = 4.0f;
 }
 
 CGirl::~CGirl()
@@ -36,7 +40,12 @@ bool CGirl::Init()
 #ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
 #else
-	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
+	// 既に読み込めていたら終了.
+	if( m_pStaticMesh != nullptr ) return true;
+	// モデルの取得.
+	CMeshResorce::GetStatic( m_pStaticMesh, MODEL_TEMP_NAME );
+	// モデルが読み込めてなければ false.
+	if( m_pStaticMesh == nullptr ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
@@ -85,10 +94,17 @@ void CGirl::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
+	if( m_pStaticMesh == nullptr ) return;
+
 	float rotY = m_vRotation.y;
 	m_vRotation.y += static_cast<float>(D3DX_PI);
-	MeshRender();	// メッシュの描画.
+	m_pStaticMesh->SetPosition( m_vPosition );
+	m_pStaticMesh->SetRotation( m_vRotation );
+	m_pStaticMesh->SetScale( m_vSclae );
 	m_vRotation.y = rotY;
+	m_pStaticMesh->Render();
+
+//	MeshRender();	// メッシュの描画.
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -110,9 +126,9 @@ void CGirl::Collision( CActor* pActor )
 }
 
 // 相手座標の設定関数.
-void CGirl::SetTargetPos( CActor& actor )
+void CGirl::SetPosition( const D3DXVECTOR3& pos )
 {
-	m_vPosition = actor.GetPosition();
+	m_vPosition = pos;
 	m_NowState = ENowState::Abduct;
 }
 
@@ -250,13 +266,13 @@ bool  CGirl::ColliderSetting()
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
 #else
-	if( m_pTempStaticMesh == nullptr ) return false;
+	if( m_pStaticMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
 	// 女の子の当たり判定.
 	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
+		m_pStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
 		&m_vSclae.x,

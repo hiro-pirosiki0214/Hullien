@@ -51,7 +51,7 @@ public:
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// 相手座標の設定関数.
-	virtual void SetTargetPos( CActor& actor ) override;
+	virtual void SetPosition( const D3DXVECTOR3& pos ) override;
 	// スプライトの描画.
 	virtual void SpriteRender() override;
 	// 危険な状態か.
@@ -71,7 +71,7 @@ private:
 	void SearchCollision( CActor* pActor );
 
 	// 当たり判定の作成.
-	bool  ColliderSetting();
+	bool ColliderSetting();
 
 	// サウンド.
 	void Sound();
@@ -91,6 +91,7 @@ private:
 	float		m_CameraRadianX;// カメラのラジアン値.
 	bool		m_IsDanger;		// 危険かどうか.
 	bool		m_IsOnlyFirst;	//一度しか処理しない.
+	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;
 };
 
 #endif	// #ifndef GIRL_H.

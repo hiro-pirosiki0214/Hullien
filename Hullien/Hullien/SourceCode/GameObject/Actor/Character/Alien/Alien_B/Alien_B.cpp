@@ -8,6 +8,9 @@
 #include "..\..\..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"	
+#include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
+
+#define IS_TEMP_MODEL_RENDER
 
 CAlienB::CAlienB()
 	: m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
@@ -30,7 +33,12 @@ bool CAlienB::Init()
 #ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
 #else
-	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
+	// Šù‚É“Ç‚İ‚ß‚Ä‚¢‚½‚çI—¹.
+	if( m_pTempStaticMesh != nullptr ) return true;
+	// ƒ‚ƒfƒ‹‚Ìæ“¾.
+	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
+	// ƒ‚ƒfƒ‹‚ª“Ç‚İ‚ß‚Ä‚È‚¯‚ê‚Î false.
+	if( m_pTempStaticMesh == nullptr ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
 	if( m_pArm->Init() == false ) return false;

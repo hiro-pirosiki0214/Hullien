@@ -293,6 +293,7 @@ bool CCollisionManager::IsCapsuleToCapsule( CCollisionManager* pManager )
 {
 	if( pManager == nullptr ) return false;
 	if( pManager->GetCapsule() == nullptr ) return false;
+	if( m_pCapsule == nullptr ) return false;
 
 	Point p1, p2;
 	float t1, t2;

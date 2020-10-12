@@ -15,6 +15,7 @@ class CAlien : public CCharacter
 
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
+	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;
 
 public:
 	// 宇宙人パラメータ.
@@ -206,6 +207,8 @@ protected:
 	bool			m_IsExplosion;				// 爆発するか.
 	bool			m_IsDelete;					// 消去するかどうか.
 	bool			m_IsRisingMotherShip;		// マザーシップに昇っているか.
+
+	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;
 };
 
 #endif	// #ifndef ALIEN_H.

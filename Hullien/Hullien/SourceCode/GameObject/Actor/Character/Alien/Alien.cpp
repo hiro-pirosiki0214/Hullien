@@ -7,6 +7,8 @@
 #include "..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\Arm\Arm.h"
 
+#define IS_TEMP_MODEL_RENDER
+
 CAlien::CAlien()
 	: m_pArm					( nullptr )
 	, m_TargetPosition			( 0.0f, 0.0f, 0.0f )

@@ -72,15 +72,9 @@ CPlayer::~CPlayer()
 bool CPlayer::Init()
 {
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
-#ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
-#if 1
 	// アニメーション再生.
 	SetAttackFrameList();
-#endif	//#if 0
-#else
-	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
 	if( WidgetSetting() == false ) return false;
 	if( EffectSetting() == false ) return false;
@@ -140,7 +134,7 @@ void CPlayer::Update()
 // 描画関数.
 void CPlayer::Render()
 {
-	MeshRender();	// メッシュの描画.
+	MeshRender();
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -432,9 +426,8 @@ void CPlayer::AttackCollision( CActor* pActor )
 //	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
 //	m_AttackPosition.y = 5.0f;
 //	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
-#ifndef IS_TEMP_MODEL_RENDER
+
 	m_pSkinMesh->GetPosFromBone( "kaito_rifa_2_L_ude_1", &m_AttackPosition );
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	// 球体の当たり判定.
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
@@ -625,24 +618,20 @@ void CPlayer::AttackAnimation()
 // アニメーション設定.
 void CPlayer::SetAnimation( const player::EAnimNo& animNo )
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_NowAnimNo == m_OldAnimNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo );
-#endif	// #ifndef IS_TEMP_MODEL_RENDER
 }
 
 void CPlayer::SetAnimationBlend( const player::EAnimNo& animNo )
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_NowAnimNo == m_OldAnimNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimBlend( m_NowAnimNo, m_OldAnimNo );
-#endif	// #ifndef IS_TEMP_MODEL_RENDER
 }
 
 // 攻撃アニメーションフレームの設定.
@@ -670,29 +659,23 @@ bool CPlayer::IsPushAttack()
 	switch( m_AttackComboCount )
 	{
 	case player::EAttackNo_One:	// 攻撃1.
-#ifndef IS_TEMP_MODEL_RENDER
 		tmpAttackData.AnimNo = player::EAnimNo_Attack1;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_One-1]-0.5;
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack1 )-0.5;
 		// 最初はアニメーションを設定する.
 		SetAnimation( tmpAttackData.AnimNo );
-#endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 		
 		break;
 	case player::EAttackNo_Two:	// 攻撃2.
-#ifndef IS_TEMP_MODEL_RENDER
 		tmpAttackData.AnimNo = player::EAnimNo_Attack2;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_Two-1]-0.5;
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack2 )-0.5;
-#endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;
 	case player::EAttackNo_Three:// 攻撃3.
-#ifndef IS_TEMP_MODEL_RENDER
 		tmpAttackData.AnimNo = player::EAnimNo_Attack3;
 		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_Three-1]-0.5;
 		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack3 )-0.5;
-#endif	// #if INTERMEDIATE_ANNOUCEMENT_ATTACK.
 
 		break;
 	default:
@@ -762,7 +745,6 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 // 当たり判定の設定.
 bool CPlayer::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -774,28 +756,14 @@ bool CPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
-#else
-	if( m_pTempStaticMesh == nullptr ) return false;
-	// メッシュを使用しての当たり判定初期化.
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
 	if( FAILED( m_pCollManager->InitCapsule( 
-		m_pTempStaticMesh->GetMesh(),
+		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		-5.0f,
 		0.0f ) )) return false;
-#endif	// #ifndef IS_MODEL_RENDER.
 
 	// 攻撃用の当たり判定初期化.
 	if( m_pAttackCollManager == nullptr ){

@@ -6,6 +6,9 @@
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
+#include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
+
+#define IS_TEMP_MODEL_RENDER
 
 CAlienD::CAlienD()
 	: m_pAttackRangeSprite	( nullptr )
@@ -28,7 +31,12 @@ bool CAlienD::Init()
 #ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
 #else
-	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
+	// Šù‚É“Ç‚İ‚ß‚Ä‚¢‚½‚çI—¹.
+	if( m_pTempStaticMesh != nullptr ) return true;
+	// ƒ‚ƒfƒ‹‚Ìæ“¾.
+	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
+	// ƒ‚ƒfƒ‹‚ª“Ç‚İ‚ß‚Ä‚È‚¯‚ê‚Î false.
+	if( m_pTempStaticMesh == nullptr ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( GetSprite( SPRITE_NAME ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
