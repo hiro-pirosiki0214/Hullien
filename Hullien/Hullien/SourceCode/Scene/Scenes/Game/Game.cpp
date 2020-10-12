@@ -196,7 +196,6 @@ void CGame::GameUpdate()
 		CSoundManager::FadeOutBGM("GameBGM");
 	}
 
-
 	m_GameObjManager->Update();
 	m_WidgetManager->Update(m_GameObjManager.get());
 }

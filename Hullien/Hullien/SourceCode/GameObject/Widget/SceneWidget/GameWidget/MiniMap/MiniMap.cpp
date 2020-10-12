@@ -9,7 +9,7 @@
 *	ミニマップクラス.
 **/
 CMiniMap::CMiniMap()
-	: m_IconList					()
+	: m_IconList		()
 	, m_ObjPosListCount	( 0 )
 
 {

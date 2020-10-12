@@ -376,8 +376,6 @@ void CSoundManager::Release()
 		GetInstance()->pBgmSource[GetInstance()->m_vsBGMNameList[i]]->DestoroySource();	// SoundSourceを解放.
 	}
 
-
-
 	// ゲーム終了フラグを立てる.
 	GetInstance()->m_bEndGame = true;
 }
