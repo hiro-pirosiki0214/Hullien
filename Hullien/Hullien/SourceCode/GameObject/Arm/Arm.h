@@ -73,8 +73,6 @@ private:
 private:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;	// スキンメッシュ.
 	LPD3DXANIMATIONCONTROLLER		m_pAC;			// アニメーションコントローラー.
-	std::shared_ptr<CDX9StaticMesh>	m_pAMesh;		// スキンメッシュ.
-	std::shared_ptr<CDX9StaticMesh>	m_pGirlMesh;	// スキンメッシュ.
 	D3DXVECTOR3						m_GrabPosition;	// 掴んでいる時の座標.
 	EArmState						m_NowArmState;	// 現在のアームの状態.
 	EArmState						m_OldArmState;	// 前回のアームの状態.
