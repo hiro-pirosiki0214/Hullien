@@ -680,7 +680,7 @@ void D3DXPARSER::ChangeAnimSet_StartPos(int index, double dStartFramePos, LPD3DX
 	//指定(index）のアニメーショントラックに変更.
 	pTmpAC->SetTrackDesc(0, &TrackDesc);
 	pTmpAC->SetTrackAnimationSet(0, m_pAnimSet[index]);
-	pTmpAC->SetTrackEnable(index, true);
+	pTmpAC->SetTrackEnable(0, true);
 }
 
 // アニメーションをブレンドして切り替え.

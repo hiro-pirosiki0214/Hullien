@@ -32,6 +32,7 @@ CGameActorManager::CGameActorManager()
 	m_pItemManager		= std::make_shared<CItemManager>();
 	m_pBarrier			= std::make_shared<CBarrier>();
 	m_pArm = std::make_shared<CArm>();
+	m_pArm2 = std::make_shared<CArm>();
 }
 
 CGameActorManager::~CGameActorManager()
@@ -49,6 +50,7 @@ bool CGameActorManager::Init()
 	if( m_pAlienManager->Init()		== false ) return false;	// 宇宙人管理の初期化.
 	if( m_pItemManager->Init()		== false ) return false;	// アイテム管理の初期化.
 	if( m_pArm->Init() == false ) return false; 
+	if( m_pArm2->Init() == false ) return false; 
 	// マザーシップの座標取取得.
 	m_pAlienManager->SetMotherShipUFOPos( m_pMotherShipUFO->GetPosition() );
 
@@ -118,7 +120,14 @@ void CGameActorManager::Update()
 			SetPositionList( pActor );				// 座標リストの設定.
 			pActor->Collision( m_pPlayer.get() );	// アイテムの当たり判定.
 		} );
+	if( GetAsyncKeyState('V') & 0x8000 ) m_pArm->SetAppearance();
+	if( GetAsyncKeyState('B') & 0x8000 ) m_pArm->SetCleanUp();
+	if( GetAsyncKeyState('N') & 0x8000 ) m_pArm2->SetAppearance();
+	if( GetAsyncKeyState('M') & 0x8000 ) m_pArm2->SetCleanUp();
+	m_pArm->SetPosition( { 10.0f, 4.0f, 0.0f } );
 	m_pArm->Update();
+	m_pArm2->SetPosition( { 0.0f, 4.0f, 10.0f } );
+	m_pArm2->Update();
 }
 
 // 描画関数.
@@ -133,6 +142,7 @@ void CGameActorManager::Render()
 	m_pItemManager->Render();	// アイテムの描画.
 //	m_pBarrier->Render();		// バリアの描画.
 	m_pArm->Render();
+	m_pArm2->Render();
 
 	// エフェクトの描画.
 	m_pPlayer->EffectRender();			// プレイヤーのエフェクト描画.

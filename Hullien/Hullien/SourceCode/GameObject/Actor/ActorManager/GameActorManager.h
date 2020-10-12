@@ -55,6 +55,7 @@ private:
 	std::shared_ptr<CItemManager>	m_pItemManager;		// アイテムマネージャー.
 	std::shared_ptr<CBarrier>		m_pBarrier;			// バリア.
 	std::shared_ptr<CArm>			m_pArm;
+	std::shared_ptr<CArm>			m_pArm2;
 
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;

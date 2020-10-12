@@ -2,6 +2,7 @@
 #include "..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\Arm\Arm.h"
 
 #include "..\..\..\..\..\Utility\FileManager\FileManager.h"
 #include "..\..\..\..\..\Editor\EditRenderer\EditRenderer.h"
@@ -16,6 +17,7 @@ CAlienB::CAlienB()
 	, m_IsAttackSE		( false )
 {
 	m_ObjectTag = EObjectTag::Alien_B;
+	m_pArm = std::make_unique<CArm>();
 }
 
 CAlienB::~CAlienB()
@@ -31,6 +33,7 @@ bool CAlienB::Init()
 	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
+	if( m_pArm->Init() == false ) return false;
 	return true;
 }
 
@@ -38,6 +41,9 @@ bool CAlienB::Init()
 void CAlienB::Update()
 {
 	CurrentStateUpdate();	// 現在の状態の更新.
+	m_pArm->SetPosition( m_vPosition );
+	m_pArm->SetRotationY( m_vRotation.y + static_cast<float>(D3DX_PI) );
+	m_pArm->Update();
 }
 
 // 描画関数.
@@ -64,7 +70,9 @@ void CAlienB::Render()
 
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
+	D3DXVECTOR3 rot = m_vRotation;
+	rot.y += static_cast<float>(D3DX_PI);
+	m_pTempStaticMesh->SetRotation( rot );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.0f, 0.8f, 0.0f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -73,6 +81,7 @@ void CAlienB::Render()
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
+	m_pArm->Render();
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
@@ -85,8 +94,12 @@ void CAlienB::Collision( CActor* pActor )
 	if( pActor == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
-	PlayerCollison( pActor );		// プレイヤーとの当たり判定.
-	GirlCollision( pActor );		// 女の子との当たり判定.
+	if( m_HasAimPlayer == true ){
+		PlayerCollison( pActor );		// プレイヤーとの当たり判定.
+		if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUp();
+	} else {
+		GirlCollision( pActor );		// 女の子との当たり判定.
+	}
 	BarrierCollision( pActor );
 }
 
@@ -95,9 +108,9 @@ bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != EAlienState::None ) return true;
+	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
-	m_Parameter = param;	// パラメータを設定.
 	m_vPosition = spawnPos;	// スポーン座標の設定.
 	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
 	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;

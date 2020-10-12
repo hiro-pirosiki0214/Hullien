@@ -6,6 +6,8 @@
 
 #include <random>
 
+class CArm;
+
 class CAlien : public CCharacter
 {
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
@@ -186,6 +188,7 @@ protected:
 	void BarrierCollision( CActor* pActor );
 
 protected:
+	std::unique_ptr<CArm>	m_pArm;				// アームクラス.
 	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
 	D3DXVECTOR3		m_TargetRotation;			// 目標の回転情報.
 	D3DXVECTOR3		m_BeforeMoveingPosition;	// 移動前の座標.

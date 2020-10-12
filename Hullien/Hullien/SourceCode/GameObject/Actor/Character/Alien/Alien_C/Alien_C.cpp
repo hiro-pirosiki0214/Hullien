@@ -3,10 +3,12 @@
 #include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
+#include "..\..\..\..\Arm\Arm.h"
 
 CAlienC::CAlienC()
 {
 	m_ObjectTag = EObjectTag::Alien_C;
+	m_pArm = std::make_unique<CArm>();
 }
 
 CAlienC::~CAlienC()
@@ -22,6 +24,7 @@ bool CAlienC::Init()
 	if( GetModel( MODEL_TEMP_NAME ) == false ) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( ColliderSetting() == false ) return false;
+	if( m_pArm->Init() == false ) return false;
 	return true;
 }
 
@@ -30,6 +33,9 @@ void CAlienC::Update()
 {
 	SetMoveVector( m_TargetPosition );
 	CurrentStateUpdate();	// 現在の状態の更新.
+	m_pArm->SetPosition( m_vPosition );
+	m_pArm->SetRotationY( m_vRotation.y + static_cast<float>(D3DX_PI) );
+	m_pArm->Update();
 	if( m_ModelAlpha > 0.0f ) return;
 	// 体力が0より多ければ終了.
 //	if( m_LifePoint > 0.0f ) return;
@@ -62,7 +68,9 @@ void CAlienC::Render()
 
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
+	D3DXVECTOR3 rot = m_vRotation;
+	rot.y += static_cast<float>(D3DX_PI);
+	m_pTempStaticMesh->SetRotation( rot );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.0f, 0.0f, 0.8f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -71,7 +79,7 @@ void CAlienC::Render()
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
-
+	m_pArm->Render();
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
@@ -94,9 +102,9 @@ bool CAlienC::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != EAlienState::None ) return true;
+	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
-	m_Parameter = param;	// パラメータを設定.
 	m_vPosition = spawnPos;	// スポーン座標の設定.
 	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
 	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;

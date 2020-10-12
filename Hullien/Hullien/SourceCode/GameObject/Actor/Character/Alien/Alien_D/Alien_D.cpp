@@ -74,9 +74,9 @@ bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != EAlienState::None ) return true;
+	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
-	m_Parameter = param;	// パラメータを設定.
 	m_vPosition = spawnPos;	// スポーン座標の設定.
 	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
 	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;
@@ -120,7 +120,9 @@ void CAlienD::ModelRender()
 #else
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
+	D3DXVECTOR3 rot = m_vRotation;
+	rot.y += static_cast<float>(D3DX_PI);
+	m_pTempStaticMesh->SetRotation( rot );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, m_ModelAlpha } );
 	AlphaBlendSetting();

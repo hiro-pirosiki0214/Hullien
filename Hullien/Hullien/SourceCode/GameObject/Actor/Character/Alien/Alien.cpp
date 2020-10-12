@@ -5,9 +5,11 @@
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\..\XAudio2\SoundManager.h"
+#include "..\..\..\Arm\Arm.h"
 
 CAlien::CAlien()
-	: m_TargetPosition			( 0.0f, 0.0f, 0.0f )
+	: m_pArm					( nullptr )
+	, m_TargetPosition			( 0.0f, 0.0f, 0.0f )
 	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
 	, m_pAbductUFOPosition		( nullptr )
 	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
@@ -85,6 +87,14 @@ void CAlien::SetGirlPos( CActor& actor )
 	// 女の子じゃなければ終了.
 	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
 	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+	// 目的の回転軸を取得.
+	m_TargetRotation.y = atan2f( 
+		m_TargetPosition.x - m_vPosition.x,
+		m_TargetPosition.z - m_vPosition.z );
+
+	// 移動用ベクトルを取得.
+	m_TargetPosition.x -= sinf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
+	m_TargetPosition.z -= cosf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
 }
 
 // 座標設定関数.
@@ -197,6 +207,7 @@ void CAlien::Move()
 void CAlien::Abduct()
 {
 	if( m_IsBarrierHit == true ) return;
+	if( m_pArm == nullptr ) return;
 
 	SetMoveVector( *m_pAbductUFOPosition );
 	m_TargetPosition = *m_pAbductUFOPosition;
@@ -277,23 +288,35 @@ void CAlien::GirlCollision( CActor* pActor )
 	// オブジェクトのタグが女の子じゃなければ終了.
 	if( pActor->GetObjectTag() != EObjectTag::Girl ) return;
 	if( m_IsBarrierHit == true ) return;
-	if( m_NowMoveState == EMoveState::Attack ) return;	// 攻撃状態は終了.
-	if( m_NowState == EAlienState::Spawn ) return;	// スポーン状態なら終了.
-	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
-	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
+	if( m_NowMoveState == EMoveState::Attack )	return;	// 攻撃状態は終了.
+	if( m_NowState == EAlienState::Spawn )		return;	// スポーン状態なら終了.
+	if( m_NowState == EAlienState::Death )		return;	// 死亡していたら終了.
+	if( m_NowState == EAlienState::Fright )		return;	// 怯み状態なら終了.
 
 	bool isAbduct = false;
 	if( m_NowState == EAlienState::Abduct ){
 		isAbduct = true;
+		pActor->SetPosition( m_pArm->GetGrabPosition() );
+		return;
 	} else {
-		if( *m_pIsAlienOtherAbduct == true ) return;
+		if( *m_pIsAlienOtherAbduct == true ){
+			if( m_pArm->IsCleanUp() == false ){
+				m_pArm->SetCleanUp();
+			}
+			return;
+		}
 		isAbduct = true;
 	}
 
 	if( isAbduct == false ) return;
 	// 球体の当たり判定.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
-	pActor->SetTargetPos( *this );
+	
+	if( m_pArm->IsGrab() == false ){
+		m_pArm->SetAppearance();
+		return;
+	}
+	pActor->SetPosition( m_pArm->GetGrabPosition() );
 
 	if( m_NowState == EAlienState::Abduct ) return;
 	m_NowState = EAlienState::Abduct;

@@ -371,19 +371,18 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 	m_CameraPos = CCameraManager::GetPosition();
 	m_CameraLookPos = CCameraManager::GetLookPosition();
 
-	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
-		if (pAC == nullptr)
+	if (pAC == nullptr)
+	{
+		if (m_pD3dxMesh->m_pAnimController)
 		{
-			if (m_pD3dxMesh->m_pAnimController)
-			{
-				BlendAnimUpdate();
-				m_pD3dxMesh->m_pAnimController->AdvanceTime( m_dAnimSpeed, NULL );
-			}
-		} else {
 			BlendAnimUpdate();
-			pAC->AdvanceTime( m_dAnimSpeed, NULL );
+			m_pD3dxMesh->m_pAnimController->AdvanceTime( m_dAnimSpeed / static_cast<double>(CSceneTexRenderer::ERenderPass::Max), NULL );
 		}
+	} else {
+		BlendAnimUpdate();
+		pAC->AdvanceTime( m_dAnimSpeed / static_cast<double>(CSceneTexRenderer::ERenderPass::Max), NULL );
 	}
+
 	m_dAnimTime += m_dAnimSpeed;
 	D3DXMATRIX m;
 	D3DXMatrixIdentity( &m );
@@ -1188,10 +1187,6 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 void CDX9SkinMesh::ChangeAnimSet( int index, LPD3DXANIMATIONCONTROLLER pAC )
 {
 	if( m_pD3dxMesh == nullptr )	return;
-	if (pAC != nullptr)
-	{
-		m_pD3dxMesh->m_pAnimController = pAC;
-	}
 	m_pD3dxMesh->ChangeAnimSet( index, pAC );
 	m_IsChangeAnim = false;
 	m_dAnimTime = 0.0;
@@ -1209,10 +1204,6 @@ void CDX9SkinMesh::ChangeAnimSet_StartPos( int index, double dStartFramePos, LPD
 void CDX9SkinMesh::ChangeAnimBlend( int index, int oldIndex, LPD3DXANIMATIONCONTROLLER pAC )
 {
 	if( m_pD3dxMesh == nullptr )	return;
-	if (pAC != nullptr)
-	{
-		m_pD3dxMesh->m_pAnimController = pAC;
-	}
 	m_pD3dxMesh->ChangeAnimBlend( index, oldIndex, pAC );
 	m_IsChangeAnim = true;
 	m_dAnimTime = 0.0;
