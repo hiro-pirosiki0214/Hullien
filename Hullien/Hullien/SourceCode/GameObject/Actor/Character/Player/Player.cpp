@@ -281,6 +281,8 @@ void CPlayer::AvoidController()
 	if( m_IsDuringAvoid == true ) return;
 	// Yボタン：特殊能力を使っていたら.
 	if( m_IsYButtonPressed == true ) return;
+	// 攻撃中は発動しない.
+	if( m_AttackComboCount > 0 ) return;
 
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
@@ -293,9 +295,8 @@ void CPlayer::AvoidController()
 	CSoundManager::PlaySE("PlayerAvoidMove");
 	CSoundManager::PlaySE("PlayerVoiceAvoidMove");
 	m_pEffects[player::enEffectNo_Avoidance]->Play( m_vPosition );
-	// 回避アニメーションを設定するなら ここ.
-	//
-
+	// 回避アニメーションの設定.
+	SetAnimationBlend( player::EAnimNo_Avoid );
 }
 
 // 移動関数.
@@ -362,16 +363,12 @@ void CPlayer::AvoidMove()
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 
-	// 回転　アニメーション設定後消す.
-	m_vRotation.z -= 0.1f;
-
 	D3DXVECTOR3 length = m_OldPosition - m_vPosition;
 	// 移動距離を計算.
 	float moveDistance = D3DXVec3Length( &length );
 	// 移動距離が一定以下なら終了.
 	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
-	m_vRotation.z = 0.0f;		// 回転　アニメーション設定後消す.
 }
 
 // 目的の座標へ回転.
