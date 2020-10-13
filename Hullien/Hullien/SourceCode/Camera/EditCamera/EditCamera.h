@@ -6,6 +6,9 @@
 
 class CMouse;	// マウスクラス.
 
+/****************************************
+* エディタ用カメラ.
+**/
 class CEditCamera : public CCamera
 {
 public:
@@ -18,12 +21,13 @@ public:
 	void SetHWND( HWND hWnd ){ m_hWnd = hWnd; }
 
 private:
+	// マウスの更新.
 	void MouseUpdate();
 
 private:
-	HWND m_hWnd;
-	std::unique_ptr<CMouse> m_pMouse;
-	D3DXVECTOR2 m_vDegree;
+	HWND					m_hWnd;		// ウィンドウハンドル.
+	std::unique_ptr<CMouse> m_pMouse;	// マウスクラス.
+	D3DXVECTOR2				m_Radian;	// ラジアン.
 };
 
 #endif	// #ifndef EDIT_CAMERA_H.
