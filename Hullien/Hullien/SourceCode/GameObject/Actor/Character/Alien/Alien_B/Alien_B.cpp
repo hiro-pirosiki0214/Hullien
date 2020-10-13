@@ -49,9 +49,10 @@ bool CAlienB::Init()
 void CAlienB::Update()
 {
 	CurrentStateUpdate();	// 現在の状態の更新.
-	m_pArm->SetPosition( m_vPosition );
-	m_pArm->SetRotationY( m_vRotation.y + static_cast<float>(D3DX_PI) );
-	m_pArm->Update();
+	// アーム.
+	m_pArm->SetPosition( m_vPosition );		// 座標をセット.
+	m_pArm->SetRotationY( m_vRotation.y );	// 回転情報をセット.
+	m_pArm->Update();						// 更新.
 }
 
 // 描画関数.
@@ -63,9 +64,7 @@ void CAlienB::Render()
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
-	D3DXVECTOR3 rot = m_vRotation;
-	rot.y += static_cast<float>(D3DX_PI);
-	m_pSkinMesh->SetRotation( rot );
+	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -78,9 +77,7 @@ void CAlienB::Render()
 
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
-	D3DXVECTOR3 rot = m_vRotation;
-	rot.y += static_cast<float>(D3DX_PI);
-	m_pTempStaticMesh->SetRotation( rot );
+	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.0f, 0.8f, 0.0f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -89,7 +86,7 @@ void CAlienB::Render()
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
-	m_pArm->Render();
+	m_pArm->Render();	// アームの描画.
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
@@ -102,13 +99,16 @@ void CAlienB::Collision( CActor* pActor )
 	if( pActor == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
+
+	// プレイヤーを狙っているか.
 	if( m_HasAimPlayer == true ){
 		PlayerCollison( pActor );		// プレイヤーとの当たり判定.
+		// アームが片付けられてなければ片付ける.
 		if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUp();
 	} else {
 		GirlCollision( pActor );		// 女の子との当たり判定.
 	}
-	BarrierCollision( pActor );
+	BarrierCollision( pActor );			// バリアとの当たり判定.
 }
 
 // スポーン.
@@ -119,10 +119,10 @@ bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
-	m_vPosition = spawnPos;	// スポーン座標の設定.
-	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
-	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;
-	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
+	m_vPosition		= spawnPos;					// スポーン座標の設定.
+	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
+	m_vPosition.y	+= INIT_POSITION_ADJ_HEIGHT;// 座標を調整.
+	m_NowState		= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 	return true;
 }
 
@@ -154,6 +154,7 @@ void CAlienB::Move()
 {
 	AimPlayerDecision();	// プレイヤーを狙うか判定.
 	TargetRotation();		// 回転.
+	// プレイヤーを狙っているか.
 	if( m_HasAimPlayer == true ){
 		CAlienB::VectorMove( m_MoveSpeed );	// 移動.
 		Attack();				// 攻撃.
@@ -165,8 +166,8 @@ void CAlienB::Move()
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
-	m_NowState = EAlienState::Escape;
-	m_NowMoveState = EMoveState::Rotation;	// 移動状態を回転する.
+	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転へ遷移する.
 }
 
 // 拐う.
@@ -198,15 +199,15 @@ void CAlienB::VectorMove( const float& moveSpeed )
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
 
-	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) );
-
+	// ベクトルを使用して移動.
 	m_vPosition.x -= m_MoveVector.x * moveSpeed;
 	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
-	if( lenght >= m_Parameter.AttackLenght ) return;
-
-	m_NowMoveState = EMoveState::Attack;
-	m_RotAccValue = m_Parameter.AttackRotInitPower;
+	// プレイヤーの座標と宇宙人の座標を比較.
+	if( D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) ) >= m_Parameter.AttackLenght ) return;
+	if( m_IsBarrierHit == true ) return;
+	m_NowMoveState	= EMoveState::Attack;
+	m_RotAccValue	= m_Parameter.AttackRotInitPower;
 }
 
 // 攻撃関数.
