@@ -98,9 +98,6 @@ private:
 	// ノックバック動作関数.
 	void KnockBack();
 
-	// 目的の座標へ回転.
-	bool TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian );
-
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
 	// 攻撃ヒット時のカメラ動作.

@@ -52,6 +52,8 @@ protected:
 		m_HasFinishedParamSetting = true;
 		return true;
 	}
+	// –Ú“I‚ÌÀ•W‚Ö‰ñ“].
+	bool TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian );
 	// ‘«‰¹.
 	void FootStep(const char* rightfoot, const char* leftfoot);
 	// ‘«‰¹—p“–‚½‚è”»’è‚Ìİ’è.

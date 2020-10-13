@@ -64,11 +64,7 @@ void CGirl::Update()
 	case ENowState::Protected:
 		break;
 	case ENowState::Abduct:
-		if( m_OldPosition == m_vPosition ){
-			m_NowState = ENowState::Move;
-			m_NowMoveState = EMoveState::Rotation;
-		}
-		m_OldPosition = m_vPosition;
+		Abduct();
 		break;
 	case ENowState::Move:
 		Move();
@@ -96,12 +92,9 @@ void CGirl::Render()
 	if( IsDisplayOut() == true ) return;
 	if( m_pStaticMesh == nullptr ) return;
 
-	float rotY = m_vRotation.y;
-	m_vRotation.y += static_cast<float>(D3DX_PI);
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRotation( m_vRotation );
 	m_pStaticMesh->SetScale( m_vSclae );
-	m_vRotation.y = rotY;
 	m_pStaticMesh->Render();
 
 //	MeshRender();	// メッシュの描画.
@@ -157,7 +150,7 @@ void CGirl::Move()
 	case EMoveState::None:
 		break;
 	case EMoveState::Rotation:
-		TargetRotation();
+		CGirl::TargetRotation();
 		break;
 	case EMoveState::Move:
 		TargetMove();
@@ -169,47 +162,32 @@ void CGirl::Move()
 	}
 }
 
+// 連れ去れている.
+void CGirl::Abduct()
+{
+	// 前回の座標が今の座標なら(連れ去れている状態で移動していない).
+	if( m_OldPosition == m_vPosition ){
+		m_NowState		= ENowState::Move;		// 移動状態へ遷移.
+		m_NowMoveState	= EMoveState::Rotation;	// 移動の回転状態へ遷移.
+	}
+	m_OldPosition = m_vPosition;	// 座標を記憶.
+}
+
 // 目的の場所に向けて回転.
 void CGirl::TargetRotation()
 {
 	if( m_NowMoveState != EMoveState::Rotation ) return;
-
-	const D3DXVECTOR3 targetPosition = { 0.0f, 0.0f, 0.0f };
 	// 目的の回転軸を取得.
-	D3DXVECTOR3 targetRotation = { 0.0f, 0.0f, 0.0f };
-	targetRotation.y = atan2f( 
-		targetPosition.x - m_vPosition.x,
-		targetPosition.z - m_vPosition.z );
-	m_MoveVector.x = sinf( targetRotation.y );
-	m_MoveVector.z = cosf( targetRotation.y );
-
-	// 自身のベクトルを用意.
-	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
-	myVector.x = sinf( m_vRotation.y );
-	myVector.z = cosf( m_vRotation.y );
-
-	// ベクトルの長さを求める.
-	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
-	float targetLenght = sqrtf(m_MoveVector.x*m_MoveVector.x + m_MoveVector.z*m_MoveVector.z);
-
-	// 目的のベクトルと、自分のベクトルの外積を求める.
-	float cross = myVector.x * m_MoveVector.z-myVector.z * m_MoveVector.x;
-	float dot = myVector.x * m_MoveVector.x+myVector.z * m_MoveVector.z;
-	dot = acosf( dot / ( myLenght * targetLenght ));
-
-	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
-
-	// 外積が0.0より少なければ 時計回り : 反時計回り に回転する.
-	m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
-
-	// 内積が許容範囲なら.
-	if( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ){
-		m_vRotation.y = targetRotation.y;	// ターゲットへの回転取得.
-											// 移動用ベクトルを取得.
-		m_MoveVector.x = sinf( m_vRotation.y );
-		m_MoveVector.z = cosf( m_vRotation.y );
-		m_NowMoveState = EMoveState::Move;
-	}
+	const float targetRotation = atan2f(
+		m_vPosition.x - m_Parameter.InitPosition.x,
+		m_vPosition.z - m_Parameter.InitPosition.z );
+	// 回転軸からベクトルを取得.
+	m_MoveVector.x = sinf( targetRotation );
+	m_MoveVector.z = cosf( targetRotation );
+	// 目的の座標に向けて回転.
+	if( CCharacter::TargetRotation( m_MoveVector, m_Parameter.RotatlonalSpeed, TOLERANCE_RADIAN ) == false ) return;
+	m_vRotation.y = targetRotation;		// ターゲットへの回転取得.
+	m_NowMoveState = EMoveState::Move;	// 移動状態へ遷移.
 }
 
 // 目的の場所に向けて移動.
@@ -217,14 +195,14 @@ void CGirl::TargetMove()
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
 
-	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * m_Parameter.MoveSpeed;
-	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * m_Parameter.MoveSpeed;
+	// 移動ベクトルを使用して移動.
+	m_vPosition.x -= m_MoveVector.x * m_Parameter.MoveSpeed;
+	m_vPosition.z -= m_MoveVector.z * m_Parameter.MoveSpeed;
 
-	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_Parameter.InitPosition - m_vPosition) );
+	// 目的の座標との距離が一定値より少ないか比較.
+	if( D3DXVec3Length( &D3DXVECTOR3(m_Parameter.InitPosition-m_vPosition) ) >= m_Parameter.InitPosLenght ) return;
 
-	if( lenght >= m_Parameter.InitPosLenght ) return;
-
-	m_NowMoveState = EMoveState::Wait;
+	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
 }
 
 // 索敵の当たり判定.
@@ -245,8 +223,7 @@ void CGirl::SearchCollision( CActor* pActor )
 
 	// 球体の当たり判定.
 	if( m_pSearchCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
-	m_IsDanger = true;
-
+	m_IsDanger = true;	// 危険.
 }
 
 // 当たり判定の作成.

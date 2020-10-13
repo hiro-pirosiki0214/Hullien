@@ -200,8 +200,8 @@ void CAlienB::VectorMove( const float& moveSpeed )
 
 	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) );
 
-	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
-	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
+	m_vPosition.x -= m_MoveVector.x * moveSpeed;
+	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
 	if( lenght >= m_Parameter.AttackLenght ) return;
 
@@ -220,8 +220,8 @@ void CAlienB::Attack()
 
 	// ‰Á‘¬“x‚ªˆÚ“®”ÍˆÍ‚È‚çˆÚ“®.
 	if( -m_Parameter.AttackMoveRange <= m_RotAccValue && m_RotAccValue <= m_Parameter.AttackMoveRange ){
-		m_vPosition.x += m_MoveVector.x * m_Parameter.AttackMoveSpeed;
-		m_vPosition.z += m_MoveVector.z * m_Parameter.AttackMoveSpeed;
+		m_vPosition.x -= m_MoveVector.x * m_Parameter.AttackMoveSpeed;
+		m_vPosition.z -= m_MoveVector.z * m_Parameter.AttackMoveSpeed;
 	}
 	if (m_IsAttackSE == false)
 	{
