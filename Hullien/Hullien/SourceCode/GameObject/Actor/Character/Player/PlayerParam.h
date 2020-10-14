@@ -49,9 +49,11 @@ enum enAnimNo
 	EAnimNo_Attack2,	// UŒ‚2.
 	EAnimNo_Attack3,	// UŒ‚3.
 	EAnimNo_Avoid,		// ‰ñ”ğ.
+	EAnimNo_SP,			// “Áê”\—Í.
 	EAnimNo_Damage,		// ƒqƒbƒg.
+	EAnimNo_Dead,		// €–S.
 
-	EAnimNo_Max = EAnimNo_Damage,
+	EAnimNo_Max = EAnimNo_Dead,
 } typedef EAnimNo;
 
 // UŒ‚”Ô†,

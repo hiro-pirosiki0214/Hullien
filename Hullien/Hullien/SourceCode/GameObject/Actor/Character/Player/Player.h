@@ -72,7 +72,7 @@ public:
 	// 特殊能力を使っているか.
 	bool IsSpecialAbility();
 	// 死亡したか.
-	bool IsDead(){ return m_LifePoint <= 0.0f; }
+	bool IsDead(){ return m_DeadAnimFrame >= m_DeadAnimEndFrame; }
 	// カメラの方向.
 	float GetCameraRadianX();
 
@@ -97,6 +97,8 @@ private:
 	void AvoidMove();
 	// ノックバック動作関数.
 	void KnockBack();
+	// 死亡動作関数.
+	void Dead();
 	// カメラの更新.
 	void CameraUpdate();
 
@@ -179,6 +181,7 @@ private:
 	float			m_SpecialAbility;		// 特殊能力.
 	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
 	bool			m_IsUsableSP;			// 特殊能力を使ったか.
+	bool			m_IsDead;				// 死亡フラグ.
 
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
@@ -188,8 +191,13 @@ private:
 
 	bool			m_IsKnockBack;				// ノックバックするか.
 
+	double			m_AnimSpeed;				// アニメーション速度.
+	double			m_SPAnimFrame;				// 特殊能力アニメーションの経過フレーム.
+	double			m_SPAnimEndFrame;			// 特殊能力アニメーションの終了フレーム.
 	double			m_AvoidAnimFrame;			// 回避アニメーションの経過フレーム.
 	double			m_AvoidAnimEndFrame;		// 回避アニメーションの終了フレーム.
+	double			m_DeadAnimFrame;			// 死亡アニメーションの経過フレーム.
+	double			m_DeadAnimEndFrame;			// 死亡アニメーションの終了フレーム.
 
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.

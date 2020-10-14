@@ -41,14 +41,20 @@ CPlayer::CPlayer()
 	, m_SpecialAbility				( 0.0f )
 	, m_IsYButtonPressed			( false )
 	, m_IsUsableSP					( false )
+	, m_IsDead						( false )
 	, m_SpecialAbilityValue			( 0.0f )
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
 	, m_MoveSpeedMulValue			( 0.0f )
 	, m_IsKnockBack					( false )
+	, m_AnimSpeed					( 0.01 )
+	, m_SPAnimFrame					( 0.0 )
+	, m_SPAnimEndFrame				( 0.0 )
 	, m_AvoidAnimFrame				( 0.0 )
 	, m_AvoidAnimEndFrame			( 0.0 )
+	, m_DeadAnimFrame				( 0.0 )
+	, m_DeadAnimEndFrame			( 0.0 )
 	, m_CameraDefaultHeight			( 0.0f )
 	, m_CameraHeight				( 0.0f )
 	, m_CameraPosition				( 0.0f, 0.0f, 0.0f )
@@ -81,19 +87,26 @@ bool CPlayer::Init()
 	// アニメーション再生.
 	SetAttackFrameList();
 	// 足音用当たり判定の設定.
-	if( FootStepCollisionSetting() == false ) return false;
-	if( ColliderSetting() == false ) return false;
-	if( WidgetSetting() == false ) return false;
-	if( EffectSetting() == false ) return false;
-	if( SoundSetting() == false ) return false;
+	if( FootStepCollisionSetting()	== false ) return false;
+	if( ColliderSetting()			== false ) return false;
+	if( WidgetSetting()				== false ) return false;
+	if( EffectSetting()				== false ) return false;
+	if( SoundSetting()				== false ) return false;
 	m_MoveSpeed		= m_Parameter.MoveSpeed;	// 移動速度の設定.
 	m_AttackPower	= m_Parameter.AttackPower;	// 攻撃力の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
-	m_SpecialAbilityValue = m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
-	m_CameraHeight = m_CameraDefaultHeight = m_Parameter.CameraHeight;
-	m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
-	m_CameraLerp = m_Parameter.CameraLerpValue;
-	m_AvoidAnimEndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Avoid )-0.4;
+	m_SpecialAbilityValue	= m_Parameter.SpecialAbilityValue;	// 特殊能力回復値の設定.
+	m_CameraHeight			= m_CameraDefaultHeight = m_Parameter.CameraHeight;
+	m_CameraLookPosition	= { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
+	m_CameraLerp			= m_Parameter.CameraLerpValue;
+
+	m_SPAnimEndFrame		= m_pSkinMesh->GetAnimPeriod( player::EAnimNo_SP )-0.02;
+	m_AvoidAnimEndFrame		= m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Avoid )-0.4;
+	m_DeadAnimEndFrame		= m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Dead )-0.01;
+
+	// 待機アニメーションに変更.
+	m_pSkinMesh->ChangeAnimSet_StartPos( player::EAnimNo_Wait, 0.0 );
+
 	return true;
 }
 
@@ -110,6 +123,7 @@ void CPlayer::Update()
 		Move();					// 移動.
 		AvoidMove();			// 回避動作.
 		KnockBack();			// ノックバック動作関数.
+		Dead();					// 死亡関数.
 	} else {
 		ParalysisUpdate();		// 麻痺時の更新.
 	}
@@ -122,6 +136,13 @@ void CPlayer::Update()
 
 	CameraUpdate();				// カメラの更新.
 
+	// 体力が1/3になったらSEを鳴らす.
+	if (m_LifePoint <= m_Parameter.LifeMax / 3)
+	{
+		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
+		CSoundManager::NoMultipleSEPlay("HP");
+	}
+
 	// 足音.
 	FootStep(RIGHT_FOOT, LEFT_FOOT);
 }
@@ -129,7 +150,13 @@ void CPlayer::Update()
 // 描画関数.
 void CPlayer::Render()
 {
-	MeshRender();
+	if( m_pSkinMesh == nullptr ) return;
+
+	m_pSkinMesh->SetPosition( m_vPosition );
+	m_pSkinMesh->SetRotation( m_vRotation );
+	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
+	m_pSkinMesh->Render();
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -199,6 +226,8 @@ float CPlayer::GetCameraRadianX()
 void CPlayer::Controller()
 {
 	if( m_IsKnockBack == true ) return;	// ノックバック中なら終了.
+	if( m_IsDead == true ) return;
+
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
@@ -213,6 +242,7 @@ void CPlayer::Controller()
 void CPlayer::CameraController()
 {
 	if( m_IsYButtonPressed == true ) return;
+	if( m_IsDead == true ) return;
 	// カメラの回転移動.
 	// 横方向.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
@@ -235,6 +265,8 @@ void CPlayer::AttackController()
 	if( m_IsDuringAvoid == true ) return;
 	// Yボタン：特殊能力を使っていたら.
 	if( m_IsYButtonPressed == true ) return;
+	if( m_IsDead == true ) return;
+
 	// Xボタンを押した瞬間じゃなければ終了.
 	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
 	// 攻撃カウントが最大以上なら終了.
@@ -254,6 +286,8 @@ void CPlayer::SPController()
 	if( m_IsDuringAvoid == true ) return;
 	// 攻撃中は移動しない.
 	if( m_AttackComboCount > 0 ) return;
+	if( m_IsDead == true ) return;
+
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
 	// Yボタンが押された瞬間じゃなければ終了.
 	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
@@ -277,6 +311,7 @@ void CPlayer::AvoidController()
 	if( m_IsYButtonPressed == true ) return;
 	// 攻撃中は発動しない.
 	if( m_AttackComboCount > 0 ) return;
+	if( m_IsDead == true ) return;
 	// 既に回避アニメーションだったら終了.
 	if( m_NowAnimNo == player::EAnimNo_Avoid ) return;
 
@@ -308,6 +343,7 @@ void CPlayer::Move()
 	if( m_AttackComboCount > 0 ) return;
 	// Yボタン：特殊能力を使っていたら.
 	if( m_IsYButtonPressed == true ) return;
+	if( m_IsDead == true ) return;
 
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
@@ -358,13 +394,14 @@ void CPlayer::AvoidMove()
 	if( m_IsKnockBack == true ) return;
 	// 回避中じゃなければ終了.
 	if( m_IsDuringAvoid == false ) return;
+	if( m_IsDead == true ) return;
 
 	// スティックの傾いた方向に向く.
 	m_vRotation.y = atan2f( m_AvoidVector.x, m_AvoidVector.z );
 	// カメラの角度と足し合わせる.
 	m_vRotation.y += m_pCamera->GetRadianX();
 
-	m_AvoidAnimFrame += 0.01f;	// 経過フレームの加算.
+	m_AvoidAnimFrame += m_AnimSpeed;	// 経過フレームの加算.
 
 	// 回転軸で移動.
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
@@ -382,6 +419,7 @@ void CPlayer::AvoidMove()
 void CPlayer::KnockBack()
 {
 	if( m_IsKnockBack == false ) return;
+	if( m_IsDead == true ) return;
 
 	m_vPosition.x += m_HitVector.x*0.5f;
 	m_vPosition.z += m_HitVector.z*0.5f;
@@ -399,9 +437,38 @@ void CPlayer::KnockBack()
 	}
 }
 
+// 死亡動作関数.
+void CPlayer::Dead()
+{
+	if( m_IsDead == false ) return;
+
+	m_DeadAnimFrame += m_AnimSpeed;	// アニメーションフレームの加算.
+
+	// アニメーションフレームが一定の範囲内なら.
+	if( 0.18 <= m_DeadAnimFrame && m_DeadAnimFrame <= 0.5 ){
+		// ベクトルを使用して前に座標を移動.
+		//	(アニメーションの引きずりの調整のため).
+		m_vPosition.x -= m_MoveVector.x*0.05f;
+		m_vPosition.z -= m_MoveVector.z*0.05f;
+
+		// 見えない壁との当たり判定.
+		if( CActor::IsCrashedWallX() == true ) m_vPosition.x += m_MoveVector.x*0.05f;
+		if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += m_MoveVector.z*0.05f;
+
+		// アニメーション速度をゆっくりにする.
+		m_AnimSpeed = 0.005;
+	}
+	// 一定のフレーム以上になったらアニメーション速度をゆっくりにする.
+	if( m_DeadAnimFrame >= 0.5 ) m_AnimSpeed = 0.005;
+	// アニメーションを再生させないようにする.
+	if( m_DeadAnimFrame >= m_DeadAnimEndFrame ) m_AnimSpeed = 0.0;
+}
+
 // カメラの更新.
 void CPlayer::CameraUpdate()
 {
+	if( m_IsDead == true ) return;
+
 	// プレイヤーを注視して回転.
 	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
@@ -415,13 +482,6 @@ void CPlayer::CameraUpdate()
 	} else {
 		// 特殊能力用のカメラをマネージャーに設定.
 		CCameraManager::SetCamera( m_pSPCamera );
-	}
-
-	// 体力が1/3になったらSEを鳴らす.
-	if (m_LifePoint <= m_Parameter.LifeMax / 3)
-	{
-		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
-		CSoundManager::NoMultipleSEPlay("HP");
 	}
 }
 
@@ -528,8 +588,10 @@ void CPlayer::SPCameraUpdate()
 		// プレイヤーの後ろに移動.
 		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, CAMERA_BACK_LERP_VALUE );
 		if( fabsf(D3DXVec3Length(&m_CameraPosition) - D3DXVec3Length(&m_CameraNextPosition)) < 0.01f ){
-			m_IsUsableSP = true;										// 特殊能力を使う.
+//			m_IsUsableSP = true;										// 特殊能力を使う.
 			m_NowSPCameraStete = player::ESPCameraState_CameraShake;	// 次の状態へいどう.
+			SetAnimationBlend( player::EAnimNo_SP );
+			m_SPAnimFrame = 0.0;
 		}
 	}
 		break;
@@ -538,11 +600,21 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 		// カメラを揺らす.
 		//-------------------------------------.
-		m_CameraCount--;	// カウントの減算.
-		// カメラの揺れ.
-		const float SHAKE_VALUE = sinf(static_cast<float>(D3DX_PI) * TWO / CAMERA_FREQUENCY_LOOKPOS * m_CameraCount) * (m_CameraCount * CAMERA_AMPLITUDE_LOOKPOS);
-		m_CameraLookPosition.x += SHAKE_VALUE;
-		m_CameraLookPosition.y += SHAKE_VALUE;
+		m_SPAnimFrame += 0.01;
+
+		if( m_SPAnimFrame >= m_SPAnimEndFrame-0.5 ){
+			m_IsUsableSP = true;
+			m_AnimSpeed = 0.0;
+		} if( m_SPAnimFrame > m_SPAnimEndFrame ){
+			m_CameraCount--;	// カウントの減算.
+			// カメラの揺れ.
+			const float SHAKE_VALUE = sinf(static_cast<float>(D3DX_PI) * TWO / CAMERA_FREQUENCY_LOOKPOS * m_CameraCount) * (m_CameraCount * CAMERA_AMPLITUDE_LOOKPOS);
+			m_CameraLookPosition.x += SHAKE_VALUE;
+			m_CameraLookPosition.y += SHAKE_VALUE;
+		}
+		if( m_CameraCount <= 20 ){
+			m_AnimSpeed = 0.01;
+		}
 		
 		// カメラカウントが0以下になったら.
 		if( m_CameraCount <= 0 ){
@@ -550,6 +622,8 @@ void CPlayer::SPCameraUpdate()
 			m_CameraNextPosition	= m_pCamera->GetPosition();	// メインカメラの座標を設定.
 			m_CameraReturnCount		= 0.0f;						// カメラを戻すカウントを初期化.
 			m_NowSPCameraStete		= player::ESPCameraState_CameraReturn;	// 次の状態へ移動.
+			m_AnimSpeed				= 0.01;
+			SetAnimationBlend( player::EAnimNo_Wait );
 		}
 	}
 		break;
@@ -656,7 +730,7 @@ void CPlayer::AttackAnimation()
 		if(m_AttackComboCount == 2) CSoundManager::PlaySE("PlayerVoiceAttack2");
 		if(m_AttackComboCount == 3)	CSoundManager::PlaySE("PlayerVoiceAttack3");
 	}
-	m_AttackDataQueue.front().Frame += 0.01;	// フレームの更新.
+	m_AttackDataQueue.front().Frame += m_AnimSpeed;	// フレームの更新.
 }
 
 // アニメーション設定.
@@ -750,6 +824,19 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 		if( m_NowAnimNo != player::EAnimNo_Damage ){
 			SetAnimation( player::EAnimNo_Damage );
 		}
+	}
+	m_LifePoint = 0.0f;
+	// 体力がなくなったら.
+	if( m_LifePoint <= 0.0f ){
+		// 死亡アニメーションを設定.
+		if( m_NowAnimNo != player::EAnimNo_Dead ){
+			SetAnimation( player::EAnimNo_Dead );
+		}
+		m_DeadAnimFrame	= 0.0;
+		m_IsDead		= true;
+		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z )+static_cast<float>(D3DX_PI);
+		m_MoveVector.x = sinf( m_vRotation.y );
+		m_MoveVector.z = cosf( m_vRotation.y );
 	}
 
 	// 体力が一定値を超えないようにする.
