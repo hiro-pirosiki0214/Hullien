@@ -42,7 +42,7 @@ class CPlayer : public CCharacter
 	const float TWO = 2.0f;
 	const float CAMERA_COUNT_MAX			= 100.0f;
 	const float CAMERA_BACK_DIRECTION_X		= 20.0f;
-	const float CAMERA_BACK_DIRECTION_Y		= 10.0f;
+	const float CAMERA_BACK_DIRECTION_Z		= 10.0f;
 	const float CAMERA_BACK_HEIGHT			= 8.0f;
 	const float CAMERA_BACK_LERP_VALUE		= 0.1f;
 	const float CAMERA_FREQUENCY_LOOKPOS	= 15.0f;	// カメラ注視位置の周波数.
@@ -97,6 +97,8 @@ private:
 	void AvoidMove();
 	// ノックバック動作関数.
 	void KnockBack();
+	// カメラの更新.
+	void CameraUpdate();
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
@@ -170,6 +172,7 @@ private:
 	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 	D3DXVECTOR3		m_HitVector;		// 衝突時のベクトル.
+	D3DXVECTOR3		m_TargetVector;		// 目的のベクトル.
 
 	SPlayerParam	m_Parameter;			// パラメーター.
 	float			m_LifePoint;			// 体力.

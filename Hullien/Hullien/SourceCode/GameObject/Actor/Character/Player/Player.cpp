@@ -34,6 +34,8 @@ CPlayer::CPlayer()
 	, m_pEffects					()
 	, m_IsDuringAvoid				( false )
 	, m_AvoidVector					( 0.0f, 0.0f, 0.0f )
+	, m_HitVector					( 0.0f, 0.0f, 0.0f )
+	, m_TargetVector				( 0.0f, 0.0f, 0.0f )
 	, m_Parameter					()
 	, m_LifePoint					( 0.0f )
 	, m_SpecialAbility				( 0.0f )
@@ -115,25 +117,7 @@ void CPlayer::Update()
 	AttackUpUpdate();			// 攻撃力UP更新.
 	MoveSpeedUpUpdate();		// 移動速度UP更新.
 
-
-	// プレイヤーを注視して回転.
-	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
-	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
-	m_pCamera->SetHeight( m_CameraHeight );	// 高さの設定.
-	if( m_IsYButtonPressed == false ){
-		m_CameraLerp = m_Parameter.CameraLerpValue;
-		// カメラをマネージャーに設定.
-		CCameraManager::SetCamera( m_pCamera );
-	} else {
-		CCameraManager::SetCamera( m_pSPCamera );
-	}
-
-	// 体力が1/3になったらSEを鳴らす.
-	if (m_LifePoint <= m_Parameter.LifeMax / 3)
-	{
-		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
-		CSoundManager::NoMultipleSEPlay("HP");
-	}
+	CameraUpdate();				// カメラの更新.
 
 	// 足音.
 	FootStep(RIGHT_FOOT, LEFT_FOOT);
@@ -160,7 +144,6 @@ void CPlayer::Collision( CActor* pActor )
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
 	AttackCollision( pActor );	// 攻撃時の当たり判定.
-
 }
 
 // 相手座標の設定関数.
@@ -217,10 +200,10 @@ void CPlayer::Controller()
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
 
-	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_vPosition.z -= m_MoveSpeed;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_vPosition.z += m_MoveSpeed;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_vPosition.x -= m_MoveSpeed;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_vPosition.x += m_MoveSpeed;
+	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_MoveVector.z -= IDLE_THUMB_MIN;
+	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_MoveVector.z += IDLE_THUMB_MAX;
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_MoveVector.x -= IDLE_THUMB_MIN;
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_MoveVector.x += IDLE_THUMB_MAX;
 }
 
 // カメラ操作.
@@ -338,8 +321,8 @@ void CPlayer::Move()
 	m_MoveSpeedMulValue += MOVE_SPEED_MUL_VALUE_ADD;
 	if( m_MoveSpeedMulValue >= MOVE_SPEED_MUL_VALUE_MAX ) m_MoveSpeedMulValue = MOVE_SPEED_MUL_VALUE_MAX;
 
-	// ターゲットのベクトルを用意.
-	float targetRot = atan2f( m_MoveVector.x, m_MoveVector.z ) + m_pCamera->GetRadianX();
+	// ターゲットのベクトルを用意 カメラのラジアン値を足して調整.
+	const float targetRot = atan2f( m_MoveVector.x, m_MoveVector.z ) + m_pCamera->GetRadianX();
 	D3DXVECTOR3 targetVec = { 0.0f, 0.0f, 0.0f };
 	targetVec.x = sinf( targetRot );
 	targetVec.z = cosf( targetRot );
@@ -378,11 +361,8 @@ void CPlayer::AvoidMove()
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 
-	D3DXVECTOR3 length = m_OldPosition - m_vPosition;
-	// 移動距離を計算.
-	float moveDistance = D3DXVec3Length( &length );
 	// 移動距離が一定以下なら終了.
-	if( moveDistance <= m_Parameter.AvoidMoveDistance ) return;
+	if( D3DXVec3Length( &(m_OldPosition - m_vPosition) ) <= m_Parameter.AvoidMoveDistance ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
 }
 
@@ -403,42 +383,65 @@ void CPlayer::KnockBack()
 	}
 }
 
+// カメラの更新.
+void CPlayer::CameraUpdate()
+{
+	// プレイヤーを注視して回転.
+	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
+	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
+	m_pCamera->SetHeight( m_CameraHeight );				// 高さの設定.
+
+	// Yボタン(特殊能力が使われていなければ).
+	if( m_IsYButtonPressed == false ){
+		m_CameraLerp = m_Parameter.CameraLerpValue;
+		// メインカメラをマネージャーに設定.
+		CCameraManager::SetCamera( m_pCamera );
+	} else {
+		// 特殊能力用のカメラをマネージャーに設定.
+		CCameraManager::SetCamera( m_pSPCamera );
+	}
+
+	// 体力が1/3になったらSEを鳴らす.
+	if (m_LifePoint <= m_Parameter.LifeMax / 3)
+	{
+		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
+		CSoundManager::NoMultipleSEPlay("HP");
+	}
+}
+
 // エフェクト描画関数.
 void CPlayer::EffectRender()
 {
+	// 攻撃カウントが一定値より多ければ.
 	if( m_AttackComboCount > player::EAttackNo_None ){
+		// 攻撃エフェクトの座標を設定する.
 		m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
 	}
-	for( auto& e : m_pEffects ){
-		e->Render();
-	}
+	// エフェクトの描画.
+	for( auto& e : m_pEffects ) e->Render();
 }
 
 // 攻撃の当たり判定.
 void CPlayer::AttackCollision( CActor* pActor )
 {
-	const float attackLength = 10.0f;
 	if( m_AttackComboCount <= player::EAttackNo_None ){
+		// 攻撃してない場合、攻撃用当たり判定座標をしたのほうに設定.
 		m_AttackPosition = { 0.0f, -1.0f, 0.0f };
 		return;
 	}
 
-	//
-	//	アニメーションが来るまでプレイヤーの目の前だけ攻撃.
-	//
-
-	// 回転軸で移動.
-//	m_AttackPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * attackLength;
-//	m_AttackPosition.y = 5.0f;
-//	m_AttackPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * attackLength;
-
+	// とりあえず方のボーン座標を設定.
 	m_pSkinMesh->GetPosFromBone( "kaito_rifa_2_L_ude_1", &m_AttackPosition );
 	// 球体の当たり判定.
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
 	// 攻撃関数.
-	auto attackProc = [&]( float& life, const bool& isAttack ){ life -= 10.0f; };
-	pActor->LifeCalculation( attackProc );
+	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
+	{ 
+		life	-= m_AttackPower;
+		isAttack = true;
+	});
+	
 	if (m_IsAttackSE == false)
 	{
 		CSoundManager::PlaySE("PlayerAttackHit");
@@ -468,9 +471,11 @@ void CPlayer::SPCameraUpdate()
 		return;
 	}
 
-	m_CameraLookPosition = m_GirlPosition;		// 女の子を視点にする.
-	D3DXVECTOR3 vec = m_vPosition - m_CameraLookPosition;	// 現在の座標と女の子の座標とのベクトルを取得する.
-	float targetRot = atan2f( vec.x, vec.z );	// 回転値を設定する.
+	m_CameraLookPosition = m_GirlPosition;	// 女の子を視点にする.
+	// 回転値を設定する.
+	const float targetRot = atan2f( 
+		m_vPosition.x - m_CameraLookPosition.x,
+		m_vPosition.z - m_CameraLookPosition.z );
 
 	switch( m_NowSPCameraStete )
 	{
@@ -480,14 +485,15 @@ void CPlayer::SPCameraUpdate()
 		// プレイヤーを女の子のほうへ向ける.
 		//-------------------------------------.
 		// 目的のベクトルを用意.
-		D3DXVECTOR3 targetVec = { 0.0f, 0.0f, 0.0f };
-		targetVec.x = sinf( targetRot );
-		targetVec.z = cosf( targetRot );
+		m_TargetVector.x = sinf( targetRot );
+		m_TargetVector.z = cosf( targetRot );
 		
-		if( TargetRotation( targetVec, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == true ){
-			m_vRotation.y = atan2f( targetVec.x, targetVec.z );
-			m_NowSPCameraStete = player::ESPCameraState_PlayerBack;
+		// 目的の座標に向けて回転.
+		if( TargetRotation( m_TargetVector, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == true ){
+			m_vRotation.y		= targetRot;							// ベクトルの回転を取得.
+			m_NowSPCameraStete	= player::ESPCameraState_PlayerBack;	// 次の状態へ移動.
 		} else {
+			// 回転中はプレイヤーを視点に設定.
 			m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 		}
 		break;
@@ -497,16 +503,17 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 		// カメラをプレイヤーの後ろに移動させる.
 		//-------------------------------------.
+		m_vRotation.y = targetRot;	// ベクトルの回転を取得.
 		// カメラの座標を設定する.
 		m_CameraNextPosition = m_vPosition;
-		m_CameraNextPosition.x += sinf( targetRot ) * CAMERA_BACK_DIRECTION_X;
-		m_CameraNextPosition.z += cosf( targetRot ) * CAMERA_BACK_DIRECTION_Y;
+		m_CameraNextPosition.x += m_TargetVector.x * CAMERA_BACK_DIRECTION_X;
+		m_CameraNextPosition.z += m_TargetVector.z * CAMERA_BACK_DIRECTION_Z;
 		m_CameraNextPosition.y = CAMERA_BACK_HEIGHT;
 		// プレイヤーの後ろに移動.
 		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, CAMERA_BACK_LERP_VALUE );
 		if( fabsf(D3DXVec3Length(&m_CameraPosition) - D3DXVec3Length(&m_CameraNextPosition)) < 0.01f ){
-			m_IsUsableSP = true;	// 特殊能力を使う.
-			m_NowSPCameraStete = player::ESPCameraState_CameraShake;
+			m_IsUsableSP = true;										// 特殊能力を使う.
+			m_NowSPCameraStete = player::ESPCameraState_CameraShake;	// 次の状態へいどう.
 		}
 	}
 		break;
@@ -521,11 +528,12 @@ void CPlayer::SPCameraUpdate()
 		m_CameraLookPosition.x += SHAKE_VALUE;
 		m_CameraLookPosition.y += SHAKE_VALUE;
 		
+		// カメラカウントが0以下になったら.
 		if( m_CameraCount <= 0 ){
-			m_CameraCount			= CAMERA_COUNT_MAX;
-			m_CameraNextPosition	= m_pCamera->GetPosition();
-			m_CameraReturnCount		= 0.0f;
-			m_NowSPCameraStete		= player::ESPCameraState_CameraReturn;
+			m_CameraCount			= CAMERA_COUNT_MAX;			// カウントを初期化.
+			m_CameraNextPosition	= m_pCamera->GetPosition();	// メインカメラの座標を設定.
+			m_CameraReturnCount		= 0.0f;						// カメラを戻すカウントを初期化.
+			m_NowSPCameraStete		= player::ESPCameraState_CameraReturn;	// 次の状態へ移動.
 		}
 	}
 		break;
@@ -534,19 +542,23 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 		// カメラをもとの位置に戻す.
 		//-------------------------------------.
-		m_CameraReturnCount += CAMERA_RETURN_COUNT_ADD;
-		if( m_CameraReturnCount >= CAMERA_RETURN_COUNT_MAX ) m_CameraReturnCount = 1.0f;
-
+		m_CameraReturnCount		+= CAMERA_RETURN_COUNT_ADD;	// カメラを戻すカウントを加算.
+		// 一定値こ超えないようにする.
+		if( m_CameraReturnCount >= CAMERA_RETURN_COUNT_MAX ) m_CameraReturnCount = CAMERA_RETURN_COUNT_MAX;
+		// 視点をプレイヤーに設定.
 		m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 		// プレイヤーの後ろに移動.
 		D3DXVec3Lerp( &m_CameraPosition, &m_CameraPosition, &m_CameraNextPosition, m_CameraReturnCount );
+		// カメラを戻すカウントが一定値以上なら.
 		if( m_CameraReturnCount >= CAMERA_RETURN_COUNT_MAX ){
-			m_pCamera->SetLookPosition( m_CameraLookPosition );
-			m_pCamera->SetPosition( m_CameraPosition );
-			m_IsYButtonPressed	= false;
-			m_CameraReturnCount = 0.0f;
-			m_CameraLerp		= 0.0f;
-			m_NowSPCameraStete	= player::ESPCameraState_Start;
+			m_pCamera->SetLookPosition( m_CameraLookPosition );	// メインカメラの視点座標を設定.
+			m_pCamera->SetPosition( m_CameraPosition );			// メインカメラの座標を設定.
+			m_IsYButtonPressed	= false;	// 特殊能力が終了したのでフラグを下す.
+			m_CameraReturnCount = 0.0f;		// カメラを戻すカウントを初期化.
+			m_CameraLerp		= 0.0f;		// カメラの補完値を初期化.
+			m_NowSPCameraStete	= player::ESPCameraState_Start;	// 初めの状態へ戻す.
+
+			return;	// 特殊カメラは設定しなくてもよいのでここで終了.
 		}
 	}
 		break;
@@ -578,14 +590,16 @@ void CPlayer::SpecialAbilityUpdate()
 void CPlayer::AttackUpUpdate()
 {
 	if( m_pEffectTimers[player::EEffectTimerNo_Attack]->Update() == false ) return;
-	m_AttackPower		= m_Parameter.AttackPower;
+	// タイマーが終了したら元の値に戻す.
+	m_AttackPower = m_Parameter.AttackPower;
 }
 
 // 移動速度UP更新関数.
 void CPlayer::MoveSpeedUpUpdate()
 {
 	if( m_pEffectTimers[player::EEffectTimerNo_MoveSpeedUp]->Update() == false ) return;
-	m_MoveSpeed = m_Parameter.MoveSpeed;
+	// タイマーが終了したら元の値に戻す.
+	m_MoveSpeed	= m_Parameter.MoveSpeed;
 }
 
 // 麻痺中の更新関数.
@@ -652,6 +666,7 @@ void CPlayer::SetAnimationBlend( const player::EAnimNo& animNo )
 void CPlayer::SetAttackFrameList()
 {
 	if( m_pSkinMesh == nullptr ) return;
+	// 各攻撃の終了フレームを取得.
 	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(player::EAnimNo_Attack1) );
 	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(player::EAnimNo_Attack2) );
 	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(player::EAnimNo_Attack3) );
@@ -706,20 +721,24 @@ bool CPlayer::IsPushAttack()
 // ライフ計算関数.
 void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 {	
-	if( m_IsDuringAvoid == true ) return;	// 回避中なら終了.
-	if( m_IsKnockBack == true ) return;		// ノックバック中なら終了.
+	if( m_IsDuringAvoid == true ) return;		// 回避中なら終了.
+	if( m_IsYButtonPressed == true ) return;	// 特殊能力を使用しているなら終了.
+	if( m_IsKnockBack == true ) return;			// ノックバック中なら終了.
 
 	bool isAttack = false;
 	proc( m_LifePoint, isAttack );
-	if( isAttack == true ){
-		m_IsKnockBack = true;
+	// 攻撃を食らったら.
+	if( isAttack == true ){	
+		m_IsKnockBack = true;	// ノックバックフラグを立てる.
+		// ダメージアニメーションを設定.
 		if( m_NowAnimNo != player::EAnimNo_Damage ){
 			SetAnimation( player::EAnimNo_Damage );
 		}
 	}
+
+	// 体力が一定値を超えないようにする.
 	if( m_LifePoint < m_Parameter.LifeMax ) return;
 	m_LifePoint = m_Parameter.LifeMax;
-	
 }
 
 // 特殊能力回復時間、効力時間設定関数.
