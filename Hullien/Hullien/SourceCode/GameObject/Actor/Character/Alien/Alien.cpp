@@ -187,7 +187,7 @@ void CAlien::Spawning()
 	// モデルのアルファ値を足していく.
 	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
 	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
-	CSoundManager::NoMultipleSEPlay("AlienAppSE");
+	CSoundManager::NoMultipleSEPlay("AlienApp");
 	m_NowState = EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;
 }

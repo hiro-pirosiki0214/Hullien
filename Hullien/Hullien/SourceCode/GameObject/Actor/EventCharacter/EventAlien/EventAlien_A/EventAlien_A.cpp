@@ -105,7 +105,7 @@ bool CEventAlienA::Spawn(const D3DXVECTOR3& spawnPos)
 
 	if (m_Parameter.IsDisp == false)
 	{
-		CSoundManager::PlaySE("EventAlienApp");
+		CSoundManager::PlaySE("AlienApp");
 		m_Parameter.IsDisp = true;
 		m_Parameter.vScale = { 0.0f,0.0f,0.0f };
 	}

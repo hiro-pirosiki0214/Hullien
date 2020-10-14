@@ -2,6 +2,7 @@
 #include "..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\XAudio2\SoundManager.h"	
 
 CArm::CArm()
 	: m_pSkinMesh		( nullptr )
@@ -109,6 +110,7 @@ void CArm::SetAppearance()
 	m_ScalingValue		= SCALING_VALUE;
 	m_pAC->ResetTime();
 	m_pSkinMesh->ChangeAnimSet_StartPos( 0, 0.0, m_pAC );
+	CSoundManager::PlaySE("Arm");
 }
 
 // 片づける用意.
@@ -138,6 +140,7 @@ void CArm::Appearance()
 		m_AppearanceCount	= APPEARANCE_COUNT_MAX;
 		m_ScalingValue		= SCALING_VALUE_MAX;
 		m_AnimSpeed			= 0.01;				// アニメーション速度変更.
+		CSoundManager::PlaySE("ArmGrab");		// つかんだ時のSE再生.
 		m_NowArmState		= EArmState::Grab;	// 次の状態へ移動.
 	}
 	if( m_ScalingValue >= SCALING_VALUE_MAX ) m_ScalingValue = SCALING_VALUE_MAX;

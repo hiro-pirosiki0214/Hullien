@@ -91,11 +91,13 @@ void CSceneManager::NextSceneMove()
 		break;
 	case EScene::GameClear:
 		m_pScene	= std::make_shared<CGameClear>( this );
+		m_IsRetry	= false;
 		m_NowScene	= m_NextScene;
 		m_NextScene	= EScene::Title;
 		break;
 	case EScene::GameOver:
 		m_pScene	= std::make_shared<CGameOver>( this );
+		m_IsRetry	= false;
 		m_NowScene	= m_NextScene;
 		m_NextScene = EScene::Title;
 		break;

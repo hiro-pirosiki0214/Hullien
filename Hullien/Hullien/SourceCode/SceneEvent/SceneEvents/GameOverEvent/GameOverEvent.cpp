@@ -103,6 +103,8 @@ void CGameOverEvent::Render()
 // スプライトの描画関数.
 void CGameOverEvent::SpriteRender()
 {
+	if (m_IsSkip == true) return;
+	m_pEventWidget->Update();
 	m_pEventWidget->Render();
 }
 
@@ -198,10 +200,12 @@ void CGameOverEvent::NextStep()
 // スキップ.
 void CGameOverEvent::Skip()
 {
+	if (m_IsSkip == true) return;
 	m_stGirl.IsDisp = false;
 	m_stCamera.vLookPosition = m_vUFOPosition;
 	m_vUFOPosition = DESTINATION_BACK;
 	m_EventStep = EEventStep::Skip;
+	m_IsSkip = true;
 	NextStep();
 }
 

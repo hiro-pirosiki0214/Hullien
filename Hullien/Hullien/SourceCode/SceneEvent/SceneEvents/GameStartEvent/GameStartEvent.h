@@ -33,7 +33,7 @@ class CGameStartEvent : public CEventBase
 	const D3DXVECTOR3 CAMERA_POSITION_CAUGHT_GIRL = D3DXVECTOR3(20.0f, 5.0f, 10.0f);	// 女の子捕獲時のカメラ位置.
 	const D3DXVECTOR3 CAMERA_POSITION_ORDER_BARRIER = D3DXVECTOR3(6.5f, 8.4f, 10.0f);	// バリア準備時のカメラ位置.
 	const D3DXVECTOR3 CAMERA_POSITION_PLAYER_UP		= D3DXVECTOR3(0.0f, 8.0f, -7.0f);	// プレイヤーのアップ時のカメラ位置.
-	const D3DXVECTOR3 CAMERA_GAMEPOSITION			= D3DXVECTOR3(0.0f, 12.0f, 30.0f);					// 女の子の位置.
+	const D3DXVECTOR3 CAMERA_GAMEPOSITION			= D3DXVECTOR3(0.0f, 12.0f, 29.0f);					// 女の子の位置.
 
 	const float AMPLITUDE_COUNT						= 50.0f;							// カメラの揺れ用カウント.
 	const float CAMERA_CORRECTION_PLAYERPOS_Y		= 6.0f;								// プレイヤーに対するカメラy座標補正値.
@@ -74,7 +74,8 @@ class CGameStartEvent : public CEventBase
 	const float AMPLITUDE_UFO_STOP		= 0.1f;										// UFO停止の振幅.
 
 	// プレイヤー関係.
-	const float PLAYER_INITPOSITION_Z = -120.0f;										// プレイヤー初期位置.
+	const float PLAYER_INITPOSITION_Z	= -60.0f;									// プレイヤー初期位置.
+	const float RUN_SPEED				= 0.2f;										//走る速度.
 	const float PLAYER_ROTATION_Y = static_cast<float>(D3DXToRadian(0));			// プレイヤーのy座標回転値.
 	const float PLAYER_DEFAULT_ROTATION_Y = static_cast<float>(D3DXToRadian(180));	// プレイヤーのy座標回転値.
 

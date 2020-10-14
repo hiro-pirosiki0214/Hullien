@@ -152,7 +152,7 @@ bool CGameStartEvent::SpawnUFOInit()
 bool CGameStartEvent::PlayerInit()
 {
 	if (m_pPlayer->Init() == false) return false;	
-	m_stPlayer.vPosition.z = PLAYER_INITPOSITION_Z;
+	m_stPlayer.vPosition.z = PLAYER_INITPOSITION_Z * TWO;
 	m_stPlayer.vRotation.y = PLAYER_DEFAULT_ROTATION_Y;
 	return true;
 }
@@ -161,7 +161,7 @@ bool CGameStartEvent::PlayerInit()
 bool CGameStartEvent::GirlInit()
 {
 	if (m_pGirl->Init() == false) return false;
-	m_stGirl.vPosition.z = PLAYER_INITPOSITION_Z + GIRL_DISTANCE_Z;
+	m_stGirl.vPosition.z = m_stPlayer.vPosition.z + GIRL_DISTANCE_Z;
 	m_stGirl.vRotation.y = GIRL_DEFAULT_ROTATION_Y;
 	return true;
 }
@@ -302,12 +302,11 @@ void CGameStartEvent::EscapePlayerAndGirl()
 	m_stCamera.vPosition.z = m_stPlayer.vPosition.z;
 	m_stCamera.vLookPosition = m_stPlayer.vPosition;
 	// プレイヤーの目的地.
-	const D3DXVECTOR3 PLAYER_DESTINATION = { 0.0f, m_stPlayer.vPosition.y, -60.0f };
+	const D3DXVECTOR3 PLAYER_DESTINATION = { 0.0f, m_stPlayer.vPosition.y, PLAYER_INITPOSITION_Z };
 	// 女の子の目的地.
 	const D3DXVECTOR3 GIRL_DESTINATION = { 0.0f, m_stGirl.vPosition.y, GIRL_DISTANCE_Z };
 
-	m_stPlayer.MoveSpeed = m_stGirl.MoveSpeed = 0.2f;
-
+	m_stPlayer.MoveSpeed = m_stGirl.MoveSpeed = RUN_SPEED;
 	MoveDestination(m_stGirl.vPosition, GIRL_DESTINATION, m_stGirl.MoveSpeed);
 	if (MoveDestination(m_stPlayer.vPosition, PLAYER_DESTINATION, m_stPlayer.MoveSpeed) == false) return;
 	CSoundManager::PlaySE("UFOMove");
@@ -567,6 +566,7 @@ void CGameStartEvent::ReturnGirl()
 	{
 		// カメラの設定.
 		m_stCamera.vLookPosition = m_stPlayer.vPosition;
+		m_stCamera.vLookPosition.y = 9.0f;
 		m_stCamera.ViewingAngle = m_pEventCamera->ResetViewingAngle();
 
 		if (m_stCamera.vPosition.x < CAMERA_GAMEPOSITION.x) { m_stCamera.vPosition.x += CAMERA_MOVE_SPEED; }

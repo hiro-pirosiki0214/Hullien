@@ -5,8 +5,9 @@
 #include "..\..\..\XAudio2\SoundManager.h"
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
-	: CSceneBase		   ( pSceneManager )
-	, m_pClearWidget	   ( nullptr )
+	: CSceneBase			( pSceneManager )
+	, m_pClearWidget		( nullptr )
+	, m_IsChangeScene		( false )
 {
 	m_pClearWidget = std::make_unique<CClearWidget>();
 	CFade::SetFadeOut();
@@ -58,10 +59,12 @@ void CGameClear::ChangeScene()
 	if (GetAsyncKeyState(VK_RETURN) & 0x0001
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 	{
-		if (CFade::GetIsFade() == true) return;
+		if(m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
 		CSoundManager::PlaySE("DeterminationSE");
+		m_IsChangeScene = true;
 	}
+
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (CFade::GetIsFade() == true) return;
