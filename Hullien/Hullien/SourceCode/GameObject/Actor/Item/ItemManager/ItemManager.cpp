@@ -72,12 +72,16 @@ void CItemManager::Update( std::function<void(CActor*)> updateProc )
 {
 	// 各アイテムの更新、当たり判定.
 	for( auto& i : m_ItemList ) updateProc( i.get() );
-	// アイテムの消去処理.
+	// アイテムをリストから消去.
 	for(size_t i = 0; i < m_ItemList.size(); i++)
 	{
-		if (m_ItemList[i]->IsDelete() == false) continue;
-		m_ItemList[i] = m_ItemList.back();
-		m_ItemList.pop_back();
+		if(m_ItemList[i]->IsHitDisappear() == true
+			|| m_ItemList[i]->IsDelete() == true)
+		{
+			m_ItemList[i] = m_ItemList.back();
+			m_ItemList.pop_back();
+			i--;
+		}
 	}
 }
 

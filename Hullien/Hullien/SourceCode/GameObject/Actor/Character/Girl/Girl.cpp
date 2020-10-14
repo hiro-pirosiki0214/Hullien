@@ -76,6 +76,7 @@ void CGirl::Update()
 	default:
 		break;
 	}
+
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
 		m_pWarning->Update();
@@ -141,11 +142,6 @@ void CGirl::SpriteRender()
 		m_pWarning->SetPosition(m_vPosition);
 		m_pWarning->Update();
 		m_pWarning->Render();
-	}
-	// 女の子が連れ去られている状態出ないなら警告を非表示.
-	if(m_NowState != ENowState::Abduct)
-	{
-		m_IsDanger = false;
 	}
 }
 
@@ -244,8 +240,13 @@ void CGirl::SearchCollision( CActor* pActor )
 		( pActor->GetObjectTag() != EObjectTag::Alien_D )) return;
 
 	// 球体の当たり判定.
-	if( m_pSearchCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
-	m_IsDanger = true;
+	if (m_pSearchCollManager->IsShereToShere(pActor->GetCollManager()) == false)
+	{
+		m_IsDanger = false;
+	}
+	else {
+		m_IsDanger = true;
+	}
 
 }
 
