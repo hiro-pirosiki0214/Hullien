@@ -3,6 +3,8 @@
 
 #include "..\EventCharacter.h"
 
+class CArm;
+
 /****************************************
 *	イベント用宇宙人クラス.
 **/
@@ -35,6 +37,10 @@ public:
 	bool IsBarrierHit() const { return m_IsBarrierHit; }
 	// 宇宙人の状態設定.
 	void SetAlienState(const EEventAlienState& state) { m_NowState = state; }
+	// ターゲット位置取得関数.
+	D3DXVECTOR3 GetTargetPosition() const { return m_vTargetPosition; }
+	// ターゲットをつかんでいるか.
+	bool IsGrab() const;
 
 
 private:
@@ -55,14 +61,6 @@ protected:
 
 	// スポーン中.
 	virtual void Spawning();
-	// 移動.
-	virtual void Move();
-	// 拐う.
-	virtual void Abduct();
-	// 逃げる.
-	virtual void Escape();
-	// 吹き飛ぶ.
-	virtual void BlowAway();
 
 	// 女の子との当たり判定.
 	void GirlCollision(CActor* pActor);
@@ -70,10 +68,12 @@ protected:
 	void BarrierCollision(CActor* pActor);
 
 protected:
-	D3DXVECTOR3*		m_pAbductUFOPosition;		// UFOの座標.
-	EEventAlienState	m_NowState;					// 現在の状態.
-	bool				m_IsBarrierHit;				// バリアに当たっているか.
-	float				m_Speed;					// 移動速度,
+	std::shared_ptr<CArm>	m_pArm;						// アームクラス.
+	D3DXVECTOR3*			m_pAbductUFOPosition;		// UFOの座標.
+	D3DXVECTOR3				m_vTargetPosition;			// ターゲット位置.
+	EEventAlienState		m_NowState;					// 現在の状態.
+	bool					m_IsBarrierHit;				// バリアに当たっているか.
+	float					m_Speed;					// 移動速度,
 
 };
 

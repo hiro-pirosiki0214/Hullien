@@ -313,6 +313,7 @@ void CGame::NextSceneMove()
 		m_pSceneManager->RetryGame();
 		break;
 	case ENextSceneState::Clear:
+		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
 		break;
 	case ENextSceneState::GameOver:
@@ -325,6 +326,7 @@ void CGame::NextSceneMove()
 		if (CFade::GetIsFade() == true) return;
 		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->OnGameOver();
+		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
 		break;
 	default:

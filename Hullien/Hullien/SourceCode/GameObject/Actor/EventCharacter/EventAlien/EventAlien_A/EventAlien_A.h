@@ -33,12 +33,6 @@ private:
 	virtual void Spawning() override;
 	// ˆÚ“®.
 	virtual void Move() override;
-	// ‰û‚¤.
-	virtual void Abduct() override;
-	// “¦‚°‚é.
-	virtual void Escape() override;
-	// ‚«”ò‚Ô.
-	virtual void BlowAway() override;
 
 	// “–‚½‚è”»’è‚Ìİ’è.
 	bool ColliderSetting();

@@ -194,6 +194,7 @@ void CGameStartEvent::ActorUpdate()
 	m_pGirl->SetOptionalState( m_stGirl );
 	// 宇宙人.
 	m_pAlienA->SetOptionalState( m_stAlien );
+	m_pAlienA->Update();
 	// UFOの位置設定.
 	m_pSpawnUFO->SetPosition( m_vUFOPosition );
 }
@@ -279,7 +280,9 @@ void CGameStartEvent::Skip()
 	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, ALIEN_MOVEING_LIMIT_Y, ALIEN_MOVEING_LIMIT_Z };
 	m_stAlien.vPosition = ALIEN_DESTINATION;
 	// 女の子.
-	m_stGirl.vPosition = m_stAlien.vPosition;
+	m_stGirl.vPosition.x = -0.015f;
+	m_stGirl.vPosition.y = m_stAlien.vPosition.y;
+	m_stGirl.vPosition.z = m_stAlien.vPosition.z - 5.5f;
 	// UFO.
 	m_pSpawnUFO->SetDisp( false );
 	CSoundManager::StopAllSE("UFOMove");
@@ -401,7 +404,8 @@ void CGameStartEvent::MoveAlien()
 	m_stAlien.vPosition.y = m_pAlienA->GetPosition().y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_ALIEN_UPDOWN * m_Count) * AMPLITUDE_ALIEN_UPDOWN);
 
 	if (m_Count < WAIT_COUNT) return;
-	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, 0.0f };
+	m_pAlienA->SetTargetPos( *m_pGirl.get() );
+	const D3DXVECTOR3 ALIEN_DESTINATION = m_pAlienA->GetTargetPosition();
 	if (MoveDestination(m_stAlien.vPosition, ALIEN_DESTINATION, ALIEN_RUN_SPEED) == false) return;
 	m_Count = 0;
 	NextStep();
@@ -427,15 +431,28 @@ void CGameStartEvent::GetCaughtGirl()
 	m_stGirl.vPosition = m_pGirl->GetPosition();
 
 	// 宇宙人の設定.
-	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, ALIEN_MOVEING_LIMIT_Z };
+	D3DXVECTOR3 ALIEN_DESTINATION;
+	if (m_pAlienA->IsGrab() == false)
+	{
+		ALIEN_DESTINATION = m_pAlienA->GetTargetPosition();
+	}
+	else
+	{
+		ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, ALIEN_MOVEING_LIMIT_Z };
+	}
 	if (MoveDestination(m_stAlien.vPosition, ALIEN_DESTINATION, ALIEN_MOVE_SPEED) == false) return;
+	if (m_pAlienA->IsGrab() == false) return;
 	m_IsSkip = true;
+	m_pWidget->SetSkip(m_IsSkip);
 	NextStep();
 }
 
 // バリア発動準備.
 void CGameStartEvent::InvocatingOrderBarrier()
 {
+	m_pGirl->Collision(m_pAlienA.get());
+	m_pAlienA->Collision(m_pGirl.get());
+
 	// カメラの設定.
 	m_stCamera.vPosition = CAMERA_POSITION_ORDER_BARRIER;
 	m_stCamera.vLookPosition = m_pGirl->GetPosition();
