@@ -39,16 +39,16 @@ bool CAlienC::Init()
 // 更新関数.
 void CAlienC::Update()
 {
-	SetMoveVector( m_TargetPosition );
-	CurrentStateUpdate();	// 現在の状態の更新.
-	m_pArm->SetPosition( m_vPosition );
-	m_pArm->SetRotationY( m_vRotation.y + static_cast<float>(D3DX_PI) );
-	m_pArm->Update();
+	SetMoveVector( m_TargetPosition );	// 目的のベクトルを取得.
+	CurrentStateUpdate();				// 現在の状態の更新.
+	// アーム.
+	m_pArm->SetPosition( m_vPosition );		// 座標を設定.
+	m_pArm->SetRotationY( m_vRotation.y );	// 回転値を設定.
+	m_pArm->Update();						// 更新.
+
+	// アルファ値が0より多ければ終了.
 	if( m_ModelAlpha > 0.0f ) return;
-	// 体力が0より多ければ終了.
-//	if( m_LifePoint > 0.0f ) return;
-	// 体力がなければ爆発させる.
-	m_IsExplosion = true;
+	m_IsExplosion = true;	// 爆発させる.
 	CSoundManager::PlaySE("Bomb");
 }
 
@@ -61,9 +61,7 @@ void CAlienC::Render()
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
-	D3DXVECTOR3 rot = m_vRotation;
-	rot.y += static_cast<float>(D3DX_PI);
-	m_pSkinMesh->SetRotation( rot );
+	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -76,9 +74,7 @@ void CAlienC::Render()
 
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
-	D3DXVECTOR3 rot = m_vRotation;
-	rot.y += static_cast<float>(D3DX_PI);
-	m_pTempStaticMesh->SetRotation( rot );
+	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.0f, 0.0f, 0.8f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -87,7 +83,7 @@ void CAlienC::Render()
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
-	m_pArm->Render();
+	m_pArm->Render();	// アームの描画.
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
@@ -101,8 +97,8 @@ void CAlienC::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	GirlCollision( pActor );
-	BarrierCollision( pActor );
+	GirlCollision( pActor );	// 女の子との当たり判定.
+	BarrierCollision( pActor );	// バリアとの当たり判定.
 }
 
 // スポーン.
