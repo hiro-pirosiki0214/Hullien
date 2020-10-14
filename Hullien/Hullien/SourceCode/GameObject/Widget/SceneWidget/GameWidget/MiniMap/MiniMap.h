@@ -24,7 +24,7 @@ private:
 		std::shared_ptr<CSprite> pSprite;	// スプライト.
 		D3DXVECTOR3 Pos;					// 位置.
 		EObjectTag EObjTag;					// タグ.
-		int AnimNumber;							// アニメーション番号.
+		int AnimNumber;						// アニメーション番号.
 
 		stIconInfo()
 			: pSprite			( nullptr )

@@ -44,11 +44,15 @@ void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 	int objCount = 1;	// マップ下地は含めないので配列番号は1から.
 	for (const auto& obj : pObj->GetObjPositionList())
 	{
-		// タグ情報の更新.
-		if (obj.first != m_IconList[objCount].EObjTag) { m_IconList[objCount].EObjTag = obj.first; }
-
 		// Noneならば処理しない.
 		if (obj.first == EObjectTag::None) continue;
+		// タグ情報の更新.
+		if (obj.first != m_IconList[objCount].EObjTag) 
+		{ 
+			m_IconList[objCount].EObjTag = obj.first; 
+			m_IconList[objCount].AnimNumber = SetAnimNumber(obj.first);
+		}
+
 		// 位置情報の更新.
 		if (m_IconList[objCount].Pos == obj.second) return;
 		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - (obj.second.x * 0.25f);
@@ -90,8 +94,18 @@ bool CMiniMap::SpriteSetting()
 // スプライト設定関数.
 void CMiniMap::SpriteSetting(OBJLIST objList)
 {
-	if (m_ObjPosListCount > objList.size()) return;
+	if(m_ObjPosListCount == objList.size()) return;
+	// カウントがオブジェクト数を超えたら.
+	// オブジェクト数分まで減らす.
+	if (m_ObjPosListCount > objList.size())
+	{
+		m_ObjPosListCount = objList.size();
+		m_IconList.resize(objList.size());
+		m_IconList.shrink_to_fit();
+		return;
+	}
 
+	// リストを増やす.
 	for (auto obj = objList.begin() + m_ObjPosListCount; obj < objList.end(); obj++)
 	{
 		m_ObjPosListCount++;
