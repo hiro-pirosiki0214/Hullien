@@ -47,6 +47,8 @@ CPlayer::CPlayer()
 	, m_MoveSpeed					( 0.0f )
 	, m_MoveSpeedMulValue			( 0.0f )
 	, m_IsKnockBack					( false )
+	, m_AvoidAnimFrame				( 0.0 )
+	, m_AvoidAnimEndFrame			( 0.0 )
 	, m_CameraDefaultHeight			( 0.0f )
 	, m_CameraHeight				( 0.0f )
 	, m_CameraPosition				( 0.0f, 0.0f, 0.0f )
@@ -91,6 +93,7 @@ bool CPlayer::Init()
 	m_CameraHeight = m_CameraDefaultHeight = m_Parameter.CameraHeight;
 	m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 	m_CameraLerp = m_Parameter.CameraLerpValue;
+	m_AvoidAnimEndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Avoid )-0.4;
 	return true;
 }
 
@@ -282,7 +285,8 @@ void CPlayer::AvoidController()
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
 	// Aボタンが押された瞬間じゃなければ終了.
 	if( CXInput::A_Button() != CXInput::enPRESSED_MOMENT ) return;
-	m_IsDuringAvoid = true;
+	m_IsDuringAvoid		= true;
+	m_AvoidAnimFrame	= 0.0;
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
 	m_OldPosition = m_vPosition;	// 現在の座標を設定.
 	CSoundManager::PlaySE("PlayerAvoidMove");
@@ -334,6 +338,9 @@ void CPlayer::Move()
 		// 回転軸で移動.
 		m_vPosition.x -= targetVec.x * m_MoveSpeed * m_MoveSpeedMulValue;
 		m_vPosition.z -= targetVec.z * m_MoveSpeed * m_MoveSpeedMulValue;
+		// 見えない壁との当たり判定.
+		if( CActor::IsCrashedWallX() == true ) m_vPosition.x += targetVec.x * m_MoveSpeed * m_MoveSpeedMulValue;
+		if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += targetVec.z * m_MoveSpeed * m_MoveSpeedMulValue;
 
 		m_OldPosition = m_vPosition;
 		if( m_NowAnimNo == player::EAnimNo_Attack1 )	return;	// アニメーションが攻撃1,2,3の場合は、
@@ -357,12 +364,17 @@ void CPlayer::AvoidMove()
 	// カメラの角度と足し合わせる.
 	m_vRotation.y += m_pCamera->GetRadianX();
 
+	m_AvoidAnimFrame += 0.01f;	// 経過フレームの加算.
+
 	// 回転軸で移動.
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 	m_vPosition.z -= cosf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
+	// 見えない壁との当たり判定.
+	if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
+	if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 
-	// 移動距離が一定以下なら終了.
-	if( D3DXVec3Length( &(m_OldPosition - m_vPosition) ) <= m_Parameter.AvoidMoveDistance ) return;
+	// 回避アニメーションの経過フレームが終了フレームを超えていたら.
+	if( m_AvoidAnimFrame <= m_AvoidAnimEndFrame ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
 }
 
@@ -374,6 +386,10 @@ void CPlayer::KnockBack()
 	m_vPosition.x += m_HitVector.x*0.5f;
 	m_vPosition.z += m_HitVector.z*0.5f;
 	m_vRotation.y = atan2( m_HitVector.x, m_HitVector.z );
+
+	// 見えない壁との当たり判定.
+	if( CActor::IsCrashedWallX() == true ) m_vPosition.x -= m_HitVector.x*0.5f;
+	if( CActor::IsCrashedWallZ() == true ) m_vPosition.z -= m_HitVector.z*0.5f;
 
 	static float time = 0.0f;
 	time += 8.0f;

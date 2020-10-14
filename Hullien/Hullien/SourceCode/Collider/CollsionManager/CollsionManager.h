@@ -37,8 +37,7 @@ public: //------ ŠÖ” -------.
 		D3DXVECTOR3* pPos, 
 		D3DXVECTOR3* pRot, float* pScale,
 		const D3DXVECTOR3& adjPos, 
-		const float& height,
-		const float& wight );
+		const D3DXVECTOR3& length );
 	// ƒJƒvƒZƒ‹‚Ì‰Šú‰».
 	HRESULT InitCapsule( 
 		LPD3DXMESH pMesh, D3DXVECTOR3* pPos, 

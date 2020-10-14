@@ -188,6 +188,9 @@ private:
 
 	bool			m_IsKnockBack;				// ノックバックするか.
 
+	double			m_AvoidAnimFrame;			// 回避アニメーションの経過フレーム.
+	double			m_AvoidAnimEndFrame;		// 回避アニメーションの終了フレーム.
+
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.
 

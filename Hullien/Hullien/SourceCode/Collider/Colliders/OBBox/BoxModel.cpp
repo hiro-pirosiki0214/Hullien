@@ -53,7 +53,7 @@ void CBoxModel::Render()
 	m_pSimpleShader->ShaderSet( m_pVertexBuffer, m_pIndexBuffer );
 
 	// プリミティブトポロジーをセット.
-	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP );
+	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
 	SetRasterizerState( enRS_STATE::Wire );
 	m_pContext11->DrawIndexed( 36, 0, 0 );

@@ -8,7 +8,7 @@
 #include "..\..\SkyDome\SkyDome.h"
 #include "..\..\MotherShipUFO\MotherShipUFO.h"
 #include "..\..\Widget\SceneWidget\GameWidget\Warning\Warning.h"
-#include "..\..\Arm\Arm.h"
+#include "..\..\InvisibleWall\InvisibleWall.h"
 
 CGameActorManager::CGameActorManager()
 	: m_pSkyDome		( nullptr )
@@ -19,7 +19,7 @@ CGameActorManager::CGameActorManager()
 	, m_pAlienManager	( nullptr )
 	, m_pItemManager	( nullptr )
 	, m_pBarrier		( nullptr )
-	, m_pArm			( nullptr )
+	, m_pInvisibleWall	( nullptr )
 	, m_ObjPositionList	()
 	, m_ObjPosListCount	( 0 )
 {
@@ -31,8 +31,7 @@ CGameActorManager::CGameActorManager()
 	m_pAlienManager		= std::make_shared<CAlienManager>();
 	m_pItemManager		= std::make_shared<CItemManager>();
 	m_pBarrier			= std::make_shared<CBarrier>();
-	m_pArm = std::make_shared<CArm>();
-	m_pArm2 = std::make_shared<CArm>();
+	m_pInvisibleWall	= std::make_unique<CInvisibleWall>();
 }
 
 CGameActorManager::~CGameActorManager()
@@ -42,17 +41,19 @@ CGameActorManager::~CGameActorManager()
 // 初期化関数.
 bool CGameActorManager::Init()
 {
-	if( m_pSkyDome->Init()			== false ) return false;
+	if( m_pSkyDome->Init()			== false ) return false;	// 背景の初期化.
 	if( m_pGroundStage->Init()		== false ) return false;	// 地面の初期化.
+	if( m_pInvisibleWall->Init()	== false ) return false;	// 見えない壁の初期化.
 	if( m_pPlayer->Init()			== false ) return false;	// プレイヤーの初期化.
 	if( m_pGirl->Init()				== false ) return false;	// 女の子の初期化.
 	if( m_pMotherShipUFO->Init()	== false ) return false;	// マザーシップの初期化.
 	if( m_pAlienManager->Init()		== false ) return false;	// 宇宙人管理の初期化.
 	if( m_pItemManager->Init()		== false ) return false;	// アイテム管理の初期化.
-	if( m_pArm->Init() == false ) return false; 
-	if( m_pArm2->Init() == false ) return false; 
 	// マザーシップの座標取取得.
 	m_pAlienManager->SetMotherShipUFOPos( m_pMotherShipUFO->GetPosition() );
+
+	m_pPlayer->SetBoxWall( m_pInvisibleWall->GetBoxWall() );
+	m_pGirl->SetBoxWall( m_pInvisibleWall->GetBoxWall() );
 
 	return true;
 }
@@ -120,14 +121,6 @@ void CGameActorManager::Update()
 			SetPositionList( pActor );				// 座標リストの設定.
 			pActor->Collision( m_pPlayer.get() );	// アイテムの当たり判定.
 		} );
-	if( GetAsyncKeyState('V') & 0x8000 ) m_pArm->SetAppearance();
-	if( GetAsyncKeyState('B') & 0x8000 ) m_pArm->SetCleanUp();
-	if( GetAsyncKeyState('N') & 0x8000 ) m_pArm2->SetAppearance();
-	if( GetAsyncKeyState('M') & 0x8000 ) m_pArm2->SetCleanUp();
-	m_pArm->SetPosition( { 10.0f, 4.0f, 0.0f } );
-	m_pArm->Update();
-	m_pArm2->SetPosition( { 0.0f, 4.0f, 10.0f } );
-	m_pArm2->Update();
 }
 
 // 描画関数.
@@ -141,8 +134,7 @@ void CGameActorManager::Render()
 	m_pMotherShipUFO->Render();	// マザーシップの描画.
 	m_pItemManager->Render();	// アイテムの描画.
 //	m_pBarrier->Render();		// バリアの描画.
-	m_pArm->Render();
-	m_pArm2->Render();
+	m_pInvisibleWall->Render();	// 見えない壁の描画.
 
 	// エフェクトの描画.
 	m_pPlayer->EffectRender();			// プレイヤーのエフェクト描画.
