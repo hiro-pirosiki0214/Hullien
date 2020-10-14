@@ -834,9 +834,9 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 		}
 		m_DeadAnimFrame	= 0.0;
 		m_IsDead		= true;
-		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z )+static_cast<float>(D3DX_PI);
-		m_MoveVector.x = sinf( m_vRotation.y );
-		m_MoveVector.z = cosf( m_vRotation.y );
+		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z );
+		m_MoveVector.x	= sinf( m_vRotation.y );
+		m_MoveVector.z	= cosf( m_vRotation.y );
 	}
 
 	// ‘Ì—Í‚ªˆê’è’l‚ð’´‚¦‚È‚¢‚æ‚¤‚É‚·‚é.
