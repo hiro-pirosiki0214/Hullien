@@ -289,15 +289,13 @@ void CGirl::WarningRotation()
 	// 女の子が危険な状態でなければ処理しない.
 	if (m_IsDanger == false) return;
 
-	const D3DXVECTOR3 targetPosition = { 0.0f, 0.0f, 0.0f };
 	// カメラから女の子への回転軸を取得.
-	D3DXVECTOR3 targetRotation = { 0.0f, 0.0f, 0.0f };
-	D3DXVECTOR3 MoveVector = { 0.0f, 0.0f, 0.0f };
-	targetRotation.y = atan2f(
+	const float targetRotation = atan2f(
 		m_vPosition.x - CCameraManager::GetPosition().x,
 		m_vPosition.z - CCameraManager::GetPosition().z);
-	MoveVector.x = sinf( targetRotation.y );
-	MoveVector.z = cosf( targetRotation.y );
+	D3DXVECTOR3 MoveVector = { 0.0f, 0.0f, 0.0f };
+	MoveVector.x = sinf( targetRotation );
+	MoveVector.z = cosf( targetRotation );
 
 	// カメラの前ベクトルを用意.
 	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
