@@ -54,6 +54,10 @@ protected:
 	}
 	// 目的の座標へ回転.
 	bool TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian );
+	// アニメーション設定.
+	void SetAnimation( const int& animNo );
+	// アニメーションをブレンドして設定.
+	void SetAnimationBlend( const int& animNo );
 	// 足音.
 	void FootStep(const char* rightfoot, const char* leftfoot);
 	// 足音用当たり判定の設定.
@@ -61,11 +65,13 @@ protected:
 
 protected:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// スキンメッシュ.
+	int		m_NowAnimNo;	// 現在のアニメーション番号.
+	int		m_OldAnimNo;	// 過去のアニメーション番号.
+	double	m_AnimSpeed;	// アニメーション速度.
 
-	D3DXVECTOR3	m_MoveVector;	// 移動ベクトル.
-	int	m_InvincibleCount;		// 無敵カウント.
-
-	bool m_HasFinishedParamSetting;	// パラメーターの設定が終わったか.
+	D3DXVECTOR3	m_MoveVector;				// 移動ベクトル.
+	int			m_InvincibleCount;			// 無敵カウント.
+	bool		m_HasFinishedParamSetting;	// パラメーターの設定が終わったか.
 
 private:
 	std::vector<std::shared_ptr<CCollisionManager>> m_pFootCollision;

@@ -120,9 +120,6 @@ private:
 
 	// 攻撃アニメーション.
 	void AttackAnimation();
-	// アニメーション設定.
-	void SetAnimation( const player::EAnimNo& animNo );
-	void SetAnimationBlend( const player::EAnimNo& animNo );
 
 	// 攻撃アニメーションフレームリストの設定.
 	void SetAttackFrameList();
@@ -162,8 +159,6 @@ private:
 	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
 	D3DXVECTOR3		m_OldPosition;			// 前回の座標.
 	D3DXVECTOR3		m_GirlPosition;			// 女の子の座標.
-	player::EAnimNo	m_NowAnimNo;			// 今のアニメーション番号.
-	player::EAnimNo	m_OldAnimNo;			// 前のアニメーション番号.
 
 	int								m_AttackComboCount;			// 攻撃コンボカウント.
 	std::vector<double>				m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
@@ -182,6 +177,7 @@ private:
 	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
 	bool			m_IsUsableSP;			// 特殊能力を使ったか.
 	bool			m_IsDead;				// 死亡フラグ.
+	bool			m_IsKnockBack;			// ノックバックするか.
 
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
@@ -189,9 +185,6 @@ private:
 	float			m_MoveSpeed;				// 移動速度.
 	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
 
-	bool			m_IsKnockBack;				// ノックバックするか.
-
-	double			m_AnimSpeed;				// アニメーション速度.
 	double			m_SPAnimFrame;				// 特殊能力アニメーションの経過フレーム.
 	double			m_SPAnimEndFrame;			// 特殊能力アニメーションの終了フレーム.
 	double			m_AvoidAnimFrame;			// 回避アニメーションの経過フレーム.
@@ -201,7 +194,6 @@ private:
 
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.
-
 
 	D3DXVECTOR3		m_CameraNextPosition;		// カメラの座標.
 	D3DXVECTOR3		m_CameraPosition;			// カメラの座標.

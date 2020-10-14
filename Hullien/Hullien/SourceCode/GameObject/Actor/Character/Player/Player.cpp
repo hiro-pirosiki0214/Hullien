@@ -25,8 +25,6 @@ CPlayer::CPlayer()
 	, m_pAttackCollManager			( nullptr )
 	, m_OldPosition					( 0.0f, 0.0f, 0.0f )
 	, m_GirlPosition				( 0.0f, 0.0f, 0.0f )
-	, m_NowAnimNo					( player::EAnimNo_Wait )
-	, m_OldAnimNo					( player::EAnimNo_None )
 	, m_AttackComboCount			( player::EAttackNo_None )
 	, m_AttackEnabledFrameList		()
 	, m_AttackDataQueue				()
@@ -42,13 +40,12 @@ CPlayer::CPlayer()
 	, m_IsYButtonPressed			( false )
 	, m_IsUsableSP					( false )
 	, m_IsDead						( false )
+	, m_IsKnockBack					( false )
 	, m_SpecialAbilityValue			( 0.0f )
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
 	, m_MoveSpeedMulValue			( 0.0f )
-	, m_IsKnockBack					( false )
-	, m_AnimSpeed					( 0.01 )
 	, m_SPAnimFrame					( 0.0 )
 	, m_SPAnimEndFrame				( 0.0 )
 	, m_AvoidAnimFrame				( 0.0 )
@@ -69,7 +66,9 @@ CPlayer::CPlayer()
 	, m_pEffectTimers				( player::EEffectTimerNo_Max )
 	, m_IsAttackSE					( false )
 {
-	m_ObjectTag = EObjectTag::Player;
+	m_ObjectTag = EObjectTag::Player;	// プレイヤータグを設定.
+	m_NowAnimNo = player::EAnimNo_Wait;	// 現在のアニメーションを待機に設定.
+	m_OldAnimNo = player::EAnimNo_None;	// 過去のアニメーションは無し.
 	m_pCamera	= std::make_shared<CRotLookAtCenter>();
 	m_pSPCamera = std::make_shared<CCamera>();
 	for( auto& e : m_pEffectTimers ) e = std::make_shared<CEffectTimer>();
@@ -82,16 +81,15 @@ CPlayer::~CPlayer()
 // 初期化関数.
 bool CPlayer::Init()
 {
+	// パラメータの取得.
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
-	if( GetModel( MODEL_NAME ) == false ) return false;
-	// アニメーション再生.
+	if( GetModel( MODEL_NAME )		== false ) return false;	// モデルの取得.
 	SetAttackFrameList();
-	// 足音用当たり判定の設定.
-	if( FootStepCollisionSetting()	== false ) return false;
-	if( ColliderSetting()			== false ) return false;
-	if( WidgetSetting()				== false ) return false;
-	if( EffectSetting()				== false ) return false;
-	if( SoundSetting()				== false ) return false;
+	if( FootStepCollisionSetting()	== false ) return false;	// 足音用当たり判定の設定.
+	if( ColliderSetting()			== false ) return false;	// 当たり判定の設定.
+	if( WidgetSetting()				== false ) return false;	// UIの設定.
+	if( EffectSetting()				== false ) return false;	// エフェクトの設定.
+	if( SoundSetting()				== false ) return false;	// サウンドの設定.
 	m_MoveSpeed		= m_Parameter.MoveSpeed;	// 移動速度の設定.
 	m_AttackPower	= m_Parameter.AttackPower;	// 攻撃力の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
@@ -731,25 +729,6 @@ void CPlayer::AttackAnimation()
 		if(m_AttackComboCount == 3)	CSoundManager::PlaySE("PlayerVoiceAttack3");
 	}
 	m_AttackDataQueue.front().Frame += m_AnimSpeed;	// フレームの更新.
-}
-
-// アニメーション設定.
-void CPlayer::SetAnimation( const player::EAnimNo& animNo )
-{
-	if( m_pSkinMesh == nullptr ) return;
-	if( m_NowAnimNo == m_OldAnimNo ) return;
-	m_OldAnimNo = m_NowAnimNo;
-	m_NowAnimNo = animNo;
-	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo );
-}
-
-void CPlayer::SetAnimationBlend( const player::EAnimNo& animNo )
-{
-	if( m_pSkinMesh == nullptr ) return;
-	if( m_NowAnimNo == m_OldAnimNo ) return;
-	m_OldAnimNo = m_NowAnimNo;
-	m_NowAnimNo = animNo;
-	m_pSkinMesh->ChangeAnimBlend( m_NowAnimNo, m_OldAnimNo );
 }
 
 // 攻撃アニメーションフレームの設定.
