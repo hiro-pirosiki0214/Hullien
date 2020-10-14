@@ -8,7 +8,7 @@
 **/
 CUltemateSing::CUltemateSing()
 	: m_IsAppUltemate	( false )
-	, m_ObjCount			( 0 )
+	, m_ObjCount		( 0 )
 {
 }
 
@@ -50,8 +50,12 @@ void CUltemateSing::IsAppUltemate(CGameActorManager* pActor)
 {
 	auto l = pActor->GetObjPositionList();
 
+	if(m_ObjCount == l.size()) return;
+	if (m_ObjCount > l.size()) {
+		m_ObjCount = l.size();
+		return;
+	}
 	// すでに処理したオブジェクト分は無視する.
-	if (m_ObjCount >= l.size()) return;
 	for (auto a = l.begin() + m_ObjCount; a < l.end(); a++)
 	{
 		m_ObjCount++;

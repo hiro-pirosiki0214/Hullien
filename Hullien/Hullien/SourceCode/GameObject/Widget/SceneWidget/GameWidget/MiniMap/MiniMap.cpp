@@ -136,26 +136,25 @@ int CMiniMap::SetAnimNumber(const EObjectTag& tag)
 	switch (tag)
 	{
 	case EObjectTag::Player:
-		animNumber = 0;
+		animNumber = static_cast<int>(EIconType::Player);
 		break;
 	case EObjectTag::Girl:
-		animNumber = 1;
+		animNumber = static_cast<int>(EIconType::Girl);
 		break;
 	case EObjectTag::Alien_A:
 	case EObjectTag::Alien_B:
 	case EObjectTag::Alien_C:
-		animNumber = 2;
+		animNumber = static_cast<int>(EIconType::Alien);
 		break;
 	case EObjectTag::Alien_D:
-		animNumber = 3;
+		animNumber = static_cast<int>(EIconType::Alien_D);
 		break;
 	case EObjectTag::SPEffectTimeItem:
 	case EObjectTag::AttackUpItem:
 	case EObjectTag::LifeRecoveryItem:
 	case EObjectTag::MoveSpeedUpItem:
-		animNumber = 4;
+		animNumber = static_cast<int>(EIconType::Item);
 		break;
-
 	default:
 		break;
 	}

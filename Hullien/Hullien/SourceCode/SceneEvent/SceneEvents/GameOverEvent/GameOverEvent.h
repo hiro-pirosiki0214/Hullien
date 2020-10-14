@@ -49,7 +49,7 @@ private:
 	// イベントステップ.
 	enum class enEventStep
 	{
-		Wait = 0,					// 待機.
+		Wait = 0,				// 待機.
 		Sucked_Girl,			// 女の子が吸い込まれる.
 		MoveRight_UFO_First,	// UFO右移動Part1.
 		MoveLeft_UFO,			// UFO左移動.

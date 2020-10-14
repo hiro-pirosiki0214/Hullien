@@ -254,6 +254,7 @@ void CGameOverEvent::SuckedGirl()
 	if( m_stGirl.vPosition.y <= GIRL_SCALEDOWN_STARTPOS ) return;
 	if( m_stGirl.vScale.x > 0.0f)
 	{
+		if(m_stGirl.vScale.x == 1.0f) CSoundManager::PlaySE("SuckedUFO");
 		m_stGirl.vScale.x -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.y -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.z -= GIRL_SCALEDOWN_SPEED;
@@ -263,7 +264,9 @@ void CGameOverEvent::SuckedGirl()
 		m_WaitCount++;
 	}
 
-	if( m_WaitCount >= WAITCOUNT_DEFAULT ) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("EscapeUFO");
 }
 
 // UFO‚Ì‰EˆÚ“®Part1.
@@ -273,7 +276,9 @@ void CGameOverEvent::MoveRightUFOFirst()
 
 	if (MoveUFO( DESTINATION_RUGHTFIRST, UFO_MOVE_SPEED_RUGHTFIRST) == true) m_WaitCount++;
 
-	if (m_WaitCount > WAITCOUNT_DEFAULT) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("EscapeUFO");
 }
 
 // UFO‚Ì¶ˆÚ“®.
@@ -282,7 +287,9 @@ void CGameOverEvent::MoveLeftUFO()
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
 	if (MoveUFO(DESTINATION_LEFT, UFO_MOVE_SPEED_LEFT) == true) m_WaitCount++;
-	if (m_WaitCount > WAITCOUNT_DEFAULT) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("EscapeUFO");
 }
 
 // UFO‚Ì‰EˆÚ“®Part1.
@@ -291,7 +298,9 @@ void CGameOverEvent::MoveRightUFOSecond()
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
 	if (MoveUFO(DESTINATION_RUGHTSECOND, UFO_MOVE_SPEED_RUGHTSECOND) == true) m_WaitCount++;
-	if (m_WaitCount > WAITCOUNT_DEFAULT) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("PulloutUFO");
 }
 
 // UFO‰œ‚ÉˆÚ“®.
