@@ -11,6 +11,7 @@ class CItemEdit;
 class CPlayerEdit;
 class CGirlEdit;
 class CMotherShipUFOEdit;
+class CInvisibleWallEdit;
 class CEditCamera;
 class CSkyDome;
 class CGroundStage;
@@ -28,6 +29,7 @@ class CEditor : public CSceneBase
 		Explosion,
 		ItemEdit,
 		MotherShipUFOEdit,
+		InvisibleWallEdit,
 
 		Max,
 
@@ -58,6 +60,7 @@ private:
 	std::unique_ptr<CPlayerEdit>		m_pPlayerEdit;
 	std::unique_ptr<CGirlEdit>			m_pGirlEdit;
 	std::unique_ptr<CMotherShipUFOEdit>	m_pMotherShipUFOEdit;
+	std::unique_ptr<CInvisibleWallEdit>	m_pInvisibleWallEdit;
 	std::shared_ptr<CEditCamera>		m_pEditCamera;
 
 	std::unique_ptr<CSkyDome>			m_pSkyDome;

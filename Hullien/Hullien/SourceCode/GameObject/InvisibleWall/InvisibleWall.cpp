@@ -1,11 +1,12 @@
 #include "InvisibleWall.h"
 #include "..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\Utility\FileManager\FileManager.h"
 
 CInvisibleWall::CInvisibleWall()
+	: m_BoxWall		()
 #ifdef _DEBUG
-	: m_pCollision	( nullptr )
+	, m_pCollision	( nullptr )
 #endif	// #ifdef _DEBUG.
-	, m_BoxWall		()
 {
 	m_vPosition.y = 10.0f;
 }
@@ -36,10 +37,20 @@ void CInvisibleWall::Render()
 #endif	// #ifdef _DEBUG.
 }
 
+// ボックスの設定.
+void CInvisibleWall::SetBoxWall( const SBoxWall& boxWall )
+{ 
+	m_BoxWall = boxWall;
+	// ボックスの半分の値を最大、最小として計算.
+	m_BoxWall.MaxPosition = { m_BoxWall.Length.x * HALF, m_BoxWall.Length.z * HALF };
+	m_BoxWall.MinPosition = { m_BoxWall.Length.x *-HALF, m_BoxWall.Length.z *-HALF };
+	InitCollision();
+}
+
 // パラメータの初期化.
 bool CInvisibleWall::InitParam()
 {
-	m_BoxWall.Length = { 100.0f, 100.0f, 100.0f };
+	if( CFileManager::BinaryReading( INVISIBLE_WALL_PARAM_FILE_NAME, m_BoxWall ) == false ) return false;
 
 	// ボックスの半分の値を最大、最小として計算.
 	m_BoxWall.MaxPosition = { m_BoxWall.Length.x * HALF, m_BoxWall.Length.z * HALF };

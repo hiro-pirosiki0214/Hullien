@@ -13,7 +13,9 @@ COBBoxCollision::COBBoxCollision()
 	, m_pDebugBox		( nullptr )
 #endif	// #ifdef _DEBUG.
 {
+#ifdef _DEBUG
 	m_pDebugBox	= std::make_unique<CBoxModel>();
+#endif	// #ifdef _DEBUG.
 }
 
 COBBoxCollision::~COBBoxCollision()

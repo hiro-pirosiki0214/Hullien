@@ -12,6 +12,7 @@ class CCollisionManager;	// 当たり判定クラス.
 class CInvisibleWall : public CGameObject
 {
 	const float HALF = 0.5f;	// 半分.
+	const char* INVISIBLE_WALL_PARAM_FILE_NAME = "Data\\GameParam\\InvisibleWall.bin";
 public:
 	CInvisibleWall();
 	virtual ~CInvisibleWall();
@@ -24,7 +25,7 @@ public:
 	virtual void Render() override;
 
 	// ボックスの設定.
-	void SetBoxWall( const SBoxWall& boxWall ){ m_BoxWall = boxWall; }
+	void SetBoxWall( const SBoxWall& boxWall );
 	// ボックスの取得.
 	SBoxWall* GetBoxWall() { return &m_BoxWall; }
 
@@ -35,10 +36,10 @@ private:
 	bool InitCollision();
 
 private:
+	SBoxWall	m_BoxWall;
 #ifdef _DEBUG
 	std::unique_ptr<CCollisionManager>	m_pCollision;
 #endif	// #ifdef _DEBUG
-	SBoxWall	m_BoxWall;
 };
 
 #endif	// #ifndef INVISIBLE_WALL_H.

@@ -8,6 +8,7 @@
 #include "..\..\..\Editor\PlayerEdit\PlayerEdit.h"
 #include "..\..\..\Editor\GirlEdit\GirlEdit.h"
 #include "..\..\..\Editor\MotherShipUFOEdit\MotherShipUFOEdit.h"
+#include "..\..\..\Editor\InvisibleWallEdit\InvisibleWallEdit.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
@@ -28,6 +29,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pPlayerEdit			( nullptr )
 	, m_pGirlEdit			( nullptr )
 	, m_pMotherShipUFOEdit	( nullptr )
+	, m_pInvisibleWallEdit	( nullptr )
 	, m_pEditCamera			( nullptr )
 	, m_pGroundStage		( nullptr )
 	, m_NowEditScene		( EEditScenes::None )
@@ -40,6 +42,7 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	m_pPlayerEdit			= std::make_unique<CPlayerEdit>();
 	m_pGirlEdit				= std::make_unique<CGirlEdit>();
 	m_pMotherShipUFOEdit	= std::make_unique<CMotherShipUFOEdit>();
+	m_pInvisibleWallEdit	= std::make_unique<CInvisibleWallEdit>();
 
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
@@ -60,6 +63,7 @@ bool CEditor::Load()
 	if( m_pPlayerEdit->Init()			== false ) return false;
 	if( m_pGirlEdit->Init()				== false ) return false;
 	if( m_pMotherShipUFOEdit->Init()	== false ) return false;
+	if( m_pInvisibleWallEdit->Init()	== false ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
 
@@ -91,6 +95,9 @@ void CEditor::Update()
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->Update();
+		break;
+	case EEditScenes::InvisibleWallEdit:
+		m_pInvisibleWallEdit->Update();
 		break;
 	default:
 		break;
@@ -142,6 +149,8 @@ void CEditor::ModelRender()
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->ModelRender();
 		break;
+	case EEditScenes::InvisibleWallEdit:
+		break;
 	default:
 		break;
 	}
@@ -175,6 +184,9 @@ void CEditor::ModelRender()
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->ModelRender();
+		break;
+	case EEditScenes::InvisibleWallEdit:
+		m_pInvisibleWallEdit->ModelRender();
 		break;
 	default:
 		break;
@@ -211,6 +223,9 @@ void CEditor::ModelRender()
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->ModelRender();
+		break;
+	case EEditScenes::InvisibleWallEdit:
+		m_pInvisibleWallEdit->ModelRender();
 		break;
 	default:
 		break;
@@ -253,6 +268,8 @@ void CEditor::ImGuiRender()
 	ImGui::RadioButton("ItemEdit", &m_NowEditScene, EEditScenes::ItemEdit);
 	ImGui::SameLine();
 	ImGui::RadioButton("MotherShipUFOEdit", &m_NowEditScene, EEditScenes::MotherShipUFOEdit);
+	ImGui::SameLine();
+	ImGui::RadioButton("InvisibleWallEdit", &m_NowEditScene, EEditScenes::InvisibleWallEdit);
 
 	ImGui::End();
 
@@ -278,6 +295,9 @@ void CEditor::ImGuiRender()
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->Render();
+		break;
+	case EEditScenes::InvisibleWallEdit:
+		m_pInvisibleWallEdit->Render();
 		break;
 	default:
 		break;
