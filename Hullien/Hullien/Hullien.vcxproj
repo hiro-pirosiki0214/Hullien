@@ -336,6 +336,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\AnimationParamInfo.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Character.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Girl\Girl.h" />

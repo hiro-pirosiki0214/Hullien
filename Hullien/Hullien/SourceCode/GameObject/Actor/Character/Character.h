@@ -2,6 +2,7 @@
 #define CHARACTER_H
 
 #include "..\Actor.h"
+#include "AnimationParamInfo.h"
 
 class CCharacter : public CActor
 {

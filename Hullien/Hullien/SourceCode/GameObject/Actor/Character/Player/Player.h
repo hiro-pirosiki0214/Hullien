@@ -50,6 +50,26 @@ class CPlayer : public CCharacter
 	const float CAMERA_RETURN_COUNT_ADD		= 0.001f;
 	const float CAMERA_RETURN_COUNT_MAX		= 0.1f;
 
+	// アニメーションの調整フレーム.
+	const double ANIM_ADJ_FRAME_Wait	= 0.0;	// 待機.
+	const double ANIM_ADJ_FRAME_Walk	= 0.0;	// 走り.
+	const double ANIM_ADJ_FRAME_Attack1	= 0.5;	// 攻撃1.
+	const double ANIM_ADJ_FRAME_Attack2	= 0.5;	// 攻撃2.
+	const double ANIM_ADJ_FRAME_Attack3	= 0.5;	// 攻撃3.
+	const double ANIM_ADJ_FRAME_Avoid	= 0.4;	// 回避.
+	const double ANIM_ADJ_FRAME_SP		= 0.02;	// 特殊能力.
+	const double ANIM_ADJ_FRAME_Damage	= 0.4;	// ヒット時.
+	const double ANIM_ADJ_FRAME_Dead	= 0.01;	// 死亡.
+
+	const double ATTACK1_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃1の調整用有効フレーム.
+	const double ATTACK2_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃2の調整用有効フレーム.
+	const double ATTACK3_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃3の調整用有効フレーム.
+
+	const double DEAD_CERTAIN_RANGE_ANIM_FRAME_MIN	= 0.18;		// 死亡アニメーションの一定範囲値の最小.
+	const double DEAD_CERTAIN_RANGE_ANIM_FRAME_MAX	= 0.5;		// 死亡アニメーションの一定範囲値の最大.
+	const float	DEAD_ANIM_DRAGING_ADJ_SPEED			= 0.05f;	// 死亡アニメーションの引きずりの調整速度.
+	const float DAMAGE_HIT_KNOC_BACK_SPEED			= 0.3f;
+
 public:
 	CPlayer();
 	virtual ~CPlayer();
@@ -72,7 +92,7 @@ public:
 	// 特殊能力を使っているか.
 	bool IsSpecialAbility();
 	// 死亡したか.
-	bool IsDead(){ return m_DeadAnimFrame >= m_DeadAnimEndFrame; }
+	bool IsDead(){ return m_AnimFrameList[player::EAnimNo_Dead].IsNowFrameOver(); }
 	// カメラの方向.
 	float GetCameraRadianX();
 
@@ -120,9 +140,6 @@ private:
 
 	// 攻撃アニメーション.
 	void AttackAnimation();
-
-	// 攻撃アニメーションフレームリストの設定.
-	void SetAttackFrameList();
 	// 攻撃の追加ができたか.
 	bool IsPushAttack();
 
@@ -141,6 +158,8 @@ private:
 	bool ColliderSetting();
 	// エフェクトの設定.
 	bool EffectSetting();
+	// アニメーションフレームの設定.
+	bool SetAnimFrameList();
 
 	// エディット用の描画関数.
 	void EditRender();
@@ -157,16 +176,13 @@ private:
 	std::shared_ptr<CCamera>						m_pSPCamera;			// 特殊能力カメラクラス.
 	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;				// Widgetクラス.
 	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
-	D3DXVECTOR3		m_OldPosition;			// 前回の座標.
-	D3DXVECTOR3		m_GirlPosition;			// 女の子の座標.
+	D3DXVECTOR3		m_GirlPosition;	// 女の子の座標.
 
 	int								m_AttackComboCount;			// 攻撃コンボカウント.
-	std::vector<double>				m_AttackEnabledFrameList;	// 攻撃有効フレームのリスト.
 	std::queue<player::SAttackData>	m_AttackDataQueue;			// 攻撃データのキュー.
 	D3DXVECTOR3						m_AttackPosition;			// 攻撃用当たり判定座標.
 
 	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
-	bool			m_IsDuringAvoid;	// 回避中かどうか.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 	D3DXVECTOR3		m_HitVector;		// 衝突時のベクトル.
 	D3DXVECTOR3		m_TargetVector;		// 目的のベクトル.
@@ -174,6 +190,7 @@ private:
 	SPlayerParam	m_Parameter;			// パラメーター.
 	float			m_LifePoint;			// 体力.
 	float			m_SpecialAbility;		// 特殊能力.
+	bool			m_IsDuringAvoid;		// 回避中かどうか.
 	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
 	bool			m_IsUsableSP;			// 特殊能力を使ったか.
 	bool			m_IsDead;				// 死亡フラグ.
@@ -185,12 +202,8 @@ private:
 	float			m_MoveSpeed;				// 移動速度.
 	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
 
-	double			m_SPAnimFrame;				// 特殊能力アニメーションの経過フレーム.
-	double			m_SPAnimEndFrame;			// 特殊能力アニメーションの終了フレーム.
-	double			m_AvoidAnimFrame;			// 回避アニメーションの経過フレーム.
-	double			m_AvoidAnimEndFrame;		// 回避アニメーションの終了フレーム.
-	double			m_DeadAnimFrame;			// 死亡アニメーションの経過フレーム.
-	double			m_DeadAnimEndFrame;			// 死亡アニメーションの終了フレーム.
+
+	anim::AAnimFrameList	m_AnimFrameList;	// アニメーションフレームのリスト.
 
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.

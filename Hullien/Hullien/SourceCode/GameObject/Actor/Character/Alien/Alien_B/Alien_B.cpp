@@ -245,13 +245,14 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
 	
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
+	// 現在の移動ベクトルを設定.
+	pActor->SetVector( m_MoveVector );
 	// プレイヤーの体力を減らす.
 	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
 	{ 
 		life -= m_Parameter.AttackPower;
 		isAttack = true;
 	});
-	pActor->SetVector( m_MoveVector );
 	CSoundManager::NoMultipleSEPlay("PlayerVoiceHit");
 }
 

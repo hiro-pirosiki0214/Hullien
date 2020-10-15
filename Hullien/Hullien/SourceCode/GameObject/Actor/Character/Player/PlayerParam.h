@@ -53,7 +53,11 @@ enum enAnimNo
 	EAnimNo_Damage,		// ƒqƒbƒg.
 	EAnimNo_Dead,		// €–S.
 
-	EAnimNo_Max = EAnimNo_Dead,
+	EAnimNo_Max,		// Å‘å.
+
+	EAnimNo_Begin	= EAnimNo_Wait,	// ‰‚ß.
+	EAnimNo_End		= EAnimNo_Max,	// I—¹.
+
 } typedef EAnimNo;
 
 // UŒ‚”Ô†,

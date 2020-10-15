@@ -92,7 +92,7 @@ bool CCharacter::TargetRotation( const D3DXVECTOR3& targetVec, const float& rotS
 void CCharacter::SetAnimation( const int& animNo )
 {
 	if( m_pSkinMesh == nullptr ) return;
-	if( m_NowAnimNo == m_OldAnimNo ) return;
+	if( m_NowAnimNo == animNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo );
@@ -102,7 +102,7 @@ void CCharacter::SetAnimation( const int& animNo )
 void CCharacter::SetAnimationBlend( const int& animNo )
 {
 	if( m_pSkinMesh == nullptr ) return;
-	if( m_NowAnimNo == m_OldAnimNo ) return;
+	if( m_NowAnimNo == animNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimBlend( m_NowAnimNo, m_OldAnimNo );

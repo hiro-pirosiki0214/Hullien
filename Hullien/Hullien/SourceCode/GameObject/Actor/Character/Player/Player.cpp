@@ -23,20 +23,18 @@ CPlayer::CPlayer()
 	, m_pSPCamera					( nullptr )
 	, m_pWidget						()
 	, m_pAttackCollManager			( nullptr )
-	, m_OldPosition					( 0.0f, 0.0f, 0.0f )
 	, m_GirlPosition				( 0.0f, 0.0f, 0.0f )
 	, m_AttackComboCount			( player::EAttackNo_None )
-	, m_AttackEnabledFrameList		()
 	, m_AttackDataQueue				()
 	, m_AttackPosition				( 0.0f, 0.0f, 0.0f )
 	, m_pEffects					()
-	, m_IsDuringAvoid				( false )
 	, m_AvoidVector					( 0.0f, 0.0f, 0.0f )
 	, m_HitVector					( 0.0f, 0.0f, 0.0f )
 	, m_TargetVector				( 0.0f, 0.0f, 0.0f )
 	, m_Parameter					()
 	, m_LifePoint					( 0.0f )
 	, m_SpecialAbility				( 0.0f )
+	, m_IsDuringAvoid				( false )
 	, m_IsYButtonPressed			( false )
 	, m_IsUsableSP					( false )
 	, m_IsDead						( false )
@@ -46,12 +44,7 @@ CPlayer::CPlayer()
 	, m_AttackPower					( 0.0f )
 	, m_MoveSpeed					( 0.0f )
 	, m_MoveSpeedMulValue			( 0.0f )
-	, m_SPAnimFrame					( 0.0 )
-	, m_SPAnimEndFrame				( 0.0 )
-	, m_AvoidAnimFrame				( 0.0 )
-	, m_AvoidAnimEndFrame			( 0.0 )
-	, m_DeadAnimFrame				( 0.0 )
-	, m_DeadAnimEndFrame			( 0.0 )
+	, m_AnimFrameList				( player::EAnimNo_Max )
 	, m_CameraDefaultHeight			( 0.0f )
 	, m_CameraHeight				( 0.0f )
 	, m_CameraPosition				( 0.0f, 0.0f, 0.0f )
@@ -84,7 +77,7 @@ bool CPlayer::Init()
 	// パラメータの取得.
 	if( ParameterSetting( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 	if( GetModel( MODEL_NAME )		== false ) return false;	// モデルの取得.
-	SetAttackFrameList();
+	if( SetAnimFrameList()			== false ) return false;	// アニメーションフレームリストの設定.
 	if( FootStepCollisionSetting()	== false ) return false;	// 足音用当たり判定の設定.
 	if( ColliderSetting()			== false ) return false;	// 当たり判定の設定.
 	if( WidgetSetting()				== false ) return false;	// UIの設定.
@@ -97,10 +90,6 @@ bool CPlayer::Init()
 	m_CameraHeight			= m_CameraDefaultHeight = m_Parameter.CameraHeight;
 	m_CameraLookPosition	= { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 	m_CameraLerp			= m_Parameter.CameraLerpValue;
-
-	m_SPAnimEndFrame		= m_pSkinMesh->GetAnimPeriod( player::EAnimNo_SP )-0.02;
-	m_AvoidAnimEndFrame		= m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Avoid )-0.4;
-	m_DeadAnimEndFrame		= m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Dead )-0.01;
 
 	// 待機アニメーションに変更.
 	m_pSkinMesh->ChangeAnimSet_StartPos( player::EAnimNo_Wait, 0.0 );
@@ -230,10 +219,10 @@ void CPlayer::Controller()
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
 
-	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_MoveVector.z -= IDLE_THUMB_MIN;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_MoveVector.z += IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_MoveVector.x -= IDLE_THUMB_MIN;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_MoveVector.x += IDLE_THUMB_MAX;
+	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_MoveVector.z = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
 }
 
 // カメラ操作.
@@ -294,7 +283,6 @@ void CPlayer::SPController()
 	m_SpecialAbility = 0.0f;
 	m_IsYButtonPressed = true;
 
-	if( m_NowAnimNo == player::EAnimNo_Wait ) return;	// 既に待機モーションなら終了.
 	SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
 }
 
@@ -319,11 +307,11 @@ void CPlayer::AvoidController()
 	// Aボタンが押された瞬間じゃなければ終了.
 	if( CXInput::A_Button() != CXInput::enPRESSED_MOMENT ) return;
 	m_IsDuringAvoid		= true;
-	m_AvoidAnimFrame	= 0.0;
+	m_AnimFrameList[player::EAnimNo_Avoid].NowFrame	= 0.0;
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
-	m_OldPosition = m_vPosition;	// 現在の座標を設定.
 	CSoundManager::PlaySE("PlayerAvoidMove");
 	CSoundManager::PlaySE("PlayerVoiceAvoidMove");
+
 	m_pEffects[player::enEffectNo_Avoidance]->Play( m_vPosition );
 	
 	// 回避アニメーションの設定.
@@ -346,17 +334,17 @@ void CPlayer::Move()
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ){
-		m_MoveSpeedMulValue = 0.0f;
+		m_MoveSpeedMulValue = 0.0f;	// 初期化.
 		if( m_NowAnimNo == player::EAnimNo_Attack1 )	return;	// アニメーションが攻撃1,2,3の時は.
 		if( m_NowAnimNo == player::EAnimNo_Attack2 )	return;	//　待機モーションに設定できないようにする.
 		if( m_NowAnimNo == player::EAnimNo_Attack3 )	return;	// 
-		if( m_NowAnimNo == player::EAnimNo_Wait )		return;	// 既に待機モーションなら終了.
 		SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
 		return;
 	}
 
 	// 掛け合わせる移動量の加算.
 	m_MoveSpeedMulValue += MOVE_SPEED_MUL_VALUE_ADD;
+	// 一定値を超えないようにする.
 	if( m_MoveSpeedMulValue >= MOVE_SPEED_MUL_VALUE_MAX ) m_MoveSpeedMulValue = MOVE_SPEED_MUL_VALUE_MAX;
 
 	// ターゲットのベクトルを用意 カメラのラジアン値を足して調整.
@@ -376,11 +364,9 @@ void CPlayer::Move()
 		if( CActor::IsCrashedWallX() == true ) m_vPosition.x += targetVec.x * m_MoveSpeed * m_MoveSpeedMulValue;
 		if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += targetVec.z * m_MoveSpeed * m_MoveSpeedMulValue;
 
-		m_OldPosition = m_vPosition;
 		if( m_NowAnimNo == player::EAnimNo_Attack1 )	return;	// アニメーションが攻撃1,2,3の場合は、
 		if( m_NowAnimNo == player::EAnimNo_Attack2 )	return;	//　移動しないので、
 		if( m_NowAnimNo == player::EAnimNo_Attack3 )	return;	//	アニメーションを設定せずに終了.
-		if( m_NowAnimNo == player::EAnimNo_Walk )		return;	// 既に移動モーションなら終了.
 		SetAnimationBlend( player::EAnimNo_Walk );
 	}
 }
@@ -399,7 +385,7 @@ void CPlayer::AvoidMove()
 	// カメラの角度と足し合わせる.
 	m_vRotation.y += m_pCamera->GetRadianX();
 
-	m_AvoidAnimFrame += m_AnimSpeed;	// 経過フレームの加算.
+	m_AnimFrameList[player::EAnimNo_Avoid].NowFrame += m_AnimSpeed;	// 経過フレームの加算.
 
 	// 回転軸で移動.
 	m_vPosition.x -= sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
@@ -408,8 +394,8 @@ void CPlayer::AvoidMove()
 	if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 	if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y ) * m_Parameter.AvoidMoveSpeed;
 
+	if( m_AnimFrameList[player::EAnimNo_Avoid].IsNowFrameOver() == false ) return;
 	// 回避アニメーションの経過フレームが終了フレームを超えていたら.
-	if( m_AvoidAnimFrame <= m_AvoidAnimEndFrame ) return;
 	m_IsDuringAvoid = false;	// 回避中じゃなくする.
 }
 
@@ -419,18 +405,17 @@ void CPlayer::KnockBack()
 	if( m_IsKnockBack == false ) return;
 	if( m_IsDead == true ) return;
 
-	m_vPosition.x += m_HitVector.x*0.5f;
-	m_vPosition.z += m_HitVector.z*0.5f;
-	m_vRotation.y = atan2( m_HitVector.x, m_HitVector.z );
+	m_AnimFrameList[player::EAnimNo_Damage].NowFrame += m_AnimSpeed;
+
+	m_vPosition.x -= m_MoveVector.x*DAMAGE_HIT_KNOC_BACK_SPEED;
+	m_vPosition.z -= m_MoveVector.z*DAMAGE_HIT_KNOC_BACK_SPEED;
 
 	// 見えない壁との当たり判定.
-	if( CActor::IsCrashedWallX() == true ) m_vPosition.x -= m_HitVector.x*0.5f;
-	if( CActor::IsCrashedWallZ() == true ) m_vPosition.z -= m_HitVector.z*0.5f;
+	if( CActor::IsCrashedWallX() == true ) m_vPosition.x -= m_MoveVector.x*DAMAGE_HIT_KNOC_BACK_SPEED;
+	if( CActor::IsCrashedWallZ() == true ) m_vPosition.z -= m_MoveVector.z*DAMAGE_HIT_KNOC_BACK_SPEED;
 
-	static float time = 0.0f;
-	time += 8.0f;
-	if( time >= m_Parameter.InvincibleTime*FPS ){
-		time = 0.0f;
+	if( m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver() == true ){
+		m_AnimFrameList[player::EAnimNo_Damage].NowFrame = 0.0;
 		m_IsKnockBack = false;
 	}
 }
@@ -440,26 +425,27 @@ void CPlayer::Dead()
 {
 	if( m_IsDead == false ) return;
 
-	m_DeadAnimFrame += m_AnimSpeed;	// アニメーションフレームの加算.
+	m_AnimFrameList[player::EAnimNo_Dead].NowFrame += m_AnimSpeed;	// アニメーションフレームの加算.
 
 	// アニメーションフレームが一定の範囲内なら.
-	if( 0.18 <= m_DeadAnimFrame && m_DeadAnimFrame <= 0.5 ){
+	if( DEAD_CERTAIN_RANGE_ANIM_FRAME_MIN <= m_AnimFrameList[player::EAnimNo_Dead].NowFrame && 
+		m_AnimFrameList[player::EAnimNo_Dead].NowFrame <= DEAD_CERTAIN_RANGE_ANIM_FRAME_MAX ){
 		// ベクトルを使用して前に座標を移動.
 		//	(アニメーションの引きずりの調整のため).
-		m_vPosition.x -= m_MoveVector.x*0.05f;
-		m_vPosition.z -= m_MoveVector.z*0.05f;
+		m_vPosition.x -= m_MoveVector.x*DEAD_ANIM_DRAGING_ADJ_SPEED;
+		m_vPosition.z -= m_MoveVector.z*DEAD_ANIM_DRAGING_ADJ_SPEED;
 
 		// 見えない壁との当たり判定.
-		if( CActor::IsCrashedWallX() == true ) m_vPosition.x += m_MoveVector.x*0.05f;
-		if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += m_MoveVector.z*0.05f;
+		if( CActor::IsCrashedWallX() == true ) m_vPosition.x += m_MoveVector.x*DEAD_ANIM_DRAGING_ADJ_SPEED;
+		if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += m_MoveVector.z*DEAD_ANIM_DRAGING_ADJ_SPEED;
 
 		// アニメーション速度をゆっくりにする.
 		m_AnimSpeed = 0.005;
 	}
 	// 一定のフレーム以上になったらアニメーション速度をゆっくりにする.
-	if( m_DeadAnimFrame >= 0.5 ) m_AnimSpeed = 0.005;
+	if( m_AnimFrameList[player::EAnimNo_Dead].NowFrame >= 0.5 ) m_AnimSpeed = 0.005;
 	// アニメーションを再生させないようにする.
-	if( m_DeadAnimFrame >= m_DeadAnimEndFrame ) m_AnimSpeed = 0.0;
+	if( m_AnimFrameList[player::EAnimNo_Dead].IsNowFrameOver() == true ) m_AnimSpeed = 0.0;
 }
 
 // カメラの更新.
@@ -589,7 +575,7 @@ void CPlayer::SPCameraUpdate()
 //			m_IsUsableSP = true;										// 特殊能力を使う.
 			m_NowSPCameraStete = player::ESPCameraState_CameraShake;	// 次の状態へいどう.
 			SetAnimationBlend( player::EAnimNo_SP );
-			m_SPAnimFrame = 0.0;
+			m_AnimFrameList[player::EAnimNo_SP].NowFrame = 0.0;
 		}
 	}
 		break;
@@ -598,21 +584,20 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 		// カメラを揺らす.
 		//-------------------------------------.
-		m_SPAnimFrame += 0.01;
+		m_AnimFrameList[player::EAnimNo_SP].NowFrame += 0.01;
 
-		if( m_SPAnimFrame >= m_SPAnimEndFrame-0.5 ){
+		if( m_AnimFrameList[player::EAnimNo_SP].NowFrame >= m_AnimFrameList[player::EAnimNo_SP].EndFrame-0.5 ){
 			m_IsUsableSP = true;
 			m_AnimSpeed = 0.0;
-		} if( m_SPAnimFrame > m_SPAnimEndFrame ){
+		}
+		if( m_AnimFrameList[player::EAnimNo_SP].IsNowFrameOver() == true ){
 			m_CameraCount--;	// カウントの減算.
 			// カメラの揺れ.
 			const float SHAKE_VALUE = sinf(static_cast<float>(D3DX_PI) * TWO / CAMERA_FREQUENCY_LOOKPOS * m_CameraCount) * (m_CameraCount * CAMERA_AMPLITUDE_LOOKPOS);
 			m_CameraLookPosition.x += SHAKE_VALUE;
 			m_CameraLookPosition.y += SHAKE_VALUE;
 		}
-		if( m_CameraCount <= 20 ){
-			m_AnimSpeed = 0.01;
-		}
+		if( m_CameraCount <= 20 ) m_AnimSpeed = 0.01;
 		
 		// カメラカウントが0以下になったら.
 		if( m_CameraCount <= 0 ){
@@ -707,16 +692,14 @@ void CPlayer::AttackAnimation()
 		if( m_AttackDataQueue.empty() == true ){
 			// これが最後の攻撃なので、攻撃カウントを0にする.
 			m_AttackComboCount = 0;	
+			// 待機モーションか、移動モーションにするかの比較.
 			// 各値が有効範囲外なら終了.
 			if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 				m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ){
 				// アニメーションを待機に設定.
-				if( m_NowAnimNo == player::EAnimNo_Wait ) return;
 				SetAnimationBlend( player::EAnimNo_Wait );
-				return;
 			} else {
 				// アニメーションを移動に設定.
-				if( m_NowAnimNo == player::EAnimNo_Walk ) return;
 				SetAnimationBlend( player::EAnimNo_Walk );
 			}
 			return;
@@ -725,20 +708,10 @@ void CPlayer::AttackAnimation()
 		SetAnimation( m_AttackDataQueue.front().AnimNo );
 		// 攻撃SEを鳴らす.
 		CSoundManager::PlaySE("PlayerAttack");
-		if(m_AttackComboCount == 2) CSoundManager::PlaySE("PlayerVoiceAttack2");
-		if(m_AttackComboCount == 3)	CSoundManager::PlaySE("PlayerVoiceAttack3");
+		if(m_AttackComboCount == player::EAttackNo_Two)		CSoundManager::PlaySE("PlayerVoiceAttack2");
+		if(m_AttackComboCount == player::EAttackNo_Three)	CSoundManager::PlaySE("PlayerVoiceAttack3");
 	}
 	m_AttackDataQueue.front().Frame += m_AnimSpeed;	// フレームの更新.
-}
-
-// 攻撃アニメーションフレームの設定.
-void CPlayer::SetAttackFrameList()
-{
-	if( m_pSkinMesh == nullptr ) return;
-	// 各攻撃の終了フレームを取得.
-	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(player::EAnimNo_Attack1) );
-	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(player::EAnimNo_Attack2) );
-	m_AttackEnabledFrameList.emplace_back( m_pSkinMesh->GetAnimPeriod(player::EAnimNo_Attack3) );
 }
 
 // 攻撃の追加ができたか.
@@ -754,29 +727,32 @@ bool CPlayer::IsPushAttack()
 	}
 
 	player::SAttackData tmpAttackData;	// 仮データを用意.
+	// 仮データの設定.
+	const auto setAttackData = [&]( const player::EAnimNo& animNo, const double& adjEndFrame )
+	{
+		tmpAttackData.AnimNo			= animNo;
+		tmpAttackData.EnabledEndFrame	= m_AnimFrameList[animNo].EndFrame - adjEndFrame;
+		tmpAttackData.EndFrame			= m_AnimFrameList[animNo].EndFrame;
+	};
+
 	switch( m_AttackComboCount )
 	{
 	case player::EAttackNo_One:	// 攻撃1.
-		tmpAttackData.AnimNo = player::EAnimNo_Attack1;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_One-1]-0.5;
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack1 )-0.5;
-		// 最初はアニメーションを設定する.
+		setAttackData( player::EAnimNo_Attack1, ATTACK1_ADJ_ENABLED_END_FRAME );
+		// 最初の攻撃はアニメーションを設定する.
 		SetAnimation( tmpAttackData.AnimNo );
 		CSoundManager::PlaySE("PlayerAttack");
 		CSoundManager::PlaySE("PlayerVoiceAttack1");
 		break;
+
 	case player::EAttackNo_Two:	// 攻撃2.
-		tmpAttackData.AnimNo = player::EAnimNo_Attack2;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_Two-1]-0.5;
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack2 )-0.5;
-
+		setAttackData( player::EAnimNo_Attack2, ATTACK2_ADJ_ENABLED_END_FRAME );
 		break;
+
 	case player::EAttackNo_Three:// 攻撃3.
-		tmpAttackData.AnimNo = player::EAnimNo_Attack3;
-		tmpAttackData.EnabledEndFrame = m_AttackEnabledFrameList[player::EAttackNo_Three-1]-0.5;
-		tmpAttackData.EndFrame = m_pSkinMesh->GetAnimPeriod( player::EAnimNo_Attack3 )-0.5;
-
+		setAttackData( player::EAnimNo_Attack3, ATTACK3_ADJ_ENABLED_END_FRAME );
 		break;
+
 	default:
 		break;
 	}
@@ -797,25 +773,22 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	bool isAttack = false;
 	proc( m_LifePoint, isAttack );
 	// 攻撃を食らったら.
-	if( isAttack == true ){	
-		m_IsKnockBack = true;	// ノックバックフラグを立てる.
+	if( isAttack == true ){
 		// ダメージアニメーションを設定.
-		if( m_NowAnimNo != player::EAnimNo_Damage ){
-			SetAnimation( player::EAnimNo_Damage );
-		}
+		SetAnimation( player::EAnimNo_Damage );
+		m_AnimFrameList[player::EAnimNo_Damage].NowFrame = 0.0;
+		m_IsKnockBack	= true;
+		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z )+static_cast<float>(D3DX_PI);
+		m_MoveVector	= m_HitVector;
 	}
-	m_LifePoint = 0.0f;
 	// 体力がなくなったら.
 	if( m_LifePoint <= 0.0f ){
 		// 死亡アニメーションを設定.
-		if( m_NowAnimNo != player::EAnimNo_Dead ){
-			SetAnimation( player::EAnimNo_Dead );
-		}
-		m_DeadAnimFrame	= 0.0;
+		SetAnimation( player::EAnimNo_Dead );
+		m_AnimFrameList[player::EAnimNo_Dead].NowFrame	= 0.0;
 		m_IsDead		= true;
-		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z );
-		m_MoveVector.x	= sinf( m_vRotation.y );
-		m_MoveVector.z	= cosf( m_vRotation.y );
+		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z )+static_cast<float>(D3DX_PI);
+		m_MoveVector	= -m_HitVector;	// ベクトル値を反転して調整.
 	}
 
 	// 体力が一定値を超えないようにする.
@@ -925,6 +898,29 @@ bool CPlayer::EffectSetting()
 		if( m_pEffects[i]->SetEffect( effectNames[i] ) == false ) return false;
 	}
 
+	return true;
+}
+
+// アニメーションフレームの設定.
+bool CPlayer::SetAnimFrameList()
+{
+	// 調整用アニメーションフレームのリストを用意.
+	const double animAdjFrames[] =
+	{
+		ANIM_ADJ_FRAME_Wait,
+		ANIM_ADJ_FRAME_Walk,
+		ANIM_ADJ_FRAME_Attack1,
+		ANIM_ADJ_FRAME_Attack2,
+		ANIM_ADJ_FRAME_Attack3,
+		ANIM_ADJ_FRAME_Avoid,
+		ANIM_ADJ_FRAME_SP,	
+		ANIM_ADJ_FRAME_Damage,
+		ANIM_ADJ_FRAME_Dead,
+	};
+	if( m_pSkinMesh == nullptr ) return false;
+	for( int i = player::EAnimNo_Begin; i < player::EAnimNo_End; i++ ){
+		m_AnimFrameList.at(i) = { 0.0, m_pSkinMesh->GetAnimPeriod(i)-animAdjFrames[i] };
+	}
 	return true;
 }
 
