@@ -27,6 +27,7 @@ CAlien::CAlien()
 	, m_IsDelete				( false )
 	, m_IsRisingMotherShip		( false )
 {
+	m_vSclae = { 0.0f, 0.0f, 0.0f };
 }
 
 CAlien::~CAlien()
@@ -174,7 +175,18 @@ void CAlien::Spawning()
 {
 	// モデルのアルファ値を足していく.
 	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
-	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+
+	
+	m_vPosition.y -= 0.01f;
+	if( m_vPosition.y < 12.0f ){
+		if( m_vSclae.x < 1.0f ){
+			m_vSclae += { 0.01f, 0.01f, 0.01f };
+			if( m_vSclae.x >= 1.0f ) m_vSclae = { 1.0f, 1.0f, 1.0f };
+		}
+	}
+	if( m_vPosition.y > INIT_POSITION_ADJ_HEIGHT ) return;
+	m_vPosition.y = INIT_POSITION_ADJ_HEIGHT;
+//	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
 	CSoundManager::NoMultipleSEPlay("AlienAppSE");
 	m_NowState		= EAlienState::Move;
 	m_NowMoveState	= EMoveState::Rotation;

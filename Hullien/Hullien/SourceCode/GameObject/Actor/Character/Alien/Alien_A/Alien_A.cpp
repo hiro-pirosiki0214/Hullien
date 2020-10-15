@@ -109,7 +109,7 @@ bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	if( Init() == false ) return false;
 	m_vPosition			= spawnPos;					// スポーン座標の設定.
 	m_LifePoint			= m_Parameter.LifeMax;		// 体力の設定.
-	m_vPosition.y		+= INIT_POSITION_ADJ_HEIGHT;// 座標を調整する.
+//	m_vPosition.y		+= INIT_POSITION_ADJ_HEIGHT;// 座標を調整する.
 	m_NowState			= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 
 	return true;
