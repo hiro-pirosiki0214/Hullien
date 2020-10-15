@@ -40,6 +40,8 @@ public:
 	bool IsGirlAbduct();
 	// 女の子が危険な状態か.
 	bool IsDanger();
+	// 宇宙人が帰還したか.
+	bool IsReturnAlien();
 
 private:
 	// 座標リストの設定.

@@ -177,6 +177,12 @@ bool CGameActorManager::IsDanger()
 	return m_pGirl->IsDanger();
 }
 
+// 宇宙人が帰還したか.
+bool CGameActorManager::IsReturnAlien()
+{
+	return m_pMotherShipUFO->IsReturnAlien();
+}
+
 // 座標リストの設定.
 void CGameActorManager::SetPositionList( CGameObject* pObj )
 {

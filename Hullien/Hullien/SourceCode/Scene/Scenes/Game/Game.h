@@ -62,8 +62,8 @@ private:
 	void ChangeEventScene();
 	// 次のシーンに移行.
 	void NextSceneMove();
-	// BGM切り替え関数.
-	void SwitchBGM( const char* StartName,const char* StopName );
+	// 次のシーンを設定.
+	void SetNextScene(EEventSceneState state, bool GameOver = false);
 
 private:
 	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.

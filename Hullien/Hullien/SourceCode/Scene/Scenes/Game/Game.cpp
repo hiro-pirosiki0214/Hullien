@@ -234,46 +234,20 @@ void CGame::ChangeEventScene()
 {
 	if (m_NowEventScene == EEventSceneState::Game)
 	{
-		// ゲームオーバーの場合.
+		// プレイヤーが死亡した場合.
 		if (m_GameObjManager->IsGameOver() == true)
 		{
-			if (m_IsChangeScene == false)
-			{
-				CFade::SetFadeIn();
-				m_IsChangeScene = true;
-			}
-			if (CFade::GetIsFade() == true) return;
-			if (m_GameObjManager->IsGirlAbduct() == true)
-			{
-				m_NowEventScene = EEventSceneState::GameOver_Girl;
-			}
-			else
-			{
-				m_NowEventScene = EEventSceneState::GameOver_Player;
-			}
-			CSoundManager::StopBGMThread("GameBGM");
-			CSoundManager::StopBGMThread("DangerBGM");
-			CSoundManager::StopBGMThread("StartEventBGM");
-			m_pEventManager->OnGameOver();
-			m_pEventManager->NextEventMove();
+			SetNextScene(EEventSceneState::GameOver_Player, true);
 		}
-
+		// 女の子がUFOまで連れ去られた場合.
+		if (m_GameObjManager->IsReturnAlien() == true)
+		{
+			SetNextScene(EEventSceneState::GameOver_Girl, true);
+		}
 		// ゲームクリアの場合.
 		if (m_WidgetManager->IsGameFinish() == true)
 		{
-			if(m_IsChangeScene == false) 
-			{
-				CFade::SetFadeIn();
-				m_IsChangeScene = true;
-			}
-			CSoundManager::FadeOutBGM("GameBGM");
-
-			if (CFade::GetIsFade() == true) return;
-			m_NowEventScene = EEventSceneState::Clear;
-			CSoundManager::StopBGMThread("GameBGM");
-			CSoundManager::StopBGMThread("DangerBGM");
-			CSoundManager::StopBGMThread("StartEventBGM");
-			m_pEventManager->NextEventMove();
+			SetNextScene(EEventSceneState::Clear);
 		}
 	}
 
@@ -332,5 +306,25 @@ void CGame::NextSceneMove()
 	default:
 		break;
 	}
+}
+
+// 次のシーンを設定.
+void CGame::SetNextScene(EEventSceneState state, bool GameOver)
+{
+	if (m_IsChangeScene == false)
+	{
+		CFade::SetFadeIn();
+		m_IsChangeScene = true;
+	}
+	if (CFade::GetIsFade() == true) return;
+	m_NowEventScene = state;
+	CSoundManager::StopBGMThread("GameBGM");
+	CSoundManager::StopBGMThread("DangerBGM");
+	CSoundManager::StopBGMThread("StartEventBGM");
+	if (GameOver == true)
+	{
+		m_pEventManager->OnGameOver();
+	}
+	m_pEventManager->NextEventMove();
 }
 
