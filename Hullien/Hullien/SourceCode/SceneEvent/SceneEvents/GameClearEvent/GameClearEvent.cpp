@@ -269,6 +269,7 @@ void CGameClearEvent::RunTowardsUFO()
 
 	if (m_stPlayer.vPosition.z > m_vUFOPosition.z) return;
 	m_pPlayer->SetAnimation(CEventPlayer::EAnimNo::Wait);
+	CSoundManager::PlaySE("SuckedUFO");
 	NextStep();
 }
 
@@ -316,18 +317,24 @@ void CGameClearEvent::FussUFO()
 	case 0:
 		m_vUFOScale.x += UFO_SCALE_SPEED_DEFAULT;
 		if(m_vUFOScale.y >= UFO_SCALE_MIN) m_vUFOScale.y -= UFO_SCALE_SPEED_Y;
-		if(m_vUFOScale.x >= UFO_SCALE_MAX_X) m_UFOStep++;
+		if (m_vUFOScale.x < UFO_SCALE_MAX_X) return;
+		CSoundManager::PlaySE("FussUFO");
+		m_UFOStep++;
 		break;
 	case 1:
 		if(m_vUFOScale.x >= SCALE_DEFAULT.x) m_vUFOScale.x -= UFO_SCALE_SPEED_DEFAULT;
 		m_vUFOScale.y += UFO_SCALE_SPEED_DEFAULT;
-		if (m_vUFOScale.y >= UFO_LIMIT_SCALE_Y) m_UFOStep++;
+		if (m_vUFOScale.y < UFO_LIMIT_SCALE_Y) return;
+		CSoundManager::PlaySE("FussUFO");
+		m_UFOStep++;
 		break;
 	case 2:
 		m_vUFOScale.x += UFO_SCALE_SPEED_X;
 		m_vUFOScale.x += UFO_SCALE_SPEED_X;
 		m_vUFOScale.y -= UFO_SCALE_SPEED_Y;
-		if (m_vUFOScale.y < UFO_SCALE_MIN) m_UFOStep++;
+		if (m_vUFOScale.y > UFO_SCALE_MIN) return;
+		CSoundManager::PlaySE("FussUFO");
+		m_UFOStep++;
 		break;
 	case 3:
 		if (m_vUFOScale.x > SCALE_DEFAULT.x) m_vUFOScale.x -= UFO_SCALE_SPEEDMAX_X;
@@ -336,6 +343,7 @@ void CGameClearEvent::FussUFO()
 		if (m_vUFOScale.y < UFO_SCALE_MAX_Y) return;
 		m_UFOStep++;
 		m_stAlien.IsDisp = true;
+		CSoundManager::PlaySE("FussUFOLast");
 		NextStep();
 		break;
 	case 4:
@@ -358,6 +366,7 @@ void CGameClearEvent::KickedOutAlien()
 	if (m_stCamera.vPosition.y >= CAMERA_LIMITPOS_Y_KICKEDOUT_ALIEN) m_stCamera.vPosition.y -= CAMERA_SPEED_Y_KICKEDOUT_ALIEN;
 
 	if (m_stCamera.ViewingAngle <= m_pEventCamera->ResetViewingAngle()) return;
+	CSoundManager::PlaySE("AlienFall");
 	NextStep();
 }
 
@@ -373,7 +382,8 @@ void CGameClearEvent::FallAlien()
 	}
 	else
 	{
-		if (m_SwingCameraCount != 0) m_SwingCameraCount--;
+		if(m_SwingCameraCount == 50) CSoundManager::PlaySE("FallDown");
+		if(m_SwingCameraCount != 0) m_SwingCameraCount--;
 		// ÉJÉÅÉâóhÇÁÇ∑.
 		m_stCamera.vLookPosition.y 
 			= m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Y * m_SwingCameraCount) * (m_SwingCameraCount * AMPLITUDE_LOOKPOS));
@@ -409,9 +419,11 @@ void CGameClearEvent::MoveUFO()
 	m_stCamera.vLookPosition = m_vUFOPosition;
 	m_stCamera.vLookPosition.y = m_vUFOPosition.y + CORRECTION_PLAYER_LOOKPOS_Y;
 
+	if( m_WaitCount == WAIT_COUNT_MOVE_UFO ) CSoundManager::PlaySE("UFOUP");
 	if( m_WaitCount <= WAIT_COUNT_MOVE_UFO ) return;
 	if( m_vUFOPosition.y <= UFO_SURFACING_POSITION_Y) { m_vUFOPosition.y += UFO_SURFACING_SPEED; }
 
+	if(m_WaitCount == WAIT_COUNT_MOVE_UFO_MAX) CSoundManager::PlaySE("EscapeUFO");
 	if(m_WaitCount <= WAIT_COUNT_MOVE_UFO_MAX ) return;
 	m_vUFOPosition.x -= UFO_MOVE_SPEED_X;
 	m_vUFOPosition.y += UFO_MOVE_SPEED_Y;
