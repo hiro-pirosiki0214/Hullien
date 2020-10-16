@@ -55,6 +55,7 @@ bool CGame::Load()
 	else
 	{
 		m_NowEventScene = EEventSceneState::Game;
+		CFade::SetFadeOut();
 	}
 
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
@@ -119,12 +120,18 @@ void CGame::Render()
 		m_WidgetManager->Render();
 		break;
 	case EEventSceneState::Continue:
-		m_pEventManager->Render();
+		if (m_GameObjManager->IsGameOver() == false) {
+			m_pEventManager->Render();
+		}
+		else {
+			ModelRender();
+			m_GameObjManager->SpriteRender();
+			m_WidgetManager->Render();
+		}
 		m_ContinueWidget->Render();
 		break;
 	case EEventSceneState::GameStart:
 	case EEventSceneState::GameOver_Girl:
-	case EEventSceneState::GameOver_Player:
 	case EEventSceneState::Clear:
 		m_pEventManager->Render();
 		break;
@@ -237,7 +244,9 @@ void CGame::ChangeEventScene()
 		// プレイヤーが死亡した場合.
 		if (m_GameObjManager->IsGameOver() == true)
 		{
-			SetNextScene(EEventSceneState::GameOver_Player, true);
+			m_NowEventScene = EEventSceneState::Continue;
+			return;
+	//		SetNextScene(EEventSceneState::GameOver_Player, true);
 		}
 		// 女の子がUFOまで連れ去られた場合.
 		if (m_GameObjManager->IsReturnAlien() == true)
@@ -259,7 +268,6 @@ void CGame::ChangeEventScene()
 		m_NowEventScene = EEventSceneState::Game;
 		break;
 	case EEventSceneState::GameOver_Girl:
-	case EEventSceneState::GameOver_Player:
 		m_NowEventScene = EEventSceneState::Continue;
 		break;
 	case EEventSceneState::Clear:
@@ -282,7 +290,9 @@ void CGame::NextSceneMove()
 			m_IsChangeScene = true;
 		}
 		CSoundManager::FadeOutBGM("GameOverEvent");
-		if (CFade::GetIsFade() == true) return;
+		if(CSoundManager::GetIsPlayBGM("GameBGM") == true) CSoundManager::StopBGMThread("GameBGM");
+		if(CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
+		if(CFade::GetIsFade() == true) return;
 		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->RetryGame();
 		break;
@@ -298,6 +308,8 @@ void CGame::NextSceneMove()
 		}
 		CSoundManager::FadeOutBGM("GameOverEvent");
 		if (CFade::GetIsFade() == true) return;
+		if (CSoundManager::GetIsPlayBGM("GameBGM") == true) CSoundManager::StopBGMThread("GameBGM");
+		if (CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
 		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->OnGameOver();
 		m_pEventManager->NextEventMove();

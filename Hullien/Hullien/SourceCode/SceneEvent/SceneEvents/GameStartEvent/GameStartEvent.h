@@ -51,9 +51,10 @@ class CGameStartEvent : public CEventBase
 	const float CAMERA_MOVE_SPEED_Z					= 1.0f;								// カメラ移動速度.
 	const float CAMERA_LENGHT_Z						= 16.0f;							// カメラとプレイヤーの距離z座標.
 	const float CAMERA_LOOKPOS_Z_PLAYER_UP			= -9.5f;								// プレイヤーアップ時のカメラの注視位置.
-	const float FREQUENCY_LOOKPOS_Y					= 10.0f;							// カメラ注視位置の周波数.
-	const float FREQUENCY_LOOKPOS_Z					= 20.0f;							// カメラ注視位置の周波数.
-	const float AMPLITUDE_LOOKPOS					= 0.01f;							// カメラ注視位置の振幅.
+	const float FREQUENCY_LOOKPOS					= 7.0f;								// カメラ注視位置の周波数.
+	const float AMPLITUDE_LOOKPOS_X					= 0.008f;							// カメラ注視位置の振幅.
+	const float AMPLITUDE_LOOKPOS_Y					= 0.01f;							// カメラ注視位置の振幅.
+	const float AMPLITUDE_SPEED						= 0.5f;								// カメラ注視位置の揺れ速度.
 
 	const float VIEWING_ANGLE_PLAYER_UP				= 1.6f;								// プレイヤーのアップ時の視野角.
 	const float VIEWING_ANGLE_MOVING_LIMIT			= 0.7f;								// 視野角の移動限界値.

@@ -307,7 +307,9 @@ void CGameOverEvent::MoveRightUFOSecond()
 void CGameOverEvent::MoveBackUFO()
 {
 	m_stCamera.vLookPosition = m_vUFOPosition;
-	if (MoveUFO(DESTINATION_BACK, UFO_MOVE_SPEED_BACK) == true) NextStep();
+	if (MoveUFO(DESTINATION_BACK, UFO_MOVE_SPEED_BACK) == false) return;
+	m_pEventWidget->SetSkip(true);
+	NextStep();
 }
 
 // イベント終了.

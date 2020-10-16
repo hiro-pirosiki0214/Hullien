@@ -533,11 +533,9 @@ void CGameStartEvent::PlayerUp()
 void CGameStartEvent::InvocatingBarrier()
 {
 	// ÉJÉÅÉâÇÃóhÇÍ.
-	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Y * m_Count) * (m_Count * AMPLITUDE_LOOKPOS));
-	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Z * m_Count) * (m_Count * AMPLITUDE_LOOKPOS));
-	if (m_Count != 0) {
-		m_Count--;
-	}
+	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_X));
+	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_Y));
+	if (m_Count != 0) m_Count -= AMPLITUDE_SPEED;
 
 	// ÉoÉäÉA.
 	m_pBarrier->SetTargetPos(*m_pGirl.get());
