@@ -11,16 +11,16 @@
 *	イベント用プレイヤークラス.
 **/
 CEventPlayer::CEventPlayer()
-	: m_NowAnimNo(EAnimNo::Walk)
-	, m_OldAnimNo(EAnimNo::None)
-	, m_AttackPosition()
-	, m_pEffects( )
-	, m_SpecialAbility(0.0f)
-	, m_HasUsableSP(false)
-	, m_IsAttackSE(false)
+	: m_AnimFrameList		(player::EAnimNo_Max)
+	, m_NowAnimNo			(player::EAnimNo::EAnimNo_Walk)
+	, m_OldAnimNo			(player::EAnimNo::EAnimNo_None)
+	, m_pEffects			()
+	, m_SpecialAbility		(0.0f)
+	, m_IsYButtonPressed	(false)
+	, m_HasUsableSP			(false)
+	, m_IsAttackSE			(false)
 {
 	m_ObjectTag = EObjectTag::Player;
-	m_NowMoveState = EMoveState::Rotation;
 }
 
 CEventPlayer::~CEventPlayer()
@@ -30,11 +30,18 @@ CEventPlayer::~CEventPlayer()
 // 初期化関数
 bool CEventPlayer::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
-	if (GetModel(MODEL_NAME) == false) return false;
-	// アニメーションの設定.
-	SetAnimation(m_NowAnimNo);
-	if (FootStepCollisionSetting() == false) return false;
+#if 1
+	// 既に読み込めていたら終了.
+	if (m_pSkinMesh != nullptr) return true;
+	// モデルの取得.
+	CMeshResorce::GetSkin(m_pSkinMesh, MODEL_NAME);
+	// モデルが読み込めてなければ false.
+	if (m_pSkinMesh == nullptr) return false;
+//	if (GetModel(MODEL_NAME) == false) return false;
+	SetAnimation(m_NowAnimNo);		// アニメーションの設定.
+	if( FootStepCollisionSetting() == false ) return false;	// 足音用の当たり判定の設定.
+	if( SetAnimFrameList() == false ) return false;			// アニメーションフレームの設定.
+
 #else
 	if (GetModel(MODEL_TEMP_NAME) == false) return false;
 #endif
@@ -55,9 +62,17 @@ void CEventPlayer::Update()
 // 描画関数.
 void CEventPlayer::Render()
 {
+	if (m_pSkinMesh == nullptr) return;
 	if (m_Parameter.IsDisp == false) return;
 	FootStep(RIGHT_FOOT, LEFT_FOOT);
-	MeshRender();	// メッシュの描画.
+
+	m_pSkinMesh->SetPosition(m_vPosition);
+	m_pSkinMesh->SetRotation(m_vRotation);
+	m_pSkinMesh->SetScale(m_vSclae);
+	m_pSkinMesh->SetAnimSpeed(m_AnimSpeed);
+	m_pSkinMesh->Render();
+
+//	MeshRender();	// メッシュの描画.
 	EffectRender();
 }
 
@@ -71,27 +86,54 @@ void CEventPlayer::SetTargetPos(CActor & actor)
 {
 }
 
-// 特殊能力を使っているか.
-bool CEventPlayer::IsSpecialAbility()
+// 特殊能力.
+void CEventPlayer::SpecialAbility()
 {
-	if (m_HasUsableSP == false) return false;
+	if(m_IsYButtonPressed == false) return;
+	SetAnimationBlend(player::EAnimNo_SP);
+
+	m_AnimFrameList[player::EAnimNo_SP].NowFrame += 0.01;
+
+	if (m_AnimFrameList[player::EAnimNo_SP].NowFrame >= m_AnimFrameList[player::EAnimNo_SP].EndFrame - 0.5) {
+		m_HasUsableSP = true;
+		m_AnimSpeed = 0.0;
+	}
+
+	if (m_HasUsableSP == false) return;
 	// 特殊能力が使えるなら.
-	m_HasUsableSP = false;	// 初期化して.
-	return true;			// trueを返す.
+	m_IsYButtonPressed = false;
+	m_HasUsableSP = false;	
 }
 
 // 特殊能力操作関数.
 void CEventPlayer::SPController()
 {
 	// Yボタンが押された瞬間じゃなければ終了.
-	//if (CXInput::Y_Button() != CXInput::enPRESSED_MOMENT) return;
-	if (GetAsyncKeyState('Y') & 0x8000
-		|| CXInput::Y_Button() == CXInput::enPRESSED_MOMENT)
-	{
-		CSoundManager::PlaySE("PlayerVoiceSpecial");
-		m_SpecialAbility = 0.0f;
-		m_HasUsableSP = true;
+	if (CXInput::Y_Button() != CXInput::enPRESSED_MOMENT) return;
+	CSoundManager::PlaySE("PlayerVoiceSpecial");
+	m_SpecialAbility = 0.0f;
+	m_IsYButtonPressed = true;
+
+}
+
+// ノックバック.
+void CEventPlayer::KnockBack()
+{
+	if (m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver() == true) return;
+
+	// ダメージアニメーションを設定.
+	SetAnimation(player::EAnimNo_Damage);
+
+	m_AnimFrameList[player::EAnimNo_Damage].NowFrame += m_AnimSpeed;
+
+	if (m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver() == true) {
+		m_AnimFrameList[player::EAnimNo_Damage].NowFrame = 0.0;
 	}
+}
+
+// 死亡.
+void CEventPlayer::Dead()
+{
 }
 
 // 移動関数.
@@ -104,20 +146,10 @@ void CEventPlayer::EffectRender()
 {
 }
 
-// アニメーション設定.
-void CEventPlayer::SetAnimation(const EAnimNo & animNo)
-{
-	if (m_pSkinMesh == nullptr) return;
-	if (animNo == m_OldAnimNo) return;
-	m_OldAnimNo = m_NowAnimNo;
-	m_NowAnimNo = animNo;
-	m_pSkinMesh->ChangeAnimSet(static_cast<int>(m_NowAnimNo));
-}
-
 // 当たり判定の設定.
 bool CEventPlayer::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
+#if 1
 	if (m_pSkinMesh == nullptr) return false;
 	if (m_pCollManager == nullptr) {
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -143,17 +175,6 @@ bool CEventPlayer::ColliderSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
-
-	// 攻撃用の当たり判定初期化.
-	if (m_pAttackCollManager == nullptr) {
-		m_pAttackCollManager = std::make_shared<CCollisionManager>();
-	}
-	if (FAILED(m_pAttackCollManager->InitSphere(
-		&m_AttackPosition,
-		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		1.0f))) return false;
 	return true;
 #endif	// #ifndef IS_MODEL_RENDER.
 }
@@ -162,6 +183,29 @@ bool CEventPlayer::ColliderSetting()
 bool CEventPlayer::EffectSetting()
 {
 	return false;
+}
+
+// アニメーションフレームの設定.
+bool CEventPlayer::SetAnimFrameList()
+{
+	// 調整用アニメーションフレームのリストを用意.
+	const double animAdjFrames[] =
+	{
+		ANIM_ADJ_FRAME_Wait,
+		ANIM_ADJ_FRAME_Walk,
+		ANIM_ADJ_FRAME_Attack1,
+		ANIM_ADJ_FRAME_Attack2,
+		ANIM_ADJ_FRAME_Attack3,
+		ANIM_ADJ_FRAME_Avoid,
+		ANIM_ADJ_FRAME_SP,
+		ANIM_ADJ_FRAME_Damage,
+		ANIM_ADJ_FRAME_Dead,
+	};
+	if (m_pSkinMesh == nullptr) return false;
+	for (int i = player::EAnimNo_Begin; i < player::EAnimNo_End; i++) {
+		m_AnimFrameList.at(i) = { 0.0, m_pSkinMesh->GetAnimPeriod(i) - animAdjFrames[i] };
+	}
+	return true;
 }
 
 // サウンドの設定.

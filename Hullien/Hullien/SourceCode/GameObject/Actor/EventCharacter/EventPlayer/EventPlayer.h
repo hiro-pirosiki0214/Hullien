@@ -2,6 +2,7 @@
 #define EVENT_PLAYER_H
 
 #include "..\EventCharacter.h"
+#include "..\..\Character\Player\PlayerParam.h"
 #include <vector>
 
 class CEffectManager;
@@ -23,21 +24,18 @@ class CEventPlayer : public CEventCharacter
 	// 声の音量.
 	const float VOICE_VOLUME = 1.5f;
 
+	// アニメーションの調整フレーム.
+	const double ANIM_ADJ_FRAME_Wait = 0.0;	// 待機.
+	const double ANIM_ADJ_FRAME_Walk = 0.0;	// 走り.
+	const double ANIM_ADJ_FRAME_Attack1 = 0.5;	// 攻撃1.
+	const double ANIM_ADJ_FRAME_Attack2 = 0.5;	// 攻撃2.
+	const double ANIM_ADJ_FRAME_Attack3 = 0.5;	// 攻撃3.
+	const double ANIM_ADJ_FRAME_Avoid = 0.4;	// 回避.
+	const double ANIM_ADJ_FRAME_SP = 0.02;	// 特殊能力.
+	const double ANIM_ADJ_FRAME_Damage = 0.4;	// ヒット時.
+	const double ANIM_ADJ_FRAME_Dead = 0.01;	// 死亡.
+
 public:
-	// アニメーション番号.
-	enum class enAnimNo
-	{
-		None = -1,
-
-		Wait,		// 待機.
-		Walk,		// 走り.
-		Attack1,	// 攻撃1.
-		Attack2,	// 攻撃2.
-		Attack3,	// 攻撃3.
-
-		Max = Attack3,
-	} typedef EAnimNo;
-
 	enum class enPlayerState
 	{
 		None = 0,
@@ -61,38 +59,49 @@ public:
 	virtual void Collision(CActor* pActor) override;
 	// 相手座標の設定関数.
 	virtual void SetTargetPos(CActor& actor) override;
-	// アニメーション設定.
-	void SetAnimation(const EAnimNo& animNo);
+	// アニメーション速度の設定.
+	void SetAnimSpeed() { m_AnimSpeed = 0.01f; }
 
-	// 特殊能力を使っているか.
-	bool IsSpecialAbility();
+	// Yボタンが押されたか.
+	bool IsYButtonPressed() { return m_IsYButtonPressed; }
+	// 特殊能力.
+	void SpecialAbility();
 
 private:
 	// 特殊能力操作関数.
 	void SPController();
+	// ノックバック動作関数.
+	void KnockBack();
+	// 死亡動作関数.
+	void Dead();
+
 	// 移動関数.
 	virtual void Move() override;
 	// エフェクト描画関数.
 	void EffectRender();
+
 	// 当たり判定の設定.
 	bool ColliderSetting();
 	// エフェクトの設定.
 	bool EffectSetting();
+	// アニメーションフレームの設定.
+	bool SetAnimFrameList();
+
 	// サウンドの設定.
 	bool SoundSetting();
 	// 音量の設定.
 	void VolumeSetting(const char* soung, float volume);
 
 private:
-	std::shared_ptr<CCollisionManager>	m_pAttackCollManager;	// 攻撃用の当たり判定.
-	EAnimNo										m_NowAnimNo;			// 今のアニメーション番号.
-	EAnimNo										m_OldAnimNo;				// 前のアニメーション番号.
-	D3DXVECTOR3								m_AttackPosition;
-	EPlayerState									m_State;						// 状態.
-	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;		// エフェクト.
-	float			m_SpecialAbility;			// 特殊能力.
-	bool			m_HasUsableSP;			// 特殊能力を使えるか.
-	bool			m_IsAttackSE;				// 攻撃SEを鳴らすか.
+	anim::AAnimFrameList							m_AnimFrameList;	// アニメーションフレームのリスト.
+	player::EAnimNo									m_NowAnimNo;		// 今のアニメーション番号.
+	player::EAnimNo									m_OldAnimNo;		// 前のアニメーション番号.
+	EPlayerState									m_State;			// 状態.
+	std::vector<std::shared_ptr<CEffectManager>>	m_pEffects;			// エフェクト.
+	float											m_SpecialAbility;	// 特殊能力.
+	bool											m_IsYButtonPressed;	// Yボタンが押されたか.
+	bool											m_HasUsableSP;		// 特殊能力を使えるか.
+	bool											m_IsAttackSE;		// 攻撃SEを鳴らすか.
 
 };
 

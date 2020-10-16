@@ -17,7 +17,6 @@ CEventGirl::CEventGirl()
 {
 	m_ObjectTag		= EObjectTag::Girl;
 	m_NowState		= ENowState::Move;
-	m_NowMoveState	= EMoveState::Move;
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
 }
 
@@ -109,17 +108,6 @@ void CEventGirl::SetOptionalState(const SOptionalState & state)
 // ˆÚ“®ŠÖ”.
 void CEventGirl::Move()
 {
-	switch (m_NowMoveState)
-	{
-	case EMoveState::None:
-		break;
-	case EMoveState::Rotation:
-		break;
-	case EMoveState::Move:
-		break;
-	default:
-		break;
-	}
 }
 
 // õ“G‚Ì“–‚½‚è”»’è.

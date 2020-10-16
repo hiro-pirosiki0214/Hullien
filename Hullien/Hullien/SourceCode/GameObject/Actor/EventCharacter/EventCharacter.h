@@ -49,17 +49,6 @@ public:
 protected:
 	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;	// 調整用座標の高さ.
 
-													// 移動状態.
-	enum class enMoveState
-	{
-		None,
-
-		Rotation,
-		Move,
-
-		Max,
-	} typedef EMoveState;
-
 	// キャラクタの情報.
 	struct stCharacterParam : public SOptionalState
 	{
@@ -108,6 +97,10 @@ public:
 	// 右回転の設定.
 	float RotationMoveRight(const float& rotValue, 
 		const float& rotSpeed, bool IsRightRot = true);
+	// アニメーション設定.
+	void SetAnimation(const int& animNo);
+	// アニメーションをブレンドして設定.
+	void SetAnimationBlend(const int& animNo);
 
 protected:
 	// メッシュの表示関数.
@@ -124,9 +117,10 @@ protected:
 #ifdef IS_TEMP_MODEL_RENDER
 	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;	// 仮のモデルデータ.
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
-
-	SCharacterParam	m_Parameter;					// パラメータ.
-	EMoveState		m_NowMoveState;					// 現在の移動状態.
+	int				m_NowAnimNo;				// 現在のアニメーション番号.
+	int				m_OldAnimNo;				// 過去のアニメーション番号.
+	double			m_AnimSpeed;				// アニメーション速度.
+	SCharacterParam	m_Parameter;				// パラメータ.
 
 private:
 	std::vector<std::shared_ptr<CCollisionManager>> m_pFootCollision;

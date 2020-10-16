@@ -273,7 +273,7 @@ void CGameStartEvent::Skip()
 	// プレイヤー.
 	m_stPlayer.vPosition.z = 0.0f;
 	m_stPlayer.vRotation.y = PLAYER_ROTATION_Y;
-	m_pPlayer->SetAnimation(CEventPlayer::EAnimNo::Wait);
+	m_pPlayer->SetAnimation(player::EAnimNo::EAnimNo_Wait);
 	// 宇宙人.
 	m_stAlien.IsDisp = true;
 	m_stAlien.vScale = SCALE_MAX;
@@ -345,7 +345,7 @@ void CGameStartEvent::MoveUFO()
 	// カメラの視点移動.
 	m_stCamera.vLookPosition = m_pSpawnUFO->GetPosition();
 	// プレイヤーの位置設定.
-	m_pPlayer->SetAnimation(CEventPlayer::EAnimNo::Wait);
+	m_pPlayer->SetAnimation(player::EAnimNo::EAnimNo_Wait);
 	m_stPlayer.vPosition.z = 0.0f;
 	// 女の子の位置設定.
 	m_stGirl.vPosition.z = GIRL_DISTANCE_Z;
@@ -463,7 +463,7 @@ void CGameStartEvent::InvocatingOrderBarrier()
 	m_pWidget->SetWidgetState(CGameStartEventWidget::EWidgetState::Push_YButton);
 
 	// Yボタンが押された場合.
-	if (m_pPlayer->IsSpecialAbility() == true)
+	if (m_pPlayer->IsYButtonPressed() == true)
 	{
 		// カメラの設定.
 		m_stCamera.vLookPosition = m_pPlayer->GetPosition();
@@ -496,6 +496,7 @@ void CGameStartEvent::PlayerUp()
 	}
 	else
 	{
+		m_pPlayer->SpecialAbility();
 		m_DecelerationZ = 0.0f;
 		m_stCamera.ViewingAngle = VIEWING_ANGLE_MOVING_LIMIT;
 		// カメラをプレイヤーの後ろ側に移動.
@@ -550,6 +551,9 @@ void CGameStartEvent::InvocatingBarrier()
 	if (m_pBarrier->IsActive() == false)
 	{
 		m_stAlien.IsDisp = false;
+		// プレイヤーのアニメーション.
+		m_pPlayer->SetAnimationBlend(player::EAnimNo::EAnimNo_Wait);
+		m_pPlayer->SetAnimSpeed();
 		NextStep();
 	}
 }
@@ -557,6 +561,7 @@ void CGameStartEvent::InvocatingBarrier()
 // 女の子帰還.
 void CGameStartEvent::ReturnGirl()
 {
+	// UFO位置.
 	m_vUFOPosition.y = UFO_POSITION.y;
 	m_vUFOPosition.z = UFO_POSITION.z;
 

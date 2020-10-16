@@ -278,7 +278,7 @@ void CPlayer::SPController()
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
 	// Yƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½uŠÔ‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
-	CSoundManager::NoMultipleSEPlay("PlayerVoiceSpecial");
+	CSoundManager::PlaySE("PlayerVoiceSpecial");
 	m_CameraPosition = m_pCamera->GetPosition();
 	m_SpecialAbility = 0.0f;
 	m_IsYButtonPressed = true;
