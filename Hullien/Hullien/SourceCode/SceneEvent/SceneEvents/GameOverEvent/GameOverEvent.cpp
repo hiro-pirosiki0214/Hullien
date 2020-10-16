@@ -112,8 +112,7 @@ void CGameOverEvent::SpriteRender()
 bool CGameOverEvent::CameraInit()
 {
 	m_stCamera.vPosition = CAMERA_INITPOSITION;
-	m_stCamera.vLookPosition = m_stGirl.vPosition;
-	m_stCamera.vLookPosition.y = m_stGirl.vPosition.y + CORRECTION_GIRLLOOKPOS_Y;
+	m_stCamera.vLookPosition.y = LOOKPOS_Y;
 	return true;
 }
 
@@ -243,12 +242,10 @@ void CGameOverEvent::Wait()
 // èóÇÃéqÇ™ãzÇ¢çûÇ‹ÇÍÇÈ.
 void CGameOverEvent::SuckedGirl()
 {
-	m_stCamera.vLookPosition.y = m_stGirl.vPosition.y + CORRECTION_GIRLLOOKPOS_Y;
-
 	if( m_stGirl.vPosition.y <= m_vUFOPosition.y + CORRECTION_UFOPOSITION_Y )
 	{
 		m_stGirl.vPosition.y += GIRL_RISE_SPEED;
-		m_stCamera.vPosition.y += CAMERA_RISE_SPEED;
+		m_stCamera.vLookPosition.y += CAMERA_RISE_SPEED;
 	}
 
 	if( m_stGirl.vPosition.y <= GIRL_SCALEDOWN_STARTPOS ) return;

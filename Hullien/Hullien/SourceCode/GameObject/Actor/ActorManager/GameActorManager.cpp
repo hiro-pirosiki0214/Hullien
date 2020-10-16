@@ -180,6 +180,7 @@ bool CGameActorManager::IsDanger()
 // ‰F’ˆl‚ª‹AŠÒ‚µ‚½‚©.
 bool CGameActorManager::IsReturnAlien()
 {
+	if(m_pGirl->GetPosition().y < GIRL_LIMIT_POS_Y) return false;
 	return m_pMotherShipUFO->IsReturnAlien();
 }
 

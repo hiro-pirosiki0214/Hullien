@@ -23,9 +23,9 @@ class CGameOverEvent : public CEventBase
 	const int WAITCOUNT_DEFAULT	= 30;	//標準待機時間.
 
 	// カメラ.
-	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 4.0f, -15.5f);	// カメラ初期位置.
-	const float CORRECTION_GIRLLOOKPOS_Y	= 1.0f;								// 女の子の注視位置補正.
-	const float CAMERA_RISE_SPEED = 0.005f; //カメラの上昇速度.
+	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 5.0f, -20.0f);	// カメラ初期位置.
+	const float LOOKPOS_Y			= 6.0f;										// 注視位置.
+	const float CAMERA_RISE_SPEED	= 0.008f;									//カメラの上昇速度.
 
 	// UFO.
 	const D3DXVECTOR3 UFO_INITPOSITION			= D3DXVECTOR3(0.0f, 10.0f, 0.0f);

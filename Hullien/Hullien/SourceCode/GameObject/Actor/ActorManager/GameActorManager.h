@@ -20,6 +20,8 @@ class CArm;
 
 class CGameActorManager
 {
+	const float GIRL_LIMIT_POS_Y = 5.0f;	//—‚Ìq‚ªUFO‚É‹z‚¢‚Ü‚ê‚½‚ÌŒÀŠE’l.
+
 public:
 	CGameActorManager();
 	~CGameActorManager();
