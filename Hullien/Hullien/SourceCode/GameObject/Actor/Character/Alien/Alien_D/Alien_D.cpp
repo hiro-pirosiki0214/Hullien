@@ -47,8 +47,8 @@ bool CAlienD::Init()
 // 更新関数.
 void CAlienD::Update()
 {
-	SetMoveVector( m_TargetPosition );
-	m_pLaserBeam->Update();
+	SetMoveVector( m_TargetPosition );	// 目的のベクトルを取得.
+	m_pLaserBeam->Update();	// レーザーの更新.
 	CurrentStateUpdate();	// 現在の状態の更新.
 }
 
@@ -57,8 +57,8 @@ void CAlienD::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-	m_pLaserBeam->Render();
-	ModelRender();
+	m_pLaserBeam->Render();	// レーザーの描画.
+	ModelRender();			// モデルの描画.
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -73,8 +73,8 @@ void CAlienD::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	AttackCollision( pActor );
-	BarrierCollision( pActor );
+	AttackCollision( pActor );	// 攻撃(レーザー)の当たり判定.
+	BarrierCollision( pActor );	// バリアの当たり判定.
 }
 
 // スポーン.
@@ -85,9 +85,9 @@ bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
-	m_vPosition = spawnPos;	// スポーン座標の設定.
-	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
-	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;
+	m_vPosition		= spawnPos;					// スポーン座標の設定.
+	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
+	m_vPosition.y	+= INIT_POSITION_ADJ_HEIGHT;// 高さを調整.
 	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
 	
 	// レーザーの移動速度の設定.
@@ -115,9 +115,7 @@ void CAlienD::ModelRender()
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
-	D3DXVECTOR3 rot = m_vRotation;
-	rot.y += static_cast<float>(D3DX_PI);
-	m_pSkinMesh->SetRotation( rot );
+	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -128,9 +126,7 @@ void CAlienD::ModelRender()
 #else
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
-	D3DXVECTOR3 rot = m_vRotation;
-	rot.y += static_cast<float>(D3DX_PI);
-	m_pTempStaticMesh->SetRotation( rot );
+	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
 	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, m_ModelAlpha } );
 	AlphaBlendSetting();
@@ -150,14 +146,15 @@ void CAlienD::AttackRangeSpriteRender()
 	D3DXVECTOR4 color;
 	if( m_IsAttackStart == true ){
 		// 攻撃の色 (黄).
-		color = ATTACK_RANGE_DANGER_COLOR;
+		color	= ATTACK_RANGE_DANGER_COLOR;
 		color.w = m_AttackCount;
 	} else {
 		// 攻撃の予告の色 (赤).
-		color = ATTACK_RANGE_COLOR;
+		color	= ATTACK_RANGE_COLOR;
 		color.w = m_AttackCount;
 	}
 
+	// 攻撃範囲スプライトの描画.
 	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_Parameter.AttackRangeSpritePosY, m_TargetPosition.z } );
 	m_pAttackRangeSprite->SetRotation( { static_cast<float>(D3DXToRadian(90)), 0.0f, 0.0f } );
 	m_pAttackRangeSprite->SetScale( m_Parameter.AttackRangeSpriteScale );	
@@ -185,13 +182,14 @@ void CAlienD::Move()
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
-	m_NowState = EAlienState::Escape;
-	m_NowMoveState = EMoveState::Rotation;	// 移動状態を回転する.
+	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
 }
 
 // 拐う.
 void CAlienD::Abduct()
 {
+	// 拐わないので処理がいらない.
 }
 
 // 怯み.
@@ -225,26 +223,19 @@ void CAlienD::Attack()
 	if( m_AttackCount >= ATTACK_TIME ){
 		m_IsAttackStart = true;
 
-		{
-			// 相手への向きを取得.
-			float radius = atan2f(
-				m_TargetPosition.x - m_vPosition.x,
-				m_TargetPosition.z - m_vPosition.z );
+		// 相手への向きを取得.
+		const float radius = atan2f(
+			m_TargetPosition.x - m_vPosition.x,
+			m_TargetPosition.z - m_vPosition.z );
 
-			// 相手との距離を測る.
-			float lenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
+		// 相手との距離を測る.
+		const float lenght = D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) - m_Parameter.ControlPointTwoLenght;
 
-			lenght -= m_Parameter.ControlPointTwoLenght;	// 計算した距離を少し減らす.
+		// 上向き少し後ろに設定..
+		m_ControlPositions[0].x = m_vPosition.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
+		m_ControlPositions[0].y = m_vPosition.y + m_Parameter.ControlPointOneLenghtY;
+		m_ControlPositions[0].z = m_vPosition.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
 
-			// 上向き少し後ろ.
-			m_ControlPositions[0].x = m_vPosition.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
-			m_ControlPositions[0].y = m_vPosition.y + m_Parameter.ControlPointOneLenghtY;
-			m_ControlPositions[0].z = m_vPosition.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
-			// 少し上の少し前.
-			//m_ControlPositions[1].x = m_vPosition.x + sinf( radius ) * lenght;
-			//m_ControlPositions[1].y = m_vPosition.y + m_Parameter.ControlPointTwoLenghtY;
-			//m_ControlPositions[1].z = m_vPosition.z + cosf( radius ) * lenght;
-		}
 		// 上で設定したコントロールポジションを設定.
 		m_pLaserBeam->SetControlPointList( m_ControlPositions );
 
@@ -253,7 +244,7 @@ void CAlienD::Attack()
 	}
 
 	if( m_AttackCount >= 0.0f ) return;
-	m_NowMoveState = EMoveState::Wait;
+	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
 }
 
 // 移動関数.
@@ -261,23 +252,23 @@ void CAlienD::VectorMove( const float& moveSpeed )
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
 
-	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
+	// ベクトルを使用して移動.
+	m_vPosition.x -= m_MoveVector.x * moveSpeed;
+	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
-	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
-	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
-
-	float researchLengh = D3DXVec3Length( &D3DXVECTOR3(m_BeforeMoveingPosition - m_vPosition) );
-	if( researchLengh >= m_Parameter.ResearchLenght ){
-		m_NowMoveState = EMoveState::Rotation;
-		m_IsAttackStart = false;
+	// 再度座標を検索し、回転するか比較.
+	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ){
+		m_NowMoveState	= EMoveState::Rotation;	// 回転状態へ遷移.
+		m_IsAttackStart = false;	// 攻撃が始まるフラグを下す.
 		return;
 	}
 
-	if( lenght >= m_Parameter.AttackLenght ) return;
+	// プレイヤーとの距離が一定値より低いか比較.
+	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= m_Parameter.AttackLenght ) return;
 	if( m_pLaserBeam->IsEndAttack() == false ) return;
-	m_IsAttackStart = false;
-	m_AttackCount = 0.0f;
-	m_NowMoveState = EMoveState::Attack;
+	m_IsAttackStart	= false;	// 攻撃が始まるフラグを下す.
+	m_AttackCount	= 0.0f;		// 攻撃カウントを初期化,
+	m_NowMoveState	= EMoveState::Attack;	// 攻撃状態へ遷移.
 }
 
 // 相手座標の設定.
@@ -292,6 +283,8 @@ void CAlienD::SetPlayerPos( CActor& actor )
 	// プレイヤーじゃなければ終了.
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;
 	m_pLaserBeam->SetTargetPos( actor );	// プレイヤーの座標を取得.
+
+	// 攻撃が始まっている場合終了.
 	if( m_IsAttackStart == true ) return;
 	m_TargetPosition = actor.GetPosition();	// プレイヤーの座標を取得.
 }

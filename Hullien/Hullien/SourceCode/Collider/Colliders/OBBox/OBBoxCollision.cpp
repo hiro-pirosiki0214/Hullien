@@ -13,7 +13,9 @@ COBBoxCollision::COBBoxCollision()
 	, m_pDebugBox		( nullptr )
 #endif	// #ifdef _DEBUG.
 {
+#ifdef _DEBUG
 	m_pDebugBox	= std::make_unique<CBoxModel>();
+#endif	// #ifdef _DEBUG.
 }
 
 COBBoxCollision::~COBBoxCollision()
@@ -40,10 +42,12 @@ HRESULT COBBoxCollision::InitModelBox( LPD3DXMESH pMesh )
 //----------------------------------------.
 // モデルのボックスの作成.
 //----------------------------------------.
-HRESULT COBBoxCollision::InitModelBox( const float& height, const float& widht )
+HRESULT COBBoxCollision::InitModelBox( const D3DXVECTOR3& length )
 {
-
-
+	m_vLength = ( length * (*m_pScale) / 2.0f ) + m_vAdjLength;
+#ifdef _DEBUG
+	m_pDebugBox->Init( m_vLength, m_vLength );
+#endif	// #ifdef _DEBUG.
 	return S_OK;
 }
 

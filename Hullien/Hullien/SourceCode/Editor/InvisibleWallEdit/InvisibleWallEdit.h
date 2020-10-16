@@ -1,0 +1,30 @@
+#ifndef INVISIBLE_WALL_EDIT_H
+#define INVISIBLE_WALL_EDIT_H
+
+#include "..\EditBase.h"
+#include "..\..\GameObject\InvisibleWall\BoxStruct.h"
+
+class CInvisibleWall;	// å©Ç¶Ç»Ç¢ï«.
+
+class CInvisibleWallEdit : public CEditBase
+{
+	const char* INVISIBLE_WALL_PARAM_FILE_NAME = "Data\\GameParam\\InvisibleWall.bin";
+public:
+	CInvisibleWallEdit();
+	virtual ~CInvisibleWallEdit();
+
+	// èâä˙âªä÷êî.
+	virtual bool Init() override;
+	// çXêVä÷êî.
+	virtual void Update() override;
+	// ï`âÊä÷êî.
+	virtual void Render() override;
+	// ÉÇÉfÉãÇÃï`âÊ.
+	virtual void ModelRender() override;
+
+private:
+	std::unique_ptr<CInvisibleWall>	m_pInvisibleWall;	// å©Ç¶Ç»Ç¢ï«.
+	SBoxWall	m_BoxWall;
+};
+
+#endif	// #ifndef INVISIBLE_WALL_EDIT_H.

@@ -27,32 +27,36 @@ CAlien::CAlien()
 	, m_IsDelete				( false )
 	, m_IsRisingMotherShip		( false )
 {
+	m_vSclae = { 0.0f, 0.0f, 0.0f };
 }
 
 CAlien::~CAlien()
 {
 }
 
-// ������W�̐ݒ�.
+// 相手座標の設定.
 void CAlien::SetTargetPos( CActor& actor )
 {
 	SetGirlPos( actor );
 }
 
-// ���C�t�v�Z�֐�.
-void CAlien::LifeCalculation( const std::function<void(float&)>& proc )
+// ライフ計算関数.
+void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 {
 	if( m_NowState == EAlienState::Spawn ) return;
 	if( m_NowState == EAlienState::Death ) return;
 	if( m_NowState == EAlienState::Fright ) return;
 
-	proc( m_LifePoint );
-	m_NowState = EAlienState::Fright;
+	bool isAttack = false;
+	proc( m_LifePoint, isAttack );
+	m_NowState = EAlienState::Fright;	// 怯み状態へ遷移.
+
 	if( m_LifePoint > 0.0f ) return;
+	// 体力が 0.0以下なら死亡状態へ遷移.
 	m_NowState = EAlienState::Death;
 }
 
-// ���݂̏�Ԃ̍X�V�֐�.
+// 現在の状態の更新関数.
 void CAlien::CurrentStateUpdate()
 {
 	switch( m_NowState )
@@ -80,181 +84,171 @@ void CAlien::CurrentStateUpdate()
 	}
 }
 
-// ���̎q�̍��W��ݒ�.
+// 女の子の座標を設定.
 void CAlien::SetGirlPos( CActor& actor )
 {
 	if( m_NowMoveState == EMoveState::Move ) return;
 	if( *m_pIsAlienOtherAbduct == true ) return;
 
-	// ���̎q����Ȃ���ΏI��.
+	// 女の子じゃなければ終了.
 	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
-	m_TargetPosition = actor.GetPosition();	// ���̎q�̍��W���擾.
-	// �ړI�̉�]�����擾.
+	m_TargetPosition = actor.GetPosition();	// 女の子の座標を取得.
+	// 目的の回転軸を取得.
 	m_TargetRotation.y = atan2f( 
-		m_TargetPosition.x - m_vPosition.x,
-		m_TargetPosition.z - m_vPosition.z );
+		m_vPosition.x - m_TargetPosition.x,
+		m_vPosition.z - m_TargetPosition.z );
 
-	// �ړ��p�x�N�g�����擾.
-	m_TargetPosition.x -= sinf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
-	m_TargetPosition.z -= cosf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
+	// 女の子と一定の距離置いた座標を設定.
+	m_TargetPosition.x += sinf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
+	m_TargetPosition.z += cosf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
 }
 
-// ���W�ݒ�֐�.
+// 座標設定関数.
 void CAlien::SetPosition( const D3DXVECTOR3& vPos )
 {
 	if( *m_pIsAlienOtherAbduct == false ) return;
-	m_vPosition = vPos;
-	m_IsRisingMotherShip = true;
+	m_vPosition				= vPos;
+	m_IsRisingMotherShip	= true;
 }
 
-// �ړ��x�N�g���ݒ�֐�.
+// 移動ベクトル設定関数.
 void CAlien::SetMoveVector( const D3DXVECTOR3& targetPos )
 {
-	// �ړI�̉�]�����擾.
+	// 目的の回転軸を取得.
 	m_TargetRotation.y = atan2f( 
-		targetPos.x - m_vPosition.x,
-		targetPos.z - m_vPosition.z );
+		m_vPosition.x - targetPos.x,
+		m_vPosition.z - targetPos.z );
 
-	// �ړ��p�x�N�g�����擾.
+	// 移動用ベクトルを取得.
 	m_MoveVector.x = sinf( m_TargetRotation.y );
 	m_MoveVector.z = cosf( m_TargetRotation.y );
 }
 
-// �ړI�̍��W�։�].
+// 目的の座標へ回転.
 void CAlien::TargetRotation()
 {
 	if( m_NowMoveState != EMoveState::Rotation ) return;
 
-	// ���g�̃x�N�g����p��.
+	// 自身のベクトルを用意.
 	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
 	myVector.x = sinf( m_vRotation.y );
 	myVector.z = cosf( m_vRotation.y );
 
-	// �x�N�g���̒��������߂�.
-	float myLenght = sqrtf(myVector.x*myVector.x + myVector.z*myVector.z);
-	float targetLenght = sqrtf(m_MoveVector.x*m_MoveVector.x + m_MoveVector.z*m_MoveVector.z);
-
-	// �ړI�̃x�N�g���ƁA�����̃x�N�g���̊O�ς����߂�.
-	float cross = myVector.x * m_MoveVector.z-myVector.z * m_MoveVector.x;
-	float dot = myVector.x * m_MoveVector.x+myVector.z * m_MoveVector.z;
-	dot = acosf( dot /( myLenght * targetLenght ));
-
-	// �O�ς�0.0��菭�Ȃ���� ���v��� : �����v��� �ɉ�]����.
-	m_vRotation.y += cross < 0.0f ? ROTATIONAL_SPEED : -ROTATIONAL_SPEED;
-
-	// ���ς����e�͈͂Ȃ�.
-	if( -TOLERANCE_RADIAN < dot && dot < TOLERANCE_RADIAN ){
-		m_vRotation.y = m_TargetRotation.y;	// �^�[�Q�b�g�ւ̉�]�擾.
-		// �ړ��p�x�N�g�����擾.
-		m_MoveVector.x = sinf( m_vRotation.y );
-		m_MoveVector.z = cosf( m_vRotation.y );
-		m_BeforeMoveingPosition = m_vPosition;
-		m_NowMoveState = EMoveState::Move;
-	}
+	// 目的の座標へ向けて回転.
+	if( CCharacter::TargetRotation( m_MoveVector, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == false )
+	m_vRotation.y			= m_TargetRotation.y;	// ターゲットへの回転取得.
+	m_BeforeMoveingPosition = m_vPosition;			// 現在の座標を記憶.
+	m_NowMoveState			= EMoveState::Move;		// 移動状態へ遷移.
 }
 
-// �ړ��֐�.
+// 移動関数.
 void CAlien::VectorMove( const float& moveSpeed )
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
+	
+	// ベクトルを使用して移動.
+	m_vPosition.x -= m_MoveVector.x * moveSpeed;
+	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
-	float lenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
+	// 再度目的の座標を探すか比較.
+	// 回転時に記憶した座標と現在の座標の距離が一定以上なら.
+	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ) 
+		m_NowMoveState = EMoveState::Rotation;	// 回転状態へ移動.
 
-	m_vPosition.x -= sinf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
-	m_vPosition.z -= cosf( m_vRotation.y+static_cast<float>(D3DX_PI) ) * moveSpeed;
-
-	float researchLengh = D3DXVec3Length( &D3DXVECTOR3(m_BeforeMoveingPosition - m_vPosition) );
-	if( researchLengh >= m_Parameter.ResearchLenght ) m_NowMoveState = EMoveState::Rotation;
-
-	if( lenght >= 1.0f ) return;
-
-	m_NowMoveState = EMoveState::Wait;
+	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= 1.0f ) return;
+	// 現在の座標と目的の座標の距離が一定以上なら.
+	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
 }
 
-// �ҋ@�֐�.
+// 待機関数.
 void CAlien::WaitMove()
 {
 	if( m_NowMoveState != EMoveState::Wait ) return;
-	m_WaitCount++;	// �ҋ@�J�E���g���Z.
+	m_WaitCount++;	// 待機カウント加算.
 	if( m_WaitCount < m_Parameter.WaitTime*FPS ) return;
-	m_NowMoveState = EMoveState::Rotation;	// �ړ���Ԃ���]����.
-	m_WaitCount = 0;	// �ҋ@�J�E���g�̏�����.
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
+	m_WaitCount		= 0;	// 待機カウントの初期化.
 }
 
-// �X�|�[����.
+// スポーン中.
 void CAlien::Spawning()
 {
-	// ���f���̃A���t�@�l�𑫂��Ă���.
+	// モデルのアルファ値を足していく.
 	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
+
 	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
 	CSoundManager::NoMultipleSEPlay("AlienApp");
 	m_NowState = EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;
 }
 
-// �ړ�.
+// 移動.
 void CAlien::Move()
 {
-	TargetRotation();			// ��].
-	CAlien::VectorMove( m_MoveSpeed );	// �ړ�.
-	CAlien::WaitMove();			// �ҋ@.
+	TargetRotation();			// 回転.
+	CAlien::VectorMove( m_MoveSpeed );	// 移動.
+	CAlien::WaitMove();			// 待機.
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
 	m_NowState		= EAlienState::Escape;
-	m_NowMoveState	= EMoveState::Rotation;	// �ړ���Ԃ���]����.
+	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
 }
 
-// ����.
+// 拐う.
 void CAlien::Abduct()
 {
 	if( m_IsBarrierHit == true ) return;
 	if( m_pArm == nullptr ) return;
 
-	SetMoveVector( *m_pAbductUFOPosition );
-	m_TargetPosition = *m_pAbductUFOPosition;
+	SetMoveVector( *m_pAbductUFOPosition );		// マザーシップの座標とのベクトルを取得.
+	m_TargetPosition = *m_pAbductUFOPosition;	// マザーシップの座標を記憶.
 
-	TargetRotation();
-	CAlien::VectorMove( m_MoveSpeed );
+	TargetRotation();	// マザーシップの方へ回転.
+	CAlien::VectorMove( m_MoveSpeed );	// 移動.
 
 	if( *m_pIsAlienOtherAbduct == true ) return;
-	m_NowState = EAlienState::Move;
-	m_NowMoveState = EMoveState::Rotation;
+	// 女の子を連れ去っていなければ.
+	m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
+	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
 }
 
-// ����.
+// 怯み.
 void CAlien::Fright()
 {
-	m_InvincibleCount++;
-	if( IsInvincibleTime( m_Parameter.InvincibleTime+5 ) == false ) return;
-	m_NowState = EAlienState::Move;
-	m_NowMoveState = EMoveState::Rotation;
+	m_InvincibleCount++;	// 無敵カウントを加算.
+	if( IsInvincibleTime( m_Parameter.InvincibleTime ) == false ) return;
+	m_NowState		= EAlienState::Move;	// 移動状態へ遷移.
+	m_NowMoveState	= EMoveState::Rotation;	// 移動の回転状態へ遷移.
 }
 
-// ���S.
+// 死亡.
 void CAlien::Death()
 {
 	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
 	if( m_ModelAlpha > 0.0f ) return;
 	CSoundManager::PlaySE("AlienHit");
-	m_IsDelete = true;
+	m_IsDelete = true;	// 死亡フラグを立てる.
 }
 
-// ������.
+// 逃げる.
 void CAlien::Escape()
 {
 	if( m_IsBarrierHit == true ) return;
 
-	SetMoveVector( *m_pAbductUFOPosition );
-	m_TargetPosition = *m_pAbductUFOPosition;
-	TargetRotation();
-	CAlien::VectorMove( m_MoveSpeed );
+	SetMoveVector( *m_pAbductUFOPosition );		// マザーシップの座標とのベクトルを取得.
+	m_TargetPosition = *m_pAbductUFOPosition;	// マザーシップの座標を記憶.
+
+	TargetRotation();	// マザーシップの方へ回転.
+	CAlien::VectorMove( m_MoveSpeed );	// 移動.
+
 	if( *m_pIsAlienOtherAbduct == true ) return;
-	m_NowState = EAlienState::Move;
-	m_NowMoveState = EMoveState::Rotation;
+	// 女の子を連れ去っていなければ.
+	m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
+	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
 }
 
-// �A���t�@�u�����h�̐ݒ�.
+// アルファブレンドの設定.
 void CAlien::AlphaBlendSetting()
 {
 #ifndef IS_TEMP_MODEL_RENDER
@@ -284,64 +278,62 @@ void CAlien::AlphaBlendSetting()
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
 }
 
-// ���̎q�Ƃ̓����蔻��.
+// 女の子との当たり判定.
 void CAlien::GirlCollision( CActor* pActor )
 {
-	// �I�u�W�F�N�g�̃^�O�����̎q����Ȃ���ΏI��.
+	// オブジェクトのタグが女の子じゃなければ終了.
 	if( pActor->GetObjectTag() != EObjectTag::Girl ) return;
 	if( m_IsBarrierHit == true ) return;
-	if( m_NowMoveState == EMoveState::Attack )	return;	// �U����Ԃ͏I��.
-	if( m_NowState == EAlienState::Spawn )		return;	// �X�|�[����ԂȂ�I��.
-	if( m_NowState == EAlienState::Death )		return;	// ���S���Ă�����I��.
-	if( m_NowState == EAlienState::Fright )		return;	// ���ݏ�ԂȂ�I��.
+	if( m_NowMoveState == EMoveState::Attack )	return;	// 攻撃状態は終了.
+	if( m_NowState == EAlienState::Spawn )		return;	// スポーン状態なら終了.
+	if( m_NowState == EAlienState::Death )		return;	// 死亡していたら終了.
+	if( m_NowState == EAlienState::Fright )		return;	// 怯み状態なら終了.
 
-	bool isAbduct = false;
 	if( m_NowState == EAlienState::Abduct ){
-		isAbduct = true;
+		// 連れ去っている状態なのでアームの座標を設定する.
 		pActor->SetPosition( m_pArm->GetGrabPosition() );
 		return;
 	} else {
+		// 既に連れ去っているか.
 		if( *m_pIsAlienOtherAbduct == true ){
-			if( m_pArm->IsCleanUp() == false ){
-				m_pArm->SetCleanUp();
-			}
+			// アームを片付けていなければ片付ける.
+			if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUp();
 			return;
 		}
-		isAbduct = true;
 	}
 
-	if( isAbduct == false ) return;
-	// ���̂̓����蔻��.
+	// 球体の当たり判定.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	
+	// 掴んでいなければ(アームを取り出してなければ).
 	if( m_pArm->IsGrab() == false ){
-		m_pArm->SetAppearance();
+		m_pArm->SetAppearance();	// アームを取り出す.
 		return;
+	} else {
+		// アームの座標を設定する.
+		pActor->SetPosition( m_pArm->GetGrabPosition() );
 	}
-	pActor->SetPosition( m_pArm->GetGrabPosition() );
 
 	if( m_NowState == EAlienState::Abduct ) return;
-	m_NowState = EAlienState::Abduct;
-	m_NowMoveState = EMoveState::Rotation;
+	m_NowState		= EAlienState::Abduct;	// 連れ去る状態へ遷移.
+	m_NowMoveState	= EMoveState::Rotation;	// 移動を回転へ遷移.
 }
 
-// �o���A�Ƃ̓����蔻��.
+// バリアとの当たり判定.
 void CAlien::BarrierCollision( CActor* pActor )
 {
-	// �I�u�W�F�N�g�̃^�O�����̎q����Ȃ���ΏI��.
+	// オブジェクトのタグが女の子じゃなければ終了.
 	if( pActor->GetObjectTag() != EObjectTag::Bariier ) return;
-	const float moveSpeed = -2.0f;
-	// ���̂̓����蔻��.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ){
-		m_MoveSpeed = m_Parameter.MoveSpeed;
-		m_IsBarrierHit = false;
-		
-	} else {
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == true ){
 		CSoundManager::PlaySE("BarrierHitSE");
-		m_MoveSpeed = moveSpeed;
-		m_IsBarrierHit = true;
-		*m_pIsAlienOtherAbduct = false;
-		m_NowState = EAlienState::Move;
-		m_NowMoveState = EMoveState::Move;
+		m_MoveSpeed		= BARRIER_HIT_MOVE_SPEED;	// バリア衝突時の移動速度に変更する.
+		m_IsBarrierHit	= true;						// バリア衝突フラグを立てる.
+		m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
+		m_NowMoveState	= EMoveState::Move;			// 移動の移動状態へ遷移.
+		*m_pIsAlienOtherAbduct	= false;			// 女の子を連れ去るフラグを下す.
+	} else {
+		m_MoveSpeed		= m_Parameter.MoveSpeed;	// 通常の移動速度に戻す.
+		m_IsBarrierHit	= false;	// バリア衝突フラグを下す.
 	}
 }

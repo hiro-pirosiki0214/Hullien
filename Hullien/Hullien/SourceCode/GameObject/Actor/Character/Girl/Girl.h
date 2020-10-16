@@ -62,6 +62,8 @@ public:
 private:
 	// ˆÚ“®ŠÖ”.
 	virtual void Move() override;
+	// ˜A‚ê‹‚ê‚Ä‚¢‚é.
+	void Abduct();
 	// –Ú“I‚ÌêŠ‚ÉŒü‚¯‚Ä‰ñ“].
 	void TargetRotation();
 	// –Ú“I‚ÌêŠ‚ÉŒü‚¯‚ÄˆÚ“®.

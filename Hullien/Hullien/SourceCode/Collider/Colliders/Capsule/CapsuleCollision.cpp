@@ -16,7 +16,9 @@ CCapsuleCollision::CCapsuleCollision()
 	, m_pDebugCapsule	( nullptr )
 #endif	// #ifdef _DEBUG.
 {
+#ifdef _DEBUG
 	m_pDebugCapsule = std::make_unique<CCapsuleModel>();
+#endif	// #ifdef _DEBUG.
 }
 
 CCapsuleCollision::~CCapsuleCollision()

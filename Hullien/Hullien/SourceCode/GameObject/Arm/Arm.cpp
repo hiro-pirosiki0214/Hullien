@@ -25,8 +25,6 @@ CArm::~CArm()
 bool CArm::Init()
 {
 	if( CMeshResorce::GetSkin( m_pSkinMesh, MODEL_NAME ) == false ) return false;
-	if( CMeshResorce::GetStatic( m_pAMesh, "a" ) == false ) return false;
-	if( CMeshResorce::GetStatic( m_pGirlMesh, "yuri-dy" ) == false ) return false;
 	// アニメーションコントローラーのクローン作成.
 	if( FAILED( m_pSkinMesh->GetAnimController()->CloneAnimationController(
 		m_pSkinMesh->GetAnimationController()->GetMaxNumAnimationOutputs(),
@@ -79,16 +77,6 @@ void CArm::Render()
 	m_pSkinMesh->SetScale( m_vSclae );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->Render( m_pAC );
-
-	//m_pAMesh->SetPosition( m_vPosition );
-	//m_pAMesh->SetRotation( m_vRotation );
-	//m_pAMesh->SetScale( 1.0f );
-	//m_pAMesh->Render();
-
-	//m_pGirlMesh->SetPosition( GetGrabPosition() );
-	//m_pGirlMesh->SetRotation( m_vRotation );
-	//m_pGirlMesh->SetScale( 1.0f );
-	//m_pGirlMesh->Render();
 }
 
 // 掴んでいる座標の取得.

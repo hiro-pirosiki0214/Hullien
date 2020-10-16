@@ -16,7 +16,7 @@ class CAlienManager;	// 宇宙人管理クラス.
 class CItemManager;		// アイテム管理クラス.
 class CBarrier;			// バリアクラス.
 class CWarning;			// 警告クラス.
-class CArm;
+class CInvisibleWall;	// 見えない壁.
 
 class CGameActorManager
 {
@@ -58,8 +58,7 @@ private:
 	std::shared_ptr<CAlienManager>	m_pAlienManager;	// 宇宙人マネージャー.
 	std::shared_ptr<CItemManager>	m_pItemManager;		// アイテムマネージャー.
 	std::shared_ptr<CBarrier>		m_pBarrier;			// バリア.
-	std::shared_ptr<CArm>			m_pArm;
-	std::shared_ptr<CArm>			m_pArm2;
+	std::unique_ptr<CInvisibleWall>	m_pInvisibleWall;	// 見えない壁.
 
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
 	int m_ObjPosListCount;

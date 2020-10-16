@@ -116,7 +116,7 @@ void CSpawnUFO::SetSpawnParameter( const SSpawnUFOParam& param )
 { 
 	m_SpawnParameter = param;
 	m_SpawnPoint	= m_vPosition = m_SpawnParameter.Position;
-	m_SpawnPoint.y	= m_SpawnParameter.SpawnPointHight;
+//	m_SpawnPoint.y	= m_SpawnParameter.SpawnPointHight;
 }
 
 // ‰F’ˆl‚Ìì¬.

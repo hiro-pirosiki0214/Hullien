@@ -12,6 +12,7 @@ class CAlien : public CCharacter
 {
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
+	const float BARRIER_HIT_MOVE_SPEED = -5.0f;	// バリアと衝突時の移動速度.
 
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
@@ -130,7 +131,7 @@ public:
 	virtual bool Spawn( const SAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
 
 	// ライフ計算関数.
-	virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
 	// モデルのアルファ値の取得.
 	float GetModelAplha() const { return m_ModelAlpha; }
 	// 連れ去っているかどうか.

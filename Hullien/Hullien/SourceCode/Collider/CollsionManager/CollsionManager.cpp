@@ -105,8 +105,7 @@ HRESULT CCollisionManager::InitBox(
 	D3DXVECTOR3* pPos, 
 	D3DXVECTOR3* pRot, float* pScale,
 	const D3DXVECTOR3& adjPos, 
-	const float& height,
-	const float& wight )
+	const D3DXVECTOR3& length )
 {
 	if( m_pBox == nullptr ) m_pBox = new COBBoxCollision();
 	m_pBox->SetAdjPosition( adjPos );
@@ -114,7 +113,7 @@ HRESULT CCollisionManager::InitBox(
 	m_pBox->SetPosition( pPos );
 	m_pBox->SetRotation( pRot );
 	m_pBox->SetScale( pScale );
-	if( FAILED( m_pBox->InitModelBox( height, wight ))) return E_FAIL;
+	if( FAILED( m_pBox->InitModelBox( length ))) return E_FAIL;
 	return S_OK;
 }
 

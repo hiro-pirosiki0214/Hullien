@@ -148,6 +148,8 @@
     <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Arm\Arm.cpp" />
+    <ClCompile Include="SourceCode\GameObject\InvisibleWall\InvisibleWall.cpp" />
+    <ClCompile Include="SourceCode\Editor\InvisibleWallEdit\InvisibleWallEdit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -300,5 +302,9 @@
     <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Arm\Arm.h" />
+    <ClInclude Include="SourceCode\GameObject\InvisibleWall\InvisibleWall.h" />
+    <ClInclude Include="SourceCode\GameObject\InvisibleWall\BoxStruct.h" />
+    <ClInclude Include="SourceCode\Editor\InvisibleWallEdit\InvisibleWallEdit.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\AnimationParamInfo.h" />
   </ItemGroup>
 </Project>

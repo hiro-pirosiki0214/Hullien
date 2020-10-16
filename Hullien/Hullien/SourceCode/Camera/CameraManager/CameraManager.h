@@ -3,8 +3,12 @@
 
 #include "..\..\Global.h"
 
-class CCamera;
+class CCamera;	// カメrラベースクラス.
 
+/****************************************
+* カメラ管理クラス.
+*	カメラベースを継承したクラスをセットし使用する.
+**/
 class CCameraManager
 {
 public:
