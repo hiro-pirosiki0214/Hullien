@@ -65,6 +65,26 @@ class CPlayer : public CCharacter
 	const double ATTACK2_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃2の調整用有効フレーム.
 	const double ATTACK3_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃3の調整用有効フレーム.
 
+	const double ATTACK1_ADJ_DRAGING_FRAME_START = 0.12;
+	const double ATTACK1_ADJ_DRAGING_FRAME_END = 0.24;
+	const float ATTACK1_ADJ_DRAGING_SPEED = 0.35f;
+
+	const double ATTACK2_ADJ_DRAGING_FRAME_START = 0.01;
+	const double ATTACK2_ADJ_DRAGING_FRAME_END = 0.2;
+	const float ATTACK2_ADJ_DRAGING_SPEED = 0.3f;
+
+	const double ATTACK3_ADJ_DRAGING_FRAME_START = 0.01;
+	const double ATTACK3_ADJ_DRAGING_FRAME_END = 0.9;
+	const float ATTACK3_ADJ_DRAGING_SPEED = 0.3f;
+
+	const D3DXVECTOR3 ATTACK_COLLISION_INVALID_POS = { 0.0f, -10.0f, 0.0f };
+	const float ATTACK1_COLLISION_RADIUS	= 6.0f;
+	const float ATTACK2_COLLISION_RADIUS	= 7.0f;
+	const float ATTACK3_COLLISION_RADIUS	= 8.0f;
+	const float ATTACK_COLLISION_DISTANCE	= 4.0f;
+	const float ATTACK_COLLISION_HEIGHT		= 4.0f;
+
+
 	const double DEAD_CERTAIN_RANGE_ANIM_FRAME_MIN	= 0.18;		// 死亡アニメーションの一定範囲値の最小.
 	const double DEAD_CERTAIN_RANGE_ANIM_FRAME_MAX	= 0.5;		// 死亡アニメーションの一定範囲値の最大.
 	const float	DEAD_ANIM_DRAGING_ADJ_SPEED			= 0.05f;	// 死亡アニメーションの引きずりの調整速度.
@@ -111,8 +131,10 @@ private:
 	// 回避操作関数.
 	void AvoidController();
 
-	// 移動関数.
+	// 移動関数(アニメーションとのずれの調整).
 	virtual void Move() override;
+	// 攻撃時の移動.
+	void AttackMove();
 	// 回避動作関数.
 	void AvoidMove();
 	// ノックバック動作関数.
@@ -201,9 +223,6 @@ private:
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
 	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
-
-
-	anim::AAnimFrameList	m_AnimFrameList;	// アニメーションフレームのリスト.
 
 	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
 	float			m_CameraHeight;				// カメラの高さ.
