@@ -3,22 +3,22 @@
 
 #include "..\Character.h"
 
-// ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿.
+// ƒvƒŒƒCƒ„[ƒpƒ‰ƒ[ƒ^.
 struct stPlayerParam : public CCharacter::SParameter
 {
-	float		SpecialAbilityMax;	// ç‰¹æ®Šèƒ½åŠ›æœ€å¤§å€¤.
-	float		SpecialAbilityValue;// ç‰¹æ®Šèƒ½åŠ›å›å¾©å€¤.
-	int			AttackComboMax;		// æ”»æ’ƒã®æœ€å¤§æ•°.
-	int			AttackQueueMax;		// æ”»æ’ƒã‚­ãƒ¥ãƒ¼ã®æœ€å¤§æ•°.
-	float		AvoidMoveDistance;	// å›é¿ã®ç§»å‹•è·é›¢.
-	float		AvoidMoveSpeed;		// å›é¿ç”¨ã®ç§»å‹•é€Ÿåº¦.
-	float		CameraMoveSpeed;	// ã‚«ãƒ¡ãƒ©ã®ç§»å‹•é€Ÿåº¦.
-	float		CameraDistance;		// ã‚«ãƒ¡ãƒ©ã®è·é›¢.
-	float		CameraHeight;		// ã‚«ãƒ¡ãƒ©ã®é«˜ã•.
-	float		CameraLookHeight;	// ã‚«ãƒ¡ãƒ©ã®æ³¨è¦–ç‚¹ã®é«˜ã•.
-	float		CameraLerpValue;	// ã‚«ãƒ¡ãƒ©ç§»å‹•ã®è£œå®Œå€¤.
-	D3DXVECTOR3 SphereAdjPos;		// ã‚¹ãƒ•ã‚£ã‚¢ã®èª¿æ•´åº§æ¨™.
-	float		SphereAdjRadius;	// ã‚¹ãƒ•ã‚£ã‚¢ã®èª¿æ•´åŠå¾„.
+	float		SpecialAbilityMax;	// “Áê”\—ÍÅ‘å’l.
+	float		SpecialAbilityValue;// “Áê”\—Í‰ñ•œ’l.
+	int			AttackComboMax;		// UŒ‚‚ÌÅ‘å”.
+	int			AttackQueueMax;		// UŒ‚ƒLƒ…[‚ÌÅ‘å”.
+	float		AvoidMoveDistance;	// ‰ñ”ğ‚ÌˆÚ“®‹——£.
+	float		AvoidMoveSpeed;		// ‰ñ”ğ—p‚ÌˆÚ“®‘¬“x.
+	float		CameraMoveSpeed;	// ƒJƒƒ‰‚ÌˆÚ“®‘¬“x.
+	float		CameraDistance;		// ƒJƒƒ‰‚Ì‹——£.
+	float		CameraHeight;		// ƒJƒƒ‰‚Ì‚‚³.
+	float		CameraLookHeight;	// ƒJƒƒ‰‚Ì’‹“_‚Ì‚‚³.
+	float		CameraLerpValue;	// ƒJƒƒ‰ˆÚ“®‚Ì•âŠ®’l.
+	D3DXVECTOR3 SphereAdjPos;		// ƒXƒtƒBƒA‚Ì’²®À•W.
+	float		SphereAdjRadius;	// ƒXƒtƒBƒA‚Ì’²®”¼Œa.
 
 	stPlayerParam()
 		: SpecialAbilityMax	( 0.0f )
@@ -38,29 +38,29 @@ struct stPlayerParam : public CCharacter::SParameter
 
 namespace player
 {
-// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·.
+// ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†.
 enum enAnimNo
 {
 	EAnimNo_None = -1,
 
-	EAnimNo_Wait,		// å¾…æ©Ÿ.
-	EAnimNo_Walk,		// èµ°ã‚Š.
-	EAnimNo_Attack1,	// æ”»æ’ƒ1.
-	EAnimNo_Attack2,	// æ”»æ’ƒ2.
-	EAnimNo_Attack3,	// æ”»æ’ƒ3.
-	EAnimNo_Avoid,		// å›é¿.
-	EAnimNo_SP,			// ç‰¹æ®Šèƒ½åŠ›.
-	EAnimNo_Damage,		// ãƒ’ãƒƒãƒˆæ™‚.
-	EAnimNo_Dead,		// æ­»äº¡.
+	EAnimNo_Wait,		// ‘Ò‹@.
+	EAnimNo_Walk,		// ‘–‚è.
+	EAnimNo_Attack1,	// UŒ‚1.
+	EAnimNo_Attack2,	// UŒ‚2.
+	EAnimNo_Attack3,	// UŒ‚3.
+	EAnimNo_Avoid,		// ‰ñ”ğ.
+	EAnimNo_SP,			// “Áê”\—Í.
+	EAnimNo_Damage,		// ƒqƒbƒg.
+	EAnimNo_Dead,		// €–S.
 
-	EAnimNo_Max,		// æœ€å¤§.
+	EAnimNo_Max,		// Å‘å.
 
-	EAnimNo_Begin	= EAnimNo_Wait,	// åˆã‚.
-	EAnimNo_End		= EAnimNo_Max,	// çµ‚äº†.
+	EAnimNo_Begin	= EAnimNo_Wait,	// ‰‚ß.
+	EAnimNo_End		= EAnimNo_Max,	// I—¹.
 
 } typedef EAnimNo;
 
-// æ”»æ’ƒç•ªå·,
+// UŒ‚”Ô†,
 enum enAttackNo
 {
 	EAttackNo_None,
@@ -72,55 +72,55 @@ enum enAttackNo
 	EAttackNo_Max = EAttackNo_Three,
 } typedef EAttackNo;
 
-// åŠ¹æœæ™‚é–“è¨ˆæ¸¬ç•ªå·.
+// Œø‰ÊŠÔŒv‘ª”Ô†.
 enum enEffectTimerNo
 {
 	EEffectTimerNo_None,
 
-	EEffectTimerNo_SPRecovery = 0,	// ç‰¹æ®Šèƒ½åŠ›å›å¾©.
-	EEffectTimerNo_Attack,			// æ”»æ’ƒåŠ›.
-	EEffectTimerNo_MoveSpeedUp,		// ç§»å‹•é€Ÿåº¦.
-	EEffectTimerNo_Paralysis,		// éº»ç—º.
+	EEffectTimerNo_SPRecovery = 0,	// “Áê”\—Í‰ñ•œ.
+	EEffectTimerNo_Attack,			// UŒ‚—Í.
+	EEffectTimerNo_MoveSpeedUp,		// ˆÚ“®‘¬“x.
+	EEffectTimerNo_Paralysis,		// –ƒáƒ.
 
 	EEffectTimerNo_Max,
 } typedef EEffectTimerNo;
 
-// ä½¿ç”¨ã‚¨ãƒ•ã‚§ã‚¯ãƒˆç•ªå·.
+// g—pƒGƒtƒFƒNƒg”Ô†.
 enum enEffectNo
 {
-	enEffectNo_AttackOne,		// æ”»æ’ƒ1.
-	enEffectNo_AttackTwo,		// æ”»æ’ƒ2.
-	enEffectNo_AttackThree,		// æ”»æ’ƒ3.
-	enEffectNo_SP,				// ç‰¹æ®Šèƒ½åŠ›.
-	enEffectNo_Avoidance,		// å›é¿.
+	enEffectNo_AttackOne,		// UŒ‚1.
+	enEffectNo_AttackTwo,		// UŒ‚2.
+	enEffectNo_AttackThree,		// UŒ‚3.
+	enEffectNo_SP,				// “Áê”\—Í.
+	enEffectNo_Avoidance,		// ‰ñ”ğ.
 
 	enEffectNo_Max,
 } typedef EEffectNo;
 
-// ç‰¹æ®Šèƒ½åŠ›ã®ã‚«ãƒ¡ãƒ©çŠ¶æ…‹.
+// “Áê”\—Í‚ÌƒJƒƒ‰ó‘Ô.
 enum enSPCameraState
 {
 	ESPCameraState_None,
 
-	ESPCameraState_TargetRotation,	// ç›®çš„ã®åº§æ¨™ã¸å›è»¢.
-	ESPCameraState_PlayerBack,		// ã‚«ãƒ¡ãƒ©ã‚’ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®å¾Œã‚ã«ç§»å‹•.
-	ESPCameraState_CameraShake,		// ã‚«ãƒ¡ãƒ©ã‚’æºã‚‰ã™.
-	ESPCameraState_CameraReturn,	// ã‚«ãƒ¡ãƒ©ã‚’å…ƒã®ä½ç½®ã«æˆ»ã™.
+	ESPCameraState_TargetRotation,	// –Ú“I‚ÌÀ•W‚Ö‰ñ“].
+	ESPCameraState_PlayerBack,		// ƒJƒƒ‰‚ğƒvƒŒƒCƒ„[‚ÌŒã‚ë‚ÉˆÚ“®.
+	ESPCameraState_CameraShake,		// ƒJƒƒ‰‚ğ—h‚ç‚·.
+	ESPCameraState_CameraReturn,	// ƒJƒƒ‰‚ğŒ³‚ÌˆÊ’u‚É–ß‚·.
 	
 	ESPCameraState_Max,
 
-	ESPCameraState_Start	= ESPCameraState_TargetRotation,	// å§‹ã¾ã‚Š.
-	ESPCameraState_End		= ESPCameraState_CameraReturn,		// çµ‚äº†.
+	ESPCameraState_Start	= ESPCameraState_TargetRotation,	// n‚Ü‚è.
+	ESPCameraState_End		= ESPCameraState_CameraReturn,		// I—¹.
 
 } typedef ESPCameraState;
 
-// æ”»æ’ƒç”¨ãƒ‡ãƒ¼ã‚¿.
+// UŒ‚—pƒf[ƒ^.
 struct stAttackData
 {
-	EAnimNo		AnimNo;				// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·.
-	double		Frame;				// çµŒéãƒ•ãƒ¬ãƒ¼ãƒ .
-	double		EnabledEndFrame;	// æœ‰åŠ¹çµ‚äº†ãƒ•ãƒ¬ãƒ¼ãƒ .
-	double		EndFrame;			// çµ‚äº†ãƒ•ãƒ¬ãƒ¼ãƒ .
+	EAnimNo		AnimNo;				// ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†.
+	double		Frame;				// Œo‰ßƒtƒŒ[ƒ€.
+	double		EnabledEndFrame;	// —LŒøI—¹ƒtƒŒ[ƒ€.
+	double		EndFrame;			// I—¹ƒtƒŒ[ƒ€.
 
 	stAttackData()
 		: AnimNo			( EAnimNo_None )
