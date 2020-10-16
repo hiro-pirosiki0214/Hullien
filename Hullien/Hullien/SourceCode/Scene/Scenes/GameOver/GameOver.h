@@ -23,6 +23,7 @@ public:
 
 private:
 	std::unique_ptr<CGameOverWidget> m_pGameOverWidget;	//UI管理クラス.
+	bool m_IsChangeScene;								//シーン切り替え可能か.
 };
 
 #endif	// #ifndef GAME_OVER_H.

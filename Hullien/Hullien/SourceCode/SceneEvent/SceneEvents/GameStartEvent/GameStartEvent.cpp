@@ -152,7 +152,7 @@ bool CGameStartEvent::SpawnUFOInit()
 bool CGameStartEvent::PlayerInit()
 {
 	if (m_pPlayer->Init() == false) return false;	
-	m_stPlayer.vPosition.z = PLAYER_INITPOSITION_Z;
+	m_stPlayer.vPosition.z = PLAYER_INITPOSITION_Z * TWO;
 	m_stPlayer.vRotation.y = PLAYER_DEFAULT_ROTATION_Y;
 	return true;
 }
@@ -161,7 +161,7 @@ bool CGameStartEvent::PlayerInit()
 bool CGameStartEvent::GirlInit()
 {
 	if (m_pGirl->Init() == false) return false;
-	m_stGirl.vPosition.z = PLAYER_INITPOSITION_Z + GIRL_DISTANCE_Z;
+	m_stGirl.vPosition.z = m_stPlayer.vPosition.z + GIRL_DISTANCE_Z;
 	m_stGirl.vRotation.y = GIRL_DEFAULT_ROTATION_Y;
 	return true;
 }
@@ -194,6 +194,7 @@ void CGameStartEvent::ActorUpdate()
 	m_pGirl->SetOptionalState( m_stGirl );
 	// 宇宙人.
 	m_pAlienA->SetOptionalState( m_stAlien );
+	m_pAlienA->Update();
 	// UFOの位置設定.
 	m_pSpawnUFO->SetPosition( m_vUFOPosition );
 }
@@ -279,7 +280,9 @@ void CGameStartEvent::Skip()
 	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, ALIEN_MOVEING_LIMIT_Y, ALIEN_MOVEING_LIMIT_Z };
 	m_stAlien.vPosition = ALIEN_DESTINATION;
 	// 女の子.
-	m_stGirl.vPosition = m_stAlien.vPosition;
+	m_stGirl.vPosition.x = -0.015f;
+	m_stGirl.vPosition.y = m_stAlien.vPosition.y;
+	m_stGirl.vPosition.z = m_stAlien.vPosition.z - 5.5f;
 	// UFO.
 	m_pSpawnUFO->SetDisp( false );
 	CSoundManager::StopAllSE("UFOMove");
@@ -299,12 +302,11 @@ void CGameStartEvent::EscapePlayerAndGirl()
 	m_stCamera.vPosition.z = m_stPlayer.vPosition.z;
 	m_stCamera.vLookPosition = m_stPlayer.vPosition;
 	// プレイヤーの目的地.
-	const D3DXVECTOR3 PLAYER_DESTINATION = { 0.0f, m_stPlayer.vPosition.y, -60.0f };
+	const D3DXVECTOR3 PLAYER_DESTINATION = { 0.0f, m_stPlayer.vPosition.y, PLAYER_INITPOSITION_Z };
 	// 女の子の目的地.
 	const D3DXVECTOR3 GIRL_DESTINATION = { 0.0f, m_stGirl.vPosition.y, GIRL_DISTANCE_Z };
 
-	m_stPlayer.MoveSpeed = m_stGirl.MoveSpeed = 0.2f;
-
+	m_stPlayer.MoveSpeed = m_stGirl.MoveSpeed = RUN_SPEED;
 	MoveDestination(m_stGirl.vPosition, GIRL_DESTINATION, m_stGirl.MoveSpeed);
 	if (MoveDestination(m_stPlayer.vPosition, PLAYER_DESTINATION, m_stPlayer.MoveSpeed) == false) return;
 	CSoundManager::PlaySE("UFOMove");
@@ -401,7 +403,8 @@ void CGameStartEvent::MoveAlien()
 	m_stAlien.vPosition.y = m_pAlienA->GetPosition().y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_ALIEN_UPDOWN * m_Count) * AMPLITUDE_ALIEN_UPDOWN);
 
 	if (m_Count < WAIT_COUNT) return;
-	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, 0.0f };
+	m_pAlienA->SetTargetPos( *m_pGirl.get() );
+	const D3DXVECTOR3 ALIEN_DESTINATION = m_pAlienA->GetTargetPosition();
 	if (MoveDestination(m_stAlien.vPosition, ALIEN_DESTINATION, ALIEN_RUN_SPEED) == false) return;
 	m_Count = 0;
 	NextStep();
@@ -427,15 +430,28 @@ void CGameStartEvent::GetCaughtGirl()
 	m_stGirl.vPosition = m_pGirl->GetPosition();
 
 	// 宇宙人の設定.
-	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, ALIEN_MOVEING_LIMIT_Z };
+	D3DXVECTOR3 ALIEN_DESTINATION;
+	if (m_pAlienA->IsGrab() == false)
+	{
+		ALIEN_DESTINATION = m_pAlienA->GetTargetPosition();
+	}
+	else
+	{
+		ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, ALIEN_MOVEING_LIMIT_Z };
+	}
 	if (MoveDestination(m_stAlien.vPosition, ALIEN_DESTINATION, ALIEN_MOVE_SPEED) == false) return;
+	if (m_pAlienA->IsGrab() == false) return;
 	m_IsSkip = true;
+	m_pWidget->SetSkip(m_IsSkip);
 	NextStep();
 }
 
 // バリア発動準備.
 void CGameStartEvent::InvocatingOrderBarrier()
 {
+	m_pGirl->Collision(m_pAlienA.get());
+	m_pAlienA->Collision(m_pGirl.get());
+
 	// カメラの設定.
 	m_stCamera.vPosition = CAMERA_POSITION_ORDER_BARRIER;
 	m_stCamera.vLookPosition = m_pGirl->GetPosition();
@@ -517,11 +533,9 @@ void CGameStartEvent::PlayerUp()
 void CGameStartEvent::InvocatingBarrier()
 {
 	// カメラの揺れ.
-	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Y * m_Count) * (m_Count * AMPLITUDE_LOOKPOS));
-	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Z * m_Count) * (m_Count * AMPLITUDE_LOOKPOS));
-	if (m_Count != 0) {
-		m_Count--;
-	}
+	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_X));
+	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_Y));
+	if (m_Count != 0) m_Count -= AMPLITUDE_SPEED;
 
 	// バリア.
 	m_pBarrier->SetTargetPos(*m_pGirl.get());
@@ -550,6 +564,7 @@ void CGameStartEvent::ReturnGirl()
 	{
 		// カメラの設定.
 		m_stCamera.vLookPosition = m_stPlayer.vPosition;
+		m_stCamera.vLookPosition.y = 9.0f;
 		m_stCamera.ViewingAngle = m_pEventCamera->ResetViewingAngle();
 
 		if (m_stCamera.vPosition.x < CAMERA_GAMEPOSITION.x) { m_stCamera.vPosition.x += CAMERA_MOVE_SPEED; }

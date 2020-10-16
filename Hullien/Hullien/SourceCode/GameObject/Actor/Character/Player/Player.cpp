@@ -126,10 +126,10 @@ void CPlayer::Update()
 	// ‘Ì—Í‚ª1/3‚É‚È‚Á‚½‚çSE‚ð–Â‚ç‚·.
 	if (m_LifePoint <= m_Parameter.LifeMax / 3)
 	{
-		if (CSoundManager::GetIsPlaySE("HP", 0) == true) return;
-		CSoundManager::NoMultipleSEPlay("HP");
+		if (CSoundManager::GetIsPlaySE("HP", 0) == false) {
+			CSoundManager::PlaySE("HP");
+		}
 	}
-
 	// ‘«‰¹.
 	FootStep(RIGHT_FOOT, LEFT_FOOT);
 }

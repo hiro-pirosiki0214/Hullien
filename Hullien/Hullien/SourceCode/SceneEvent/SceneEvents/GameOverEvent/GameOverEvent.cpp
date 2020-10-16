@@ -103,6 +103,8 @@ void CGameOverEvent::Render()
 // スプライトの描画関数.
 void CGameOverEvent::SpriteRender()
 {
+	if (m_IsSkip == true) return;
+	m_pEventWidget->Update();
 	m_pEventWidget->Render();
 }
 
@@ -110,8 +112,7 @@ void CGameOverEvent::SpriteRender()
 bool CGameOverEvent::CameraInit()
 {
 	m_stCamera.vPosition = CAMERA_INITPOSITION;
-	m_stCamera.vLookPosition = m_stGirl.vPosition;
-	m_stCamera.vLookPosition.y = m_stGirl.vPosition.y + CORRECTION_GIRLLOOKPOS_Y;
+	m_stCamera.vLookPosition.y = LOOKPOS_Y;
 	return true;
 }
 
@@ -198,10 +199,12 @@ void CGameOverEvent::NextStep()
 // スキップ.
 void CGameOverEvent::Skip()
 {
+	if (m_IsSkip == true) return;
 	m_stGirl.IsDisp = false;
 	m_stCamera.vLookPosition = m_vUFOPosition;
 	m_vUFOPosition = DESTINATION_BACK;
 	m_EventStep = EEventStep::Skip;
+	m_IsSkip = true;
 	NextStep();
 }
 
@@ -239,17 +242,16 @@ void CGameOverEvent::Wait()
 // 女の子が吸い込まれる.
 void CGameOverEvent::SuckedGirl()
 {
-	m_stCamera.vLookPosition.y = m_stGirl.vPosition.y + CORRECTION_GIRLLOOKPOS_Y;
-
 	if( m_stGirl.vPosition.y <= m_vUFOPosition.y + CORRECTION_UFOPOSITION_Y )
 	{
 		m_stGirl.vPosition.y += GIRL_RISE_SPEED;
-		m_stCamera.vPosition.y += CAMERA_RISE_SPEED;
+		m_stCamera.vLookPosition.y += CAMERA_RISE_SPEED;
 	}
 
 	if( m_stGirl.vPosition.y <= GIRL_SCALEDOWN_STARTPOS ) return;
 	if( m_stGirl.vScale.x > 0.0f)
 	{
+		if(m_stGirl.vScale.x == 1.0f) CSoundManager::PlaySE("SuckedUFO");
 		m_stGirl.vScale.x -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.y -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.z -= GIRL_SCALEDOWN_SPEED;
@@ -259,7 +261,9 @@ void CGameOverEvent::SuckedGirl()
 		m_WaitCount++;
 	}
 
-	if( m_WaitCount >= WAITCOUNT_DEFAULT ) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("EscapeUFO");
 }
 
 // UFOの右移動Part1.
@@ -269,7 +273,9 @@ void CGameOverEvent::MoveRightUFOFirst()
 
 	if (MoveUFO( DESTINATION_RUGHTFIRST, UFO_MOVE_SPEED_RUGHTFIRST) == true) m_WaitCount++;
 
-	if (m_WaitCount > WAITCOUNT_DEFAULT) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("EscapeUFO");
 }
 
 // UFOの左移動.
@@ -278,7 +284,9 @@ void CGameOverEvent::MoveLeftUFO()
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
 	if (MoveUFO(DESTINATION_LEFT, UFO_MOVE_SPEED_LEFT) == true) m_WaitCount++;
-	if (m_WaitCount > WAITCOUNT_DEFAULT) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("EscapeUFO");
 }
 
 // UFOの右移動Part1.
@@ -287,14 +295,18 @@ void CGameOverEvent::MoveRightUFOSecond()
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
 	if (MoveUFO(DESTINATION_RUGHTSECOND, UFO_MOVE_SPEED_RUGHTSECOND) == true) m_WaitCount++;
-	if (m_WaitCount > WAITCOUNT_DEFAULT) NextStep();
+	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	NextStep();
+	CSoundManager::PlaySE("PulloutUFO");
 }
 
 // UFO奥に移動.
 void CGameOverEvent::MoveBackUFO()
 {
 	m_stCamera.vLookPosition = m_vUFOPosition;
-	if (MoveUFO(DESTINATION_BACK, UFO_MOVE_SPEED_BACK) == true) NextStep();
+	if (MoveUFO(DESTINATION_BACK, UFO_MOVE_SPEED_BACK) == false) return;
+	m_pEventWidget->SetSkip(true);
+	NextStep();
 }
 
 // イベント終了.

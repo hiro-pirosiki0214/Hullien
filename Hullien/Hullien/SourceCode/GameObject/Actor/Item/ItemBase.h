@@ -90,6 +90,8 @@ public:
 
 	// Á‚¦‚½‚©‚Ç‚¤‚©.
 	bool IsDelete(){ return m_NowState == ENowState::Delete; }
+	// “–‚½‚Á‚ÄÁ‚¦‚½‚©.
+	bool IsHitDisappear(){ return m_NowState == ENowState::HitDisappear; }
 
 protected:
 	// “–‚½‚Á‚½Û‚ÌŒø‰Ê‚ğ—^‚¦‚é.

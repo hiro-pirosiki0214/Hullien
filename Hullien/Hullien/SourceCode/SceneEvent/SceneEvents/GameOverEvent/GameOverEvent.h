@@ -23,15 +23,15 @@ class CGameOverEvent : public CEventBase
 	const int WAITCOUNT_DEFAULT	= 30;	//標準待機時間.
 
 	// カメラ.
-	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 4.0f, -15.5f);	// カメラ初期位置.
-	const float CORRECTION_GIRLLOOKPOS_Y	= 1.0f;								// 女の子の注視位置補正.
-	const float CAMERA_RISE_SPEED = 0.005f; //カメラの上昇速度.
+	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 5.0f, -20.0f);	// カメラ初期位置.
+	const float LOOKPOS_Y			= 6.0f;										// 注視位置.
+	const float CAMERA_RISE_SPEED	= 0.008f;									//カメラの上昇速度.
 
 	// UFO.
 	const D3DXVECTOR3 UFO_INITPOSITION			= D3DXVECTOR3(0.0f, 10.0f, 0.0f);
-	const D3DXVECTOR3 DESTINATION_RUGHTFIRST	= D3DXVECTOR3(10.0f, 10.0f, 10.0f);		// 右移動Part1時の目的地.
-	const D3DXVECTOR3 DESTINATION_LEFT			= D3DXVECTOR3(-20.0f, 30.0f, 40.0f);	// 左移動時の目的地.
-	const D3DXVECTOR3 DESTINATION_RUGHTSECOND	= D3DXVECTOR3(10.0f, 50.0f, 100.0f);	// 右移動Part2時の目的地.
+	const D3DXVECTOR3 DESTINATION_RUGHTFIRST	= D3DXVECTOR3(20.0f, 10.0f, 10.0f);		// 右移動Part1時の目的地.
+	const D3DXVECTOR3 DESTINATION_LEFT			= D3DXVECTOR3(-35.0f, 25.0f, 50.0f);	// 左移動時の目的地.
+	const D3DXVECTOR3 DESTINATION_RUGHTSECOND	= D3DXVECTOR3(50.0f, 50.0f, 100.0f);	// 右移動Part2時の目的地.
 	const D3DXVECTOR3 DESTINATION_BACK			= D3DXVECTOR3(-100.0f, 200.0f, 500.0f);	// 奥移動時の目的地.
 	const float CORRECTION_UFOPOSITION_Y		= 3.0f;									// UFO位置補正.
 	const float UFO_MOVE_SPEED_RUGHTFIRST		= 0.5f;									// 右移動Part1時のUFO移動速度.
@@ -49,7 +49,7 @@ private:
 	// イベントステップ.
 	enum class enEventStep
 	{
-		Wait = 0,					// 待機.
+		Wait = 0,				// 待機.
 		Sucked_Girl,			// 女の子が吸い込まれる.
 		MoveRight_UFO_First,	// UFO右移動Part1.
 		MoveLeft_UFO,			// UFO左移動.

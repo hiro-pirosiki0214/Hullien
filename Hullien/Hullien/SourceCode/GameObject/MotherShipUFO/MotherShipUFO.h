@@ -47,6 +47,8 @@ public:
 	void SetParameter( const SMotherShipUFOParam& param );
 	// 描画フラグ設定関数.
 	void SetDisp(const bool& disp) { m_IsDisp = disp; }
+	// 宇宙人が帰還したか取得関数.
+	bool IsReturnAlien() const { return m_IsReturnAlien; }
 
 private:
 	// モデルの取得.
@@ -58,7 +60,8 @@ private:
 	std::shared_ptr<CDX9StaticMesh>		m_pStaticMesh;	// スタティックメッシュ.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;	// 当たり判定クラス.
 	SMotherShipUFOParam					m_Param;
-	bool								m_IsDisp;		//描画しているか.
+	bool								m_IsDisp;		// 描画しているか.
+	bool								m_IsReturnAlien;// 宇宙人が帰還したか.
 };
 
 #endif	// #ifndef MOTHER_SHIP_UFO_H.

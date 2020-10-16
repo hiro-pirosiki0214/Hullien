@@ -10,6 +10,7 @@ CMotherShipUFO::CMotherShipUFO()
 	, m_pCollManager	( nullptr )
 	, m_Param			()
 	, m_IsDisp			( true )
+	, m_IsReturnAlien	( false )
 {
 }
 
@@ -62,7 +63,7 @@ void CMotherShipUFO::Collision( CActor* pActor )
 		( pActor->GetObjectTag() != EObjectTag::Alien_D )) return;
 
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
-
+	m_IsReturnAlien = true;
 	D3DXVECTOR3 pos = pActor->GetPosition();
 	pos.y += m_Param.AddPosYPower;	// À•W‚ðã‚É‚ ‚°‚é.
 	pActor->SetPosition( pos );

@@ -27,6 +27,7 @@ private:
 
 private:
 	std::unique_ptr<CClearWidget> m_pClearWidget;	// クリアUIクラス.
+	bool m_IsChangeScene;							//シーン切り替え可能か.
 };
 
 #endif	// #ifndef GAME_CLEAR_H.

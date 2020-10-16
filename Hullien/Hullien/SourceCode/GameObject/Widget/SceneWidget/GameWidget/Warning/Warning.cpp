@@ -63,7 +63,9 @@ bool CWarning::SpriteSetting()
 void CWarning::RenderDangerSign()
 {
 	m_pSprite[DANGER_SIGN]->SetPosition(m_vPosition);
+	m_pSprite[DANGER_SIGN]->SetDeprh(false);
 	m_pSprite[DANGER_SIGN]->Render(true);	// ビルボードにする.
+	m_pSprite[DANGER_SIGN]->SetDeprh(true);
 }
 
 // スプライトUIの描画関数.

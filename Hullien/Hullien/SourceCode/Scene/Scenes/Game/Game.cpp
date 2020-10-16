@@ -55,6 +55,7 @@ bool CGame::Load()
 	else
 	{
 		m_NowEventScene = EEventSceneState::Game;
+		CFade::SetFadeOut();
 	}
 
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
@@ -119,12 +120,18 @@ void CGame::Render()
 		m_WidgetManager->Render();
 		break;
 	case EEventSceneState::Continue:
-		m_pEventManager->Render();
+		if (m_GameObjManager->IsGameOver() == false) {
+			m_pEventManager->Render();
+		}
+		else {
+			ModelRender();
+			m_GameObjManager->SpriteRender();
+			m_WidgetManager->Render();
+		}
 		m_ContinueWidget->Render();
 		break;
 	case EEventSceneState::GameStart:
 	case EEventSceneState::GameOver_Girl:
-	case EEventSceneState::GameOver_Player:
 	case EEventSceneState::Clear:
 		m_pEventManager->Render();
 		break;
@@ -196,7 +203,6 @@ void CGame::GameUpdate()
 		CSoundManager::FadeOutBGM("GameBGM");
 	}
 
-
 	m_GameObjManager->Update();
 	m_WidgetManager->Update(m_GameObjManager.get());
 }
@@ -235,46 +241,22 @@ void CGame::ChangeEventScene()
 {
 	if (m_NowEventScene == EEventSceneState::Game)
 	{
-		// ゲームオーバーの場合.
+		// プレイヤーが死亡した場合.
 		if (m_GameObjManager->IsGameOver() == true)
 		{
-			if (m_IsChangeScene == false)
-			{
-				CFade::SetFadeIn();
-				m_IsChangeScene = true;
-			}
-			if (CFade::GetIsFade() == true) return;
-			if (m_GameObjManager->IsGirlAbduct() == true)
-			{
-				m_NowEventScene = EEventSceneState::GameOver_Girl;
-			}
-			else
-			{
-				m_NowEventScene = EEventSceneState::GameOver_Player;
-			}
-			CSoundManager::StopBGMThread("GameBGM");
-			CSoundManager::StopBGMThread("DangerBGM");
-			CSoundManager::StopBGMThread("StartEventBGM");
-			m_pEventManager->OnGameOver();
-			m_pEventManager->NextEventMove();
+			m_NowEventScene = EEventSceneState::Continue;
+			return;
+	//		SetNextScene(EEventSceneState::GameOver_Player, true);
 		}
-
+		// 女の子がUFOまで連れ去られた場合.
+		if (m_GameObjManager->IsReturnAlien() == true)
+		{
+			SetNextScene(EEventSceneState::GameOver_Girl, true);
+		}
 		// ゲームクリアの場合.
 		if (m_WidgetManager->IsGameFinish() == true)
 		{
-			if(m_IsChangeScene == false) 
-			{
-				CFade::SetFadeIn();
-				m_IsChangeScene = true;
-			}
-			CSoundManager::FadeOutBGM("GameBGM");
-
-			if (CFade::GetIsFade() == true) return;
-			m_NowEventScene = EEventSceneState::Clear;
-			CSoundManager::StopBGMThread("GameBGM");
-			CSoundManager::StopBGMThread("DangerBGM");
-			CSoundManager::StopBGMThread("StartEventBGM");
-			m_pEventManager->NextEventMove();
+			SetNextScene(EEventSceneState::Clear);
 		}
 	}
 
@@ -286,7 +268,6 @@ void CGame::ChangeEventScene()
 		m_NowEventScene = EEventSceneState::Game;
 		break;
 	case EEventSceneState::GameOver_Girl:
-	case EEventSceneState::GameOver_Player:
 		m_NowEventScene = EEventSceneState::Continue;
 		break;
 	case EEventSceneState::Clear:
@@ -309,11 +290,14 @@ void CGame::NextSceneMove()
 			m_IsChangeScene = true;
 		}
 		CSoundManager::FadeOutBGM("GameOverEvent");
-		if (CFade::GetIsFade() == true) return;
+		if(CSoundManager::GetIsPlayBGM("GameBGM") == true) CSoundManager::StopBGMThread("GameBGM");
+		if(CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
+		if(CFade::GetIsFade() == true) return;
 		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->RetryGame();
 		break;
 	case ENextSceneState::Clear:
+		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
 		break;
 	case ENextSceneState::GameOver:
@@ -324,12 +308,35 @@ void CGame::NextSceneMove()
 		}
 		CSoundManager::FadeOutBGM("GameOverEvent");
 		if (CFade::GetIsFade() == true) return;
+		if (CSoundManager::GetIsPlayBGM("GameBGM") == true) CSoundManager::StopBGMThread("GameBGM");
+		if (CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
 		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->OnGameOver();
+		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
 		break;
 	default:
 		break;
 	}
+}
+
+// 次のシーンを設定.
+void CGame::SetNextScene(EEventSceneState state, bool GameOver)
+{
+	if (m_IsChangeScene == false)
+	{
+		CFade::SetFadeIn();
+		m_IsChangeScene = true;
+	}
+	if (CFade::GetIsFade() == true) return;
+	m_NowEventScene = state;
+	CSoundManager::StopBGMThread("GameBGM");
+	CSoundManager::StopBGMThread("DangerBGM");
+	CSoundManager::StopBGMThread("StartEventBGM");
+	if (GameOver == true)
+	{
+		m_pEventManager->OnGameOver();
+	}
+	m_pEventManager->NextEventMove();
 }
 

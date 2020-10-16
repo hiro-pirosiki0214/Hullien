@@ -8,7 +8,7 @@
 **/
 CGameWidgetManager::CGameWidgetManager()
 	: m_pLimitTime		(nullptr)
-	, m_pMiniMap			(nullptr)
+	, m_pMiniMap		(nullptr)
 	, m_pUltemateSing	(nullptr)
 {
 	m_pLimitTime = std::make_unique<CLimitTime>();

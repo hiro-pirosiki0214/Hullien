@@ -4,8 +4,9 @@
 #include "..\..\..\XAudio2\SoundManager.h"
 
 CGameOver::CGameOver( CSceneManager* pSceneManager )
-	: CSceneBase				( pSceneManager )
+	: CSceneBase		( pSceneManager )
 	, m_pGameOverWidget	( nullptr )
+	, m_IsChangeScene	( false )
 {
 	m_pGameOverWidget = std::make_unique<CGameOverWidget>();
 }
@@ -40,12 +41,13 @@ void CGameOver::Update()
 
 
 	// ˆÈ‰ºƒV[ƒ“‘JˆÚ.
-	if( GetAsyncKeyState(VK_RETURN) & 0x0001
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 	{
-		if (CFade::GetIsFade() == true) return;
+		if(m_IsChangeScene == true) return;
 		CFade::GetInstance()->SetFadeIn();
 		CSoundManager::PlaySE("DeterminationSE");
+		m_IsChangeScene = true;
 	}
 
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;

@@ -2,6 +2,8 @@
 #include "..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\Arm\Arm.h"
+#include "..\..\..\..\..\XAudio2\SoundManager.h"	
 
 /*************************************
 *	イベント用宇宙人A.
@@ -9,6 +11,8 @@
 CEventAlienA::CEventAlienA()
 {
 	m_ObjectTag = EObjectTag::Alien_A;
+	m_NowState = EEventAlienState::None;
+	m_pArm = std::make_shared<CArm>();
 }
 
 CEventAlienA::~CEventAlienA()
@@ -23,7 +27,8 @@ bool CEventAlienA::Init()
 #else
 	if (GetModel(MODEL_TEMP_NAME) == false) return false;
 #endif	// #ifndef IS_TEMP_MODEL_RENDER.
-	if (ColliderSetting() == false) return false;
+	if(ColliderSetting() == false) return false;
+	if(m_pArm->Init() == false) return false;
 	return true;
 }
 
@@ -32,6 +37,9 @@ void CEventAlienA::Update()
 {
 	if (m_Parameter.IsDisp == false) return;
 	CurrentStateUpdate();	// 現在の状態の更新.
+	m_pArm->Update();
+	m_pArm->SetPosition(m_vPosition);
+	m_pArm->SetRotationY(m_vRotation.y);
 }
 
 // 描画関数.
@@ -66,6 +74,9 @@ void CEventAlienA::Render()
 	//	m_pTempStaticMesh->SetBlend( false );
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
 
+	// アームの描画.
+	m_pArm->Render();
+
 #if _DEBUG
 	if (m_pCollManager == nullptr) return;
 	m_pCollManager->DebugRender();
@@ -92,7 +103,15 @@ bool CEventAlienA::Spawn(const D3DXVECTOR3& spawnPos)
 	// 初期化に失敗したら終了.
 	if (Init() == false) return false;
 
-	Spawning();
+	if (m_Parameter.IsDisp == false)
+	{
+		CSoundManager::PlaySE("AlienApp");
+		m_Parameter.IsDisp = true;
+		m_Parameter.vScale = { 0.0f,0.0f,0.0f };
+	}
+
+	m_NowState = EEventAlienState::Spawn;
+	//Spawning();
 	return true;
 }
 
@@ -102,30 +121,9 @@ void CEventAlienA::Spawning()
 	CEventAlien::Spawning();
 }
 
-// 移動.
 void CEventAlienA::Move()
 {
-	CEventAlien::Move();
 }
-
-// 拐う.
-void CEventAlienA::Abduct()
-{
-	CEventAlien::Abduct();
-}
-
-// 逃げる.
-void CEventAlienA::Escape()
-{
-	CEventAlien::Escape();
-}
-
-// 吹き飛ぶ.
-void CEventAlienA::BlowAway()
-{
-	CEventAlien::BlowAway();
-}
-
 // 当たり判定の設定
 bool CEventAlienA::ColliderSetting()
 {
@@ -147,11 +145,13 @@ bool CEventAlienA::ColliderSetting()
 	if (m_pCollManager == nullptr) {
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
+
+	float Scale = 1.0f;
 	if (FAILED(m_pCollManager->InitSphere(
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&Scale,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
 	return true;

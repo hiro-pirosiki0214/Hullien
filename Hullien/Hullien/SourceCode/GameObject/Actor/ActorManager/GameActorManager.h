@@ -20,6 +20,8 @@ class CInvisibleWall;	// 見えない壁.
 
 class CGameActorManager
 {
+	const float GIRL_LIMIT_POS_Y = 5.0f;	//女の子がUFOに吸い込まれた時の限界値.
+
 public:
 	CGameActorManager();
 	~CGameActorManager();
@@ -40,6 +42,8 @@ public:
 	bool IsGirlAbduct();
 	// 女の子が危険な状態か.
 	bool IsDanger();
+	// 宇宙人が帰還したか.
+	bool IsReturnAlien();
 
 private:
 	// 座標リストの設定.

@@ -62,6 +62,8 @@ private:
 	void ChangeEventScene();
 	// 次のシーンに移行.
 	void NextSceneMove();
+	// 次のシーンを設定.
+	void SetNextScene(EEventSceneState state, bool GameOver = false);
 
 private:
 	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.
@@ -71,6 +73,7 @@ private:
 	EEventSceneState					m_NowEventScene;	// 現在のイベントシーン.
 	ENextSceneState						m_NextSceneState;	// 次のシーン状態.
 	bool								m_IsChangeScene;	// シーン切り替えが可能か.
+	float								m_WaitCount;
 
 };
 

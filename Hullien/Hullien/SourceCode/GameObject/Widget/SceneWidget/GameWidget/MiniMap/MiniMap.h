@@ -24,15 +24,25 @@ private:
 		std::shared_ptr<CSprite> pSprite;	// スプライト.
 		D3DXVECTOR3 Pos;					// 位置.
 		EObjectTag EObjTag;					// タグ.
-		int AnimNumber;							// アニメーション番号.
+		int AnimNumber;						// アニメーション番号.
 
 		stIconInfo()
-			: pSprite			( nullptr )
-			, Pos				(D3DXVECTOR3(0.0f,0.0f,0.0f))
-			, EObjTag		(EObjectTag::Max)
+			: pSprite	( nullptr )
+			, Pos		(D3DXVECTOR3(0.0f,0.0f,0.0f))
+			, EObjTag	(EObjectTag::Max)
 			, AnimNumber (0)
 		{}
 	}typedef SIconInfo;
+
+	// アイコンの種類.
+	enum class IconType
+	{
+		Player = 0,
+		Girl,
+		Alien,
+		Alien_D,
+		Item,
+	}typedef EIconType;
 
 public:
 	CMiniMap();
