@@ -28,7 +28,6 @@ CEventCharacter::CEventCharacter()
 	, m_vRightPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
 	, m_vLeftPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
 {
-	m_vPosition.y = INIT_POSITION_ADJ_HEIGHT;
 }
 
 CEventCharacter::~CEventCharacter()

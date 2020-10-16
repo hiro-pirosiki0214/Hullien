@@ -87,9 +87,9 @@ void CEventPlayer::SetTargetPos(CActor & actor)
 }
 
 // 特殊能力.
-void CEventPlayer::SpecialAbility()
+bool CEventPlayer::IsSpecialAbility()
 {
-	if(m_IsYButtonPressed == false) return;
+	if(m_IsYButtonPressed == false) return false;
 	SetAnimationBlend(player::EAnimNo_SP);
 
 	m_AnimFrameList[player::EAnimNo_SP].NowFrame += 0.01;
@@ -99,10 +99,11 @@ void CEventPlayer::SpecialAbility()
 		m_AnimSpeed = 0.0;
 	}
 
-	if (m_HasUsableSP == false) return;
+	if (m_HasUsableSP == false) return false;
 	// 特殊能力が使えるなら.
 	m_IsYButtonPressed = false;
 	m_HasUsableSP = false;	
+	return true;
 }
 
 // 特殊能力操作関数.
@@ -111,9 +112,7 @@ void CEventPlayer::SPController()
 	// Yボタンが押された瞬間じゃなければ終了.
 	if (CXInput::Y_Button() != CXInput::enPRESSED_MOMENT) return;
 	CSoundManager::PlaySE("PlayerVoiceSpecial");
-	m_SpecialAbility = 0.0f;
 	m_IsYButtonPressed = true;
-
 }
 
 // ノックバック.
@@ -130,12 +129,6 @@ void CEventPlayer::KnockBack()
 		m_AnimFrameList[player::EAnimNo_Damage].NowFrame = 0.0;
 	}
 }
-
-// 死亡.
-void CEventPlayer::Dead()
-{
-}
-
 // 移動関数.
 void CEventPlayer::Move()
 {

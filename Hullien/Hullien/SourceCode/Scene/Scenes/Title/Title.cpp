@@ -70,7 +70,8 @@ void CTitle::ChangeScene()
 	{
 		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
-		CSoundManager::PlaySE("DeterminationSE");
+		CSoundManager::PlaySE("Determination");
+		CSoundManager::FadeOutBGM("TestBGM");
 		m_IsChangeScene = true;
 	}
 
@@ -81,11 +82,13 @@ void CTitle::ChangeScene()
 	switch (m_pWidget->GetSelectState())
 	{
 	case CTitleWidget::ESelectState::Start:
-		CSoundManager::StopBGMThread("TestBGM");
+		if (CSoundManager::GetBGMVolume("TestBGM") > 0.0f) return;
+		while( CSoundManager::StopBGMThread("TestBGM") == false);
 		m_pSceneManager->NextSceneMove();
 		break;
 	case CTitleWidget::ESelectState::End:
-		CSoundManager::StopBGMThread("TestBGM");
+		if (CSoundManager::GetBGMVolume("TestBGM") > 0.0f) return;
+		while (CSoundManager::StopBGMThread("TestBGM") == false);
 		// ウィンドウを閉じる.
 		m_pSceneManager->EndGameClose();
 		break;

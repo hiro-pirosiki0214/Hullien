@@ -173,10 +173,17 @@ void CAlien::WaitMove()
 // スポーン中.
 void CAlien::Spawning()
 {
-	// モデルのアルファ値を足していく.
-	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
 
-	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+	m_vPosition.y -= 0.1f;
+	if (m_ModelAlpha < MODEL_ALPHA_MAX) {
+		m_vSclae.x += m_Parameter.ModelAlphaAddValue;
+		m_vSclae.y += m_Parameter.ModelAlphaAddValue;
+		m_vSclae.z += m_Parameter.ModelAlphaAddValue;
+		// モデルのアルファ値を足していく.
+		m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
+	}
+
+	if( m_vPosition.y > 4.0f ) return;
 	CSoundManager::NoMultipleSEPlay("AlienApp");
 	m_NowState = EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;

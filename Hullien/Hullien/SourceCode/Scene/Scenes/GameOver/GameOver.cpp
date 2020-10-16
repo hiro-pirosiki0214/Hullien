@@ -46,7 +46,7 @@ void CGameOver::Update()
 	{
 		if(m_IsChangeScene == true) return;
 		CFade::GetInstance()->SetFadeIn();
-		CSoundManager::PlaySE("DeterminationSE");
+		CSoundManager::PlaySE("Determination");
 		m_IsChangeScene = true;
 	}
 

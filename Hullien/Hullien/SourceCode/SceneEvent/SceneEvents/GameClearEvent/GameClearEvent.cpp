@@ -268,7 +268,7 @@ void CGameClearEvent::RunTowardsUFO()
 	m_stGirl.vPosition.z -= m_stGirl.MoveSpeed;
 
 	if (m_stPlayer.vPosition.z > m_vUFOPosition.z) return;
-	m_pPlayer->SetAnimation(player::EAnimNo::EAnimNo_Wait);
+	m_pPlayer->SetAnimationBlend(player::EAnimNo::EAnimNo_Wait);
 	CSoundManager::PlaySE("SuckedUFO");
 	NextStep();
 }

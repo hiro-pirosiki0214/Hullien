@@ -64,6 +64,8 @@ private:
 	void NextSceneMove();
 	// 次のシーンを設定.
 	void SetNextScene(EEventSceneState state, bool GameOver = false);
+	// BGMの停止.
+	bool StopBGM(const char* name);
 
 private:
 	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.

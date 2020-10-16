@@ -774,6 +774,7 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	proc( m_LifePoint, isAttack );
 	// 攻撃を食らったら.
 	if( isAttack == true ){
+		if (m_LifePoint > 0.0f) CSoundManager::PlaySE("PlayerVoiceHit");
 		// ダメージアニメーションを設定.
 		SetAnimation( player::EAnimNo_Damage );
 		m_AnimFrameList[player::EAnimNo_Damage].NowFrame = 0.0;
@@ -783,6 +784,7 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	}
 	// 体力がなくなったら.
 	if( m_LifePoint <= 0.0f ){
+		CSoundManager::PlaySE("PlayerVoiceDead");
 		// 死亡アニメーションを設定.
 		SetAnimation( player::EAnimNo_Dead );
 		m_AnimFrameList[player::EAnimNo_Dead].NowFrame	= 0.0;
@@ -934,6 +936,7 @@ bool CPlayer::SoundSetting()
 	VolumeSetting("PlayerVoiceAttack2", VOICE_VOLUME);
 	VolumeSetting("PlayerVoiceAttack3", VOICE_VOLUME);
 	VolumeSetting("PlayerVoiceSpecial", VOICE_VOLUME);
+	VolumeSetting("PlayerVoiceDead",	VOICE_VOLUME);
 	return true;
 }
 

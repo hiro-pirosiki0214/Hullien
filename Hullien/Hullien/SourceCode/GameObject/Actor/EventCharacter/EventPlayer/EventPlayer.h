@@ -31,7 +31,7 @@ class CEventPlayer : public CEventCharacter
 	const double ANIM_ADJ_FRAME_Attack2 = 0.5;	// 攻撃2.
 	const double ANIM_ADJ_FRAME_Attack3 = 0.5;	// 攻撃3.
 	const double ANIM_ADJ_FRAME_Avoid = 0.4;	// 回避.
-	const double ANIM_ADJ_FRAME_SP = 0.02;	// 特殊能力.
+	const double ANIM_ADJ_FRAME_SP = 0.02;		// 特殊能力.
 	const double ANIM_ADJ_FRAME_Damage = 0.4;	// ヒット時.
 	const double ANIM_ADJ_FRAME_Dead = 0.01;	// 死亡.
 
@@ -65,15 +65,13 @@ public:
 	// Yボタンが押されたか.
 	bool IsYButtonPressed() { return m_IsYButtonPressed; }
 	// 特殊能力.
-	void SpecialAbility();
+	bool IsSpecialAbility();
 
 private:
 	// 特殊能力操作関数.
 	void SPController();
 	// ノックバック動作関数.
 	void KnockBack();
-	// 死亡動作関数.
-	void Dead();
 
 	// 移動関数.
 	virtual void Move() override;

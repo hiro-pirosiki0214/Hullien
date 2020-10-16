@@ -232,10 +232,10 @@ void CGameStartEvent::SceneSetting()
 	case EEventStep::GetCaught_Girl: // 女の子捕まる.
 		GetCaughtGirl();
 		break;
-	case EEventStep::InvocatingOrder_Barrier:	//バリア発動指示.
+	case EEventStep::InvocatingOrder_Barrier://バリア発動指示.
 		InvocatingOrderBarrier();
 		break;
-	case EEventStep::Player_Up:				//バリア発動.
+	case EEventStep::Player_Up:				//プレイヤーアップ.
 		PlayerUp();
 		break;
 	case EEventStep::Invocating_Barrier:	//バリア発動.
@@ -457,11 +457,12 @@ void CGameStartEvent::InvocatingOrderBarrier()
 	m_stCamera.vLookPosition = m_pGirl->GetPosition();
 	// マザーシップの描画.
 	m_pMotherShipUFO->SetDisp(true);
-	// プレイヤーの更新.
-	m_pPlayer->Update();
 	// UIの設定.
 	m_pWidget->SetWidgetState(CGameStartEventWidget::EWidgetState::Push_YButton);
-
+	
+	if (m_pWidget->IsDispEnd() == false) return;
+	// プレイヤーの更新.
+	m_pPlayer->Update();
 	// Yボタンが押された場合.
 	if (m_pPlayer->IsYButtonPressed() == true)
 	{
@@ -496,7 +497,6 @@ void CGameStartEvent::PlayerUp()
 	}
 	else
 	{
-		m_pPlayer->SpecialAbility();
 		m_DecelerationZ = 0.0f;
 		m_stCamera.ViewingAngle = VIEWING_ANGLE_MOVING_LIMIT;
 		// カメラをプレイヤーの後ろ側に移動.
@@ -510,14 +510,17 @@ void CGameStartEvent::PlayerUp()
 			}
 			else
 			{
+				//  プレイヤーの特殊能力アニメーション再生.
+				m_pPlayer->IsSpecialAbility();
 				if (m_stCamera.MoveSpeed >= CAMERA_ROTATION_SPEED) m_stCamera.MoveSpeed -= CAMERA_DECELERATION_SPEED;
 			}
 		}
 		else
 		{
-			NextStep();
+			if(m_pPlayer->IsSpecialAbility() == false) return;
 			// カメラの揺れ用カウント.
 			m_Count = AMPLITUDE_COUNT;
+			NextStep();
 		}
 
 		// カメラとプレイヤーの距離.
@@ -533,6 +536,7 @@ void CGameStartEvent::PlayerUp()
 // バリア発動.
 void CGameStartEvent::InvocatingBarrier()
 {
+
 	// カメラの揺れ.
 	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_X));
 	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_Y));

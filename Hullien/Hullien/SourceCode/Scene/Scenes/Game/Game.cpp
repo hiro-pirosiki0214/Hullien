@@ -219,7 +219,7 @@ void CGame::ContinueUpdate()
 		if (GetAsyncKeyState(VK_RETURN) & 0x8000
 			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
-			CSoundManager::PlaySE("DeterminationSE");
+			CSoundManager::PlaySE("Determination");
 			m_NextSceneState = ENextSceneState::Game;
 		}
 		break;
@@ -246,17 +246,16 @@ void CGame::ChangeEventScene()
 		{
 			m_NowEventScene = EEventSceneState::Continue;
 			return;
-	//		SetNextScene(EEventSceneState::GameOver_Player, true);
-		}
-		// 女の子がUFOまで連れ去られた場合.
-		if (m_GameObjManager->IsReturnAlien() == true)
-		{
-			SetNextScene(EEventSceneState::GameOver_Girl, true);
 		}
 		// ゲームクリアの場合.
 		if (m_WidgetManager->IsGameFinish() == true)
 		{
 			SetNextScene(EEventSceneState::Clear);
+		}
+		else if (m_GameObjManager->IsReturnAlien() == true)
+		{
+			// 女の子がUFOまで連れ去られた場合.
+			SetNextScene(EEventSceneState::GameOver_Girl, true);
 		}
 	}
 
@@ -294,9 +293,11 @@ void CGame::NextSceneMove()
 		if(CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
 		if(CFade::GetIsFade() == true) return;
 		CSoundManager::StopBGMThread("GameOverEvent");
+		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->RetryGame();
 		break;
 	case ENextSceneState::Clear:
+		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
 		break;

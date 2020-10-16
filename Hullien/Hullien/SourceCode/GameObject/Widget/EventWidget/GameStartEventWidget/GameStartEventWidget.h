@@ -38,6 +38,8 @@ public:
 	virtual void Render() override;
 	// UIの状態設定関数.
 	void SetWidgetState(const EWidgetState& state);
+	// 描画が終了したか.
+	bool IsDispEnd() { return m_IsDispEnd == true; }
 
 private:
 	// スプライト設定関数.
@@ -49,6 +51,7 @@ private:
 	EWidgetState							m_WidgetState;		// UIの情報.
 	float									m_Alpha;			// 透過値.
 	float									m_WaitCount;		// 待機カウント.
+	bool									m_IsDispEnd;			// 描画終了.
 };
 
 #endif	//#ifndef GAMESTART_EVENT_WIDGET_H.
