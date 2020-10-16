@@ -6,6 +6,9 @@
 
 class CCharacter : public CActor
 {
+protected:
+	const double DEFAULT_ANIM_SPEED = 0.01;	// デフォルトアニメーション速度.
+
 public:
 	// キャラクターパラメータ.
 	struct stParameter

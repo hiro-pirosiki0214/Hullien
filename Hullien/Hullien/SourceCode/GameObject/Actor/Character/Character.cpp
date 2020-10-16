@@ -6,11 +6,6 @@
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
-namespace
-{
-	const double DEFAULT_ANIM_SPEED = 0.01;	// デフォルトアニメーション速度.
-}
-
 CCharacter::CCharacter()
 	: m_pSkinMesh				( nullptr )
 	, m_AnimFrameList			()

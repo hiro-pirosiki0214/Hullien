@@ -146,8 +146,6 @@ private:
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
-	// 攻撃ヒット時のカメラ動作.
-	void AttackHitCameraUpdate();
 	// 特殊能力時のカメラ動作.
 	void SPCameraUpdate();
 
@@ -196,15 +194,16 @@ private:
 private:
 	std::shared_ptr<CRotLookAtCenter>				m_pCamera;				// カメラクラス.
 	std::shared_ptr<CCamera>						m_pSPCamera;			// 特殊能力カメラクラス.
-	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;				// Widgetクラス.
 	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
-	D3DXVECTOR3		m_GirlPosition;	// 女の子の座標.
+	std::vector<std::shared_ptr<CEffectManager>>	m_pEffects;				// エフェクト.
+	std::vector<std::shared_ptr<CEffectTimer>>		m_pEffectTimers;		// 効果時間計測クラス.
+	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;				// Widgetクラス.
 
 	int								m_AttackComboCount;			// 攻撃コンボカウント.
 	std::queue<player::SAttackData>	m_AttackDataQueue;			// 攻撃データのキュー.
 	D3DXVECTOR3						m_AttackPosition;			// 攻撃用当たり判定座標.
 
-	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
+	D3DXVECTOR3		m_GirlPosition;		// 女の子の座標.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 	D3DXVECTOR3		m_HitVector;		// 衝突時のベクトル.
 	D3DXVECTOR3		m_TargetVector;		// 目的のベクトル.
@@ -215,17 +214,14 @@ private:
 	bool			m_IsDuringAvoid;		// 回避中かどうか.
 	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
 	bool			m_IsUsableSP;			// 特殊能力を使ったか.
-	bool			m_IsDead;				// 死亡フラグ.
 	bool			m_IsKnockBack;			// ノックバックするか.
+	bool			m_IsDead;				// 死亡フラグ.
 
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
 	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
-
-	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
-	float			m_CameraHeight;				// カメラの高さ.
 
 	D3DXVECTOR3		m_CameraNextPosition;		// カメラの座標.
 	D3DXVECTOR3		m_CameraPosition;			// カメラの座標.
@@ -234,15 +230,8 @@ private:
 	float			m_CameraReturnCount;		// カメラの戻るカウント.
 	float			m_CameraLerp;				// カメラ移動の補間値.
 	int				m_NowSPCameraStete;			// 特殊能力のカメラ状態.
-
-	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
-	float			m_CameraShakeCount;			// カメラの揺れカウント.
-	float			m_CameraShakeTime;			// カメラの揺れ時間.
-	float			m_CameraShakeCountAdd;		// カメラの揺れカウント加算値.
-	std::vector<std::shared_ptr<CEffectTimer>>	m_pEffectTimers;	// 効果時間計測クラス.
 	
 	bool			m_IsAttackSE;				//攻撃SEを鳴らすか.
-
 };
 
 #endif	// #ifndef PLAYER_H.

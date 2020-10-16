@@ -88,13 +88,13 @@ enum enEffectTimerNo
 // 使用エフェクト番号.
 enum enEffectNo
 {
-	enEffectNo_AttackOne,		// 攻撃1.
-	enEffectNo_AttackTwo,		// 攻撃2.
-	enEffectNo_AttackThree,		// 攻撃3.
-	enEffectNo_SP,				// 特殊能力.
-	enEffectNo_Avoidance,		// 回避.
-
-	enEffectNo_Max,
+	EEffectNo_AttackOne,		// 攻撃1.
+	EEffectNo_AttackTwo,		// 攻撃2.
+	EEffectNo_AttackThree,		// 攻撃3.
+	EEffectNo_SP,				// 特殊能力.
+	EEffectNo_Avoidance,		// 回避.
+	
+	EEffectNo_Max,
 } typedef EEffectNo;
 
 // 特殊能力のカメラ状態.
