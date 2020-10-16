@@ -13,7 +13,9 @@ class CAlien : public CCharacter
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 	const float BARRIER_HIT_MOVE_SPEED = -5.0f;	// バリアと衝突時の移動速度.
-
+	const float ADD_SCALE_VALUE = 0.03f;
+	const float SCALE_MAX = 1.0f;
+	const float DOWN_SPEED = 0.02f;
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
 	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;

@@ -20,7 +20,7 @@ CAlien::CAlien()
 	, m_NowMoveState			( EMoveState::None )
 	, m_HasAnyItem				( EItemList::None )
 	, m_LifePoint				( 0.0f )
-	, m_ModelAlpha				( 0.0f )
+	, m_ModelAlpha				( 1.0f )
 	, m_WaitCount				( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
 	, m_IsExplosion				( false )
@@ -173,10 +173,16 @@ void CAlien::WaitMove()
 // スポーン中.
 void CAlien::Spawning()
 {
-	// モデルのアルファ値を足していく.
-	m_ModelAlpha += m_Parameter.ModelAlphaAddValue;
+	// スケールの加算.
+	m_vSclae += { ADD_SCALE_VALUE, ADD_SCALE_VALUE, ADD_SCALE_VALUE };
+	// 大きさが一定値以上なら.
+	if( m_vSclae.x >= SCALE_MAX ){
+		m_vSclae = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
+		m_vPosition.y -= DOWN_SPEED;	// 高さを下げる.
+	}
 
-	if( m_ModelAlpha < MODEL_ALPHA_MAX ) return;
+	// 高さが一定値より大きければ終了.
+	if( m_vPosition.y > INIT_POSITION_ADJ_HEIGHT ) return;
 	CSoundManager::NoMultipleSEPlay("AlienApp");
 	m_NowState = EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;
