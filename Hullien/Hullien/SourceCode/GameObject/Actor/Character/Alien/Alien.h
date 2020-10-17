@@ -20,6 +20,7 @@ class CAlien : public CCharacter
 	const float DEATH_COUNT_ADD_VALUE = 0.005f;
 	const float DEATH_SCALE_SUB_VALUE = 0.005f;
 	const float DEATH_SCALE_PI = 6.0f*static_cast<float>(D3DX_PI);
+	const float RISING_MOTHER_SHIP_SCALE_SUB_VALUE = 0.01f;
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
 	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;
@@ -103,13 +104,14 @@ protected:
 	{
 		None,
 
-		Spawn,		// スポーン.
-		Move,		// 移動.
-		Abduct,		// 拐う.
-		KnockBack,	// ノックバック.
-		Fright,		// 怯み.
-		Death,		// 死亡.
-		Escape,		// 逃げる.
+		Spawn,				// スポーン.
+		Move,				// 移動.
+		Abduct,				// 拐う.
+		KnockBack,			// ノックバック.
+		Fright,				// 怯み.
+		Death,				// 死亡.
+		Escape,				// 逃げる.
+		RisingMotherShip,	// 上に上がる(マザーシップに).
 
 		Max,
 
@@ -156,7 +158,7 @@ public:
 	// 消去するかどうか.
 	bool IsDelete() const { return m_IsDelete; }
 	// マザーシップに昇っているか.
-	bool IsRisingMotherShip() const { return m_IsRisingMotherShip; }
+	bool IsRisingMotherShip() const { return m_NowState == EAlienState::RisingMotherShip; }
 
 protected:
 	// 現在の状態の更新関数.
@@ -189,6 +191,8 @@ protected:
 	virtual void Death();
 	// 逃げる.
 	virtual void Escape();
+	// マザーシップに昇っている.
+	virtual void RisingMotherShip();
 
 	// 女の子との当たり判定.
 	void GirlCollision( CActor* pActor );
@@ -216,7 +220,6 @@ protected:
 	bool			m_IsBarrierHit;				// バリアに当たっているか.
 	bool			m_IsExplosion;				// 爆発するか.
 	bool			m_IsDelete;					// 消去するかどうか.
-	bool			m_IsRisingMotherShip;		// マザーシップに昇っているか.
 
 	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;
 };

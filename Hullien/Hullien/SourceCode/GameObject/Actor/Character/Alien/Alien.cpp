@@ -28,7 +28,6 @@ CAlien::CAlien()
 	, m_pIsAlienOtherAbduct		( nullptr )
 	, m_IsExplosion				( false )
 	, m_IsDelete				( false )
-	, m_IsRisingMotherShip		( false )
 {
 	m_vSclae = { 0.0f, 0.0f, 0.0f };
 }
@@ -93,6 +92,9 @@ void CAlien::CurrentStateUpdate()
 	case EAlienState::Escape:
 		this->Escape();
 		break;
+	case EAlienState::RisingMotherShip:
+		this->RisingMotherShip();
+		break;
 	default:
 		break;
 	}
@@ -121,8 +123,8 @@ void CAlien::SetGirlPos( CActor& actor )
 void CAlien::SetPosition( const D3DXVECTOR3& vPos )
 {
 	if( *m_pIsAlienOtherAbduct == false ) return;
-	m_vPosition				= vPos;
-	m_IsRisingMotherShip	= true;
+	m_NowState = EAlienState::RisingMotherShip;
+	m_vPosition	= vPos;
 }
 
 // 移動ベクトル設定関数.
@@ -290,6 +292,16 @@ void CAlien::Escape()
 	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
 }
 
+// マザーシップに昇っている.
+void CAlien::RisingMotherShip()
+{
+	m_vSclae.x -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
+	m_vSclae.y -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
+	m_vSclae.z -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
+	if( m_vSclae.x > 0.0f ) return;
+	m_IsDelete = true;	// 死亡フラグを立てる.
+}
+
 // 女の子との当たり判定.
 void CAlien::GirlCollision( CActor* pActor )
 {
@@ -334,7 +346,8 @@ void CAlien::GirlCollision( CActor* pActor )
 // バリアとの当たり判定.
 void CAlien::BarrierCollision( CActor* pActor )
 {
-	// オブジェクトのタグが女の子じゃなければ終了.
+	if( m_NowState == EAlienState::RisingMotherShip ) return;	// マザーシップに昇っている状態なら終了.
+	// オブジェクトのタグがバリアじゃなければ終了.
 	if( pActor->GetObjectTag() != EObjectTag::Bariier ) return;
 	// 球体の当たり判定.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == true ){

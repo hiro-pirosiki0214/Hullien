@@ -48,6 +48,7 @@ void CAlienC::Update()
 
 	// アルファ値が0より多ければ終了.
 	if( m_IsDelete == false ) return;
+	if( m_NowState == EAlienState::RisingMotherShip ) return;	// マザーシップに昇っている状態なら終了.
 	m_IsExplosion = true;	// 爆発させる.
 	CSoundManager::PlaySE("Bomb");
 }
