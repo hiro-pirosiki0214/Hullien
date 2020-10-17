@@ -114,6 +114,22 @@ enum enSPCameraState
 
 } typedef ESPCameraState;
 
+// 現在の状態のフラグ(ビットフラグ用).
+enum enStatusFlag : unsigned char
+{
+	EStatusFlag_None,
+
+	EStatusFlag_DuringAvoid		= 1 << 0,	// 回避中か.
+	EStatusFlag_EndSPCameraMove	= 1 << 1,	// 特殊能力のカメラの移動が終了したか.
+	EStatusFlag_UsableSP		= 1 << 2,	// 特殊能力が使えるか.
+	EStatusFlag_KnockBack		= 1 << 3,	// ノックバック中か.
+	EStatusFlag_Dead			= 1 << 4,	// 死亡中か.
+	EStatusFlag_AttackSE		= 1 << 5,	// 攻撃SEを鳴らすか.
+
+	EStatusFlag_Max,
+
+} typedef EStatusFlag;
+
 // 攻撃用データ.
 struct stAttackData
 {

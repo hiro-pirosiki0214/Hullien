@@ -12,6 +12,7 @@
 #include "..\..\..\..\Common\Effect\EffectManager.h"
 #include "..\..\Item\EffectTimer\EffectTimer.h"
 
+#include "..\..\..\..\Utility\BitFlagManager\BitFlagManager.h"
 #include "..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\..\..\Editor\EditRenderer\EditRenderer.h"
 #include "..\..\..\..\Utility\FileManager\FileManager.h"
@@ -35,11 +36,7 @@ CPlayer::CPlayer()
 	, m_Parameter					()
 	, m_LifePoint					( 0.0f )
 	, m_SpecialAbility				( 0.0f )
-	, m_IsDuringAvoid				( false )
-	, m_IsYButtonPressed			( false )
-	, m_IsUsableSP					( false )
-	, m_IsKnockBack					( false )
-	, m_IsDead						( false )
+	, m_StatusFlag					( player::EStatusFlag_None )
 	, m_SpecialAbilityValue			( 0.0f )
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
@@ -193,9 +190,9 @@ void CPlayer::SpriteRender()
 // 特殊能力を使っているか.
 bool CPlayer::IsSpecialAbility()
 {
-	if( m_IsUsableSP  == false ) return false;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_UsableSP )  == false ) return false;
 	// 特殊能力が使えるなら.
-	m_IsUsableSP = false;	// 初期化して.
+	bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_UsableSP );
 	return true;			// trueを返す.
 }
 
@@ -208,8 +205,8 @@ float CPlayer::GetCameraRadianX()
 // 操作関数.
 void CPlayer::Controller()
 {
-	if( m_IsKnockBack	== true ) return;	// ノックバック中なら終了.
-	if( m_IsDead		== true ) return;	// 死亡していたら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )	== true ) return;	// ノックバック中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )		== true ) return;	// 死亡中は終了.
 
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
@@ -224,8 +221,8 @@ void CPlayer::Controller()
 // カメラ操作.
 void CPlayer::CameraController()
 {
-	if( m_IsYButtonPressed == true ) return;
-	if( m_IsDead == true ) return;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove )	== true ) return;	// SPカメラの動作中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中は終了.
 	// カメラの回転移動.
 	// 横方向.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
@@ -242,13 +239,10 @@ void CPlayer::CameraController()
 // 攻撃操作関数.
 void CPlayer::AttackController()
 {
-	// ノックバック中なら終了.
-	if( m_IsKnockBack == true ) return;
-	// 回避中なら終了.
-	if( m_IsDuringAvoid == true ) return;
-	// Yボタン：特殊能力を使っていたら.
-	if( m_IsYButtonPressed == true ) return;
-	if( m_IsDead == true ) return;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )		== true ) return;	// 回避中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return;	// ノックバック中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove )	== true ) return;	// SPカメラの動作中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中は終了.
 
 	// Xボタンを押した瞬間じゃなければ終了.
 	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
@@ -263,13 +257,11 @@ void CPlayer::AttackController()
 // 特殊能力操作関数.
 void CPlayer::SPController()
 {
-	// ノックバック中なら終了.
-	if( m_IsKnockBack == true ) return;
-	// 回避中なら終了.
-	if( m_IsDuringAvoid == true ) return;
-	// 攻撃中は移動しない.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack ) == true ) return;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid ) == true ) return;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return;
 	if( m_AttackComboCount > player::EAttackNo_None ) return;
-	if( m_IsDead == true ) return;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == true ) return;
 
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
 	// Yボタンが押された瞬間じゃなければ終了.
@@ -277,7 +269,7 @@ void CPlayer::SPController()
 	CSoundManager::NoMultipleSEPlay("PlayerVoiceSpecial");
 	m_CameraPosition	= m_pCamera->GetPosition();
 	m_SpecialAbility	= 0.0f;
-	m_IsYButtonPressed	= true;
+	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_EndSPCameraMove );
 
 	SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
 }
@@ -285,10 +277,10 @@ void CPlayer::SPController()
 // 回避操作関数.
 void CPlayer::AvoidController()
 {
-	if( m_IsDuringAvoid		== true ) return;	// 回避中なら終了.
-	if( m_IsKnockBack		== true ) return;	// ノックバック中なら終了.
-	if( m_IsYButtonPressed	== true ) return;	// Yボタン：特殊能力を使っていたら.
-	if( m_IsDead			== true ) return;	// 死亡していたら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )		== true ) return;	// 回避中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return;	// ノックバック中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return;	// SPカメラ中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中は終了.
 	if( m_AttackComboCount > player::EAttackNo_None ) return;	// 攻撃中は発動しない.
 	// 既に回避アニメーションだったら終了.
 	if( m_NowAnimNo == player::EAnimNo_Avoid ) return;
@@ -298,7 +290,7 @@ void CPlayer::AvoidController()
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
 	// Aボタンが押された瞬間じゃなければ終了.
 	if( CXInput::A_Button() != CXInput::enPRESSED_MOMENT ) return;
-	m_IsDuringAvoid		= true;
+	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );	// 回避フラグを立てる.
 	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
 	m_pEffects[player::EEffectNo_Avoidance]->Play( m_vPosition );
 	// 回避アニメーションの設定.
@@ -311,10 +303,10 @@ void CPlayer::AvoidController()
 // 移動関数.
 void CPlayer::Move()
 {
-	if( m_IsKnockBack		== true ) return;	// ノックバック中なら終了.
-	if( m_IsDuringAvoid		== true ) return;	// 回避中なら終了.
-	if( m_IsYButtonPressed	== true ) return;	// Yボタン：特殊能力を使っていたら.
-	if( m_IsDead			== true ) return;	// 死亡中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return;	// ノックバック中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )		== true ) return;	// 回避中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return;	// SPカメラの動作中は終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中は終了.
 	if( m_AttackComboCount > player::EAttackNo_None ) return;	// 攻撃中は終了.
 
 	// 各値が有効範囲外なら終了.
@@ -360,10 +352,10 @@ void CPlayer::Move()
 // 攻撃時の移動.
 void CPlayer::AttackMove()
 {
-	if( m_AttackComboCount <= player::EAttackNo_None ) return;
-	if( m_IsKnockBack	== true ) return;	// ノックバック中なら終了.
-	if( m_IsDuringAvoid == true ) return;	// 回避中なら終了.
-	if( m_IsDead		== true ) return;	// 死亡していたら終了.
+	if( m_AttackComboCount <= player::EAttackNo_None ) return;	// 攻撃カウントが無ければ終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid ) == true ) return;	// 回避中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )	== true ) return;	// ノックバック中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )		== true ) return;	// 死亡中なら終了.
 
 	// 現在のアニメーション番号.
 	switch( m_NowAnimNo )
@@ -395,8 +387,8 @@ void CPlayer::AttackMove()
 		break;
 
 	case player::EAnimNo_Attack3:// 攻撃3.
-		if( ATTACK3_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack2].NowFrame && 
-			m_AnimFrameList[player::EAnimNo_Attack2].NowFrame <= ATTACK3_ADJ_DRAGING_FRAME_END ){
+		if( ATTACK3_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack3].NowFrame && 
+			m_AnimFrameList[player::EAnimNo_Attack3].NowFrame <= ATTACK3_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
 			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
 			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
@@ -415,9 +407,9 @@ void CPlayer::AttackMove()
 // 回避動作関数.
 void CPlayer::AvoidMove()
 {
-	if( m_IsDuringAvoid == false ) return;	// 回避中じゃなければ終了.
-	if( m_IsDead		== true ) return;	// 死亡中なら死亡.
-	if( m_IsKnockBack	== true ) return;	// ノックバック中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )	== false ) return;	// 回避してなければ終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )		== true ) return;	// 死亡していれば終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )	== true ) return;	// ノックバックしていれば終了.
 
 	// スティックの傾いた方向に向く.
 	m_vRotation.y = atan2f( m_AvoidVector.x, m_AvoidVector.z );
@@ -433,16 +425,15 @@ void CPlayer::AvoidMove()
 
 	if( m_AnimFrameList[player::EAnimNo_Avoid].IsNowFrameOver() == false ) return;
 	// 回避アニメーションの経過フレームが終了フレームを超えていたら.
-	m_IsDuringAvoid = false;	// 回避中じゃなくする.
+	// 回避中じゃなくする.
+	bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );
 }
 
 // ノックバック動作関数.
 void CPlayer::KnockBack()
 {
-	if( m_IsKnockBack	== false ) return;	// ノックバック中じゃなければ終了.
-	if( m_IsDead		== true ) return;	// 死亡中なら.
-
-	m_AnimFrameList[player::EAnimNo_Damage].NowFrame += m_AnimSpeed;
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )	== false )	return;	// ノックバックしてなければ終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )		== true )	return;	// 死亡中なら終了.
 
 	m_vPosition.x -= m_MoveVector.x*DAMAGE_HIT_KNOC_BACK_SPEED;
 	m_vPosition.z -= m_MoveVector.z*DAMAGE_HIT_KNOC_BACK_SPEED;
@@ -452,14 +443,15 @@ void CPlayer::KnockBack()
 	if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += m_MoveVector.z*DAMAGE_HIT_KNOC_BACK_SPEED;
 
 	if( m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver() == true ){
-		m_IsKnockBack = false;
+		bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_KnockBack );	// ノックバックを止める.
 	}
 }
 
 // 死亡動作関数.
 void CPlayer::Dead()
 {
-	if( m_IsDead == false ) return;	// 死亡中じゃなければ終了.
+	// 死亡してなければ終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == false ) return;
 
 	// アニメーションフレームが一定の範囲内なら.
 	if( DEAD_CERTAIN_RANGE_ANIM_FRAME_MIN <= m_AnimFrameList[player::EAnimNo_Dead].NowFrame && 
@@ -485,7 +477,8 @@ void CPlayer::Dead()
 // カメラの更新.
 void CPlayer::CameraUpdate()
 {
-	if( m_IsDead == true ) return;
+	// 死亡中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == true ) return;
 
 	// プレイヤーを注視して回転.
 	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
@@ -493,7 +486,7 @@ void CPlayer::CameraUpdate()
 	m_pCamera->SetHeight( m_Parameter.CameraHeight );	// 高さの設定.
 
 	// Yボタン(特殊能力が使われていなければ).
-	if( m_IsYButtonPressed == false ){
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == false ){
 		m_CameraLerp = m_Parameter.CameraLerpValue;
 		// メインカメラをマネージャーに設定.
 		CCameraManager::SetCamera( m_pCamera );
@@ -550,7 +543,7 @@ void CPlayer::AttackCollision( CActor* pActor )
 void CPlayer::SPCameraUpdate()
 {
 	// 特殊能力が使えないなら終了.
-	if( m_IsYButtonPressed == false ){
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == false ){
 		m_CameraLookPosition = { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z };
 		return;
 	}
@@ -608,7 +601,7 @@ void CPlayer::SPCameraUpdate()
 		//-------------------------------------.
 
 		if( m_AnimFrameList[player::EAnimNo_SP].NowFrame >= m_AnimFrameList[player::EAnimNo_SP].EndFrame-0.5 ){
-			m_IsUsableSP = true;
+			bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_UsableSP );	// SPを使えるようにする.
 			m_AnimSpeed = 0.0;
 			m_AnimFrameList[player::EAnimNo_SP].UpdateFrame( DEFAULT_ANIM_SPEED );
 		}
@@ -648,7 +641,7 @@ void CPlayer::SPCameraUpdate()
 		if( m_CameraReturnCount >= CAMERA_RETURN_COUNT_MAX ){
 			m_pCamera->SetLookPosition( m_CameraLookPosition );	// メインカメラの視点座標を設定.
 			m_pCamera->SetPosition( m_CameraPosition );			// メインカメラの座標を設定.
-			m_IsYButtonPressed	= false;	// 特殊能力が終了したのでフラグを下す.
+			bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_EndSPCameraMove );	// SPカメラのフラグを下す.
 			m_CameraReturnCount = 0.0f;		// カメラを戻すカウントを初期化.
 			m_CameraLerp		= 0.0f;		// カメラの補完値を初期化.
 			m_NowSPCameraStete	= player::ESPCameraState_Start;	// 初めの状態へ戻す.
@@ -816,18 +809,25 @@ bool CPlayer::IsPushAttack()
 
 // ライフ計算関数.
 void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
-{	
-	if( m_IsDuringAvoid == true ) return;		// 回避中なら終了.
-	if( m_IsYButtonPressed == true ) return;	// 特殊能力を使用しているなら終了.
-	if( m_IsKnockBack == true ) return;			// ノックバック中なら終了.
+{
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return; // SPカメラが動作しているなら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return; // ノックバック中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return; // 死亡中なら終了.
 
 	bool isAttack = false;
+	const float oldLifePoint = m_LifePoint;
 	proc( m_LifePoint, isAttack );
+
+	// 回避中だが攻撃を食らっていたら.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )	== true &&
+		isAttack == true ){
+		m_LifePoint = oldLifePoint;	// 前回の体力を入れる.
+	}
 	// 攻撃を食らったら.
 	if( isAttack == true ){
 		// ダメージアニメーションを設定.
 		SetAnimation( player::EAnimNo_Damage );
-		m_IsKnockBack	= true;
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_KnockBack );
 		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z )+static_cast<float>(D3DX_PI);
 		m_MoveVector	= m_HitVector;
 	}
@@ -835,7 +835,7 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	if( m_LifePoint <= 0.0f ){
 		// 死亡アニメーションを設定.
 		SetAnimation( player::EAnimNo_Dead );
-		m_IsDead		= true;
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_Dead );
 		m_vRotation.y	= atan2( m_HitVector.x, m_HitVector.z )+static_cast<float>(D3DX_PI);
 		m_MoveVector	= -m_HitVector;	// ベクトル値を反転して調整.
 	}
@@ -883,10 +883,10 @@ void CPlayer::SetMoveSpeedEffectTime( const std::function<void(float&,float&)>& 
 // 麻痺の設定.
 void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 {
-	if( m_IsDuringAvoid		== true ) return;	// 回避中なら終了.
-	if( m_IsKnockBack		== true ) return;	// ノックバック中なら終了.
-	if( m_IsYButtonPressed	== true ) return;	// Yボタン：特殊能力を使っていたら.
-	if( m_IsDead			== true ) return;	// 死亡していたら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )		== true ) return;	// 回避中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return;	// ノックバック中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return;	// SPカメラが動作中なら終了.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中なら終了.
 
 	float tmpTime = 0.0f;
 	proc( tmpTime );

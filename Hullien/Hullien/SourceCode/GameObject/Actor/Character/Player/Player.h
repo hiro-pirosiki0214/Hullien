@@ -74,7 +74,7 @@ class CPlayer : public CCharacter
 	const float ATTACK2_ADJ_DRAGING_SPEED = 0.3f;
 
 	const double ATTACK3_ADJ_DRAGING_FRAME_START = 0.01;
-	const double ATTACK3_ADJ_DRAGING_FRAME_END = 0.9;
+	const double ATTACK3_ADJ_DRAGING_FRAME_END = 0.2;
 	const float ATTACK3_ADJ_DRAGING_SPEED = 0.3f;
 
 	const D3DXVECTOR3 ATTACK_COLLISION_INVALID_POS = { 0.0f, -10.0f, 0.0f };
@@ -211,11 +211,7 @@ private:
 	SPlayerParam	m_Parameter;			// パラメーター.
 	float			m_LifePoint;			// 体力.
 	float			m_SpecialAbility;		// 特殊能力.
-	bool			m_IsDuringAvoid;		// 回避中かどうか.
-	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
-	bool			m_IsUsableSP;			// 特殊能力を使ったか.
-	bool			m_IsKnockBack;			// ノックバックするか.
-	bool			m_IsDead;				// 死亡フラグ.
+	unsigned char	m_StatusFlag;			// 現在の状態のフラグ.
 
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.

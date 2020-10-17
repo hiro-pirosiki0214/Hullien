@@ -306,5 +306,6 @@
     <ClInclude Include="SourceCode\GameObject\InvisibleWall\BoxStruct.h" />
     <ClInclude Include="SourceCode\Editor\InvisibleWallEdit\InvisibleWallEdit.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\AnimationParamInfo.h" />
+    <ClInclude Include="SourceCode\Utility\BitFlagManager\BitFlagManager.h" />
   </ItemGroup>
 </Project>
