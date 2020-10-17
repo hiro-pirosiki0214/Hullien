@@ -82,8 +82,6 @@ void CAlienManager::Update( std::function<void(CActor*)> updateProc )
 		i--;
 	}
 	if( isAbduct == false ) m_IsAlienAbduct = false;
-	// モデルのアルファ値でのソート.
-	ModelAlphaSort();
 }
 
 // 描画関数.
@@ -199,19 +197,4 @@ bool CAlienManager::ReadExplosionParam()
 {
 	if( CFileManager::BinaryReading( EXPLOSION_PARAM_FILE_PATH, m_ExplosionParam ) == false ) return false;
 	return true;
-}
-
-// 宇宙人のモデルの値でのソート関数.
-void CAlienManager::ModelAlphaSort()
-{
-	m_SortCount++;
-	if( m_SortCount < FPS ) return;
-
-	// ソートのラムダ関数.
-	auto comp = []( auto& a, auto& b )
-	{ return a->GetModelAplha() > b->GetModelAplha();};
-
-	// ソート.
-	std::sort( m_AilenList.begin(), m_AilenList.end(), comp );
-	m_SortCount = 0;	// ソートカウントを初期化.
 }

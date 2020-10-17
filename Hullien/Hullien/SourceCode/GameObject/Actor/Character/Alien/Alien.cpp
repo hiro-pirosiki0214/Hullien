@@ -13,6 +13,7 @@ CAlien::CAlien()
 	: m_pArm					( nullptr )
 	, m_TargetPosition			( 0.0f, 0.0f, 0.0f )
 	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
+	, m_KnockBackVector			( 0.0f, 0.0f, 0.0f )
 	, m_pAbductUFOPosition		( nullptr )
 	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
 	, m_Parameter				()
@@ -20,7 +21,9 @@ CAlien::CAlien()
 	, m_NowMoveState			( EMoveState::None )
 	, m_HasAnyItem				( EItemList::None )
 	, m_LifePoint				( 0.0f )
-	, m_ModelAlpha				( 1.0f )
+	, m_DeathScale				( 1.0f )
+	, m_DeathCount				( 0.0f )
+	, m_KnockBackCount			( 0 )
 	, m_WaitCount				( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
 	, m_IsExplosion				( false )
@@ -38,6 +41,14 @@ CAlien::~CAlien()
 void CAlien::SetTargetPos( CActor& actor )
 {
 	SetGirlPos( actor );
+}
+// ベクトルの取得.
+void CAlien::SetVector( const D3DXVECTOR3& vec )
+{
+	if( m_NowState == EAlienState::Spawn ) return;
+	if( m_NowState == EAlienState::Death ) return;
+	m_KnockBackVector = vec;
+	m_KnockBackCount = 0;
 }
 
 // ライフ計算関数.
@@ -70,7 +81,10 @@ void CAlien::CurrentStateUpdate()
 	case EAlienState::Abduct:
 		this->Abduct();
 		break;
+	case EAlienState::KnockBack:
+		break;
 	case EAlienState::Fright:
+		this->KnockBack();
 		this->Fright();
 		break;
 	case EAlienState::Death:
@@ -114,6 +128,8 @@ void CAlien::SetPosition( const D3DXVECTOR3& vPos )
 // 移動ベクトル設定関数.
 void CAlien::SetMoveVector( const D3DXVECTOR3& targetPos )
 {
+	if( m_NowState == EAlienState::Fright ) return;
+
 	// 目的の回転軸を取得.
 	m_TargetRotation.y = atan2f( 
 		m_vPosition.x - targetPos.x,
@@ -219,20 +235,40 @@ void CAlien::Abduct()
 	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
 }
 
+// ノックバック.
+void CAlien::KnockBack()
+{
+	m_KnockBackCount++;	// 無敵カウントを加算.
+	if( m_KnockBackCount <= KNOCK_BACK_TIME ){
+		m_vRotation.y = atan2( m_KnockBackVector.x, m_KnockBackVector.z ) + static_cast<float>(D3DX_PI);
+		m_vPosition.x -= m_KnockBackVector.x;
+		m_vPosition.z -= m_KnockBackVector.z;
+	}
+}
+
 // 怯み.
 void CAlien::Fright()
 {
 	m_InvincibleCount++;	// 無敵カウントを加算.
 	if( IsInvincibleTime( m_Parameter.InvincibleTime ) == false ) return;
-	m_NowState		= EAlienState::Move;	// 移動状態へ遷移.
-	m_NowMoveState	= EMoveState::Rotation;	// 移動の回転状態へ遷移.
+	m_InvincibleCount	= 0;	// 無敵カウントの初期化.
+	m_KnockBackCount	= 0;	// 無敵カウントの初期化.
+	m_NowState			= EAlienState::Move;	// 移動状態へ遷移.
+	m_NowMoveState		= EMoveState::Rotation;	// 移動の回転状態へ遷移.
 }
 
 // 死亡.
 void CAlien::Death()
 {
-	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
-	if( m_ModelAlpha > 0.0f ) return;
+	m_DeathCount += DEATH_COUNT_ADD_VALUE;
+	m_DeathScale -= DEATH_SCALE_SUB_VALUE;
+	// モデルのサイズの計算.
+	const float scale = m_DeathScale*exp(-m_DeathCount)*sinf(DEATH_SCALE_PI*m_DeathCount);
+	m_vSclae = { scale, scale, scale };
+
+	// 大きさが一定値以上なら.
+	if( m_vSclae.x > 0.0f ) return;
+	m_vSclae = { 0.0f, 0.0f, 0.0f };
 	CSoundManager::PlaySE("AlienHit");
 	m_IsDelete = true;	// 死亡フラグを立てる.
 }
@@ -252,36 +288,6 @@ void CAlien::Escape()
 	// 女の子を連れ去っていなければ.
 	m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
 	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
-}
-
-// アルファブレンドの設定.
-void CAlien::AlphaBlendSetting()
-{
-#ifndef IS_TEMP_MODEL_RENDER
-	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
-		if( m_ModelAlpha < 1.0f ){
-			m_pSkinMesh->SetBlend( false );
-		}
-	}
-	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::GBuffer ){
-		m_pSkinMesh->SetBlend( true );
-		if( m_ModelAlpha >= 1.0f ){
-			m_pSkinMesh->SetBlend( false );
-		}
-	}
-#else
-	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ){
-		if( m_ModelAlpha < 1.0f ){
-			m_pTempStaticMesh->SetBlend( false );
-		}
-	}
-	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::GBuffer ){
-		m_pTempStaticMesh->SetBlend( true );
-		if( m_ModelAlpha >= 1.0f ){
-			m_pTempStaticMesh->SetBlend( false );
-		}
-	}
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 }
 
 // 女の子との当たり判定.

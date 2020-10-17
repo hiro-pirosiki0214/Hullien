@@ -116,8 +116,7 @@ void CAlienD::ModelRender()
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
-	AlphaBlendSetting();
+	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
@@ -127,8 +126,7 @@ void CAlienD::ModelRender()
 	m_pTempStaticMesh->SetPosition( m_vPosition );
 	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
-	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, m_ModelAlpha } );
-	AlphaBlendSetting();
+	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, 1.0f } );
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pTempStaticMesh->Render();
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );

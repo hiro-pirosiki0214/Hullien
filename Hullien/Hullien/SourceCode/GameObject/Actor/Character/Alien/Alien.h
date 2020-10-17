@@ -16,6 +16,10 @@ class CAlien : public CCharacter
 	const float ADD_SCALE_VALUE = 0.03f;
 	const float SCALE_MAX = 1.0f;
 	const float DOWN_SPEED = 0.02f;
+	const int KNOCK_BACK_TIME = 5;
+	const float DEATH_COUNT_ADD_VALUE = 0.005f;
+	const float DEATH_SCALE_SUB_VALUE = 0.005f;
+	const float DEATH_SCALE_PI = 6.0f*static_cast<float>(D3DX_PI);
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
 	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;
@@ -99,12 +103,13 @@ protected:
 	{
 		None,
 
-		Spawn,	// スポーン.
-		Move,	// 移動.
-		Abduct,	// 拐う.
-		Fright,	// 怯み.
-		Death,	// 死亡.
-		Escape,	// 逃げる.
+		Spawn,		// スポーン.
+		Move,		// 移動.
+		Abduct,		// 拐う.
+		KnockBack,	// ノックバック.
+		Fright,		// 怯み.
+		Death,		// 死亡.
+		Escape,		// 逃げる.
 
 		Max,
 
@@ -129,13 +134,13 @@ public:
 
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
+	// ベクトルの取得.
+	virtual void SetVector( const D3DXVECTOR3& vec ) override;
 	// スポーン.
 	virtual bool Spawn( const SAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
 
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
-	// モデルのアルファ値の取得.
-	float GetModelAplha() const { return m_ModelAlpha; }
 	// 連れ去っているかどうか.
 	bool IsAbduct() const { return m_NowState == EAlienState::Abduct; }
 	// どのアイテムを持っているか取得.
@@ -176,15 +181,14 @@ protected:
 	virtual void Move() override;
 	// 拐う.
 	virtual void Abduct();
+	// ノックバック.
+	virtual void KnockBack();
 	// 怯み.
 	virtual void Fright();
 	// 死亡.
 	virtual void Death();
 	// 逃げる.
 	virtual void Escape();
-
-	// アルファブレンドの設定.
-	void AlphaBlendSetting();
 
 	// 女の子との当たり判定.
 	void GirlCollision( CActor* pActor );
@@ -195,6 +199,7 @@ protected:
 	std::unique_ptr<CArm>	m_pArm;				// アームクラス.
 	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
 	D3DXVECTOR3		m_TargetRotation;			// 目標の回転情報.
+	D3DXVECTOR3		m_KnockBackVector;
 	D3DXVECTOR3		m_BeforeMoveingPosition;	// 移動前の座標.
 	D3DXVECTOR3*	m_pAbductUFOPosition;		// UFOの座標.
 	SAlienParam		m_Parameter;				// パラメータ.
@@ -203,7 +208,9 @@ protected:
 	EItemList		m_HasAnyItem;				// どのアイテムを持っているか.
 	float			m_LifePoint;				// 体力.
 	float			m_MoveSpeed;				// 移動速度.
-	float			m_ModelAlpha;				// モデルのアルファ値.
+	float			m_DeathScale;				// 死亡時の大きさ.
+	float			m_DeathCount;				// 死亡カウント.
+	int				m_KnockBackCount;			// ノックバックカウント.
 	int				m_WaitCount;				// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.
 	bool			m_IsBarrierHit;				// バリアに当たっているか.

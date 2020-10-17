@@ -525,6 +525,17 @@ void CPlayer::AttackCollision( CActor* pActor )
 	// 球体の当たり判定.
 	if( m_pAttackCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
+	D3DXVECTOR3 vec =
+	{
+		m_AttackPosition.x - pActor->GetPosition().x,
+		0.0f,
+		m_AttackPosition.z - pActor->GetPosition().z
+	};
+	D3DXVec3Normalize( &vec, &vec );
+	vec.x *= m_AttackComboCount*0.5;
+	vec.z *= m_AttackComboCount*0.5;
+	pActor->SetVector( vec );
+
 	// 攻撃関数.
 	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
 	{ 
@@ -720,6 +731,8 @@ void CPlayer::AttackAnimation()
 			}
 			return;
 		}
+		// エフェクトを再生.
+		m_pEffects[m_AttackComboCount-1]->Play( m_vPosition );
 		float attackCollisionRadius = 0.0f;	// 攻撃の当たり判定.
 		// 攻撃SEを鳴らす.
 		CSoundManager::PlaySE("PlayerAttack");
@@ -802,8 +815,7 @@ bool CPlayer::IsPushAttack()
 	
 	// キューにデータを挿入.
 	m_AttackDataQueue.push( tmpAttackData );
-	// エフェクトを再生.
-	m_pEffects[m_AttackComboCount-1]->Play( m_vPosition );
+	
 	return true;
 }
 
