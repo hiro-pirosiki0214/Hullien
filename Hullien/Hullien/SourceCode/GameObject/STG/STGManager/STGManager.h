@@ -4,6 +4,7 @@
 namespace STG
 {
 	class CPlayer;	// プレイヤークラス.
+	class CEnemy;	// 敵クラス.
 }
 class CCamera;
 
@@ -25,6 +26,7 @@ public:
 private:
 	std::shared_ptr<CCamera>		m_pCamera;
 	std::shared_ptr<STG::CPlayer>	m_pPlayer;	// プレイヤークラス.
+	std::shared_ptr<STG::CEnemy>	m_pEnemy;
 };
 
 #endif	// #ifndef STG_MANAGER_H.

@@ -1,5 +1,5 @@
 #include "STGPlayer.h"
-#include "..\..\Bullet\Bullet.h"
+#include "..\..\Bullet\STGBullet.h"
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"

@@ -154,7 +154,8 @@
     <ClCompile Include="SourceCode\GameObject\STG\STGActor.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\STGCharacter.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Player\STGPlayer.cpp" />
-    <ClCompile Include="SourceCode\GameObject\STG\Bullet\Bullet.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Bullet\STGBullet.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -316,6 +317,7 @@
     <ClInclude Include="SourceCode\GameObject\STG\STGActor.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\STGCharacter.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Player\STGPlayer.h" />
-    <ClInclude Include="SourceCode\GameObject\STG\Bullet\Bullet.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Bullet\STGBullet.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.h" />
   </ItemGroup>
 </Project>

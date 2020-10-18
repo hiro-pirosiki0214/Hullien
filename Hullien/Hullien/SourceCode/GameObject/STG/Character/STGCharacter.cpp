@@ -1,5 +1,5 @@
 #include "STGCharacter.h"
-#include "..\Bullet\Bullet.h"
+#include "..\Bullet\STGBullet.h"
 
 STG::CCharacter::CCharacter()
 	: m_pBullets	()

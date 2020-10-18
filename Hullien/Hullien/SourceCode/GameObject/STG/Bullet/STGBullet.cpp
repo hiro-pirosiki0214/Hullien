@@ -1,4 +1,4 @@
-#include "Bullet.h"
+#include "STGBullet.h"
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 
