@@ -36,7 +36,7 @@ CGameOverEvent::CGameOverEvent()
 	m_pGirl			= std::make_shared<CEventGirl>();
 	m_pEventCamera	= std::make_shared<CEventCamera>();
 	m_pEventWidget	= std::make_shared<CEventWidget>();
-	m_pSkyDome = std::make_shared<CSkyDome>();
+	m_pSkyDome		= std::make_shared<CSkyDome>();
 	
 }
 
@@ -179,12 +179,18 @@ void CGameOverEvent::SceneSetting()
 		break;
 	}
 
-	//	スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x8000
-		|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
-	{
-		Skip();
+	// スキップ.
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
+		m_SkipWaitCount++;
+
 	}
+	else {
+		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
+	}
+
+	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
+	Skip();
 }
 
 // 次のシーンに進める.
@@ -200,35 +206,16 @@ void CGameOverEvent::NextStep()
 void CGameOverEvent::Skip()
 {
 	if (m_IsSkip == true) return;
+	CFade::SetFadeIn();
+
+	if(CFade::GetIsFade() == true) return;
 	m_stGirl.IsDisp = false;
-	m_stCamera.vLookPosition = m_vUFOPosition;
 	m_vUFOPosition = DESTINATION_BACK;
+	m_stCamera.vLookPosition = m_vUFOPosition;
 	m_EventStep = EEventStep::Skip;
-	m_IsSkip = true;
 	NextStep();
-}
-
-// UFO移動.
-bool CGameOverEvent::MoveUFO(const D3DXVECTOR3& vDestination, const float& speed)
-{
-	if( m_WaitCount != 0 ) return true;
-
-	// 移動距離の算出.
-	float Distance = sqrtf((m_vUFOPosition.x - vDestination.x) * (m_vUFOPosition.x - vDestination.x)
-		+ (m_vUFOPosition.y - vDestination.y) * (m_vUFOPosition.y - vDestination.y)
-		+ (m_vUFOPosition.z - vDestination.z) * (m_vUFOPosition.z - vDestination.z));
-
-	// 移動回数の算出.
-	float MoveCount = Distance / speed;
-
-	// 移動量を座標に足す.
-	m_vUFOPosition.x += (vDestination.x - m_vUFOPosition.x) / MoveCount;
-	m_vUFOPosition.y += (vDestination.y - m_vUFOPosition.y) / MoveCount;
-	m_vUFOPosition.z += (vDestination.z - m_vUFOPosition.z) / MoveCount;
-
-	if ( MoveCount >= ONE) return false;
-
-	return true;
+	m_IsSkip = true;
+	CFade::SetFadeOut();
 }
 
 // 待機.
@@ -251,7 +238,7 @@ void CGameOverEvent::SuckedGirl()
 	if( m_stGirl.vPosition.y <= GIRL_SCALEDOWN_STARTPOS ) return;
 	if( m_stGirl.vScale.x > 0.0f)
 	{
-		if(m_stGirl.vScale.x == 1.0f) CSoundManager::PlaySE("SuckedUFO");
+		if(m_stGirl.vScale.x == SCALE_MAX) CSoundManager::PlaySE("UFOSucked");
 		m_stGirl.vScale.x -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.y -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.z -= GIRL_SCALEDOWN_SPEED;
@@ -262,8 +249,9 @@ void CGameOverEvent::SuckedGirl()
 	}
 
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
+	m_stGirl.IsDisp = false;	//女の子を非表示にする.
 	NextStep();
-	CSoundManager::PlaySE("EscapeUFO");
+	CSoundManager::PlaySE("UFOEscape");
 }
 
 // UFOの右移動Part1.
@@ -271,11 +259,11 @@ void CGameOverEvent::MoveRightUFOFirst()
 {
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
-	if (MoveUFO( DESTINATION_RUGHTFIRST, UFO_MOVE_SPEED_RUGHTFIRST) == true) m_WaitCount++;
+	if (MoveDestination( m_vUFOPosition, DESTINATION_RUGHTFIRST, UFO_MOVE_SPEED_RUGHTFIRST) == true) m_WaitCount++;
 
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	NextStep();
-	CSoundManager::PlaySE("EscapeUFO");
+	CSoundManager::PlaySE("UFOEscape");
 }
 
 // UFOの左移動.
@@ -283,10 +271,10 @@ void CGameOverEvent::MoveLeftUFO()
 {
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
-	if (MoveUFO(DESTINATION_LEFT, UFO_MOVE_SPEED_LEFT) == true) m_WaitCount++;
+	if (MoveDestination(m_vUFOPosition, DESTINATION_LEFT, UFO_MOVE_SPEED_LEFT) == true) m_WaitCount++;
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	NextStep();
-	CSoundManager::PlaySE("EscapeUFO");
+	CSoundManager::PlaySE("UFOEscape");
 }
 
 // UFOの右移動Part1.
@@ -294,17 +282,17 @@ void CGameOverEvent::MoveRightUFOSecond()
 {
 	m_stCamera.vLookPosition = m_vUFOPosition;
 
-	if (MoveUFO(DESTINATION_RUGHTSECOND, UFO_MOVE_SPEED_RUGHTSECOND) == true) m_WaitCount++;
+	if (MoveDestination(m_vUFOPosition, DESTINATION_RUGHTSECOND, UFO_MOVE_SPEED_RUGHTSECOND) == true) m_WaitCount++;
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	NextStep();
-	CSoundManager::PlaySE("PulloutUFO");
+	CSoundManager::PlaySE("UFOPullout");
 }
 
 // UFO奥に移動.
 void CGameOverEvent::MoveBackUFO()
 {
 	m_stCamera.vLookPosition = m_vUFOPosition;
-	if (MoveUFO(DESTINATION_BACK, UFO_MOVE_SPEED_BACK) == false) return;
+	if (MoveDestination(m_vUFOPosition, DESTINATION_BACK, UFO_MOVE_SPEED_BACK) == false) return;
 	m_pEventWidget->SetSkip(true);
 	NextStep();
 }

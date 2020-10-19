@@ -12,6 +12,7 @@ CGameStartEventWidget::CGameStartEventWidget()
 	, m_WidgetState	( EWidgetState::None )
 	, m_Alpha		( 0.0f )
 	, m_WaitCount	( 0.0f ) 
+	, m_IsDispEnd	( false )
 {
 }
 
@@ -48,6 +49,7 @@ void CGameStartEventWidget::Update()
 	case CGameStartEventWidget::EWidgetState::Push_YButton:		
 		if(m_IsDisp[PUSH_YBUTTON] == false) m_IsDisp[PUSH_YBUTTON] = true;
 		if (m_Alpha < ALPHA_MAX) m_Alpha += ALPHA_SPEED;
+		else { m_IsDispEnd = true; }
 		break;
 
 	case CGameStartEventWidget::EWidgetState::Preserve_Girl:

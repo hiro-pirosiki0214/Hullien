@@ -64,6 +64,10 @@ private:
 	void NextSceneMove();
 	// 次のシーンを設定.
 	void SetNextScene(EEventSceneState state, bool GameOver = false);
+	// BGMの停止.
+	void StopBGM(const char* name);
+	// 全てのBGM停止.
+	void StopAllBGM();
 
 private:
 	std::unique_ptr<CGameActorManager>	m_GameObjManager;	// ゲームオブジェクト管理クラス.
@@ -72,8 +76,7 @@ private:
 	std::unique_ptr<CEventManager>		m_pEventManager; 	//	イベント管理クラス.
 	EEventSceneState					m_NowEventScene;	// 現在のイベントシーン.
 	ENextSceneState						m_NextSceneState;	// 次のシーン状態.
-	bool								m_IsChangeScene;	// シーン切り替えが可能か.
-	float								m_WaitCount;
+	float								m_WaitCount;		// 待機カウント.
 
 };
 

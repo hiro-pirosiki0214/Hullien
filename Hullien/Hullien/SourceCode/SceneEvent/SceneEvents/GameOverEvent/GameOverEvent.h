@@ -21,6 +21,7 @@ class CGameOverEvent : public CEventBase
 	const int ONE				= 1;	//一.
 	const int WAITCOUNT_WAIT	= 150;	//待機時の待機時間.
 	const int WAITCOUNT_DEFAULT	= 30;	//標準待機時間.
+	const float SCALE_MAX		= 1.0f;	// 大きさの最大.
 
 	// カメラ.
 	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 5.0f, -20.0f);	// カメラ初期位置.
@@ -32,7 +33,7 @@ class CGameOverEvent : public CEventBase
 	const D3DXVECTOR3 DESTINATION_RUGHTFIRST	= D3DXVECTOR3(20.0f, 10.0f, 10.0f);		// 右移動Part1時の目的地.
 	const D3DXVECTOR3 DESTINATION_LEFT			= D3DXVECTOR3(-35.0f, 25.0f, 50.0f);	// 左移動時の目的地.
 	const D3DXVECTOR3 DESTINATION_RUGHTSECOND	= D3DXVECTOR3(50.0f, 50.0f, 100.0f);	// 右移動Part2時の目的地.
-	const D3DXVECTOR3 DESTINATION_BACK			= D3DXVECTOR3(-100.0f, 200.0f, 500.0f);	// 奥移動時の目的地.
+	const D3DXVECTOR3 DESTINATION_BACK			= D3DXVECTOR3(0.0f, 200.0f, 500.0f);	// 奥移動時の目的地.
 	const float CORRECTION_UFOPOSITION_Y		= 3.0f;									// UFO位置補正.
 	const float UFO_MOVE_SPEED_RUGHTFIRST		= 0.5f;									// 右移動Part1時のUFO移動速度.
 	const float UFO_MOVE_SPEED_LEFT				= 1.0f;									// 左移動時のUFO移動速度.
@@ -93,9 +94,6 @@ private:
 	// スキップ.
 	virtual void Skip() override;
 	
-	// UFO移動.
-	bool MoveUFO(const D3DXVECTOR3& vDestination, const float& speed);
-
 	// 以下イベントステップ.
 	void Wait();				// 待機.
 	void SuckedGirl();			// 女の子が吸い込まれる.

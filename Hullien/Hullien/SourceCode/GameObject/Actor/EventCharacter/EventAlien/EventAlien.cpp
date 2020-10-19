@@ -49,8 +49,6 @@ void CEventAlien::CurrentStateUpdate()
 // 女の子の座標を設定.
 void CEventAlien::SetGirlPos(CActor& actor)
 {
-	if (m_NowMoveState == EMoveState::Move) return;
-
 	// 女の子じゃなければ終了.
 	if (actor.GetObjectTag() != EObjectTag::Girl) return;
 	m_vTargetPosition = actor.GetPosition();	// 女の子の座標を取得.
@@ -135,6 +133,5 @@ void CEventAlien::BarrierCollision(CActor* pActor)
 		m_Speed = moveSpeed;
 		m_IsBarrierHit = true;
 		m_NowState = EEventAlienState::Move;
-		m_NowMoveState = EMoveState::Move;
 	}
 }

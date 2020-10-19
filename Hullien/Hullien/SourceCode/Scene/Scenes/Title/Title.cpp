@@ -30,7 +30,7 @@ bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
-	CSoundManager::SetBGMVolume("TestBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
+	CSoundManager::SetBGMVolume("TitleBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
 	return true;
 }
@@ -40,7 +40,7 @@ bool CTitle::Load()
 //============================.
 void CTitle::Update()
 {
-	CSoundManager::ThreadPlayBGM("TestBGM");
+	CSoundManager::ThreadPlayBGM("TitleBGM");
 
 	if (CFade::GetIsFade() == true) return;
 
@@ -70,7 +70,13 @@ void CTitle::ChangeScene()
 	{
 		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
-		CSoundManager::PlaySE("DeterminationSE");
+		if(m_pWidget->GetSelectState() == CTitleWidget::ESelectState::Start) {
+			CSoundManager::PlaySE("Determination");
+		}
+		else {
+			CSoundManager::PlaySE("CancelDetermination");
+		}
+		CSoundManager::FadeOutBGM("TitleBGM");
 		m_IsChangeScene = true;
 	}
 
@@ -81,11 +87,13 @@ void CTitle::ChangeScene()
 	switch (m_pWidget->GetSelectState())
 	{
 	case CTitleWidget::ESelectState::Start:
-		CSoundManager::StopBGMThread("TestBGM");
+		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
+		while( CSoundManager::StopBGMThread("TitleBGM") == false);
 		m_pSceneManager->NextSceneMove();
 		break;
 	case CTitleWidget::ESelectState::End:
-		CSoundManager::StopBGMThread("TestBGM");
+		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
+		while (CSoundManager::StopBGMThread("TitleBGM") == false);
 		// ウィンドウを閉じる.
 		m_pSceneManager->EndGameClose();
 		break;

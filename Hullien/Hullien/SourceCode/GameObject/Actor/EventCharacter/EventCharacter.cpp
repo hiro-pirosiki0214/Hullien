@@ -5,6 +5,11 @@
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
+namespace
+{
+	const double DEFAULT_ANIM_SPEED = 0.01;	// デフォルトアニメーション速度.
+}
+
 /***************************************
 *	イベント用キャラクタクラス.
 **/
@@ -14,14 +19,15 @@ CEventCharacter::CEventCharacter()
 	, m_pTempStaticMesh( nullptr )
 #endif
 	, m_Parameter				()
-	, m_NowMoveState			( EMoveState::None )
+	, m_NowAnimNo				(0)
+	, m_OldAnimNo				(0)
+	, m_AnimSpeed				(DEFAULT_ANIM_SPEED)
 	, m_pFootCollision			()
 	, m_pGroundCollision		( nullptr )
 	, m_vGroundPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
 	, m_vRightPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
 	, m_vLeftPosition			(D3DXVECTOR3(0.0f,0.0f,0.0f))
 {
-	m_vPosition.y = INIT_POSITION_ADJ_HEIGHT;
 }
 
 CEventCharacter::~CEventCharacter()
@@ -85,6 +91,26 @@ bool CEventCharacter::GetModel(const char * modelName)
 #endif	// #ifndef IS_MODEL_RENDER.
 }
 
+// アニメーション設定.
+void CEventCharacter::SetAnimation(const int & animNo)
+{
+	if (m_pSkinMesh == nullptr) return;
+	if (m_NowAnimNo == animNo) return;
+	m_OldAnimNo = m_NowAnimNo;
+	m_NowAnimNo = animNo;
+	m_pSkinMesh->ChangeAnimSet(m_NowAnimNo);
+}
+
+// アニメーションをブレンドして設定.
+void CEventCharacter::SetAnimationBlend(const int & animNo)
+{
+	if (m_pSkinMesh == nullptr) return;
+	if (m_NowAnimNo == animNo) return;
+	m_OldAnimNo = m_NowAnimNo;
+	m_NowAnimNo = animNo;
+	m_pSkinMesh->ChangeAnimBlend(m_NowAnimNo, m_OldAnimNo);
+}
+
 // 足音.
 void CEventCharacter::FootStep(const char* rightfoot, const char* leftfoot)
 {
@@ -108,7 +134,7 @@ void CEventCharacter::FootStep(const char* rightfoot, const char* leftfoot)
 // 当たり判定の設定.
 bool CEventCharacter::FootStepCollisionSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
+//#ifndef IS_TEMP_MODEL_RENDER
 	// 地面の当たり判定.
 	if (m_pGroundCollision != nullptr) return true;
 	if (m_pGroundCollision == nullptr)
@@ -138,7 +164,7 @@ bool CEventCharacter::FootStepCollisionSetting()
 		&m_vSclae.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
-#endif
+//#endif
 	return true;
 }
 

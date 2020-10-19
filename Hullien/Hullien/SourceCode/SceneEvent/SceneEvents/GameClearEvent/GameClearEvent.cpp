@@ -90,13 +90,6 @@ void CGameClearEvent::Update()
 	CameraUpdate();
 	// シーンの設定.
 	SceneSetting();
-
-	// スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x8000
-		|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
-	{
-		Skip();
-	}
 }
 
 // 描画関数.
@@ -227,6 +220,18 @@ void CGameClearEvent::SceneSetting()
 		break;
 	}
 
+	// スキップ.
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
+		m_SkipWaitCount++;
+
+	}
+	else {
+		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
+	}
+
+	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
+	Skip();
 }
 
 // 次のシーンに進める.
@@ -268,8 +273,8 @@ void CGameClearEvent::RunTowardsUFO()
 	m_stGirl.vPosition.z -= m_stGirl.MoveSpeed;
 
 	if (m_stPlayer.vPosition.z > m_vUFOPosition.z) return;
-	m_pPlayer->SetAnimation(CEventPlayer::EAnimNo::Wait);
-	CSoundManager::PlaySE("SuckedUFO");
+	m_pPlayer->SetAnimationBlend(player::EAnimNo::EAnimNo_Wait);
+	CSoundManager::PlaySE("UFOSucked");
 	NextStep();
 }
 
@@ -318,14 +323,14 @@ void CGameClearEvent::FussUFO()
 		m_vUFOScale.x += UFO_SCALE_SPEED_DEFAULT;
 		if(m_vUFOScale.y >= UFO_SCALE_MIN) m_vUFOScale.y -= UFO_SCALE_SPEED_Y;
 		if (m_vUFOScale.x < UFO_SCALE_MAX_X) return;
-		CSoundManager::PlaySE("FussUFO");
+		CSoundManager::PlaySE("UFOFuss");
 		m_UFOStep++;
 		break;
 	case 1:
 		if(m_vUFOScale.x >= SCALE_DEFAULT.x) m_vUFOScale.x -= UFO_SCALE_SPEED_DEFAULT;
 		m_vUFOScale.y += UFO_SCALE_SPEED_DEFAULT;
 		if (m_vUFOScale.y < UFO_LIMIT_SCALE_Y) return;
-		CSoundManager::PlaySE("FussUFO");
+		CSoundManager::PlaySE("UFOFuss");
 		m_UFOStep++;
 		break;
 	case 2:
@@ -333,7 +338,7 @@ void CGameClearEvent::FussUFO()
 		m_vUFOScale.x += UFO_SCALE_SPEED_X;
 		m_vUFOScale.y -= UFO_SCALE_SPEED_Y;
 		if (m_vUFOScale.y > UFO_SCALE_MIN) return;
-		CSoundManager::PlaySE("FussUFO");
+		CSoundManager::PlaySE("UFOFuss");
 		m_UFOStep++;
 		break;
 	case 3:
@@ -343,7 +348,7 @@ void CGameClearEvent::FussUFO()
 		if (m_vUFOScale.y < UFO_SCALE_MAX_Y) return;
 		m_UFOStep++;
 		m_stAlien.IsDisp = true;
-		CSoundManager::PlaySE("FussUFOLast");
+		CSoundManager::PlaySE("UFOFussLast");
 		NextStep();
 		break;
 	case 4:
@@ -423,7 +428,7 @@ void CGameClearEvent::MoveUFO()
 	if( m_WaitCount <= WAIT_COUNT_MOVE_UFO ) return;
 	if( m_vUFOPosition.y <= UFO_SURFACING_POSITION_Y) { m_vUFOPosition.y += UFO_SURFACING_SPEED; }
 
-	if(m_WaitCount == WAIT_COUNT_MOVE_UFO_MAX) CSoundManager::PlaySE("EscapeUFO");
+	if(m_WaitCount == WAIT_COUNT_MOVE_UFO_MAX) CSoundManager::PlaySE("UFOEscape");
 	if(m_WaitCount <= WAIT_COUNT_MOVE_UFO_MAX ) return;
 	m_vUFOPosition.x -= UFO_MOVE_SPEED_X;
 	m_vUFOPosition.y += UFO_MOVE_SPEED_Y;

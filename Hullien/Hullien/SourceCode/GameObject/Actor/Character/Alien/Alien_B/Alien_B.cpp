@@ -247,10 +247,10 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	// プレイヤーの体力を減らす.
 	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
 	{ 
+		m_Parameter.AttackPower = 5.0f;
 		life -= m_Parameter.AttackPower;
 		isAttack = true;
 	});
-	CSoundManager::NoMultipleSEPlay("PlayerVoiceHit");
 }
 
 // プレイヤーを狙うか判定.

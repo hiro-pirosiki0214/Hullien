@@ -13,6 +13,9 @@
 **/
 class CEventBase
 {
+protected:
+	const int   SKIP_WAIT_COUNT = 100;
+
 public:
 	CEventBase();
 	virtual ~CEventBase();
@@ -31,6 +34,7 @@ public:
 protected:
 	// 目的地へのの移動.
 	bool MoveDestination(D3DXVECTOR3& vMyPosition, const D3DXVECTOR3& vDestination, const float& speed);
+	bool MoveDestination(float& MyPosition, const float& Destination, const float& speed);
 
 	// 次のシーンに進める.
 	virtual void NextStep() = 0;
@@ -38,8 +42,10 @@ protected:
 	virtual void Skip() = 0;
 
 protected:
-	bool	m_IsEventEnd;	// イベントが終了したか.
-	bool	m_IsSkip;		// スキップしたか.
+	bool	m_IsEventEnd;		// イベントが終了したか.
+	bool	m_IsSkip;			// スキップしたか.
+	int		m_SkipWaitCount;	//スキップするまでの時間.
+
 };
 
 #endif	//#ifndef SCENE_EVENT_BASE_H.

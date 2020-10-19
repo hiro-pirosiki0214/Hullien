@@ -40,7 +40,7 @@ void CSpecialAbilityGauge::Update()
 	// SE‚ğ–Â‚ç‚·..
 	if (m_IsOnlyFirst == false)
 	{
-		CSoundManager::NoMultipleSEPlay("SpecialAbilityMaxSE");
+		CSoundManager::NoMultipleSEPlay("SpecialAbilityMax");
 		m_IsOnlyFirst = true;
 	}
 	// Œõ‚ç‚¹‚éˆ—.

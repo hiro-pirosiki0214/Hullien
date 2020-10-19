@@ -103,13 +103,15 @@ void CGameClear::ChangeScene()
 	{
 		if(m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
-		CSoundManager::PlaySE("DeterminationSE");
+		CSoundManager::PlaySE("Determination");
+		CSoundManager::FadeOutBGM("ClearBGM");
 		m_IsChangeScene = true;
 	}
 
 	// フェードイン状態かつフェード中なら処理しない.
-	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
-	if (CFade::GetIsFade() == true) return;
-	CSoundManager::StopBGMThread("ClearBGM");
+	if(CFade::GetFadeState() != CFade::EFadeState::In) return;
+	if(CFade::GetIsFade() == true) return;
+	if(CSoundManager::GetBGMVolume("ClearBGM") > 0.0f) return;
+	while(CSoundManager::StopBGMThread("ClearBGM")== false);
 	m_pSceneManager->NextSceneMove();
 }

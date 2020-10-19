@@ -9,8 +9,10 @@
 //-----------------------------
 // 定数宣言.
 namespace {
-	const float FADE_OUT_VOLUME = 0.0001f;	// フェードで1度に下げるる音量.
-	const float FADE_IN_VOLUME = 0.0004f;	// フェードで1度にあげる音量.
+//	const float FADE_OUT_VOLUME = 0.0001f;	// フェードで1度に下げる音量.
+//	const float FADE_IN_VOLUME = 0.0004f;	// フェードで1度にあげる音量.
+	const float FADE_OUT_VOLUME = 0.001f;	// フェードで1度に下げる音量.
+	const float FADE_IN_VOLUME = 0.004f;	// フェードで1度にあげる音量.
 	const float MAX_PITCH = 5.0f;		// 最大ピッチ(最高5.0f).
 }
 

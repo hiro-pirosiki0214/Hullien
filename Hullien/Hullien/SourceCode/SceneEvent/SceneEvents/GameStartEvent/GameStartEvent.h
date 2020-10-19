@@ -28,15 +28,15 @@ class CGameStartEvent : public CEventBase
 
 	// カメラ関係.
 	const D3DXVECTOR3 CAMERA_INITPOSITION = D3DXVECTOR3(-23.0f, 7.5f, 20.0f);			// カメラ初期位置.
-	const D3DXVECTOR3 CAMERA_POSITION_MOVEUFO = D3DXVECTOR3(-3.5f, 7.0f, -10.5f);			// MoveUFOの時のカメラ位置.
+	const D3DXVECTOR3 CAMERA_POSITION_MOVEUFO = D3DXVECTOR3(-3.5f, 7.0f, -10.5f);		// MoveUFOの時のカメラ位置.
 	const D3DXVECTOR3 CAMERA_POSITION_APP_ALIEN = D3DXVECTOR3(0.0f, 8.5f, 15.0f);		// 宇宙人登場時のカメラ位置.
-	const D3DXVECTOR3 CAMERA_POSITION_CAUGHT_GIRL = D3DXVECTOR3(20.0f, 5.0f, 10.0f);	// 女の子捕獲時のカメラ位置.
+	const D3DXVECTOR3 CAMERA_POSITION_CAUGHT_GIRL = D3DXVECTOR3(20.0f, 8.0f, 10.0f);	// 女の子捕獲時のカメラ位置.
 	const D3DXVECTOR3 CAMERA_POSITION_ORDER_BARRIER = D3DXVECTOR3(6.5f, 8.4f, 10.0f);	// バリア準備時のカメラ位置.
 	const D3DXVECTOR3 CAMERA_POSITION_PLAYER_UP		= D3DXVECTOR3(0.0f, 8.0f, -7.0f);	// プレイヤーのアップ時のカメラ位置.
-	const D3DXVECTOR3 CAMERA_GAMEPOSITION			= D3DXVECTOR3(0.0f, 12.0f, 29.0f);					// 女の子の位置.
+	const D3DXVECTOR3 CAMERA_GAMEPOSITION			= D3DXVECTOR3(0.0f, 12.0f, 29.0f);	// 女の子の位置.
 
 	const float AMPLITUDE_COUNT						= 50.0f;							// カメラの揺れ用カウント.
-	const float CAMERA_CORRECTION_PLAYERPOS_Y		= 6.0f;								// プレイヤーに対するカメラy座標補正値.
+	const float CAMERA_CORRECTION_PLAYERPOS_Y		= 8.0f;							// プレイヤーに対するカメラy座標補正値.
 	const float CAMERA_CORRECTION_UFOPOS_Y			= 7.0f;								// UFOに対するカメラy座標補正値.
 	const float CAMERA_CORRECTION_UFOPOS_Z			= 5.0f;								// UFOに対するカメラz座標補正値.
 	const float CAMERA_CORRECTIONALIENPOS_Y			= 1.0f;								// 宇宙人に対するカメラy座標補正値.
@@ -44,12 +44,12 @@ class CGameStartEvent : public CEventBase
 	const float CAMERASWITCHING_POS_Z				= -40.0f;							// カメラ切り替えz座標,
 	const float CAMERA_ROTAION_MOVING_LIMIT_X = static_cast<float>(D3DXToRadian(-150)); // カメラのx座標回転値の限界.
 	const float CAMERA_ROTAION_DEC_START = static_cast<float>(D3DXToRadian(-100));		// カメラの減速開始値.
-	const float CAMERA_DECELERATION_SPEED			= 0.0005f;							// カメラの減速度.
+	const float CAMERA_DECELERATION_SPEED			= 0.001f;							// カメラの減速度.
 	const float CAMERA_ROTATION_SPEED				= 0.01f;							// カメラの回転速度.
 	const float CAMERA_MOVE_SPEED					= 0.1f;								// カメラ移動速度.
 	const float CAMERA_MOVE_SPEED_Y					= 0.2f;								// カメラ移動速度.
 	const float CAMERA_MOVE_SPEED_Z					= 1.0f;								// カメラ移動速度.
-	const float CAMERA_LENGHT_Z						= 16.0f;							// カメラとプレイヤーの距離z座標.
+	const float CAMERA_LENGHT_Z						= 7.2f;							// カメラとプレイヤーの距離z座標.
 	const float CAMERA_LOOKPOS_Z_PLAYER_UP			= -9.5f;								// プレイヤーアップ時のカメラの注視位置.
 	const float FREQUENCY_LOOKPOS					= 7.0f;								// カメラ注視位置の周波数.
 	const float AMPLITUDE_LOOKPOS_X					= 0.008f;							// カメラ注視位置の振幅.
@@ -95,7 +95,7 @@ class CGameStartEvent : public CEventBase
 	const float ALIEN_RUN_SPEED = 0.5f;												// 宇宙人の移動速度.
 	const float FREQUENCY_ALIEN_UPDOWN = 90.0f;										// 宇宙人の周波数.
 	const float AMPLITUDE_ALIEN_UPDOWN = 0.01f;										// 宇宙人の振幅.
-	const float GET_EXPELLED_SPEED = 1.0f;											// バリアからはじき出される速度.
+	const float GET_EXPELLED_SPEED = 7.0f;											// バリアからはじき出される速度.
 
 private:
 	// イベントの各ステップ.

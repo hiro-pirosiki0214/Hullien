@@ -30,7 +30,7 @@ class CGameClearEvent : public CEventBase
 	const int WAIT_COUNT_MOVE_UFO_MAX			= 350;		// UFO移動時の待機時間.
 
 
-															// カメラ.
+	// カメラ.
 	const D3DXVECTOR3 INIT_CAMERAPOSITION		= D3DXVECTOR3(-27.0f, 7.5f, -65.5f);	// カメラの初期位置.
 	const D3DXVECTOR3 CAMERAPOSITION			= D3DXVECTOR3(-8.0f, 19.0f, -114.5f);	// カメラの位置.
 	const float CORRECTION_PLAYER_LOOKPOS_Y		= 3.0f;									// プレイヤー注視位置y座標補正.
@@ -46,12 +46,12 @@ class CGameClearEvent : public CEventBase
 	const float LOOK_POSITION_Y_FALL_ALIEN		= 9.0f;		// 宇宙人の落下時の注視位置.
 	const float LOOK_SPEED_Y_FALL_ALIEN			= 1.0f;		// 宇宙人の落下時の注視位置移動速度.
 
-															// プレイヤー.
+	// プレイヤー.
 	const float INIT_PLAYERPOSITION_Z			= -30.0f;	//プレイヤーの初期z座標.
-															// 女の子.
+	// 女の子.
 	const float INIT_GIRLPOSITION_Z				= 2.5f;	//女の子の初期z座標.
 
-														// 宇宙人.
+	// 宇宙人.
 	const float INIT_ALIENPOSITION_Y			= 9.0f;	//宇宙人の初期y座標.
 	const float ALIEN_ROTATION_Y				= static_cast<float>(D3DXToRadian(145)); // 宇宙人のy座標回転値.
 	const float ALIEN_FALL_POSITION_Y			= 2.0f;		//宇宙人の落下位置.
@@ -62,7 +62,7 @@ class CGameClearEvent : public CEventBase
 	const float ALIEN_FALL_ROTATION				= static_cast<float>(D3DXToRadian(160));	//宇宙人の落下時の回転値.
 	const float ALIEN_FALL_ROTATION_SPEED		= static_cast<float>(D3DXToRadian(20));		//宇宙人の落下時の回転速度.
 
-																							// UFO.
+	// UFO.
 	const D3DXVECTOR3 INIT_UFOPOSITION			= D3DXVECTOR3(0.0f, 10.0f, -100.0f);	// UFOの初期位置.
 	const int WAITCOUNT_UP_UFO					= 50;									// UFOアップ時の待機時間.
 	const float UFO_SCALE_SPEED_DEFAULT			= 0.1f;		// UFOの拡大速度の標準.
