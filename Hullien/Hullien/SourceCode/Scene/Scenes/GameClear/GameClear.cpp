@@ -7,6 +7,8 @@
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 
+//#define ENDING_STG // ClearŽž‚ÌSTG‚ð“ü‚ê‚é‚©.
+
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
 	, m_pClearWidget		( nullptr )
@@ -41,13 +43,16 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-	//CSoundManager::ThreadPlayBGM("ClearBGM");
+#ifndef ENDING_STG
+	CSoundManager::ThreadPlayBGM("ClearBGM");
 
-	//if (CFade::GetFadeState() == CFade::EFadeState::Out
-	//	&& CFade::GetIsFade() == true) return;
-	//m_pClearWidget->Update();
-	//ChangeScene();
+	if (CFade::GetFadeState() == CFade::EFadeState::Out
+		&& CFade::GetIsFade() == true) return;
+	m_pClearWidget->Update();
+	ChangeScene();
+#else
 	m_pSTGManager->Update();
+#endif	// #ifndef ENDING_STG
 }
 
 //============================.
@@ -55,8 +60,10 @@ void CGameClear::Update()
 //============================.
 void CGameClear::Render()
 {
-	//if (m_pClearWidget == nullptr) return;
-	//m_pClearWidget->Render();
+#ifndef ENDING_STG
+	if (m_pClearWidget == nullptr) return;
+	m_pClearWidget->Render();
+#else
 	//--------------------------------------------.
 	// •`‰æƒpƒX1.
 	//--------------------------------------------.
@@ -90,7 +97,7 @@ void CGameClear::Render()
 
 	CDirectX11::SetBackBuffer();
 	CSceneTexRenderer::Render();
-	
+#endif	// #ifndef ENDING_STG
 }
 
 //============================.
