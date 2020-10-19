@@ -65,8 +65,8 @@ void CMotherShipUFO::Collision( CActor* pActor )
 
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	m_IsReturnAlien = true;
-	if (CSoundManager::GetIsPlaySE("SuckedUFO", 0) == false) {
-		CSoundManager::PlaySE("SuckedUFO");
+	if (CSoundManager::GetIsPlaySE("UFOSucked", 0) == false) {
+		CSoundManager::PlaySE("UFOSucked");
 	}
 	D3DXVECTOR3 pos = pActor->GetPosition();
 	pos.y += m_Param.AddPosYPower;	// À•W‚ğã‚É‚ ‚°‚é.

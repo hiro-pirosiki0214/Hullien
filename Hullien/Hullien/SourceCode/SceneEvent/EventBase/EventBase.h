@@ -34,6 +34,7 @@ public:
 protected:
 	// 目的地へのの移動.
 	bool MoveDestination(D3DXVECTOR3& vMyPosition, const D3DXVECTOR3& vDestination, const float& speed);
+	bool MoveDestination(float& MyPosition, const float& Destination, const float& speed);
 
 	// 次のシーンに進める.
 	virtual void NextStep() = 0;

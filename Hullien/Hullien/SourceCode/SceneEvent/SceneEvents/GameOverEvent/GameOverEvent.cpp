@@ -238,7 +238,7 @@ void CGameOverEvent::SuckedGirl()
 	if( m_stGirl.vPosition.y <= GIRL_SCALEDOWN_STARTPOS ) return;
 	if( m_stGirl.vScale.x > 0.0f)
 	{
-		if(m_stGirl.vScale.x == SCALE_MAX) CSoundManager::PlaySE("SuckedUFO");
+		if(m_stGirl.vScale.x == SCALE_MAX) CSoundManager::PlaySE("UFOSucked");
 		m_stGirl.vScale.x -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.y -= GIRL_SCALEDOWN_SPEED;
 		m_stGirl.vScale.z -= GIRL_SCALEDOWN_SPEED;
@@ -251,7 +251,7 @@ void CGameOverEvent::SuckedGirl()
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	m_stGirl.IsDisp = false;	//女の子を非表示にする.
 	NextStep();
-	CSoundManager::PlaySE("EscapeUFO");
+	CSoundManager::PlaySE("UFOEscape");
 }
 
 // UFOの右移動Part1.
@@ -263,7 +263,7 @@ void CGameOverEvent::MoveRightUFOFirst()
 
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	NextStep();
-	CSoundManager::PlaySE("EscapeUFO");
+	CSoundManager::PlaySE("UFOEscape");
 }
 
 // UFOの左移動.
@@ -274,7 +274,7 @@ void CGameOverEvent::MoveLeftUFO()
 	if (MoveDestination(m_vUFOPosition, DESTINATION_LEFT, UFO_MOVE_SPEED_LEFT) == true) m_WaitCount++;
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	NextStep();
-	CSoundManager::PlaySE("EscapeUFO");
+	CSoundManager::PlaySE("UFOEscape");
 }
 
 // UFOの右移動Part1.
@@ -285,7 +285,7 @@ void CGameOverEvent::MoveRightUFOSecond()
 	if (MoveDestination(m_vUFOPosition, DESTINATION_RUGHTSECOND, UFO_MOVE_SPEED_RUGHTSECOND) == true) m_WaitCount++;
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;
 	NextStep();
-	CSoundManager::PlaySE("PulloutUFO");
+	CSoundManager::PlaySE("UFOPullout");
 }
 
 // UFO奥に移動.

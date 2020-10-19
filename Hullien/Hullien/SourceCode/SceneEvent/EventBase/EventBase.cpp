@@ -34,3 +34,19 @@ bool CEventBase::MoveDestination(D3DXVECTOR3& vMyPosition, const D3DXVECTOR3 & v
 	if (MoveCount >= 1) return false;
 	return true;
 }
+
+bool CEventBase::MoveDestination(float& MyPosition, const float& Destination, const float& speed)
+{
+	// ˆÚ“®‹——£‚ÌZo.
+	float Distance = sqrtf((MyPosition - Destination) * (MyPosition - Destination));
+
+	// ˆÚ“®‰ñ”‚ÌZo.
+	float MoveCount = Distance / speed;
+	if (MoveCount < 1) return true;
+
+	// ˆÚ“®—Ê‚ğÀ•W‚É‘«‚·.
+	MyPosition += Destination - MyPosition / MoveCount;
+
+	if (MoveCount >= 1) return false;
+	return true;
+}
