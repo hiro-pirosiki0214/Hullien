@@ -70,6 +70,6 @@ void CGameClear::ChangeScene()
 	if(CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if(CFade::GetIsFade() == true) return;
 	if(CSoundManager::GetBGMVolume("ClearBGM") > 0.0f) return;
-	while (CSoundManager::StopBGMThread("ClearBGM")== false);
+	while(CSoundManager::StopBGMThread("ClearBGM")== false);
 	m_pSceneManager->NextSceneMove();
 }

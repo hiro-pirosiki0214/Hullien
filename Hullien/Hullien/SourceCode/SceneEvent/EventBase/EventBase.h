@@ -13,6 +13,9 @@
 **/
 class CEventBase
 {
+protected:
+	const int   SKIP_WAIT_COUNT = 100;
+
 public:
 	CEventBase();
 	virtual ~CEventBase();
@@ -38,8 +41,10 @@ protected:
 	virtual void Skip() = 0;
 
 protected:
-	bool	m_IsEventEnd;	// イベントが終了したか.
-	bool	m_IsSkip;		// スキップしたか.
+	bool	m_IsEventEnd;		// イベントが終了したか.
+	bool	m_IsSkip;			// スキップしたか.
+	int		m_SkipWaitCount;	//スキップするまでの時間.
+
 };
 
 #endif	//#ifndef SCENE_EVENT_BASE_H.

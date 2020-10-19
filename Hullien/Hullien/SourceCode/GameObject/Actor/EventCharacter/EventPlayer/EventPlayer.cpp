@@ -110,9 +110,12 @@ bool CEventPlayer::IsSpecialAbility()
 void CEventPlayer::SPController()
 {
 	// Yボタンが押された瞬間じゃなければ終了.
-	if (CXInput::Y_Button() != CXInput::enPRESSED_MOMENT) return;
-	CSoundManager::PlaySE("PlayerVoiceSpecial");
-	m_IsYButtonPressed = true;
+//	if (CXInput::Y_Button() != CXInput::enPRESSED_MOMENT) return;
+	if (CXInput::Y_Button() == CXInput::enPRESSED_MOMENT
+		|| GetAsyncKeyState('Y') & 0x8000) {
+		CSoundManager::PlaySE("PlayerVoiceSpecial");
+		m_IsYButtonPressed = true;
+	}
 }
 
 // ノックバック.

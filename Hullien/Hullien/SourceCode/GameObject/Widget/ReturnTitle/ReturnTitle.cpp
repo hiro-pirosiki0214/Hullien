@@ -55,9 +55,10 @@ void CReturnTitle::Render()
 	m_pSprite->SetAlpha(m_Alpha);
 
 	m_pSprite->SetBlend( true );
+	m_pSprite->SetDeprh( false );
 	m_pSprite->RenderUI();
+	m_pSprite->SetDeprh( true );
 	m_pSprite->SetBlend( false );
-
 }
 
 bool CReturnTitle::SpriteSetting()

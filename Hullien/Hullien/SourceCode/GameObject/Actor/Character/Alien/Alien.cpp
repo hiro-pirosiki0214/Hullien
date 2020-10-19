@@ -173,7 +173,6 @@ void CAlien::WaitMove()
 // ÉXÉ|Å[ÉìíÜ.
 void CAlien::Spawning()
 {
-
 	m_vPosition.y -= 0.1f;
 	if (m_ModelAlpha < MODEL_ALPHA_MAX) {
 		m_vSclae.x += m_Parameter.ModelAlphaAddValue;
@@ -223,10 +222,10 @@ void CAlien::Abduct()
 // ãØÇ›.
 void CAlien::Fright()
 {
-	m_InvincibleCount++;	// ñ≥ìGÉJÉEÉìÉgÇâ¡éZ.
+	m_InvincibleCount++;					// ñ≥ìGÉJÉEÉìÉgÇâ¡éZ.
 	if( IsInvincibleTime( m_Parameter.InvincibleTime ) == false ) return;
-	m_NowState		= EAlienState::Move;	// à⁄ìÆèÛë‘Ç÷ëJà⁄.
-	m_NowMoveState	= EMoveState::Rotation;	// à⁄ìÆÇÃâÒì]èÛë‘Ç÷ëJà⁄.
+	m_NowState			= EAlienState::Move;	// à⁄ìÆèÛë‘Ç÷ëJà⁄.
+	m_NowMoveState		= EMoveState::Rotation;	// à⁄ìÆÇÃâÒì]èÛë‘Ç÷ëJà⁄.
 }
 
 // éÄñS.

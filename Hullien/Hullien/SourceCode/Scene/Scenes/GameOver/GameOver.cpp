@@ -45,14 +45,15 @@ void CGameOver::Update()
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
 	{
 		if(m_IsChangeScene == true) return;
-		CFade::GetInstance()->SetFadeIn();
+		CFade::SetFadeIn();
 		CSoundManager::PlaySE("Determination");
+		CSoundManager::FadeOutBGM("GameOverBGM");
 		m_IsChangeScene = true;
 	}
 
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (CFade::GetIsFade() == true) return;
-	CSoundManager::StopBGMThread("GameOverBGM");
+	while(CSoundManager::StopBGMThread("GameOverBGM") == false);
 	m_pSceneManager->NextSceneMove();
 
 }

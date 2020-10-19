@@ -90,13 +90,6 @@ void CGameClearEvent::Update()
 	CameraUpdate();
 	// シーンの設定.
 	SceneSetting();
-
-	// スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x8000
-		|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
-	{
-		Skip();
-	}
 }
 
 // 描画関数.
@@ -227,6 +220,18 @@ void CGameClearEvent::SceneSetting()
 		break;
 	}
 
+	// スキップ.
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
+		m_SkipWaitCount++;
+
+	}
+	else {
+		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
+	}
+
+	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
+	Skip();
 }
 
 // 次のシーンに進める.

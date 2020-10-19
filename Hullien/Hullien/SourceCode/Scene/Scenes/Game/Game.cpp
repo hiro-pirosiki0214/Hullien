@@ -27,7 +27,6 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_ContinueWidget	( nullptr )
 	, m_NowEventScene	( EEventSceneState::GameStart )
 	, m_NextSceneState	( ENextSceneState::None )
-	, m_IsChangeScene	( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
@@ -57,7 +56,6 @@ bool CGame::Load()
 		m_NowEventScene = EEventSceneState::Game;
 		CFade::SetFadeOut();
 	}
-
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
 	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
@@ -82,7 +80,6 @@ void CGame::Update()
 		break;
 	case EEventSceneState::GameStart:
 	case EEventSceneState::GameOver_Girl:
-	case EEventSceneState::GameOver_Player:
 	case EEventSceneState::Clear:
 		m_pEventManager->Update();
 		break;
@@ -227,7 +224,7 @@ void CGame::ContinueUpdate()
 		if (GetAsyncKeyState(VK_RETURN) & 0x8000
 			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
-			CSoundManager::PlaySE("End");
+			CSoundManager::PlaySE("CancelDetermination");
 			m_NextSceneState = ENextSceneState::GameOver;
 		}
 		break;
@@ -283,35 +280,19 @@ void CGame::NextSceneMove()
 	switch (m_NextSceneState)
 	{
 	case ENextSceneState::Game:
-		if (m_IsChangeScene == false)
-		{
-			CFade::SetFadeIn();
-			m_IsChangeScene = true;
-		}
-		CSoundManager::FadeOutBGM("GameOverEvent");
-		if(CSoundManager::GetIsPlayBGM("GameBGM") == true) CSoundManager::StopBGMThread("GameBGM");
-		if(CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
+		CFade::SetFadeIn();
+		StopAllBGM();	// BGMの停止.
 		if(CFade::GetIsFade() == true) return;
-		CSoundManager::StopBGMThread("GameOverEvent");
-		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->RetryGame();
 		break;
 	case ENextSceneState::Clear:
-		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
 		break;
 	case ENextSceneState::GameOver:
-		if (m_IsChangeScene == false)
-		{
-			CFade::SetFadeIn();
-			m_IsChangeScene = true;
-		}
-		CSoundManager::FadeOutBGM("GameOverEvent");
+		CFade::SetFadeIn();
+		StopAllBGM();	// BGMの停止.
 		if (CFade::GetIsFade() == true) return;
-		if (CSoundManager::GetIsPlayBGM("GameBGM") == true) CSoundManager::StopBGMThread("GameBGM");
-		if (CSoundManager::GetIsPlayBGM("DangerBGM") == true) CSoundManager::StopBGMThread("DangerBGM");
-		CSoundManager::StopBGMThread("GameOverEvent");
 		m_pSceneManager->OnGameOver();
 		m_pEventManager->NextEventMove();
 		m_pSceneManager->NextSceneMove();
@@ -324,16 +305,11 @@ void CGame::NextSceneMove()
 // 次のシーンを設定.
 void CGame::SetNextScene(EEventSceneState state, bool GameOver)
 {
-	if (m_IsChangeScene == false)
-	{
-		CFade::SetFadeIn();
-		m_IsChangeScene = true;
-	}
+	CFade::SetFadeIn();
+	StopAllBGM();	// BGMの停止.
+
 	if (CFade::GetIsFade() == true) return;
 	m_NowEventScene = state;
-	CSoundManager::StopBGMThread("GameBGM");
-	CSoundManager::StopBGMThread("DangerBGM");
-	CSoundManager::StopBGMThread("StartEventBGM");
 	if (GameOver == true)
 	{
 		m_pEventManager->OnGameOver();
@@ -341,3 +317,25 @@ void CGame::SetNextScene(EEventSceneState state, bool GameOver)
 	m_pEventManager->NextEventMove();
 }
 
+// BGMの停止.
+void CGame::StopBGM(const char* name)
+{
+	// BGMがなっていなければ終了.
+	if (CSoundManager::GetIsPlayBGM(name) == false) return;
+	// BGMフェードアウト.
+	CSoundManager::FadeOutBGM(name);
+
+	// スプライトフェードが終了していなければ処理しない.
+	if (CFade::GetIsFade() == true) return;
+	// BGMを止める.
+	CSoundManager::StopBGMThread(name);
+}
+
+// 全てのBGM停止.
+void CGame::StopAllBGM()
+{
+	StopBGM("StartEventBGM");
+	StopBGM("GameBGM");
+	StopBGM("DangerBGM");
+	StopBGM("GameOverEvent");
+}

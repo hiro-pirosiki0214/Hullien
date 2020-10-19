@@ -77,6 +77,8 @@ void CFade::Render()
 // フェードイン設定関数.
 void CFade::SetFadeIn()
 {
+	if(GetInstance()->m_FadeState == EFadeState::In) return;
+
 	GetInstance()->m_Alpha = 0.0f;
 	GetInstance()->m_IsFade = true;
 	GetInstance()->m_FadeState = EFadeState::In;
@@ -85,6 +87,8 @@ void CFade::SetFadeIn()
 // フェードアウト設定関数.
 void CFade::SetFadeOut()
 {
+	if (GetInstance()->m_FadeState == EFadeState::Out) return;
+
 	GetInstance()->m_Alpha = GetInstance()->ALPHA_MAX;
 	GetInstance()->m_IsFade = true;
 	GetInstance()->m_FadeState = EFadeState::Out;

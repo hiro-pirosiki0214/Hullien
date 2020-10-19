@@ -98,13 +98,6 @@ void CGameStartEvent::Update()
 	CameraUpdate();
 	// UIの更新.
 	m_pWidget->Update();
-
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
-	{
-		// 長押しされたら遷移するようにしたい.
-		Skip();
-	}
 }
 
 // 描画関数.
@@ -254,6 +247,18 @@ void CGameStartEvent::SceneSetting()
 		break;
 	}
 
+	// スキップ.
+	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
+		m_SkipWaitCount++;
+
+	}
+	else {
+		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
+	}
+
+	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
+	Skip();
 }
 
 // 次のシーンに進める.
@@ -269,6 +274,9 @@ void CGameStartEvent::Skip()
 	if (m_EventStep == EEventStep::Disp_Preserve_Girl) return;
 	if (m_EventStep == EEventStep::GameStart) return;
 	if (m_IsSkip == true) return;
+
+	CFade::SetFadeIn();
+	if (CFade::GetIsFade() == true) return;
 
 	// プレイヤー.
 	m_stPlayer.vPosition.z = 0.0f;
@@ -287,8 +295,11 @@ void CGameStartEvent::Skip()
 	m_pSpawnUFO->SetDisp( false );
 	CSoundManager::StopAllSE("UFOMove");
 
+	// スキップ後のシーンに遷移.
 	m_NowStep = static_cast<int>(EEventStep::Skip);
 	NextStep();
+	// フェードアウト.
+	CFade::SetFadeOut();
 
 	m_IsSkip = true;
 	// UI.
@@ -449,6 +460,7 @@ void CGameStartEvent::GetCaughtGirl()
 // バリア発動準備.
 void CGameStartEvent::InvocatingOrderBarrier()
 {
+	// 当たり判定.
 	m_pGirl->Collision(m_pAlienA.get());
 	m_pAlienA->Collision(m_pGirl.get());
 
@@ -460,6 +472,7 @@ void CGameStartEvent::InvocatingOrderBarrier()
 	// UIの設定.
 	m_pWidget->SetWidgetState(CGameStartEventWidget::EWidgetState::Push_YButton);
 	
+	if (CFade::GetIsFade() == true) return;	//フェード中なら終了.
 	if (m_pWidget->IsDispEnd() == false) return;
 	// プレイヤーの更新.
 	m_pPlayer->Update();

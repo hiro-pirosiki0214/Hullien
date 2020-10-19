@@ -70,7 +70,12 @@ void CTitle::ChangeScene()
 	{
 		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
-		CSoundManager::PlaySE("Determination");
+		if(m_pWidget->GetSelectState() == CTitleWidget::ESelectState::Start) {
+			CSoundManager::PlaySE("Determination");
+		}
+		else {
+			CSoundManager::PlaySE("CancelDetermination");
+		}
 		CSoundManager::FadeOutBGM("TestBGM");
 		m_IsChangeScene = true;
 	}

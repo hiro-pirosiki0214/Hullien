@@ -4,8 +4,9 @@
 *	イベントシーン元クラス.
 **/
 CEventBase::CEventBase()
-	: m_IsEventEnd	( false )
-	, m_IsSkip		( false )
+	: m_IsEventEnd		( false )
+	, m_IsSkip			( false )
+	, m_SkipWaitCount	(0)
 {
 }
 

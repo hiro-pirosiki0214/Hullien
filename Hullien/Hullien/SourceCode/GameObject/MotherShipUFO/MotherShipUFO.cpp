@@ -4,6 +4,7 @@
 #include "..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\Actor\Actor.h"
 #include "..\..\Utility\FileManager\FileManager.h"
+#include "..\..\XAudio2\SoundManager.h"
 
 CMotherShipUFO::CMotherShipUFO()
 	: m_pStaticMesh		( nullptr )
@@ -64,6 +65,9 @@ void CMotherShipUFO::Collision( CActor* pActor )
 
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	m_IsReturnAlien = true;
+	if (CSoundManager::GetIsPlaySE("SuckedUFO", 0) == false) {
+		CSoundManager::PlaySE("SuckedUFO");
+	}
 	D3DXVECTOR3 pos = pActor->GetPosition();
 	pos.y += m_Param.AddPosYPower;	// À•W‚ðã‚É‚ ‚°‚é.
 	pActor->SetPosition( pos );
