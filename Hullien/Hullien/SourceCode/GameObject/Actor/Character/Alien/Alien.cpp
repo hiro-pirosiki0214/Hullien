@@ -233,7 +233,7 @@ void CAlien::Death()
 {
 	m_ModelAlpha -= m_Parameter.ModelAlphaSubValue;
 	if( m_ModelAlpha > 0.0f ) return;
-	CSoundManager::PlaySE("AlienHit");
+	CSoundManager::PlaySE("AlienDead");
 	m_IsDelete = true;	// 死亡フラグを立てる.
 }
 
@@ -332,7 +332,7 @@ void CAlien::BarrierCollision( CActor* pActor )
 	if( pActor->GetObjectTag() != EObjectTag::Bariier ) return;
 	// 球体の当たり判定.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == true ){
-		CSoundManager::PlaySE("BarrierHitSE");
+		CSoundManager::PlaySE("BarrierHit");
 		m_MoveSpeed		= BARRIER_HIT_MOVE_SPEED;	// バリア衝突時の移動速度に変更する.
 		m_IsBarrierHit	= true;						// バリア衝突フラグを立てる.
 		m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
