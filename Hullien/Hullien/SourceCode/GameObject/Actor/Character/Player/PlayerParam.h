@@ -88,13 +88,13 @@ enum enEffectTimerNo
 // 使用エフェクト番号.
 enum enEffectNo
 {
-	enEffectNo_AttackOne,		// 攻撃1.
-	enEffectNo_AttackTwo,		// 攻撃2.
-	enEffectNo_AttackThree,		// 攻撃3.
-	enEffectNo_SP,				// 特殊能力.
-	enEffectNo_Avoidance,		// 回避.
-
-	enEffectNo_Max,
+	EEffectNo_AttackOne,		// 攻撃1.
+	EEffectNo_AttackTwo,		// 攻撃2.
+	EEffectNo_AttackThree,		// 攻撃3.
+	EEffectNo_SP,				// 特殊能力.
+	EEffectNo_Avoidance,		// 回避.
+	
+	EEffectNo_Max,
 } typedef EEffectNo;
 
 // 特殊能力のカメラ状態.
@@ -113,6 +113,22 @@ enum enSPCameraState
 	ESPCameraState_End		= ESPCameraState_CameraReturn,		// 終了.
 
 } typedef ESPCameraState;
+
+// 現在の状態のフラグ(ビットフラグ用).
+enum enStatusFlag : unsigned char
+{
+	EStatusFlag_None,
+
+	EStatusFlag_DuringAvoid		= 1 << 0,	// 回避中か.
+	EStatusFlag_EndSPCameraMove	= 1 << 1,	// 特殊能力のカメラの移動が終了したか.
+	EStatusFlag_UsableSP		= 1 << 2,	// 特殊能力が使えるか.
+	EStatusFlag_KnockBack		= 1 << 3,	// ノックバック中か.
+	EStatusFlag_Dead			= 1 << 4,	// 死亡中か.
+	EStatusFlag_AttackSE		= 1 << 5,	// 攻撃SEを鳴らすか.
+
+	EStatusFlag_Max,
+
+} typedef EStatusFlag;
 
 // 攻撃用データ.
 struct stAttackData

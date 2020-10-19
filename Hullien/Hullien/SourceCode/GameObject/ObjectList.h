@@ -22,6 +22,12 @@ enum class enObjectTagList
 	Explosion,			// 爆発.
 	Bariier,			// バリア.
 
+	//-------------------------------------.
+	// ↓STG用↓.
+	STG_Player,		// プレイヤー.
+	STG_Enemy,		// 敵.
+	STG_Bullet,		// 弾.
+
 	Max,
 
 } typedef EObjectTag;

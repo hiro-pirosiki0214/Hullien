@@ -65,6 +65,26 @@ class CPlayer : public CCharacter
 	const double ATTACK2_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃2の調整用有効フレーム.
 	const double ATTACK3_ADJ_ENABLED_END_FRAME	= 0.0;	// 攻撃3の調整用有効フレーム.
 
+	const double ATTACK1_ADJ_DRAGING_FRAME_START = 0.12;
+	const double ATTACK1_ADJ_DRAGING_FRAME_END = 0.24;
+	const float ATTACK1_ADJ_DRAGING_SPEED = 0.35f;
+
+	const double ATTACK2_ADJ_DRAGING_FRAME_START = 0.01;
+	const double ATTACK2_ADJ_DRAGING_FRAME_END = 0.2;
+	const float ATTACK2_ADJ_DRAGING_SPEED = 0.3f;
+
+	const double ATTACK3_ADJ_DRAGING_FRAME_START = 0.01;
+	const double ATTACK3_ADJ_DRAGING_FRAME_END = 0.2;
+	const float ATTACK3_ADJ_DRAGING_SPEED = 0.3f;
+
+	const D3DXVECTOR3 ATTACK_COLLISION_INVALID_POS = { 0.0f, -10.0f, 0.0f };
+	const float ATTACK1_COLLISION_RADIUS	= 6.0f;
+	const float ATTACK2_COLLISION_RADIUS	= 7.0f;
+	const float ATTACK3_COLLISION_RADIUS	= 8.0f;
+	const float ATTACK_COLLISION_DISTANCE	= 4.0f;
+	const float ATTACK_COLLISION_HEIGHT		= 4.0f;
+
+
 	const double DEAD_CERTAIN_RANGE_ANIM_FRAME_MIN	= 0.18;		// 死亡アニメーションの一定範囲値の最小.
 	const double DEAD_CERTAIN_RANGE_ANIM_FRAME_MAX	= 0.5;		// 死亡アニメーションの一定範囲値の最大.
 	const float	DEAD_ANIM_DRAGING_ADJ_SPEED			= 0.05f;	// 死亡アニメーションの引きずりの調整速度.
@@ -111,8 +131,10 @@ private:
 	// 回避操作関数.
 	void AvoidController();
 
-	// 移動関数.
+	// 移動関数(アニメーションとのずれの調整).
 	virtual void Move() override;
+	// 攻撃時の移動.
+	void AttackMove();
 	// 回避動作関数.
 	void AvoidMove();
 	// ノックバック動作関数.
@@ -124,8 +146,6 @@ private:
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
-	// 攻撃ヒット時のカメラ動作.
-	void AttackHitCameraUpdate();
 	// 特殊能力時のカメラ動作.
 	void SPCameraUpdate();
 
@@ -174,15 +194,16 @@ private:
 private:
 	std::shared_ptr<CRotLookAtCenter>				m_pCamera;				// カメラクラス.
 	std::shared_ptr<CCamera>						m_pSPCamera;			// 特殊能力カメラクラス.
-	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;				// Widgetクラス.
 	std::shared_ptr<CCollisionManager>				m_pAttackCollManager;	// 攻撃用の当たり判定.
-	D3DXVECTOR3		m_GirlPosition;	// 女の子の座標.
+	std::vector<std::shared_ptr<CEffectManager>>	m_pEffects;				// エフェクト.
+	std::vector<std::shared_ptr<CEffectTimer>>		m_pEffectTimers;		// 効果時間計測クラス.
+	std::vector<std::shared_ptr<CCharacterWidget>>	m_pWidget;				// Widgetクラス.
 
 	int								m_AttackComboCount;			// 攻撃コンボカウント.
 	std::queue<player::SAttackData>	m_AttackDataQueue;			// 攻撃データのキュー.
 	D3DXVECTOR3						m_AttackPosition;			// 攻撃用当たり判定座標.
 
-	std::vector<std::shared_ptr<CEffectManager>> m_pEffects;	// エフェクト.
+	D3DXVECTOR3		m_GirlPosition;		// 女の子の座標.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 	D3DXVECTOR3		m_HitVector;		// 衝突時のベクトル.
 	D3DXVECTOR3		m_TargetVector;		// 目的のベクトル.
@@ -190,23 +211,13 @@ private:
 	SPlayerParam	m_Parameter;			// パラメーター.
 	float			m_LifePoint;			// 体力.
 	float			m_SpecialAbility;		// 特殊能力.
-	bool			m_IsDuringAvoid;		// 回避中かどうか.
-	bool			m_IsYButtonPressed;		// Yボタンが押されたか.
-	bool			m_IsUsableSP;			// 特殊能力を使ったか.
-	bool			m_IsDead;				// 死亡フラグ.
-	bool			m_IsKnockBack;			// ノックバックするか.
+	unsigned char	m_StatusFlag;			// 現在の状態のフラグ.
 
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
 	float			m_AttackPower;				// 攻撃力.
 	float			m_MoveSpeed;				// 移動速度.
 	float			m_MoveSpeedMulValue;		// 移動速度に掛け合わせる値.
-
-
-	anim::AAnimFrameList	m_AnimFrameList;	// アニメーションフレームのリスト.
-
-	float			m_CameraDefaultHeight;		// カメラのデフォルト高さ.
-	float			m_CameraHeight;				// カメラの高さ.
 
 	D3DXVECTOR3		m_CameraNextPosition;		// カメラの座標.
 	D3DXVECTOR3		m_CameraPosition;			// カメラの座標.
@@ -215,15 +226,8 @@ private:
 	float			m_CameraReturnCount;		// カメラの戻るカウント.
 	float			m_CameraLerp;				// カメラ移動の補間値.
 	int				m_NowSPCameraStete;			// 特殊能力のカメラ状態.
-
-	bool			m_IsAttackHitCamera;		// 攻撃ヒット時のカメラが有効か.
-	float			m_CameraShakeCount;			// カメラの揺れカウント.
-	float			m_CameraShakeTime;			// カメラの揺れ時間.
-	float			m_CameraShakeCountAdd;		// カメラの揺れカウント加算値.
-	std::vector<std::shared_ptr<CEffectTimer>>	m_pEffectTimers;	// 効果時間計測クラス.
 	
 	bool			m_IsAttackSE;				//攻撃SEを鳴らすか.
-
 };
 
 #endif	// #ifndef PLAYER_H.

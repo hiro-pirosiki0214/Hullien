@@ -13,7 +13,14 @@ class CAlien : public CCharacter
 	const float ROTATIONAL_SPEED = 0.05f;	// 回転速度.
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 	const float BARRIER_HIT_MOVE_SPEED = -5.0f;	// バリアと衝突時の移動速度.
-
+	const float ADD_SCALE_VALUE = 0.03f;
+	const float SCALE_MAX = 1.0f;
+	const float DOWN_SPEED = 0.02f;
+	const int KNOCK_BACK_TIME = 5;
+	const float DEATH_COUNT_ADD_VALUE = 0.005f;
+	const float DEATH_SCALE_SUB_VALUE = 0.005f;
+	const float DEATH_SCALE_PI = 6.0f*static_cast<float>(D3DX_PI);
+	const float RISING_MOTHER_SHIP_SCALE_SUB_VALUE = 0.01f;
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
 	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;
@@ -97,12 +104,14 @@ protected:
 	{
 		None,
 
-		Spawn,	// スポーン.
-		Move,	// 移動.
-		Abduct,	// 拐う.
-		Fright,	// 怯み.
-		Death,	// 死亡.
-		Escape,	// 逃げる.
+		Spawn,				// スポーン.
+		Move,				// 移動.
+		Abduct,				// 拐う.
+		KnockBack,			// ノックバック.
+		Fright,				// 怯み.
+		Death,				// 死亡.
+		Escape,				// 逃げる.
+		RisingMotherShip,	// 上に上がる(マザーシップに).
 
 		Max,
 
@@ -127,13 +136,13 @@ public:
 
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
+	// ベクトルの取得.
+	virtual void SetVector( const D3DXVECTOR3& vec ) override;
 	// スポーン.
 	virtual bool Spawn( const SAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
 
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
-	// モデルのアルファ値の取得.
-	float GetModelAplha() const { return m_ModelAlpha; }
 	// 連れ去っているかどうか.
 	bool IsAbduct() const { return m_NowState == EAlienState::Abduct; }
 	// どのアイテムを持っているか取得.
@@ -149,7 +158,7 @@ public:
 	// 消去するかどうか.
 	bool IsDelete() const { return m_IsDelete; }
 	// マザーシップに昇っているか.
-	bool IsRisingMotherShip() const { return m_IsRisingMotherShip; }
+	bool IsRisingMotherShip() const { return m_NowState == EAlienState::RisingMotherShip; }
 
 protected:
 	// 現在の状態の更新関数.
@@ -174,15 +183,16 @@ protected:
 	virtual void Move() override;
 	// 拐う.
 	virtual void Abduct();
+	// ノックバック.
+	virtual void KnockBack();
 	// 怯み.
 	virtual void Fright();
 	// 死亡.
 	virtual void Death();
 	// 逃げる.
 	virtual void Escape();
-
-	// アルファブレンドの設定.
-	void AlphaBlendSetting();
+	// マザーシップに昇っている.
+	virtual void RisingMotherShip();
 
 	// 女の子との当たり判定.
 	void GirlCollision( CActor* pActor );
@@ -193,6 +203,7 @@ protected:
 	std::unique_ptr<CArm>	m_pArm;				// アームクラス.
 	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
 	D3DXVECTOR3		m_TargetRotation;			// 目標の回転情報.
+	D3DXVECTOR3		m_KnockBackVector;
 	D3DXVECTOR3		m_BeforeMoveingPosition;	// 移動前の座標.
 	D3DXVECTOR3*	m_pAbductUFOPosition;		// UFOの座標.
 	SAlienParam		m_Parameter;				// パラメータ.
@@ -201,13 +212,14 @@ protected:
 	EItemList		m_HasAnyItem;				// どのアイテムを持っているか.
 	float			m_LifePoint;				// 体力.
 	float			m_MoveSpeed;				// 移動速度.
-	float			m_ModelAlpha;				// モデルのアルファ値.
+	float			m_DeathScale;				// 死亡時の大きさ.
+	float			m_DeathCount;				// 死亡カウント.
+	int				m_KnockBackCount;			// ノックバックカウント.
 	int				m_WaitCount;				// 待機カウント.
 	bool*			m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.
 	bool			m_IsBarrierHit;				// バリアに当たっているか.
 	bool			m_IsExplosion;				// 爆発するか.
 	bool			m_IsDelete;					// 消去するかどうか.
-	bool			m_IsRisingMotherShip;		// マザーシップに昇っているか.
 
 	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;
 };

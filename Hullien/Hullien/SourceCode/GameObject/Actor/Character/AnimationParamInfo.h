@@ -19,6 +19,8 @@ struct stAnimFrame
 		, EndFrame	( endFrame )
 	{}
 
+	// フレームの更新.
+	void UpdateFrame( const double& animSpeed ){ NowFrame += animSpeed; }
 	// 経過フレームが終了フレームを超えているか.
 	bool IsNowFrameOver() const { return NowFrame >= EndFrame; }
 

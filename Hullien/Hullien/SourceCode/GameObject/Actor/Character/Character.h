@@ -6,6 +6,9 @@
 
 class CCharacter : public CActor
 {
+protected:
+	const double DEFAULT_ANIM_SPEED = 0.01;	// デフォルトアニメーション速度.
+
 public:
 	// キャラクターパラメータ.
 	struct stParameter
@@ -66,6 +69,7 @@ protected:
 
 protected:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// スキンメッシュ.
+	anim::AAnimFrameList			m_AnimFrameList;	// アニメーションフレームのリスト.
 	int		m_NowAnimNo;	// 現在のアニメーション番号.
 	int		m_OldAnimNo;	// 過去のアニメーション番号.
 	double	m_AnimSpeed;	// アニメーション速度.

@@ -4,6 +4,7 @@
 #include "..\..\SceneBase\SceneBase.h"
 
 class CClearWidget;	// クリアUIクラス.
+class CSTGManager;	// シューティング管理クラス.
 
 /**********************************
 *	ゲームクリアクラス.
@@ -26,7 +27,8 @@ private:
 	void ChangeScene();
 
 private:
-	std::unique_ptr<CClearWidget> m_pClearWidget;	// クリアUIクラス.
+	std::unique_ptr<CClearWidget>	m_pClearWidget;	// クリアUIクラス.
+	std::unique_ptr<CSTGManager>	m_pSTGManager;	// シューティング管理クラス.
 	bool m_IsChangeScene;							//シーン切り替え可能か.
 };
 

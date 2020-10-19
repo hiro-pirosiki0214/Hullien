@@ -27,7 +27,7 @@ CFontCreate::~CFontCreate()
 //-----------------------------------.
 // フォント画像の作成.
 //-----------------------------------.
-HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11Texture2D** textur2D )
+HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11ShaderResourceView** resource )
 {
 	if( m_pDevice11 == nullptr ) return E_FAIL;
 	if( m_pContext11 == nullptr ) return E_FAIL;
@@ -98,12 +98,13 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11Texture2D** textu
 	// CPUで書き込みができるテクスチャを作成
 	// テクスチャ作成
 	D3D11_TEXTURE2D_DESC desc = CreateDesc( GM.gmCellIncX, TM.tmHeight );
+	ID3D11Texture2D* texture2D = nullptr;
 
-	hr = m_pDevice11->CreateTexture2D( &desc, 0, textur2D );
+	hr = m_pDevice11->CreateTexture2D( &desc, 0, &texture2D );
 
 	D3D11_MAPPED_SUBRESOURCE hMappedResource;
 	hr = m_pContext11->Map( 
-		*textur2D,
+		texture2D,
 		0,
 		D3D11_MAP_WRITE_DISCARD,
 		0,
@@ -132,9 +133,23 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11Texture2D** textu
 			memcpy( (BYTE*)pBits + hMappedResource.RowPitch * y + 4 * x, &Color, sizeof(DWORD) );
 		}
 	}
-	m_pContext11->Unmap( *textur2D, 0 );
+	m_pContext11->Unmap( texture2D, 0 );
 
 	delete[] ptr;
+
+	// テクスチャ情報を取得する.
+	D3D11_TEXTURE2D_DESC texDesc;
+	texture2D->GetDesc( &texDesc );
+
+	// ShaderResourceViewの情報を作成する.
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	ZeroMemory( &srvDesc, sizeof(srvDesc) );
+	srvDesc.Format = texDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
+
+	m_pDevice11->CreateShaderResourceView( texture2D, &srvDesc, resource );
 
 	return S_OK;
 

@@ -150,6 +150,13 @@
     <ClCompile Include="SourceCode\GameObject\Arm\Arm.cpp" />
     <ClCompile Include="SourceCode\GameObject\InvisibleWall\InvisibleWall.cpp" />
     <ClCompile Include="SourceCode\Editor\InvisibleWallEdit\InvisibleWallEdit.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\STGManager\STGManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\STGActor.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\STGCharacter.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Player\STGPlayer.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Bullet\STGBullet.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -306,5 +313,13 @@
     <ClInclude Include="SourceCode\GameObject\InvisibleWall\BoxStruct.h" />
     <ClInclude Include="SourceCode\Editor\InvisibleWallEdit\InvisibleWallEdit.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\AnimationParamInfo.h" />
+    <ClInclude Include="SourceCode\Utility\BitFlagManager\BitFlagManager.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\STGManager\STGManager.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\STGActor.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\STGCharacter.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Player\STGPlayer.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Bullet\STGBullet.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.h" />
   </ItemGroup>
 </Project>

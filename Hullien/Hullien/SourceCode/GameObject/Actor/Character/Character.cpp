@@ -6,13 +6,9 @@
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
-namespace
-{
-	const double DEFAULT_ANIM_SPEED = 0.01;	// デフォルトアニメーション速度.
-}
-
 CCharacter::CCharacter()
 	: m_pSkinMesh				( nullptr )
+	, m_AnimFrameList			()
 	, m_NowAnimNo				( 0 )
 	, m_OldAnimNo				( 0 )
 	, m_AnimSpeed				( DEFAULT_ANIM_SPEED )
@@ -96,6 +92,7 @@ void CCharacter::SetAnimation( const int& animNo )
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo );
+	m_AnimFrameList.at(animNo).NowFrame = 0.0;
 }
 
 // アニメーションをブレンドして設定.
@@ -106,6 +103,7 @@ void CCharacter::SetAnimationBlend( const int& animNo )
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
 	m_pSkinMesh->ChangeAnimBlend( m_NowAnimNo, m_OldAnimNo );
+	m_AnimFrameList.at(animNo).NowFrame = 0.0;
 }
 
 // 足音.

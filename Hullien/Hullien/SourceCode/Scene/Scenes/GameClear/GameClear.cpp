@@ -1,15 +1,21 @@
 #include "..\SceneList.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h"
+#include "..\..\..\GameObject\STG\STGManager\STGManager.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\XAudio2\SoundManager.h"
+#include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
+#include "..\..\..\Common\D3DX\D3DX11.h"
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
 	, m_pClearWidget		( nullptr )
+	, m_pSTGManager			( nullptr )
 	, m_IsChangeScene		( false )
 {
-	m_pClearWidget = std::make_unique<CClearWidget>();
+	m_pClearWidget	= std::make_unique<CClearWidget>();
+	m_pSTGManager	= std::make_unique<CSTGManager>();
+
 	CFade::SetFadeOut();
 }
 
@@ -23,6 +29,7 @@ CGameClear::~CGameClear()
 bool CGameClear::Load()
 {
 	if ( m_pClearWidget->Init() == false ) return false;
+	if( m_pSTGManager->Init() == false ) return false;
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
 	CSoundManager::SetBGMVolume("ClearBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
@@ -34,12 +41,13 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-	CSoundManager::ThreadPlayBGM("ClearBGM");
+	//CSoundManager::ThreadPlayBGM("ClearBGM");
 
-	if (CFade::GetFadeState() == CFade::EFadeState::Out
-		&& CFade::GetIsFade() == true) return;
-	m_pClearWidget->Update();
-	ChangeScene();
+	//if (CFade::GetFadeState() == CFade::EFadeState::Out
+	//	&& CFade::GetIsFade() == true) return;
+	//m_pClearWidget->Update();
+	//ChangeScene();
+	m_pSTGManager->Update();
 }
 
 //============================.
@@ -47,8 +55,42 @@ void CGameClear::Update()
 //============================.
 void CGameClear::Render()
 {
-	if (m_pClearWidget == nullptr) return;
-	m_pClearWidget->Render();
+	//if (m_pClearWidget == nullptr) return;
+	//m_pClearWidget->Render();
+	//--------------------------------------------.
+	// 描画パス1.
+	//--------------------------------------------.
+	// 深度テクスチャに影用の深度を書き込む.
+
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Shadow );
+	m_pSTGManager->Render();
+
+	//--------------------------------------------.
+	// 描画パス2.
+	//--------------------------------------------.
+	// エフェクトなどの描画.
+
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Trans );
+	CSceneTexRenderer::SetTransBuffer();
+	m_pSTGManager->Render();
+
+	//--------------------------------------------.
+	// 描画パス3.
+	//--------------------------------------------.
+	// G-Bufferにcolor, normal, depthを書き込む.
+
+	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::GBuffer );
+	CSceneTexRenderer::SetGBuffer();
+	m_pSTGManager->Render();
+
+	//--------------------------------------------.
+	// 最終描画.
+	//--------------------------------------------.
+	// G-Bufferを使用して、画面に描画する.
+
+	CDirectX11::SetBackBuffer();
+	CSceneTexRenderer::Render();
+	
 }
 
 //============================.

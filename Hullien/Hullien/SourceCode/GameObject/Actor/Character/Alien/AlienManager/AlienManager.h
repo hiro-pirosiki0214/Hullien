@@ -53,9 +53,6 @@ private:
 	// 爆発パラメータの読み込み.
 	bool ReadExplosionParam();
 
-	// 宇宙人のモデルの値でのソート関数.
-	void ModelAlphaSort();
-
 private:
 	std::vector<std::shared_ptr<CAlien>>	m_AilenList;		// 宇宙人リスト.
 	std::vector<CSpawnUFO>					m_SpawnUFOList;		// スポーンUFOリスト.

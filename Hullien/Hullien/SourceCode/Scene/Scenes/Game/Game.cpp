@@ -102,6 +102,11 @@ void CGame::Update()
 	// ŽŸ‚ÌƒV[ƒ“‚ÖˆÚ“®.
 	NextSceneMove();
 #endif	// #if 0.
+#ifdef _DEBUG
+	if( GetAsyncKeyState(VK_F4) & 0x0001 ){
+		m_pSceneManager->NextSceneMove();
+	}
+#endif	// #ifdef _DEBUG.
 }
 
 //============================.

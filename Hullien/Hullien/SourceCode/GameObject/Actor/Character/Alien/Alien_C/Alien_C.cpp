@@ -47,7 +47,8 @@ void CAlienC::Update()
 	m_pArm->Update();						// 更新.
 
 	// アルファ値が0より多ければ終了.
-	if( m_ModelAlpha > 0.0f ) return;
+	if( m_IsDelete == false ) return;
+	if( m_NowState == EAlienState::RisingMotherShip ) return;	// マザーシップに昇っている状態なら終了.
 	m_IsExplosion = true;	// 爆発させる.
 	CSoundManager::PlaySE("Bomb");
 }
@@ -63,8 +64,7 @@ void CAlienC::Render()
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, m_ModelAlpha } );
-	AlphaBlendSetting();
+	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
@@ -76,8 +76,7 @@ void CAlienC::Render()
 	m_pTempStaticMesh->SetPosition( m_vPosition );
 	m_pTempStaticMesh->SetRotation( m_vRotation );
 	m_pTempStaticMesh->SetScale( m_vSclae );
-	m_pTempStaticMesh->SetColor( { 0.0f, 0.0f, 0.8f, m_ModelAlpha } );
-	AlphaBlendSetting();
+	m_pTempStaticMesh->SetColor( { 0.0f, 0.0f, 0.8f, 1.0f } );
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pTempStaticMesh->Render();
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
@@ -111,7 +110,6 @@ bool CAlienC::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	if( Init() == false ) return false;
 	m_vPosition = spawnPos;	// スポーン座標の設定.
 	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
-	m_vPosition.y += INIT_POSITION_ADJ_HEIGHT;
 	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
 
 	return true;

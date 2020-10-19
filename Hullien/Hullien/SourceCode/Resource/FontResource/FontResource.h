@@ -23,14 +23,14 @@ public:
 	// フォントの読み込み.
 	static void Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
 	// フォントテクスチャの読み込み.
-	static ID3D11Texture2D* GetTexture2D( const std::string key );
+	static ID3D11ShaderResourceView* GetTexture2D( const std::string key );
 
 private:
 	// フォントの読み込み.
 	void FontLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
 
 private:
-	std::unordered_map<std::string, ID3D11Texture2D*> m_FontTexturList;
+	std::unordered_map<std::string, ID3D11ShaderResourceView*> m_FontTexturList;
 	bool m_HasFinishedLoading;			// 読込が終わったか.
 };
 
