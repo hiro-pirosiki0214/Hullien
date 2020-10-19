@@ -7,7 +7,7 @@ namespace STG
 {
 	class CPlayer : public STG::CCharacter
 	{
-		const char* MODEL_NAME = "a";
+		const char* MODEL_NAME = "ufo_mini";
 		const char* BULLET_MODEL_NAME = "item cure";
 		const float MOVE_SPEED = 0.2f;
 		const float BULLET_MOVE_SPEED	= 0.5f;	// ’e‚Ì‘¬“x.
@@ -23,6 +23,8 @@ namespace STG
 		virtual void Update() override;
 		// •`‰æŠÖ”.
 		virtual void Render() override;
+		// “–‚½‚è”»’è.
+		virtual void Collision( STG::CActor* pActor ) override;
 		// ‘€ìŠÖ”.
 		void Controller();
 
@@ -32,6 +34,8 @@ namespace STG
 		// ’e‚ğŒ‚‚Â‘€ìŠÖ”.
 		void ShotController();
 
+		// “–‚½‚è”»’è‚Ìì¬.
+		bool CollisionInit();
 		
 	private:
 		D3DXVECTOR3 m_Direction;

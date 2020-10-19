@@ -2,12 +2,14 @@
 #include "..\..\Bullet\STGBullet.h"
 #include "..\..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
+#include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"
 
 STG::CPlayer::CPlayer()
 	: m_Direction	( 0.0f, 0.0f, 0.0f )
 {
-	m_pBullets.resize( BULLET_COUNT_MAX );
+	m_IsActive		= true;
+	m_pCollManager	= std::make_shared<CCollisionManager>();
 }
 
 STG::CPlayer::~CPlayer()
@@ -17,8 +19,10 @@ STG::CPlayer::~CPlayer()
 // 初期化関数.
 bool STG::CPlayer::Init()
 {
-	if( CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME ) == false ) return false;
-	if( BulletInit( BULLET_MODEL_NAME ) == false ) return false;
+	if( CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME )	== false ) return false;
+	if( CollisionInit()											== false ) return false;
+	if( BulletInit( m_pBullets,BULLET_COUNT_MAX, BULLET_MODEL_NAME )	== false ) return false;
+	for( auto& b : m_pBullets ) b->SetCollDisappear();	// 当たった弾が消えるかどうかの設定.
 	return true;
 }
 
@@ -33,9 +37,25 @@ void STG::CPlayer::Update()
 void STG::CPlayer::Render()
 {
 	if( m_pStaticMesh == nullptr ) return;
-	m_pStaticMesh->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
-	MeshRender();
-	BulletRender();
+	MeshRender();	// メッシュの描画.
+	BulletRender();	// 弾の描画.
+
+#ifdef _DEBUG
+	m_pCollManager->DebugRender();
+#endif	// #ifdef _DEBUG.
+}
+
+// 当たり判定.
+void STG::CPlayer::Collision( STG::CActor* pActor )
+{
+	if( m_IsActive			== false ) return;	// 自分が動作してなければ終了.
+	if( pActor->GetActive()	== false ) return;	// 相手が動作してなければ終了.
+
+	// 弾の数だけあたり判定を行う.
+	for( auto& b : m_pBullets ) b->Collision( pActor );
+	// カプセルの当たり判定.
+	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetColl() ) == false ) return;
+
 }
 
 // 移動関数.
@@ -48,6 +68,7 @@ void STG::CPlayer::Move()
 // 操作関数.
 void STG::CPlayer::Controller()
 {
+	if( m_IsActive == false ) return;
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
@@ -87,4 +108,17 @@ void STG::CPlayer::ShotController()
 			m_ShotCount = 0;
 		}
 	}
+}
+
+// 当たり判定の作成.
+bool STG::CPlayer::CollisionInit()
+{
+	if( FAILED( m_pCollManager->InitCapsule(
+		&m_vPosition,
+		&m_vRotation,
+		&m_vSclae.x,
+		{0.0f, 0.0f, 0.0f},
+		2.0f,
+		2.0f ))) return false;
+	return true;
 }

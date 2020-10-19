@@ -532,8 +532,8 @@ void CPlayer::AttackCollision( CActor* pActor )
 		m_AttackPosition.z - pActor->GetPosition().z
 	};
 	D3DXVec3Normalize( &vec, &vec );
-	vec.x *= m_AttackComboCount*0.5;
-	vec.z *= m_AttackComboCount*0.5;
+	vec.x *= m_AttackComboCount*0.5f;
+	vec.z *= m_AttackComboCount*0.5f;
 	pActor->SetVector( vec );
 
 	// UŒ‚ŠÖ”.

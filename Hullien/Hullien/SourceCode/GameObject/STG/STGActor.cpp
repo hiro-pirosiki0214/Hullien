@@ -2,8 +2,11 @@
 #include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 
 STG::CActor::CActor()
-	: m_pStaticMesh	( nullptr )
-	, m_MoveVector	( 0.0f, 0.0f, 0.0f )
+	: m_pStaticMesh		( nullptr )
+	, m_pCollManager	( nullptr )
+	, m_MoveVector		( 0.0f, 0.0f, 0.0f )
+	, m_TargetPositon	( 0.0f, 0.0f, 0.0f )
+	, m_IsActive		( false )
 {
 }
 

@@ -35,7 +35,7 @@ void CFontResource::Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext
 //-------------------------------------.
 // フォントテクスチャの読み込み.
 //-------------------------------------.
-ID3D11Texture2D* CFontResource::GetTexture2D( const std::string key )
+ID3D11ShaderResourceView* CFontResource::GetTexture2D( const std::string key )
 {
 	// 指定したモデルを返す.
 	for( auto& m : GetInstance()->m_FontTexturList ){

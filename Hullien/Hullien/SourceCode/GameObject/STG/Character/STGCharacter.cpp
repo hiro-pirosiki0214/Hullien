@@ -12,9 +12,13 @@ STG::CCharacter::~CCharacter()
 }
 
 // ’e‚Ì‰Šú‰».
-bool STG::CCharacter::BulletInit( const char* modelName )
+bool STG::CCharacter::BulletInit( 
+	std::vector<std::shared_ptr<CBullet>>& bullets,
+	const int& bulletCount,
+	const char* modelName )
 {
-	for( auto& b : m_pBullets ){
+	m_pBullets.resize( bulletCount );
+	for( auto& b : bullets ){
 		b = std::make_shared<CBullet>( modelName );
 		if( b->Init() == false ) return false;
 	}

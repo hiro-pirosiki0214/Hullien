@@ -19,17 +19,25 @@ namespace STG
 		virtual void Update() override;
 		// •`‰æŠÖ”.
 		virtual void Render() override;
+		// “–‚½‚è”»’è.
+		virtual void Collision( STG::CActor* pActor ) override;
 		// Œ‚‚Â.
 		virtual bool Shoot( 
 			const D3DXVECTOR3& pos,
 			const float& rot, 
 			const float& moveSpeed );
 		// Œ‚‚Á‚½‚©.
-		bool IsShot() const { return m_IsShot; }
+		bool IsShot() const { return m_IsActive; }
+		// “–‚½‚Á‚½’e‚ªÁ‚¦‚éİ’è.
+		void SetCollDisappear(){ m_IsBulletToBulletCollJudge = true; }
+
+	private:
+		// “–‚½‚è”»’è‚Ìì¬.
+		bool CollisionInit();
 
 	private:
 		float	m_MoveSpeed;	// ˆÚ“®‘¬“x.
-		bool	m_IsShot;		// Œ‚‚Á‚½‚©.
+		bool	m_IsBulletToBulletCollJudge;	// ’e‚Ç‚¤‚µ‚Ì“–‚½‚è”»’è‚ğs‚¤‚©.
 	};
 };
 

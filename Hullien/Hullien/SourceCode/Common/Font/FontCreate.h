@@ -13,7 +13,7 @@ public:
 	~CFontCreate();
 
 	// ƒtƒHƒ“ƒg‰æ‘œ‚Ìì¬.
-	HRESULT CreateFontTexture2D( const char* c, ID3D11Texture2D** textur2D );
+	HRESULT CreateFontTexture2D( const char* c, ID3D11ShaderResourceView** textur2D );
 
 private:
 	CFontCreate();

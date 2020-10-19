@@ -1,14 +1,14 @@
 #ifndef STG_MANAGER_H
 #define STG_MANAGER_H
 
+#include <memory>
+
 namespace STG
 {
-	class CPlayer;	// プレイヤークラス.
-	class CEnemy;	// 敵クラス.
+	class CPlayer;			// プレイヤークラス.
+	class CEnemyManager;	// 敵管理クラス.
 }
 class CCamera;
-
-#include <memory>
 
 class CSTGManager
 {
@@ -24,9 +24,9 @@ public:
 	void Render();
 
 private:
-	std::shared_ptr<CCamera>		m_pCamera;
-	std::shared_ptr<STG::CPlayer>	m_pPlayer;	// プレイヤークラス.
-	std::shared_ptr<STG::CEnemy>	m_pEnemy;
+	std::shared_ptr<CCamera>			m_pCamera;
+	std::shared_ptr<STG::CPlayer>		m_pPlayer;			// プレイヤークラス.
+	std::unique_ptr<STG::CEnemyManager>	m_pEnemyManager;	// 敵管理クラス.
 };
 
 #endif	// #ifndef STG_MANAGER_H.

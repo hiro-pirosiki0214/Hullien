@@ -6,19 +6,23 @@
 
 namespace STG
 {
-	class CBullet;	// ’eƒNƒ‰ƒX.
-
 	class CCharacter : public STG::CActor
 	{
 	public:
 		CCharacter();
 		virtual ~CCharacter();
 
+		// ’e‚Ìæ“¾.
+		virtual std::vector<std::shared_ptr<CBullet>> GetBullets(){ return m_pBullets; }
+
 	protected:
 		// ˆÚ“®ŠÖ”.
 		virtual void Move() = 0;
 		// ’e‚Ì‰Šú‰».
-		virtual bool BulletInit( const char* modelName );
+		virtual bool BulletInit( 
+			std::vector<std::shared_ptr<CBullet>>& bullets, 
+			const int& bulletCount,
+			const char* modelName );
 		// ’e‚ÌXV.
 		virtual void BulletUpdate();
 		// ’e‚Ì•`‰æ.
