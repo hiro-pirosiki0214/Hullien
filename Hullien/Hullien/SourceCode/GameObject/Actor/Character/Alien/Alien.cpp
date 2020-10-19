@@ -36,12 +36,12 @@ CAlien::~CAlien()
 {
 }
 
-// ç›¸æ‰‹åº§æ¨™ã®è¨­å®š.
+// ‘ŠèÀ•W‚Ìİ’è.
 void CAlien::SetTargetPos( CActor& actor )
 {
 	SetGirlPos( actor );
 }
-// ãƒ™ã‚¯ãƒˆãƒ«ã®å–å¾—.
+// ƒxƒNƒgƒ‹‚Ìæ“¾.
 void CAlien::SetVector( const D3DXVECTOR3& vec )
 {
 	if( m_NowState == EAlienState::Spawn ) return;
@@ -50,7 +50,7 @@ void CAlien::SetVector( const D3DXVECTOR3& vec )
 	m_KnockBackCount = 0;
 }
 
-// ãƒ©ã‚¤ãƒ•è¨ˆç®—é–¢æ•°.
+// ƒ‰ƒCƒtŒvZŠÖ”.
 void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 {
 	if( m_NowState == EAlienState::Spawn ) return;
@@ -59,14 +59,14 @@ void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 
 	bool isAttack = false;
 	proc( m_LifePoint, isAttack );
-	m_NowState = EAlienState::Fright;	// æ€¯ã¿çŠ¶æ…‹ã¸é·ç§».
+	m_NowState = EAlienState::Fright;	// ‹¯‚İó‘Ô‚Ö‘JˆÚ.
 
 	if( m_LifePoint > 0.0f ) return;
-	// ä½“åŠ›ãŒ 0.0ä»¥ä¸‹ãªã‚‰æ­»äº¡çŠ¶æ…‹ã¸é·ç§».
+	// ‘Ì—Í‚ª 0.0ˆÈ‰º‚È‚ç€–Só‘Ô‚Ö‘JˆÚ.
 	m_NowState = EAlienState::Death;
 }
 
-// ç¾åœ¨ã®çŠ¶æ…‹ã®æ›´æ–°é–¢æ•°.
+// Œ»İ‚Ìó‘Ô‚ÌXVŠÖ”.
 void CAlien::CurrentStateUpdate()
 {
 	switch( m_NowState )
@@ -100,26 +100,26 @@ void CAlien::CurrentStateUpdate()
 	}
 }
 
-// å¥³ã®å­ã®åº§æ¨™ã‚’è¨­å®š.
+// —‚Ìq‚ÌÀ•W‚ğİ’è.
 void CAlien::SetGirlPos( CActor& actor )
 {
 	if( m_NowMoveState == EMoveState::Move ) return;
 	if( *m_pIsAlienOtherAbduct == true ) return;
 
-	// å¥³ã®å­ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	// —‚Ìq‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( actor.GetObjectTag() != EObjectTag::Girl ) return;
-	m_TargetPosition = actor.GetPosition();	// å¥³ã®å­ã®åº§æ¨™ã‚’å–å¾—.
-	// ç›®çš„ã®å›è»¢è»¸ã‚’å–å¾—.
+	m_TargetPosition = actor.GetPosition();	// —‚Ìq‚ÌÀ•W‚ğæ“¾.
+	// –Ú“I‚Ì‰ñ“]²‚ğæ“¾.
 	m_TargetRotation.y = atan2f( 
 		m_vPosition.x - m_TargetPosition.x,
 		m_vPosition.z - m_TargetPosition.z );
 
-	// å¥³ã®å­ã¨ä¸€å®šã®è·é›¢ç½®ã„ãŸåº§æ¨™ã‚’è¨­å®š.
+	// —‚Ìq‚Æˆê’è‚Ì‹——£’u‚¢‚½À•W‚ğİ’è.
 	m_TargetPosition.x += sinf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
 	m_TargetPosition.z += cosf( m_TargetRotation.y ) * CArm::GRAB_DISTANCE;
 }
 
-// åº§æ¨™è¨­å®šé–¢æ•°.
+// À•Wİ’èŠÖ”.
 void CAlien::SetPosition( const D3DXVECTOR3& vPos )
 {
 	if( *m_pIsAlienOtherAbduct == false ) return;
@@ -127,79 +127,79 @@ void CAlien::SetPosition( const D3DXVECTOR3& vPos )
 	m_vPosition	= vPos;
 }
 
-// ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«è¨­å®šé–¢æ•°.
+// ˆÚ“®ƒxƒNƒgƒ‹İ’èŠÖ”.
 void CAlien::SetMoveVector( const D3DXVECTOR3& targetPos )
 {
 	if( m_NowState == EAlienState::Fright ) return;
 
-	// ç›®çš„ã®å›è»¢è»¸ã‚’å–å¾—.
+	// –Ú“I‚Ì‰ñ“]²‚ğæ“¾.
 	m_TargetRotation.y = atan2f( 
 		m_vPosition.x - targetPos.x,
 		m_vPosition.z - targetPos.z );
 
-	// ç§»å‹•ç”¨ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—.
+	// ˆÚ“®—pƒxƒNƒgƒ‹‚ğæ“¾.
 	m_MoveVector.x = sinf( m_TargetRotation.y );
 	m_MoveVector.z = cosf( m_TargetRotation.y );
 }
 
-// ç›®çš„ã®åº§æ¨™ã¸å›è»¢.
+// –Ú“I‚ÌÀ•W‚Ö‰ñ“].
 void CAlien::TargetRotation()
 {
 	if( m_NowMoveState != EMoveState::Rotation ) return;
 
-	// è‡ªèº«ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’ç”¨æ„.
+	// ©g‚ÌƒxƒNƒgƒ‹‚ğ—pˆÓ.
 	D3DXVECTOR3 myVector = { 0.0f, 0.0f ,0.0f };
 	myVector.x = sinf( m_vRotation.y );
 	myVector.z = cosf( m_vRotation.y );
 
-	// ç›®çš„ã®åº§æ¨™ã¸å‘ã‘ã¦å›è»¢.
+	// –Ú“I‚ÌÀ•W‚ÖŒü‚¯‚Ä‰ñ“].
 	if( CCharacter::TargetRotation( m_MoveVector, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == false )
-	m_vRotation.y			= m_TargetRotation.y;	// ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã¸ã®å›è»¢å–å¾—.
-	m_BeforeMoveingPosition = m_vPosition;			// ç¾åœ¨ã®åº§æ¨™ã‚’è¨˜æ†¶.
-	m_NowMoveState			= EMoveState::Move;		// ç§»å‹•çŠ¶æ…‹ã¸é·ç§».
+	m_vRotation.y			= m_TargetRotation.y;	// ƒ^[ƒQƒbƒg‚Ö‚Ì‰ñ“]æ“¾.
+	m_BeforeMoveingPosition = m_vPosition;			// Œ»İ‚ÌÀ•W‚ğ‹L‰¯.
+	m_NowMoveState			= EMoveState::Move;		// ˆÚ“®ó‘Ô‚Ö‘JˆÚ.
 }
 
-// ç§»å‹•é–¢æ•°.
+// ˆÚ“®ŠÖ”.
 void CAlien::VectorMove( const float& moveSpeed )
 {
 	if( m_NowMoveState != EMoveState::Move ) return;
 	
-	// ãƒ™ã‚¯ãƒˆãƒ«ã‚’ä½¿ç”¨ã—ã¦ç§»å‹•.
+	// ƒxƒNƒgƒ‹‚ğg—p‚µ‚ÄˆÚ“®.
 	m_vPosition.x -= m_MoveVector.x * moveSpeed;
 	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
-	// å†åº¦ç›®çš„ã®åº§æ¨™ã‚’æ¢ã™ã‹æ¯”è¼ƒ.
-	// å›è»¢æ™‚ã«è¨˜æ†¶ã—ãŸåº§æ¨™ã¨ç¾åœ¨ã®åº§æ¨™ã®è·é›¢ãŒä¸€å®šä»¥ä¸Šãªã‚‰.
+	// Ä“x–Ú“I‚ÌÀ•W‚ğ’T‚·‚©”äŠr.
+	// ‰ñ“]‚É‹L‰¯‚µ‚½À•W‚ÆŒ»İ‚ÌÀ•W‚Ì‹——£‚ªˆê’èˆÈã‚È‚ç.
 	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ) 
-		m_NowMoveState = EMoveState::Rotation;	// å›è»¢çŠ¶æ…‹ã¸ç§»å‹•.
+		m_NowMoveState = EMoveState::Rotation;	// ‰ñ“]ó‘Ô‚ÖˆÚ“®.
 
 	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= 1.0f ) return;
-	// ç¾åœ¨ã®åº§æ¨™ã¨ç›®çš„ã®åº§æ¨™ã®è·é›¢ãŒä¸€å®šä»¥ä¸Šãªã‚‰.
-	m_NowMoveState = EMoveState::Wait;	// å¾…æ©ŸçŠ¶æ…‹ã¸é·ç§».
+	// Œ»İ‚ÌÀ•W‚Æ–Ú“I‚ÌÀ•W‚Ì‹——£‚ªˆê’èˆÈã‚È‚ç.
+	m_NowMoveState = EMoveState::Wait;	// ‘Ò‹@ó‘Ô‚Ö‘JˆÚ.
 }
 
-// å¾…æ©Ÿé–¢æ•°.
+// ‘Ò‹@ŠÖ”.
 void CAlien::WaitMove()
 {
 	if( m_NowMoveState != EMoveState::Wait ) return;
-	m_WaitCount++;	// å¾…æ©Ÿã‚«ã‚¦ãƒ³ãƒˆåŠ ç®—.
+	m_WaitCount++;	// ‘Ò‹@ƒJƒEƒ“ƒg‰ÁZ.
 	if( m_WaitCount < m_Parameter.WaitTime*FPS ) return;
-	m_NowMoveState	= EMoveState::Rotation;	// ç§»å‹•çŠ¶æ…‹ã‚’å›è»¢ã™ã‚‹.
-	m_WaitCount		= 0;	// å¾…æ©Ÿã‚«ã‚¦ãƒ³ãƒˆã®åˆæœŸåŒ–.
+	m_NowMoveState	= EMoveState::Rotation;	// ˆÚ“®ó‘Ô‚ğ‰ñ“]‚·‚é.
+	m_WaitCount		= 0;	// ‘Ò‹@ƒJƒEƒ“ƒg‚Ì‰Šú‰».
 }
 
-// ã‚¹ãƒãƒ¼ãƒ³ä¸­.
+// ƒXƒ|[ƒ“’†.
 void CAlien::Spawning()
 {
-	// ã‚¹ã‚±ãƒ¼ãƒ«ã®åŠ ç®—.
+	// ƒXƒP[ƒ‹‚Ì‰ÁZ.
 	m_vSclae += { ADD_SCALE_VALUE, ADD_SCALE_VALUE, ADD_SCALE_VALUE };
-	// å¤§ãã•ãŒä¸€å®šå€¤ä»¥ä¸Šãªã‚‰.
+	// ‘å‚«‚³‚ªˆê’è’lˆÈã‚È‚ç.
 	if( m_vSclae.x >= SCALE_MAX ){
 		m_vSclae = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
-		m_vPosition.y -= DOWN_SPEED;	// é«˜ã•ã‚’ä¸‹ã’ã‚‹.
+		m_vPosition.y -= DOWN_SPEED;	// ‚‚³‚ğ‰º‚°‚é.
 	}
 
-	// é«˜ã•ãŒä¸€å®šå€¤ã‚ˆã‚Šå¤§ãã‘ã‚Œã°çµ‚äº†.
+	// ‚‚³‚ªˆê’è’l‚æ‚è‘å‚«‚¯‚ê‚ÎI—¹.
 	if( m_vPosition.y > INIT_POSITION_ADJ_HEIGHT ) return;
 
 	CSoundManager::NoMultipleSEPlay("AlienApp");
@@ -207,41 +207,41 @@ void CAlien::Spawning()
 	m_NowMoveState = EMoveState::Rotation;
 }
 
-// ç§»å‹•.
+// ˆÚ“®.
 void CAlien::Move()
 {
-	TargetRotation();			// å›è»¢.
-	CAlien::VectorMove( m_MoveSpeed );	// ç§»å‹•.
-	CAlien::WaitMove();			// å¾…æ©Ÿ.
+	TargetRotation();			// ‰ñ“].
+	CAlien::VectorMove( m_MoveSpeed );	// ˆÚ“®.
+	CAlien::WaitMove();			// ‘Ò‹@.
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
 	m_NowState		= EAlienState::Escape;
-	m_NowMoveState	= EMoveState::Rotation;	// ç§»å‹•çŠ¶æ…‹ã‚’å›è»¢ã™ã‚‹.
+	m_NowMoveState	= EMoveState::Rotation;	// ˆÚ“®ó‘Ô‚ğ‰ñ“]‚·‚é.
 }
 
-// æ‹ã†.
+// ‰û‚¤.
 void CAlien::Abduct()
 {
 	if( m_IsBarrierHit == true ) return;
 	if( m_pArm == nullptr ) return;
 
-	SetMoveVector( *m_pAbductUFOPosition );		// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã®åº§æ¨™ã¨ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—.
-	m_TargetPosition = *m_pAbductUFOPosition;	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã®åº§æ¨™ã‚’è¨˜æ†¶.
+	SetMoveVector( *m_pAbductUFOPosition );		// ƒ}ƒU[ƒVƒbƒv‚ÌÀ•W‚Æ‚ÌƒxƒNƒgƒ‹‚ğæ“¾.
+	m_TargetPosition = *m_pAbductUFOPosition;	// ƒ}ƒU[ƒVƒbƒv‚ÌÀ•W‚ğ‹L‰¯.
 
-	TargetRotation();	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã®æ–¹ã¸å›è»¢.
-	CAlien::VectorMove( m_MoveSpeed );	// ç§»å‹•.
+	TargetRotation();	// ƒ}ƒU[ƒVƒbƒv‚Ì•û‚Ö‰ñ“].
+	CAlien::VectorMove( m_MoveSpeed );	// ˆÚ“®.
 
 	if( *m_pIsAlienOtherAbduct == true ) return;
-	// å¥³ã®å­ã‚’é€£ã‚Œå»ã£ã¦ã„ãªã‘ã‚Œã°.
-	m_NowState		= EAlienState::Move;		// ç§»å‹•çŠ¶æ…‹ã¸é·ç§».
-	m_NowMoveState	= EMoveState::Rotation;		// ç§»å‹•ã®å›è»¢çŠ¶æ…‹ã¸é·ç§».
+	// —‚Ìq‚ğ˜A‚ê‹‚Á‚Ä‚¢‚È‚¯‚ê‚Î.
+	m_NowState		= EAlienState::Move;		// ˆÚ“®ó‘Ô‚Ö‘JˆÚ.
+	m_NowMoveState	= EMoveState::Rotation;		// ˆÚ“®‚Ì‰ñ“]ó‘Ô‚Ö‘JˆÚ.
 }
 
-// ãƒãƒƒã‚¯ãƒãƒƒã‚¯.
+// ƒmƒbƒNƒoƒbƒN.
 void CAlien::KnockBack()
 {
-	m_KnockBackCount++;	// ç„¡æ•µã‚«ã‚¦ãƒ³ãƒˆã‚’åŠ ç®—.
+	m_KnockBackCount++;	// –³“GƒJƒEƒ“ƒg‚ğ‰ÁZ.
 	if( m_KnockBackCount <= KNOCK_BACK_TIME ){
 		m_vRotation.y = atan2( m_KnockBackVector.x, m_KnockBackVector.z ) + static_cast<float>(D3DX_PI);
 		m_vPosition.x -= m_KnockBackVector.x;
@@ -249,119 +249,119 @@ void CAlien::KnockBack()
 	}
 }
 
-// æ€¯ã¿.
+// ‹¯‚İ.
 void CAlien::Fright()
 {
-	m_InvincibleCount++;					// ç„¡æ•µã‚«ã‚¦ãƒ³ãƒˆã‚’åŠ ç®—.
+	m_InvincibleCount++;					// –³“GƒJƒEƒ“ƒg‚ğ‰ÁZ.
 	if( IsInvincibleTime( m_Parameter.InvincibleTime ) == false ) return;
 
-	m_InvincibleCount	= 0;	// ç„¡æ•µã‚«ã‚¦ãƒ³ãƒˆã®åˆæœŸåŒ–.
-	m_KnockBackCount	= 0;	// ç„¡æ•µã‚«ã‚¦ãƒ³ãƒˆã®åˆæœŸåŒ–.
+	m_InvincibleCount	= 0;	// –³“GƒJƒEƒ“ƒg‚Ì‰Šú‰».
+	m_KnockBackCount	= 0;	// –³“GƒJƒEƒ“ƒg‚Ì‰Šú‰».
 
-	m_NowState			= EAlienState::Move;	// ç§»å‹•çŠ¶æ…‹ã¸é·ç§».
-	m_NowMoveState		= EMoveState::Rotation;	// ç§»å‹•ã®å›è»¢çŠ¶æ…‹ã¸é·ç§».
+	m_NowState			= EAlienState::Move;	// ˆÚ“®ó‘Ô‚Ö‘JˆÚ.
+	m_NowMoveState		= EMoveState::Rotation;	// ˆÚ“®‚Ì‰ñ“]ó‘Ô‚Ö‘JˆÚ.
 }
 
-// æ­»äº¡.
+// €–S.
 void CAlien::Death()
 {
 	m_DeathCount += DEATH_COUNT_ADD_VALUE;
 	m_DeathScale -= DEATH_SCALE_SUB_VALUE;
-	// ãƒ¢ãƒ‡ãƒ«ã®ã‚µã‚¤ã‚ºã®è¨ˆç®—.
+	// ƒ‚ƒfƒ‹‚ÌƒTƒCƒY‚ÌŒvZ.
 	const float scale = m_DeathScale*exp(-m_DeathCount)*sinf(DEATH_SCALE_PI*m_DeathCount);
 	m_vSclae = { scale, scale, scale };
 
-	// å¤§ãã•ãŒä¸€å®šå€¤ä»¥ä¸Šãªã‚‰.
+	// ‘å‚«‚³‚ªˆê’è’lˆÈã‚È‚ç.
 	if( m_vSclae.x > 0.0f ) return;
 	m_vSclae = { 0.0f, 0.0f, 0.0f };
 	CSoundManager::PlaySE("AlienDead");
-	m_IsDelete = true;	// æ­»äº¡ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹.
+	m_IsDelete = true;	// €–Sƒtƒ‰ƒO‚ğ—§‚Ä‚é.
 }
 
-// é€ƒã’ã‚‹.
+// “¦‚°‚é.
 void CAlien::Escape()
 {
 	if( m_IsBarrierHit == true ) return;
 
-	SetMoveVector( *m_pAbductUFOPosition );		// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã®åº§æ¨™ã¨ã®ãƒ™ã‚¯ãƒˆãƒ«ã‚’å–å¾—.
-	m_TargetPosition = *m_pAbductUFOPosition;	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã®åº§æ¨™ã‚’è¨˜æ†¶.
+	SetMoveVector( *m_pAbductUFOPosition );		// ƒ}ƒU[ƒVƒbƒv‚ÌÀ•W‚Æ‚ÌƒxƒNƒgƒ‹‚ğæ“¾.
+	m_TargetPosition = *m_pAbductUFOPosition;	// ƒ}ƒU[ƒVƒbƒv‚ÌÀ•W‚ğ‹L‰¯.
 
-	TargetRotation();	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã®æ–¹ã¸å›è»¢.
-	CAlien::VectorMove( m_MoveSpeed );	// ç§»å‹•.
+	TargetRotation();	// ƒ}ƒU[ƒVƒbƒv‚Ì•û‚Ö‰ñ“].
+	CAlien::VectorMove( m_MoveSpeed );	// ˆÚ“®.
 
 	if( *m_pIsAlienOtherAbduct == true ) return;
-	// å¥³ã®å­ã‚’é€£ã‚Œå»ã£ã¦ã„ãªã‘ã‚Œã°.
-	m_NowState		= EAlienState::Move;		// ç§»å‹•çŠ¶æ…‹ã¸é·ç§».
-	m_NowMoveState	= EMoveState::Rotation;		// ç§»å‹•ã®å›è»¢çŠ¶æ…‹ã¸é·ç§».
+	// —‚Ìq‚ğ˜A‚ê‹‚Á‚Ä‚¢‚È‚¯‚ê‚Î.
+	m_NowState		= EAlienState::Move;		// ˆÚ“®ó‘Ô‚Ö‘JˆÚ.
+	m_NowMoveState	= EMoveState::Rotation;		// ˆÚ“®‚Ì‰ñ“]ó‘Ô‚Ö‘JˆÚ.
 }
 
-// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã«æ˜‡ã£ã¦ã„ã‚‹.
+// ƒ}ƒU[ƒVƒbƒv‚É¸‚Á‚Ä‚¢‚é.
 void CAlien::RisingMotherShip()
 {
 	m_vSclae.x -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
 	m_vSclae.y -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
 	m_vSclae.z -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
 	if( m_vSclae.x > 0.0f ) return;
-	m_IsDelete = true;	// æ­»äº¡ãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹.
+	m_IsDelete = true;	// €–Sƒtƒ‰ƒO‚ğ—§‚Ä‚é.
 }
 
-// å¥³ã®å­ã¨ã®å½“ãŸã‚Šåˆ¤å®š.
+// —‚Ìq‚Æ‚Ì“–‚½‚è”»’è.
 void CAlien::GirlCollision( CActor* pActor )
 {
-	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¿ã‚°ãŒå¥³ã®å­ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	// ƒIƒuƒWƒFƒNƒg‚Ìƒ^ƒO‚ª—‚Ìq‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( pActor->GetObjectTag() != EObjectTag::Girl ) return;
 	if( m_IsBarrierHit == true ) return;
-	if( m_NowMoveState == EMoveState::Attack )	return;	// æ”»æ’ƒçŠ¶æ…‹ã¯çµ‚äº†.
-	if( m_NowState == EAlienState::Spawn )		return;	// ã‚¹ãƒãƒ¼ãƒ³çŠ¶æ…‹ãªã‚‰çµ‚äº†.
-	if( m_NowState == EAlienState::Death )		return;	// æ­»äº¡ã—ã¦ã„ãŸã‚‰çµ‚äº†.
-	if( m_NowState == EAlienState::Fright )		return;	// æ€¯ã¿çŠ¶æ…‹ãªã‚‰çµ‚äº†.
+	if( m_NowMoveState == EMoveState::Attack )	return;	// UŒ‚ó‘Ô‚ÍI—¹.
+	if( m_NowState == EAlienState::Spawn )		return;	// ƒXƒ|[ƒ“ó‘Ô‚È‚çI—¹.
+	if( m_NowState == EAlienState::Death )		return;	// €–S‚µ‚Ä‚¢‚½‚çI—¹.
+	if( m_NowState == EAlienState::Fright )		return;	// ‹¯‚İó‘Ô‚È‚çI—¹.
 
 	if( m_NowState == EAlienState::Abduct ){
-		// é€£ã‚Œå»ã£ã¦ã„ã‚‹çŠ¶æ…‹ãªã®ã§ã‚¢ãƒ¼ãƒ ã®åº§æ¨™ã‚’è¨­å®šã™ã‚‹.
+		// ˜A‚ê‹‚Á‚Ä‚¢‚éó‘Ô‚È‚Ì‚ÅƒA[ƒ€‚ÌÀ•W‚ğİ’è‚·‚é.
 		pActor->SetPosition( m_pArm->GetGrabPosition() );
 		return;
 	} else {
-		// æ—¢ã«é€£ã‚Œå»ã£ã¦ã„ã‚‹ã‹.
+		// Šù‚É˜A‚ê‹‚Á‚Ä‚¢‚é‚©.
 		if( *m_pIsAlienOtherAbduct == true ){
-			// ã‚¢ãƒ¼ãƒ ã‚’ç‰‡ä»˜ã‘ã¦ã„ãªã‘ã‚Œã°ç‰‡ä»˜ã‘ã‚‹.
+			// ƒA[ƒ€‚ğ•Ğ•t‚¯‚Ä‚¢‚È‚¯‚ê‚Î•Ğ•t‚¯‚é.
 			if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUp();
 			return;
 		}
 	}
 
-	// çƒä½“ã®å½“ãŸã‚Šåˆ¤å®š.
+	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	
-	// æ´ã‚“ã§ã„ãªã‘ã‚Œã°(ã‚¢ãƒ¼ãƒ ã‚’å–ã‚Šå‡ºã—ã¦ãªã‘ã‚Œã°).
+	// ’Í‚ñ‚Å‚¢‚È‚¯‚ê‚Î(ƒA[ƒ€‚ğæ‚èo‚µ‚Ä‚È‚¯‚ê‚Î).
 	if( m_pArm->IsGrab() == false ){
-		m_pArm->SetAppearance();	// ã‚¢ãƒ¼ãƒ ã‚’å–ã‚Šå‡ºã™.
+		m_pArm->SetAppearance();	// ƒA[ƒ€‚ğæ‚èo‚·.
 		return;
 	} else {
-		// ã‚¢ãƒ¼ãƒ ã®åº§æ¨™ã‚’è¨­å®šã™ã‚‹.
+		// ƒA[ƒ€‚ÌÀ•W‚ğİ’è‚·‚é.
 		pActor->SetPosition( m_pArm->GetGrabPosition() );
 	}
 
 	if( m_NowState == EAlienState::Abduct ) return;
-	m_NowState		= EAlienState::Abduct;	// é€£ã‚Œå»ã‚‹çŠ¶æ…‹ã¸é·ç§».
-	m_NowMoveState	= EMoveState::Rotation;	// ç§»å‹•ã‚’å›è»¢ã¸é·ç§».
+	m_NowState		= EAlienState::Abduct;	// ˜A‚ê‹‚éó‘Ô‚Ö‘JˆÚ.
+	m_NowMoveState	= EMoveState::Rotation;	// ˆÚ“®‚ğ‰ñ“]‚Ö‘JˆÚ.
 }
 
-// ãƒãƒªã‚¢ã¨ã®å½“ãŸã‚Šåˆ¤å®š.
+// ƒoƒŠƒA‚Æ‚Ì“–‚½‚è”»’è.
 void CAlien::BarrierCollision( CActor* pActor )
 {
-	if( m_NowState == EAlienState::RisingMotherShip ) return;	// ãƒã‚¶ãƒ¼ã‚·ãƒƒãƒ—ã«æ˜‡ã£ã¦ã„ã‚‹çŠ¶æ…‹ãªã‚‰çµ‚äº†.
-	// ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ã‚¿ã‚°ãŒãƒãƒªã‚¢ã˜ã‚ƒãªã‘ã‚Œã°çµ‚äº†.
+	if( m_NowState == EAlienState::RisingMotherShip ) return;	// ƒ}ƒU[ƒVƒbƒv‚É¸‚Á‚Ä‚¢‚éó‘Ô‚È‚çI—¹.
+	// ƒIƒuƒWƒFƒNƒg‚Ìƒ^ƒO‚ªƒoƒŠƒA‚¶‚á‚È‚¯‚ê‚ÎI—¹.
 	if( pActor->GetObjectTag() != EObjectTag::Bariier ) return;
-	// çƒä½“ã®å½“ãŸã‚Šåˆ¤å®š.
+	// ‹…‘Ì‚Ì“–‚½‚è”»’è.
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == true ){
 		CSoundManager::PlaySE("BarrierHit");
-		m_MoveSpeed		= BARRIER_HIT_MOVE_SPEED;	// ãƒãƒªã‚¢è¡çªæ™‚ã®ç§»å‹•é€Ÿåº¦ã«å¤‰æ›´ã™ã‚‹.
-		m_IsBarrierHit	= true;						// ãƒãƒªã‚¢è¡çªãƒ•ãƒ©ã‚°ã‚’ç«‹ã¦ã‚‹.
-		m_NowState		= EAlienState::Move;		// ç§»å‹•çŠ¶æ…‹ã¸é·ç§».
-		m_NowMoveState	= EMoveState::Move;			// ç§»å‹•ã®ç§»å‹•çŠ¶æ…‹ã¸é·ç§».
-		*m_pIsAlienOtherAbduct	= false;			// å¥³ã®å­ã‚’é€£ã‚Œå»ã‚‹ãƒ•ãƒ©ã‚°ã‚’ä¸‹ã™.
+		m_MoveSpeed		= BARRIER_HIT_MOVE_SPEED;	// ƒoƒŠƒAÕ“Ë‚ÌˆÚ“®‘¬“x‚É•ÏX‚·‚é.
+		m_IsBarrierHit	= true;						// ƒoƒŠƒAÕ“Ëƒtƒ‰ƒO‚ğ—§‚Ä‚é.
+		m_NowState		= EAlienState::Move;		// ˆÚ“®ó‘Ô‚Ö‘JˆÚ.
+		m_NowMoveState	= EMoveState::Move;			// ˆÚ“®‚ÌˆÚ“®ó‘Ô‚Ö‘JˆÚ.
+		*m_pIsAlienOtherAbduct	= false;			// —‚Ìq‚ğ˜A‚ê‹‚éƒtƒ‰ƒO‚ğ‰º‚·.
 	} else {
-		m_MoveSpeed		= m_Parameter.MoveSpeed;	// é€šå¸¸ã®ç§»å‹•é€Ÿåº¦ã«æˆ»ã™.
-		m_IsBarrierHit	= false;	// ãƒãƒªã‚¢è¡çªãƒ•ãƒ©ã‚°ã‚’ä¸‹ã™.
+		m_MoveSpeed		= m_Parameter.MoveSpeed;	// ’Êí‚ÌˆÚ“®‘¬“x‚É–ß‚·.
+		m_IsBarrierHit	= false;	// ƒoƒŠƒAÕ“Ëƒtƒ‰ƒO‚ğ‰º‚·.
 	}
 }
