@@ -7,7 +7,7 @@
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 
-//#define ENDING_STG // ClearŽž‚ÌSTG‚ð“ü‚ê‚é‚©.
+#define ENDING_STG // ClearŽž‚ÌSTG‚ð“ü‚ê‚é‚©.
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )

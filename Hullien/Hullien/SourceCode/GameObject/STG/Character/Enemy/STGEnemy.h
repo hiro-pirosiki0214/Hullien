@@ -12,9 +12,6 @@ namespace STG
 		const char* MODEL_NAME			= "a";
 		const char* BULLET_MODEL_NAME	= "item cure";
 
-		const float ANGLE_MAX = static_cast<float>(D3DXToRadian(360.0));	// ’e‚ÌÅ‘å.
-		const float ANGLE_MIN = static_cast<float>(D3DXToRadian(0.0));		// ’e‚ÌÅ‘å.
-
 		const float INIT_POSITION_Z		= -100.0f;
 		const float MOVE_SUB_VALUE		= 0.002f;
 		const float MOVE_SUB_POSITION_Z = -10.0f;
@@ -30,13 +27,14 @@ namespace STG
 		const int	SPAWN_TIME				= 10;		// ƒXƒ|[ƒ“‚ÌŠÔ.
 		const float MOVE_SPEED				= 0.2f;		// ˆÚ“®‘¬“x.
 		const float BULLET_MOVE_SPEED		= 0.1f;		// ’e‚Ì‘¬“x.
+		const int	BULLET_COLL_DISAPPEAR	= 1;		// ’e‚ªÕ“Ë‚µ‚½Û‚É’e‚ğÁ‚·‚©.
 		const float	BULLET_ANGLE			= static_cast<float>(D3DXToRadian(25.0));	// ’e‚ÌŠp“x.
 		const int	BULLET_COUNT_MAX		= 30;		// ’e‚ÌÅ‘å”.
 		const int	ANY_BULLET_COUNT_MAX	= 15;		// •¡”’e‚ğŒ‚‚ÂÛ‚ÌÅ‘å”.
 		const int	SHOT_INTERVAL_FRAME		= 20;		// ’e‚ğŒ‚‚ÂŠÔŠuƒtƒŒ[ƒ€.
-		const int	SHOT_BULLET_COUNT		= 2;		// ˆê”­‚Åo‚é’e‚Ì”.
-		const float SHOT_ANGLE				= static_cast<float>(D3DXToRadian(5.0));	// Œ‚‚Â‚ÌŠp“x.
-		const int	SHOT_NUMBER				= 2;	// ’e‚Ì”Ô† 1 : ˆê”­‚¸‚Â, 2 : •¡”.
+		const int	SHOT_BULLET_COUNT		= 3;		// ˆê”­‚Åo‚é’e‚Ì”.
+		const float SHOT_ANGLE				= static_cast<float>(D3DXToRadian(10.0));	// Œ‚‚Â‚ÌŠp“x.
+		const int	SHOT_NUMBER				= 1;	// ’e‚Ì”Ô† 1 : ˆê”­‚¸‚Â, 2 : •¡”.
 
 		// Œ»İ‚Ìó‘Ô.
 		enum enState

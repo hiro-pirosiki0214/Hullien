@@ -31,9 +31,9 @@ bool STG::CEnemy::Init()
 {
 	if( CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME )	== false ) return false;
 	if( CollisionInit()											== false ) return false;
-	if( BulletInit( m_pBullets,				BULLET_COUNT_MAX, BULLET_MODEL_NAME ) == false ) return false;
+	if( BulletInit( m_pBullets, BULLET_COUNT_MAX, BULLET_MODEL_NAME ) == false ) return false;
 	if( FAILED( m_pFont->Init( CDirectX11::GetDevice(), CDirectX11::GetContext() ) )) return false;
-
+	if( BULLET_COLL_DISAPPEAR == 1 ) for( auto& b : m_pBullets ) b->SetCollDisappear();
 	return true;
 }
 
@@ -49,14 +49,8 @@ void STG::CEnemy::Update()
 	case EState_Shot:	Shot();		break;
 	case EState_Escape: Escape();	break;
 	case EState_Dead:	Dead();		break;
-	default:
-		break;
+	default:						break;
 	}
-
-	// ‘Šè‚ÌŠp“x‚ğæ“¾.
-	m_Angle = atan2(
-		m_TargetPositon.x - m_vPosition.x,
-		m_TargetPositon.z - m_vPosition.z );
 
 	BulletUpdate();
 }
@@ -105,13 +99,20 @@ void STG::CEnemy::Move()
 	if( m_vPosition.z >= MOVE_SUB_POSITION_Z ) m_MoveSpeed -= MOVE_SUB_VALUE;
 	if( m_MoveSpeed > 0.0f ) return;
 	m_NowState = EState_Shot;
+	// ’e‚Ì”‚Æ‰~‚ÌŠÔŠu‚Å‰Šú“x‚ğæ“¾‚·‚é.
+	const float startDegree =
+		static_cast<float>(SHOT_BULLET_COUNT*D3DXToDegree(BULLET_ANGLE)) -
+		static_cast<float>((SHOT_BULLET_COUNT+1)*(D3DXToDegree(BULLET_ANGLE)/2));
+	// ‘Šè‚ÌŠp“x‚ğæ“¾.
+	m_Angle = atan2(
+		m_vPosition.x - m_TargetPositon.x,
+		m_vPosition.z - m_TargetPositon.z );
+	m_Angle -= static_cast<float>(D3DXToRadian(startDegree));
 }
 
 // ’e‚ğŒ‚‚Â.
 void STG::CEnemy::Shot()
 {
-	static float rot = 0.0f;
-
 	m_ShotCount++;
 	if( m_ShotCount != SHOT_INTERVAL_FRAME ) return;
 	switch( SHOT_NUMBER )
@@ -121,17 +122,15 @@ void STG::CEnemy::Shot()
 	case 1:
 		if( m_NowShotBulletCount == BULLET_COUNT_MAX ) m_NowState = EState_Escape;
 
-		BulletShot( rot, BULLET_ANGLE );
-		rot += SHOT_ANGLE;	// Šp“x‚Ì‰ÁZ.
-		if( rot >= ANGLE_MAX ) rot = ANGLE_MIN;
+		BulletShot( m_Angle, BULLET_ANGLE );
+		m_Angle += SHOT_ANGLE;	// Šp“x‚Ì‰ÁZ.
 
 		break;
 	case 2:
 		if( m_NowShotBulletCount == ANY_BULLET_COUNT_MAX ) m_NowState = EState_Escape;
 
-		BulletShotAnyWay( rot, BULLET_ANGLE, BULLET_MOVE_SPEED, SHOT_BULLET_COUNT );
-		rot += SHOT_ANGLE;	// Šp“x‚Ì‰ÁZ.
-		if( rot >= ANGLE_MAX ) rot = ANGLE_MIN;
+		BulletShotAnyWay( m_Angle, BULLET_ANGLE, BULLET_MOVE_SPEED, SHOT_BULLET_COUNT );
+		m_Angle += SHOT_ANGLE;	// Šp“x‚Ì‰ÁZ.
 
 		break;
 	default:
@@ -175,7 +174,6 @@ void STG::CEnemy::BulletShotAnyWay(
 		if( b->Shoot( m_vPosition, addrot, moveSpeed ) == false ) continue;
 		addrot += angle;	// Šp“x‚Ì‰ÁZ.
 		count++;			// Œ‚‚Á‚½’e‚Ì‰ÁZ.
-		if( addrot >= ANGLE_MAX ) addrot = ANGLE_MIN;
 	}
 }
 
