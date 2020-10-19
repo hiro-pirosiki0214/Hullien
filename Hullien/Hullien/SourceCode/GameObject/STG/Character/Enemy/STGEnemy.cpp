@@ -18,7 +18,7 @@ STG::CEnemy::CEnemy()
 	m_pCollManager	= std::make_shared<CCollisionManager>();
 	m_vPosition.z	= INIT_POSITION_Z;
 	m_vRotation	= { 0.0f, 0.0f, static_cast<float>(D3DXToRadian(90)) };
-	m_IsActive	= true;
+	m_IsActive	= false;
 	m_MoveSpeed = MOVE_SPEED;
 }
 
@@ -31,40 +31,32 @@ bool STG::CEnemy::Init()
 {
 	if( CMeshResorce::GetStatic( m_pStaticMesh, MODEL_NAME )	== false ) return false;
 	if( CollisionInit()											== false ) return false;
-	if( BulletInit( m_pBullets,				BULLET_COUNT_MAX, BULLET_MODEL_NAME ) == false ) return false;
-	if( FAILED( m_pFont->Init( CDirectX11::GetDevice(), CDirectX11::GetContext() ) )) return false;
-
+	if( BulletInit( m_pBullets, BULLET_COUNT_MAX, BULLET_MODEL_NAME ) == false )		return false;
+	if( FAILED( m_pFont->Init( CDirectX11::GetDevice(), CDirectX11::GetContext() ) ))	return false;
+	// Õ“ËŽžA’e‚ðÁ‚·‚©‚Ç‚¤‚©Ý’è.
+	if( BULLET_COLL_DISAPPEAR == 1 ) for( auto& b : m_pBullets ) b->SetCollDisappear();
 	return true;
 }
 
 // XVŠÖ”.
 void STG::CEnemy::Update()
 {
-	if( m_IsActive == false ) return;
-
 	switch( m_NowState )
 	{
-	case EState_Spawn:	Spawn();	break;
-	case EState_Move:	Move();		break;
-	case EState_Shot:	Shot();		break;
-	case EState_Escape: Escape();	break;
-	case EState_Dead:	Dead();		break;
-	default:
-		break;
+	case EState_Spawn:	Spawn();	break;	// ƒXƒ|[ƒ“.
+	case EState_Move:	Move();		break;	// ˆÚ“®.
+	case EState_Shot:	Shot();		break;	// ’e‚ðŒ‚‚Â.
+	case EState_Escape: Escape();	break;	// “¦‚°‚é.
+	case EState_Dead:	Dead();		break;	// Ž€–S.
+	default:						break;
 	}
 
-	// ‘ŠŽè‚ÌŠp“x‚ðŽæ“¾.
-	m_Angle = atan2(
-		m_TargetPositon.x - m_vPosition.x,
-		m_TargetPositon.z - m_vPosition.z );
-
-	BulletUpdate();
+	BulletUpdate();	// ’e‚ÌXV.
 }
 
 // •`‰æŠÖ”.
 void STG::CEnemy::Render()
 {
-	if( m_IsActive == false ) return;
 	m_pFont->SetColor( { 0.0f, 0.0f, 0.0f, 1.0f } );
 	m_pFont->SetPosition( m_vPosition );
 	m_pFont->SetRotation( FONT_ROTATION );
@@ -104,14 +96,19 @@ void STG::CEnemy::Move()
 	m_vPosition.z += m_MoveSpeed;
 	if( m_vPosition.z >= MOVE_SUB_POSITION_Z ) m_MoveSpeed -= MOVE_SUB_VALUE;
 	if( m_MoveSpeed > 0.0f ) return;
+	m_IsActive = true;
 	m_NowState = EState_Shot;
+
+	// ‘ŠŽè‚Æ‚ÌŠp“x‚ðŽæ“¾.
+	m_Angle = atan2(
+		m_vPosition.x - m_TargetPositon.x,
+		m_vPosition.z - m_TargetPositon.z );
+	m_Angle -= BULLET_ANGLE/static_cast<float>(SHOT_BULLET_COUNT);
 }
 
 // ’e‚ðŒ‚‚Â.
 void STG::CEnemy::Shot()
 {
-	static float rot = 0.0f;
-
 	m_ShotCount++;
 	if( m_ShotCount != SHOT_INTERVAL_FRAME ) return;
 	switch( SHOT_NUMBER )
@@ -121,17 +118,17 @@ void STG::CEnemy::Shot()
 	case 1:
 		if( m_NowShotBulletCount == BULLET_COUNT_MAX ) m_NowState = EState_Escape;
 
-		BulletShot( rot, BULLET_ANGLE );
-		rot += SHOT_ANGLE;	// Šp“x‚Ì‰ÁŽZ.
-		if( rot >= ANGLE_MAX ) rot = ANGLE_MIN;
+		BulletShot( m_Angle, BULLET_ANGLE );
+		m_Angle += SHOT_ANGLE;	// Šp“x‚Ì‰ÁŽZ.
+//		if( m_Angle >= ANGLE_MAX ) m_Angle = ANGLE_MIN;
 
 		break;
 	case 2:
 		if( m_NowShotBulletCount == ANY_BULLET_COUNT_MAX ) m_NowState = EState_Escape;
 
-		BulletShotAnyWay( rot, BULLET_ANGLE, BULLET_MOVE_SPEED, SHOT_BULLET_COUNT );
-		rot += SHOT_ANGLE;	// Šp“x‚Ì‰ÁŽZ.
-		if( rot >= ANGLE_MAX ) rot = ANGLE_MIN;
+		BulletShotAnyWay( m_Angle, BULLET_ANGLE, BULLET_MOVE_SPEED, SHOT_BULLET_COUNT );
+		m_Angle += SHOT_ANGLE;	// Šp“x‚Ì‰ÁŽZ.
+//		if( m_Angle >= ANGLE_MAX ) m_Angle = ANGLE_MIN;
 
 		break;
 	default:

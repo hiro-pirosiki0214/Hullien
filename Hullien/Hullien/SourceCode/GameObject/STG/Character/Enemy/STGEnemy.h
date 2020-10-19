@@ -29,13 +29,14 @@ namespace STG
 		const char* RENDER_CHAR				= "FukutaReiya";
 		const int	SPAWN_TIME				= 10;		// ƒXƒ|[ƒ“‚ÌŠÔ.
 		const float MOVE_SPEED				= 0.2f;		// ˆÚ“®‘¬“x.
+		const int	BULLET_COLL_DISAPPEAR	= 0;		// Õ“Ë,’e‚ğÁ‚·‚©.
 		const float BULLET_MOVE_SPEED		= 0.1f;		// ’e‚Ì‘¬“x.
-		const float	BULLET_ANGLE			= static_cast<float>(D3DXToRadian(25.0));	// ’e‚ÌŠp“x.
 		const int	BULLET_COUNT_MAX		= 30;		// ’e‚ÌÅ‘å”.
+		const float	BULLET_ANGLE			= static_cast<float>(D3DXToRadian(25.0));	// ’e‚ÌŠp“x.
 		const int	ANY_BULLET_COUNT_MAX	= 15;		// •¡”’e‚ğŒ‚‚ÂÛ‚ÌÅ‘å”.
 		const int	SHOT_INTERVAL_FRAME		= 20;		// ’e‚ğŒ‚‚ÂŠÔŠuƒtƒŒ[ƒ€.
 		const int	SHOT_BULLET_COUNT		= 2;		// ˆê”­‚Åo‚é’e‚Ì”.
-		const float SHOT_ANGLE				= static_cast<float>(D3DXToRadian(5.0));	// Œ‚‚Â‚ÌŠp“x.
+		const float SHOT_ANGLE				= static_cast<float>(D3DXToRadian(0.0));	// Œ‚‚Â‚ÌŠp“x.
 		const int	SHOT_NUMBER				= 2;	// ’e‚Ì”Ô† 1 : ˆê”­‚¸‚Â, 2 : •¡”.
 
 		// Œ»İ‚Ìó‘Ô.
