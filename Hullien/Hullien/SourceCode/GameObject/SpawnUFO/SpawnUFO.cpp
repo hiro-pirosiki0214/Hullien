@@ -68,7 +68,7 @@ void CSpawnUFO::Render()
 	if( m_IsDisp == false ) return;
 
 	m_pStaticMesh->SetPosition( m_vPosition );
-	m_pStaticMesh->SetScale( m_vSclae );
+	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
@@ -226,7 +226,7 @@ bool CSpawnUFO::CollisionSetting()
 	if (FAILED(m_pCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{ 0.0f, 0.0f, 0.0f },
 		COLLISION_RADIUS))) {
 		return false;

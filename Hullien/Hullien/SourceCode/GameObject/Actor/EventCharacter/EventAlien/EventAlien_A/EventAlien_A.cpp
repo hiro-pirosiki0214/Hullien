@@ -54,7 +54,7 @@ void CEventAlienA::Render()
 	D3DXVECTOR3 rot = m_vRotation;
 	rot.y += static_cast<float>(D3DX_PI);
 	m_pSkinMesh->SetRotation(rot);
-	m_pSkinMesh->SetScale(m_vSclae);
+	m_pSkinMesh->SetScale(m_vScale);
 	m_pSkinMesh->SetColor({ 0.5f, 0.8f, 0.5f, m_Parameter.ModelAlpha });
 	//	m_pSkinMesh->SetBlend( true );
 	m_pSkinMesh->SetRasterizerState(CCommon::enRS_STATE::Back);
@@ -65,7 +65,7 @@ void CEventAlienA::Render()
 	if (m_pTempStaticMesh == nullptr) return;
 	m_pTempStaticMesh->SetPosition(m_vPosition);
 	m_pTempStaticMesh->SetRotation(m_vRotation);
-	m_pTempStaticMesh->SetScale(m_vSclae);
+	m_pTempStaticMesh->SetScale(m_vScale);
 	m_pTempStaticMesh->SetColor({ 0.5f, 0.8f, 0.5f, m_Parameter.ModelAlpha });
 	//	m_pTempStaticMesh->SetBlend( true );
 	m_pTempStaticMesh->SetRasterizerState(CCommon::enRS_STATE::Back);

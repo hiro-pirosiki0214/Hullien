@@ -68,7 +68,7 @@ void CEventPlayer::Render()
 
 	m_pSkinMesh->SetPosition(m_vPosition);
 	m_pSkinMesh->SetRotation(m_vRotation);
-	m_pSkinMesh->SetScale(m_vSclae);
+	m_pSkinMesh->SetScale(m_vScale);
 	m_pSkinMesh->SetAnimSpeed(m_AnimSpeed);
 	m_pSkinMesh->Render();
 
@@ -154,7 +154,7 @@ bool CEventPlayer::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
 	return true;
@@ -168,7 +168,7 @@ bool CEventPlayer::ColliderSetting()
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
 	return true;

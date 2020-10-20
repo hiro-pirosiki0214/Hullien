@@ -61,7 +61,7 @@ void CExplosion::Render()
 	m_pCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Param.SphereAdjPos,
 		m_CollSphereRadius );
 }
@@ -135,7 +135,7 @@ bool CExplosion::ColliderSetting()
 	m_pCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Param.SphereAdjPos,
 		0.0f );
 	return true;

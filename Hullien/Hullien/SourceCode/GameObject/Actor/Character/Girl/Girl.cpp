@@ -95,7 +95,7 @@ void CGirl::Render()
 
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRotation( m_vRotation );
-	m_pStaticMesh->SetScale( m_vSclae );
+	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->Render();
 
 //	MeshRender();	// ƒƒbƒVƒ…‚Ì•`‰æ.
@@ -239,7 +239,7 @@ bool  CGirl::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
@@ -253,14 +253,14 @@ bool  CGirl::ColliderSetting()
 		m_pStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	// õ“G‚Ì“–‚½‚è”»’è.
 	if( FAILED( m_pSearchCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SearchCollRadius ) )) return false;
 

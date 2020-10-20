@@ -35,7 +35,7 @@ protected:
 	EObjectTag	m_ObjectTag;	// オブジェクトタグ.
 	D3DXVECTOR3 m_vPosition;	// 座標.
 	D3DXVECTOR3 m_vRotation;	// 回転.
-	D3DXVECTOR3 m_vSclae;		// 大きさ.
+	D3DXVECTOR3 m_vScale;		// 大きさ.
 };
 
 #endif	// #ifndef GAME_OBJECT_H.

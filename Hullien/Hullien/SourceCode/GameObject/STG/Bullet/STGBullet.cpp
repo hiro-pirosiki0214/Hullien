@@ -94,7 +94,7 @@ namespace STG
 		if( FAILED( m_pCollManager->InitCapsule(
 			&m_vPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			{0.0f, 0.0f, 0.0f},
 			1.0f,
 			1.0f ))) return false;

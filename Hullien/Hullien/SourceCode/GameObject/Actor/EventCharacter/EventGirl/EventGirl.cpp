@@ -96,7 +96,7 @@ void CEventGirl::SetOptionalState(const SOptionalState & state)
 {
 	m_vPosition = state.vPosition;
 	m_vRotation = state.vRotation;
-	m_vSclae = state.vScale;
+	m_vScale = state.vScale;
 	m_Parameter.ModelAlpha = state.ModelAlpha;
 	m_Parameter.MoveSpeed = state.MoveSpeed;
 	m_Parameter.RotationalSpeed = state.RotationalSpeed;
@@ -159,14 +159,14 @@ bool CEventGirl::ColliderSetting()
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
 	// õ“G‚Ì“–‚½‚è”»’è.
 	if (FAILED(m_pSearchCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SearchCollRadius))) return false;
 

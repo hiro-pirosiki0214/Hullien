@@ -28,7 +28,7 @@ bool CAttackUpItem::Init()
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 	m_ObjectTag = EObjectTag::AttackUpItem;
 	return true;
 }

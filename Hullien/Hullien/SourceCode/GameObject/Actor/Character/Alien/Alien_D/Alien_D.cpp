@@ -115,7 +115,7 @@ void CAlienD::ModelRender()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
@@ -125,7 +125,7 @@ void CAlienD::ModelRender()
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
 	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vSclae );
+	m_pTempStaticMesh->SetScale( m_vScale );
 	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, 1.0f } );
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pTempStaticMesh->Render();
@@ -317,7 +317,7 @@ bool CAlienD::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
@@ -330,7 +330,7 @@ bool CAlienD::ColliderSetting()
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;

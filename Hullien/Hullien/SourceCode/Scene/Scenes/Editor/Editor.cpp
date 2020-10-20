@@ -104,9 +104,7 @@ void CEditor::Update()
 	}
 	m_pEditCamera->Updata();
 	CCameraManager::SetCamera( m_pEditCamera );
-	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
-		( GetAsyncKeyState('D') & 0x8000 ) ){
-		if( !(GetAsyncKeyState('W') & 0x8000 ) ) return;
+	if(( GetAsyncKeyState(VK_F6) & 0x8000 ) && ( GetAsyncKeyState(VK_SHIFT) & 0x8000 )){
 		m_pSceneManager->NextSceneMove();
 	}
 }

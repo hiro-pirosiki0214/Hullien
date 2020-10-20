@@ -39,7 +39,7 @@ public:
 	void SetDisp(const bool& disp) { m_IsDisp = disp; }
 
 	// スケール値の設定.
-	void SetScale(const D3DXVECTOR3& scale) { m_vSclae = scale; }
+	void SetScale(const D3DXVECTOR3& scale) { m_vScale = scale; }
 	// 当たり判定(イベントで使用).
 	D3DXVECTOR3 Collision(CActor* pActor);
 private:

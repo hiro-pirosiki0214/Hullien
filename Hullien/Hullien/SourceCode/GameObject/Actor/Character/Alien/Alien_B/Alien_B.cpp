@@ -65,7 +65,7 @@ void CAlienB::Render()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render();
@@ -77,7 +77,7 @@ void CAlienB::Render()
 	if( m_pTempStaticMesh == nullptr ) return;
 	m_pTempStaticMesh->SetPosition( m_vPosition );
 	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vSclae );
+	m_pTempStaticMesh->SetScale( m_vScale );
 	m_pTempStaticMesh->SetColor( { 0.0f, 0.8f, 0.0f, 1.0f } );
 	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pTempStaticMesh->Render();
@@ -246,8 +246,7 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	pActor->SetVector( m_MoveVector );
 	// ƒvƒŒƒCƒ„[‚Ì‘Ì—Í‚ðŒ¸‚ç‚·.
 	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
-	{ 
-		m_Parameter.AttackPower = 5.0f;
+	{
 		life -= m_Parameter.AttackPower;
 		isAttack = true;
 	});
@@ -304,7 +303,7 @@ bool CAlienB::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
@@ -317,14 +316,14 @@ bool CAlienB::ColliderSetting()
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	if( FAILED( m_pCollManager->InitCapsule( 
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		-1.0f,
 		0.0f ) )) return false;

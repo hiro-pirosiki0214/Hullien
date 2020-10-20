@@ -82,7 +82,7 @@ void CMotherShipUFO::SetParameter( const SMotherShipUFOParam& param )
 		m_pCollManager->InitSphere(
 			&m_vPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			m_Param.SphereAdjPos,
 			m_Param.CollisionRadius );
 	}
@@ -106,7 +106,7 @@ bool CMotherShipUFO::CollisionSetting()
 	if( FAILED( m_pCollManager->InitSphere(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Param.SphereAdjPos,
 		m_Param.CollisionRadius ))){
 		return false;

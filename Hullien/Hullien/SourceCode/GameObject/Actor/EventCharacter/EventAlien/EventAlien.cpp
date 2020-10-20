@@ -68,15 +68,15 @@ void CEventAlien::SetGirlPos(CActor& actor)
 void CEventAlien::Spawning()
 {
 	// モデルのスケール値を足していく.
-	if (m_vSclae.x >= MODEL_SCALE_MAX) return;
-	m_vSclae.x += m_Parameter.ScaleSpeed;
-	m_vSclae.y += m_Parameter.ScaleSpeed;
-	m_vSclae.z += m_Parameter.ScaleSpeed;
-	if (m_vSclae.x > MODEL_SCALE_MAX)
+	if (m_vScale.x >= MODEL_SCALE_MAX) return;
+	m_vScale.x += m_Parameter.ScaleSpeed;
+	m_vScale.y += m_Parameter.ScaleSpeed;
+	m_vScale.z += m_Parameter.ScaleSpeed;
+	if (m_vScale.x > MODEL_SCALE_MAX)
 	{
-		m_vSclae.x = MODEL_SCALE_MAX;
-		m_vSclae.y = MODEL_SCALE_MAX;
-		m_vSclae.z = MODEL_SCALE_MAX;
+		m_vScale.x = MODEL_SCALE_MAX;
+		m_vScale.y = MODEL_SCALE_MAX;
+		m_vScale.z = MODEL_SCALE_MAX;
 		m_NowState = EEventAlienState::Move;
 	}
 

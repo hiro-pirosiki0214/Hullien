@@ -187,7 +187,7 @@ bool STG::CEnemy::CollisionInit()
 	if( FAILED( m_pCollManager->InitCapsule(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{0.0f, 0.0f, 0.0f},
 		1.0f,
 		2.0f*static_cast<float>(PARAMETER.Text.length()) ))) return false;

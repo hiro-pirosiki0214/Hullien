@@ -23,7 +23,7 @@ CItemBase::CItemBase()
 	, m_HitEffectCount		( 0.0f )
 	, pPRAMETER				( nullptr )
 {
-	m_vSclae = { 1.0f, 1.0f, 1.0f };
+	m_vScale = { 1.0f, 1.0f, 1.0f };
 }
 
 CItemBase::CItemBase( const SParameter* pParam )
@@ -42,7 +42,7 @@ CItemBase::CItemBase( const SParameter* pParam )
 	, m_HitEffectCount		( 0.0f )
 	, pPRAMETER				( pParam )
 {
-	m_vSclae = { pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax };
+	m_vScale = { pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax };
 
 	for( auto& e : m_pEffects ) e = std::make_shared<CEffectManager>();
 }
@@ -123,7 +123,7 @@ void CItemBase::Drop()
 	if( m_Scale <= pPRAMETER->ModelScaleMax ){
 		m_Scale += pPRAMETER->ModelScaleAddValue;
 		if( m_Scale >= 1.0f ) m_Scale = 1.0f;
-		m_vSclae = { m_Scale, m_Scale, m_Scale };
+		m_vScale = { m_Scale, m_Scale, m_Scale };
 	}
 
 	m_AccelerationValue += m_Gravity;		// d—Í‚Ì‰ÁŽZ.
@@ -211,7 +211,7 @@ bool CItemBase::ColliderSetting()
 	if( FAILED( m_pCollManager->InitCapsule(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{ 0.0f, 0.0f, 0.0f },
 		1.0f,
 		1.0f ) )) return false;
@@ -230,7 +230,7 @@ void CItemBase::DropAndActiveRender()
 	if( m_pStaticMesh == nullptr ) return;
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRotation( m_vRotation );
-	m_pStaticMesh->SetScale( m_vSclae );
+	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->SetAlpha( m_ModelAlpha );
 	AlphaBlendSetting();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );

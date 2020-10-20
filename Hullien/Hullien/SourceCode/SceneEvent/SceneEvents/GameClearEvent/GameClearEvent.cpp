@@ -148,6 +148,7 @@ bool CGameClearEvent::GirlInit()
 {
 	if( m_pGirl->Init() == false )return false;
 	m_stGirl.vPosition = m_pGirl->GetPosition();
+	m_stGirl.vPosition.y = 4.0f;
 	m_stGirl.vPosition.z = m_stPlayer.vPosition.z + INIT_GIRLPOSITION_Z;
 	m_stGirl.MoveSpeed = MOVE_SPEED;
 	return true;

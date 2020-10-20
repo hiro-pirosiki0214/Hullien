@@ -130,9 +130,7 @@ void CSceneManager::RetryGame()
 //=================================.
 void CSceneManager::ChangeEditScene()
 {
-	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
-		( GetAsyncKeyState('D') & 0x8000 ) ){
-		if( !(GetAsyncKeyState('Q') & 0x8000 ) ) return;
+	if(( GetAsyncKeyState(VK_F5) & 0x8000 ) && ( GetAsyncKeyState(VK_SHIFT) & 0x8000 )){
 		m_pScene	= std::make_shared<CEditor>( this );
 		m_IsLoadEnd	= false;
 		m_NextScene	= m_NowScene;

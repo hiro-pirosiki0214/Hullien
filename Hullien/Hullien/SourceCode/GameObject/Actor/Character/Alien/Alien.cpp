@@ -29,7 +29,7 @@ CAlien::CAlien()
 	, m_IsExplosion				( false )
 	, m_IsDelete				( false )
 {
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 }
 
 CAlien::~CAlien()
@@ -192,10 +192,10 @@ void CAlien::WaitMove()
 void CAlien::Spawning()
 {
 	// スケールの加算.
-	m_vSclae += { ADD_SCALE_VALUE, ADD_SCALE_VALUE, ADD_SCALE_VALUE };
+	m_vScale += { ADD_SCALE_VALUE, ADD_SCALE_VALUE, ADD_SCALE_VALUE };
 	// 大きさが一定値以上なら.
-	if( m_vSclae.x >= SCALE_MAX ){
-		m_vSclae = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
+	if( m_vScale.x >= SCALE_MAX ){
+		m_vScale = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
 		m_vPosition.y -= DOWN_SPEED;	// 高さを下げる.
 	}
 
@@ -269,11 +269,11 @@ void CAlien::Death()
 	m_DeathScale -= DEATH_SCALE_SUB_VALUE;
 	// モデルのサイズの計算.
 	const float scale = m_DeathScale*exp(-m_DeathCount)*sinf(DEATH_SCALE_PI*m_DeathCount);
-	m_vSclae = { scale, scale, scale };
+	m_vScale = { scale, scale, scale };
 
 	// 大きさが一定値以上なら.
-	if( m_vSclae.x > 0.0f ) return;
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	if( m_vScale.x > 0.0f ) return;
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 	CSoundManager::PlaySE("AlienDead");
 	m_IsDelete = true;	// 死亡フラグを立てる.
 }
@@ -298,10 +298,10 @@ void CAlien::Escape()
 // マザーシップに昇っている.
 void CAlien::RisingMotherShip()
 {
-	m_vSclae.x -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
-	m_vSclae.y -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
-	m_vSclae.z -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
-	if( m_vSclae.x > 0.0f ) return;
+	m_vScale.x -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
+	m_vScale.y -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
+	m_vScale.z -= RISING_MOTHER_SHIP_SCALE_SUB_VALUE;
+	if( m_vScale.x > 0.0f ) return;
 	m_IsDelete = true;	// 死亡フラグを立てる.
 }
 

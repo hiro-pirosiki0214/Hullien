@@ -134,7 +134,7 @@ void CPlayer::Render()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->Render();
 
@@ -212,10 +212,10 @@ void CPlayer::Controller()
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
 
-	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_MoveVector.z = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState('W') & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState('S') & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState('D') & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState('A') & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
 }
 
 // カメラ操作.
@@ -230,10 +230,10 @@ void CPlayer::CameraController()
 	if( CXInput::RThumbX_Axis() <= IDLE_THUMB_MIN ) 
 		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// 左方向.
 
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000 && GetAsyncKeyState(VK_RIGHT) & 0x8000) 
-		m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);
-	if (GetAsyncKeyState(VK_SHIFT)  & 0x8000 && GetAsyncKeyState(VK_LEFT) & 0x8000)	
-		m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) 
+		m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);	// 右方向.
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )
+		m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);	// 左方向.
 }
 
 // 攻撃操作関数.
@@ -244,14 +244,15 @@ void CPlayer::AttackController()
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove )	== true ) return;	// SPカメラの動作中は終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中は終了.
 
-	// Xボタンを押した瞬間じゃなければ終了.
-	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
-	// 攻撃カウントが最大以上なら終了.
-	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
-	m_AttackComboCount++;	// 攻撃カウントを加算.
-	// 攻撃データがキューに追加されたら終了.
-	if( IsPushAttack() == true ) return;
-	m_AttackComboCount--;	// 攻撃カウントを減算.
+	// Xボタンを押した瞬間になれば.
+	if( CXInput::X_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('F') & 0x8000 ) ){
+		// 攻撃カウントが最大以上なら終了.
+		if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
+		m_AttackComboCount++;	// 攻撃カウントを加算.
+		// 攻撃データがキューに追加されたら終了.
+		if( IsPushAttack() == true ) return;
+		m_AttackComboCount--;	// 攻撃カウントを減算.
+	}
 }
 
 // 特殊能力操作関数.
@@ -264,15 +265,15 @@ void CPlayer::SPController()
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == true ) return;
 
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
-	// Yボタンが押された瞬間じゃなければ終了.
-	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
+	// Yボタンが押された瞬間になれば.
+	if( CXInput::Y_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('Y') & 0x8000 )){
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_EndSPCameraMove );
+		m_CameraPosition	= m_pCamera->GetPosition();
+		m_SpecialAbility	= 0.0f;
 
-	CSoundManager::PlaySE("PlayerVoiceSpecial");
-	m_CameraPosition	= m_pCamera->GetPosition();
-	m_SpecialAbility	= 0.0f;
-	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_EndSPCameraMove );
-
-	SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
+		SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
+		CSoundManager::PlaySE("PlayerVoiceSpecial");
+	}
 }
 
 // 回避操作関数.
@@ -289,16 +290,17 @@ void CPlayer::AvoidController()
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
-	// Aボタンが押された瞬間じゃなければ終了.
-	if( CXInput::A_Button() != CXInput::enPRESSED_MOMENT ) return;
-	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );	// 回避フラグを立てる.
-	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
-	m_pEffects[player::EEffectNo_Avoidance]->Play( m_vPosition );
-	// 回避アニメーションの設定.
-	SetAnimationBlend( player::EAnimNo_Avoid );
+	// Aボタンが押された瞬間になれば.
+	if( CXInput::A_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('R') & 0x8000 )){
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );	// 回避フラグを立てる.
+		m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
+		m_pEffects[player::EEffectNo_Avoidance]->Play( m_vPosition );
+		// 回避アニメーションの設定.
+		SetAnimationBlend( player::EAnimNo_Avoid );
 
-	CSoundManager::PlaySE("PlayerAvoidMove");
-	CSoundManager::PlaySE("PlayerVoiceAvoidMove");
+		CSoundManager::PlaySE("PlayerAvoidMove");
+		CSoundManager::PlaySE("PlayerVoiceAvoidMove");
+	}
 }
 
 // 移動関数.
@@ -749,7 +751,7 @@ void CPlayer::AttackAnimation()
 		if( FAILED( m_pAttackCollManager->InitSphere(
 			&m_AttackPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			m_Parameter.SphereAdjPos,
 			attackCollisionRadius ) )) return;
 		// 各値が有効範囲内ならベクトルから回転値を入れる.
@@ -792,7 +794,7 @@ bool CPlayer::IsPushAttack()
 		if( FAILED( m_pAttackCollManager->InitSphere(
 			&m_AttackPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			m_Parameter.SphereAdjPos,
 			ATTACK1_COLLISION_RADIUS ) )) return false;
 		setAttackData( player::EAnimNo_Attack1, ATTACK1_ADJ_ENABLED_END_FRAME );
@@ -922,14 +924,14 @@ bool CPlayer::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	if( FAILED( m_pCollManager->InitCapsule( 
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		-18.0f,
 		0.0f ) )) return false;
@@ -941,7 +943,7 @@ bool CPlayer::ColliderSetting()
 	if( FAILED( m_pAttackCollManager->InitSphere(
 		&m_AttackPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		ATTACK1_COLLISION_RADIUS ) )) return false;
 	return true;

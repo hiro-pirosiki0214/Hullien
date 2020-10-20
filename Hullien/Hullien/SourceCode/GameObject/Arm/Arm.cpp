@@ -14,7 +14,7 @@ CArm::CArm()
 	, m_ScalingValue	( SCALING_VALUE )
 	, m_AnimSpeed		( 0.0 )
 {
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 }
 
 CArm::~CArm()
@@ -74,7 +74,7 @@ void CArm::Render()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->Render( m_pAC );
 }
@@ -134,7 +134,7 @@ void CArm::Appearance()
 	if( m_ScalingValue >= SCALING_VALUE_MAX ) m_ScalingValue = SCALING_VALUE_MAX;
 	// スケール値を計算.
 	const float scale = fabsf(sinf( static_cast<float>(D3DX_PI)*0.5f * m_AppearanceCount ));
-	m_vSclae = { scale * m_ScalingValue, scale*m_ScalingValue, scale };
+	m_vScale = { scale * m_ScalingValue, scale*m_ScalingValue, scale };
 }
 
 // 掴む.
@@ -159,5 +159,5 @@ void CArm::CleanUp()
 	}
 	// スケール値を計算.
 	const float scale = fabsf(sinf( static_cast<float>(D3DX_PI)*0.5f * m_AppearanceCount ));
-	m_vSclae = { scale, scale, scale };
+	m_vScale = { scale, scale, scale };
 }

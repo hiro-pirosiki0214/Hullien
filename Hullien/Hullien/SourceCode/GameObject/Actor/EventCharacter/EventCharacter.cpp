@@ -39,7 +39,7 @@ void CEventCharacter::SetOptionalState(const SOptionalState& state)
 {
 	m_vPosition = state.vPosition;
 	m_vRotation = state.vRotation;
-	m_vSclae = state.vScale;
+	m_vScale = state.vScale;
 	m_Parameter.ModelAlpha = state.ModelAlpha;
 	m_Parameter.MoveSpeed = state.MoveSpeed;
 	m_Parameter.RotationalSpeed = state.RotationalSpeed;
@@ -64,7 +64,7 @@ void CEventCharacter::MeshRender()
 
 	m_pTempStaticMesh->SetPosition(m_vPosition);
 	m_pTempStaticMesh->SetRotation(m_vRotation);
-	m_pTempStaticMesh->SetScale(m_vSclae);
+	m_pTempStaticMesh->SetScale(m_vScale);
 	m_pTempStaticMesh->Render();
 #endif	// #ifdef IS_TEMP_MODEL_RENDER.
 }
@@ -144,7 +144,7 @@ bool CEventCharacter::FootStepCollisionSetting()
 	if (FAILED(m_pGroundCollision->InitSphere(
 		&m_vGroundPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
 
@@ -155,13 +155,13 @@ bool CEventCharacter::FootStepCollisionSetting()
 	if (FAILED(m_pFootCollision[0]->InitSphere(
 		&m_vRightPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
 	if (FAILED(m_pFootCollision[1]->InitSphere(
 		&m_vLeftPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
 //#endif
@@ -223,31 +223,31 @@ void CEventCharacter::SetRotationZ(const float& vRot_z)
 // ‘å‚«‚³æ“¾ŠÖ”.
 D3DXVECTOR3 CEventCharacter::GetScale() const
 {
-	return m_vSclae;
+	return m_vScale;
 }
 
 // ‘å‚«‚³İ’èŠÖ”.
 void CEventCharacter::SetScale(const D3DXVECTOR3& vScale)
 {
-	m_vSclae = vScale;
+	m_vScale = vScale;
 }
 
 // XÀ•W‘å‚«‚³İ’èŠÖ”.
 void CEventCharacter::SetScaleX(const float & vScale_x)
 {
-	m_vSclae.x = vScale_x;
+	m_vScale.x = vScale_x;
 }
 
 // YÀ•W‘å‚«‚³İ’èŠÖ”.
 void CEventCharacter::SetScaleY(const float & vScale_y)
 {
-	m_vSclae.y = vScale_y;
+	m_vScale.y = vScale_y;
 }
 
 // ZÀ•W‘å‚«‚³İ’èŠÖ”.
 void CEventCharacter::SetScaleZ(const float & vScale_z)
 {
-	m_vSclae.z = vScale_z;
+	m_vScale.z = vScale_z;
 }
 
 float CEventCharacter::RotationMoveRight(const float& rotValue, const float& rotSpeed, bool IsRightRot)

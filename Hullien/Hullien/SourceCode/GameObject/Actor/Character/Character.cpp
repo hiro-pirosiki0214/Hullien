@@ -34,7 +34,7 @@ void CCharacter::MeshRender()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->Render();
 }
@@ -136,7 +136,7 @@ bool CCharacter::FootStepCollisionSetting()
 	if (FAILED(m_pGroundCollision->InitSphere(
 		&m_vGroundPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{0.0f,0.0f,0.0f},
 		1.0f))) return false;
 
@@ -147,13 +147,13 @@ bool CCharacter::FootStepCollisionSetting()
 	if (FAILED(m_pFootCollision[0]->InitSphere(
 		&m_vRightPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{ 0.0f,0.0f,0.0f },
 		0.5f))) return false;
 	if (FAILED(m_pFootCollision[1]->InitSphere(
 		&m_vLeftPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{ 0.0f,0.0f,0.0f },
 		0.5f))) return false;
 	return true;
