@@ -1,11 +1,12 @@
 #include "STGEnemyManager.h"
+#include "..\STGEnemyFactory\STGEnemyFactory.h"
 #include "..\STGEnemy.h"
 
 STG::CEnemyManager::CEnemyManager()
-	: m_Enemys	()
+	: m_pEnemyFactory	( nullptr )
+	, m_Enemys			()
 {
-	m_Enemys.resize( 1 );
-	for( auto& e : m_Enemys ) e = std::make_shared<STG::CEnemy>();
+	m_pEnemyFactory = std::make_unique<STG::CEnemyFactory>();
 }
 
 STG::CEnemyManager::~CEnemyManager()
@@ -15,6 +16,7 @@ STG::CEnemyManager::~CEnemyManager()
 // ‰Šú‰»ŠÖ”.
 bool STG::CEnemyManager::Init()
 {
+	if( m_pEnemyFactory->Create( m_Enemys ) == false ) return false;
 	for( auto& e : m_Enemys ) if( e->Init() == false ) return false;
 	return true;
 }

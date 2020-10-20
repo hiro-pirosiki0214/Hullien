@@ -157,6 +157,7 @@
     <ClCompile Include="SourceCode\GameObject\STG\Bullet\STGBullet.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -321,5 +322,7 @@
     <ClInclude Include="SourceCode\GameObject\STG\Bullet\STGBullet.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyParam.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.h" />
   </ItemGroup>
 </Project>

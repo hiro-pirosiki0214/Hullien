@@ -2,6 +2,7 @@
 #define STG_ENEMY_H
 
 #include "..\STGCharacter.h"
+#include "STGEnemyParam.h"
 
 class CFont;
 
@@ -9,35 +10,19 @@ namespace STG
 {
 	class CEnemy : public STG::CCharacter
 	{
-		const char* MODEL_NAME			= "a";
-		const char* BULLET_MODEL_NAME	= "item cure";
+		inline static const char* BULLET_MODEL_NAME		= "item cure";
+		inline static const float INIT_POSITION_Z		= -100.0f;	// 初期座標 : Z.
+		inline static const float MOVE_SUB_VALUE		= 0.002f;	// 移動速度を引く値.
+		inline static const float MOVE_SUB_POSITION_Z	= -10.0f;	// 移動速度を引いていく座標.
 
-		const float ANGLE_MAX = static_cast<float>(D3DXToRadian(360.0));	// 弾の最大.
-		const float ANGLE_MIN = static_cast<float>(D3DXToRadian(0.0));		// 弾の最大.
-
-		const float INIT_POSITION_Z		= -100.0f;
-		const float MOVE_SUB_VALUE		= 0.002f;
-		const float MOVE_SUB_POSITION_Z = -10.0f;
-
-		const D3DXVECTOR3 FONT_ROTATION =	// フォントの回転値.
+		inline static const D3DXVECTOR3 FONT_ROTATION =	// フォントの回転値.
 		{
 			static_cast<float>(D3DXToRadian(270)),
 			0.0f, 
 			static_cast<float>(D3DXToRadian(180))
 		};
 
-		const char* RENDER_CHAR				= "FukutaReiya";
-		const int	SPAWN_TIME				= 10;		// スポーンの時間.
-		const float MOVE_SPEED				= 0.2f;		// 移動速度.
-		const int	BULLET_COLL_DISAPPEAR	= 0;		// 衝突時,弾を消すか.
-		const float BULLET_MOVE_SPEED		= 0.1f;		// 弾の速度.
-		const int	BULLET_COUNT_MAX		= 30;		// 弾の最大数.
-		const float	BULLET_ANGLE			= static_cast<float>(D3DXToRadian(25.0));	// 弾の角度.
-		const int	ANY_BULLET_COUNT_MAX	= 15;		// 複数弾を撃つ際の最大数.
-		const int	SHOT_INTERVAL_FRAME		= 20;		// 弾を撃つ間隔フレーム.
-		const int	SHOT_BULLET_COUNT		= 2;		// 一発で出る弾の数.
-		const float SHOT_ANGLE				= static_cast<float>(D3DXToRadian(0.0));	// 撃つ時の角度.
-		const int	SHOT_NUMBER				= 2;	// 弾の番号 1 : 一発ずつ, 2 : 複数.
+		const STG::SEnemyParam PARAMETER;	// パラメータ.
 
 		// 現在の状態.
 		enum enState
@@ -54,6 +39,7 @@ namespace STG
 		} typedef EState;
 	public:
 		CEnemy();
+		CEnemy( const STG::SEnemyParam& param );
 		virtual ~CEnemy();
 
 		// 初期化関数.

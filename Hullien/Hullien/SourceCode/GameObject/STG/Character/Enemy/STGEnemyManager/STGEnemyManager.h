@@ -7,8 +7,9 @@
 
 namespace STG
 {
-	class CActor;
-	class CEnemy;	// 敵クラス.
+	class CActor;			// 規定クラス.
+	class CEnemy;			// 敵クラス.
+	class CEnemyFactory;	// 敵作成クラス.
 
 	class CEnemyManager
 	{
@@ -24,7 +25,8 @@ namespace STG
 		void Render();
 
 	private:
-		std::vector<std::shared_ptr<CEnemy>> m_Enemys;	// 敵リスト.
+		std::unique_ptr<STG::CEnemyFactory>			m_pEnemyFactory;	// 敵作成クラス.
+		std::vector<std::shared_ptr<STG::CEnemy>>	m_Enemys;			// 敵リスト.
 	};
 };
 
