@@ -6,6 +6,7 @@
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\DebugText\DebugText.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h"
+#include "..\..\..\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\XAudio2\SoundManager.h"
@@ -13,9 +14,11 @@
 CTitle::CTitle(CSceneManager* pSceneManager)
 	: CSceneBase(pSceneManager)
 	, m_pWidget				( nullptr )
+	, m_pConfigWidget	( nullptr )
 	, m_IsChangeScene	( false )
 {
 	m_pWidget	= std::make_unique< CTitleWidget >();
+	m_pConfigWidget = std::make_unique<CConfigWidget>();
 	CFade::SetFadeOut();
 }
 
@@ -29,6 +32,7 @@ CTitle::~CTitle()
 bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
+	if( m_pConfigWidget->Init() == false ) return false;
 	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
 	CSoundManager::SetBGMVolume("TitleBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
@@ -45,6 +49,7 @@ void CTitle::Update()
 	if (CFade::GetIsFade() == true) return;
 
 	m_pWidget->Update();
+	m_pConfigWidget->Update();
 	//ƒV[ƒ“Ø‚è‘Ö‚¦.
 	ChangeScene();
 
@@ -57,6 +62,7 @@ void CTitle::Render()
 {
 	if ( m_pWidget == nullptr ) return;
 	m_pWidget->Render();
+	m_pConfigWidget->Render();
 }
 
 //============================.
