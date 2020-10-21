@@ -55,7 +55,6 @@ void STG::CPlayer::Collision( STG::CActor* pActor )
 	for( auto& b : m_pBullets ) b->Collision( pActor );
 	// カプセルの当たり判定.
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetColl() ) == false ) return;
-
 }
 
 // 移動関数.
@@ -76,15 +75,10 @@ void STG::CPlayer::Controller()
 	m_Direction.x = static_cast<float>(CXInput::RThumbX_Axis());
 	m_Direction.z = static_cast<float>(CXInput::RThumbY_Axis());
 
-	if( GetAsyncKeyState('W') & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState('S') & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
-	if( GetAsyncKeyState('D') & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState('A') & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
-
-	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_Direction.z = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_Direction.z = IDLE_THUMB_MIN;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_Direction.x = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_Direction.x = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_MoveVector.z = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
 
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
@@ -112,13 +106,20 @@ void STG::CPlayer::ShotController()
 		BulletShot( m_vRotation.y, BULLET_MOVE_SPEED );
 	}
 	// 長押しの場合弾を撃つ・ShotCountの加算.
-	if( CXInput::R_Button() == CXInput::enPRESS_AND_HOLD || ( GetAsyncKeyState('R') & 0x8000 )){
+	if( CXInput::R_Button() == CXInput::enPRESS_AND_HOLD || ( GetAsyncKeyState('Z') & 0x8000 )){
 		m_ShotCount++;
 		if( m_ShotCount == SHOT_INTERVAL_FRAME ){
 			BulletShot( m_vRotation.y, BULLET_MOVE_SPEED );
 			m_ShotCount = 0;
 		}
 	}
+}
+
+// ライフ計算関数.
+void STG::CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
+{
+	float life = 0.0f;
+	proc( life );
 }
 
 // 当たり判定の作成.

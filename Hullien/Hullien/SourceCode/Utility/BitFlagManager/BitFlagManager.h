@@ -3,7 +3,6 @@
 
 namespace bit
 {
-
 	// ƒrƒbƒg‚ð—§‚Ä‚é.
 	template<typename T>
 	void OnBitFlag( T* pBit, const unsigned int& bitFlag )

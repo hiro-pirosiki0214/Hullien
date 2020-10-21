@@ -9,7 +9,7 @@ namespace STG
 	{
 		const char* MODEL_NAME = "ufo_mini";
 		const char* BULLET_MODEL_NAME = "item cure";
-		const float MOVE_SPEED = 0.2f;
+		const float MOVE_SPEED = 0.4f;
 		const float BULLET_MOVE_SPEED	= 0.5f;	// 弾の速度.
 		const int	BULLET_COUNT_MAX	= 30;	// 弾の最大数.
 		const int	SHOT_INTERVAL_FRAME	= 15;	// 弾を撃つ間隔フレーム.
@@ -33,6 +33,9 @@ namespace STG
 		virtual void Move() override;
 		// 弾を撃つ操作関数.
 		void ShotController();
+
+		// ライフ計算関数.
+		virtual void LifeCalculation( const std::function<void(float&)>& ) override;
 
 		// 当たり判定の作成.
 		bool CollisionInit();

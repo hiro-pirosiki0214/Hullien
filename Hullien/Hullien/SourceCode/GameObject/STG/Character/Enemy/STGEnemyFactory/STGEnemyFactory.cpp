@@ -43,8 +43,14 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 			case EEnemyParamNo_PositionX:
 				enemyParam.PositionX = std::stof(buff);
 				break;
-			case EEnemyParamNo_pText:
+			case EEnemyParamNo_Text:
 				enemyParam.Text = buff;
+				break;
+			case EEnemyParamNo_TextSize:
+				enemyParam.TextSize = std::stof(buff);
+				break;
+			case EEnemyParamNo_LifePoint:
+				enemyParam.LifePoint = std::stof(buff);
 				break;
 			case EEnemyParamNo_MoveSpeed:
 				enemyParam.MoveSpeed = std::stof(buff);

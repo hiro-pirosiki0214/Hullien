@@ -14,11 +14,17 @@ STG::CEnemy::CEnemy()
 STG::CEnemy::CEnemy( const STG::SEnemyParam& param )
 	: PARAMETER				( param )
 	, m_pFont				( nullptr )
+	, m_FontRotation		( FONT_ROTATION )
 	, m_NowState			( EState_Spawn )
 	, m_MoveSpeed			( 0.0f )
+	, m_LifePoint			( 0.0f )
+	, m_MoveingDistance		( 0.0f )
+	, m_MoveingDistanceMax	( 0.0f )
 	, m_SpawnCount			( 0 )
-	, m_Angle				( 0.0f )
+	, m_ShotAngle			( 0.0f )
 	, m_NowShotBulletCount	( 0 )
+	, m_IsHitShake			( false )
+	, m_ShakeCount			( SHAKE_COUNT_MAX )
 {
 	m_pFont			= std::make_unique<CFont>();
 	m_pCollManager	= std::make_shared<CCollisionManager>();
@@ -26,6 +32,8 @@ STG::CEnemy::CEnemy( const STG::SEnemyParam& param )
 	m_vPosition.x	= PARAMETER.PositionX;
 	m_vRotation		= { 0.0f, 0.0f, static_cast<float>(D3DXToRadian(90)) };
 	m_MoveSpeed		= PARAMETER.MoveSpeed;
+	m_LifePoint		= PARAMETER.LifePoint;
+	m_vScale		= { PARAMETER.TextSize, PARAMETER.TextSize, PARAMETER.TextSize };
 }
 
 STG::CEnemy::~CEnemy()
@@ -46,6 +54,8 @@ bool STG::CEnemy::Init()
 // 更新関数.
 void STG::CEnemy::Update()
 {
+	BulletUpdate();	// 弾の更新.
+
 	switch( m_NowState )
 	{
 	case EState_Spawn:	Spawn();	break;	// スポーン.
@@ -56,18 +66,25 @@ void STG::CEnemy::Update()
 	default:						break;
 	}
 
-	BulletUpdate();
+	HitShake();		// ヒット時の揺れ.
 }
 
 // 描画関数.
 void STG::CEnemy::Render()
 {
+	BulletRender( 
+		{ 
+			1.0f,
+			PARAMETER.BulletCollDisappear*0.4f, 
+			PARAMETER.BulletCollDisappear*0.4f
+		} );	// 弾の描画.
+
 	m_pFont->SetColor( { 0.0f, 0.0f, 0.0f, 1.0f } );
 	m_pFont->SetPosition( m_vPosition );
-	m_pFont->SetRotation( FONT_ROTATION );
+	m_pFont->SetRotation( m_FontRotation );
+	m_pFont->SetScale( m_vScale );
 	m_pFont->Render( PARAMETER.Text );
 
-	BulletRender();
 
 #ifdef _DEBUG
 	m_pCollManager->DebugRender();
@@ -92,6 +109,7 @@ void STG::CEnemy::Spawn()
 	m_SpawnCount++;
 	if( m_SpawnCount < PARAMETER.SpawnTime*FPS ) return;
 	m_NowState = EState_Move;
+	m_IsActive = true;
 }
 
 
@@ -100,18 +118,19 @@ void STG::CEnemy::Move()
 {
 	m_vPosition.z += m_MoveSpeed;
 	if( m_vPosition.z >= MOVE_SUB_POSITION_Z ) m_MoveSpeed -= MOVE_SUB_VALUE;
+
 	if( m_MoveSpeed > 0.0f ) return;
-	m_IsActive = true;
+
 	m_NowState = EState_Shot;
 	// 弾の数と円の間隔で初期度を取得する.
 	const float startDegree =
 		static_cast<float>(PARAMETER.ShotBulletCount*D3DXToDegree(PARAMETER.BulletAngle)) -
 		static_cast<float>((PARAMETER.ShotBulletCount+1)*(D3DXToDegree(PARAMETER.BulletAngle)/2));
 	// 相手の角度を取得.
-	m_Angle = atan2(
+	m_ShotAngle = atan2(
 		m_vPosition.x - m_TargetPositon.x,
 		m_vPosition.z - m_TargetPositon.z );
-	m_Angle -= static_cast<float>(D3DXToRadian(startDegree));
+	m_ShotAngle -= static_cast<float>(D3DXToRadian(startDegree));
 }
 
 // 弾を撃つ.
@@ -124,17 +143,25 @@ void STG::CEnemy::Shot()
 	case 0:
 		break;
 	case 1:
-		if( m_NowShotBulletCount == PARAMETER.BulletCountMax ) m_NowState = EState_Escape;
-
-		BulletShot( m_Angle, PARAMETER.BulletAngle );
-		m_Angle += PARAMETER.ShotAngle;	// 角度の加算.
+		// 撃った弾が最大数に達すれば.
+		if( m_NowShotBulletCount == PARAMETER.BulletCountMax ){
+			m_NowState = EState_Escape;	// 逃げる状態へ遷移.
+			SearchRandomMoveVector();	// 移動ベクトルを検索.
+		}
+		// 弾を一つずつ発射.
+		BulletShot( m_ShotAngle, PARAMETER.BulletSpeed );
+		m_ShotAngle += PARAMETER.ShotAngle;	// 角度の加算.
 
 		break;
 	case 2:
-		if( m_NowShotBulletCount == PARAMETER.AnyBulletCountMax ) m_NowState = EState_Escape;
-
-		BulletShotAnyWay( m_Angle, PARAMETER.BulletAngle, PARAMETER.BulletSpeed, PARAMETER.ShotBulletCount );
-		m_Angle += PARAMETER.ShotAngle;	// 角度の加算.
+		// 撃った弾が最大数に達すれば.
+		if( m_NowShotBulletCount == PARAMETER.AnyBulletCountMax ){
+			m_NowState = EState_Escape;	// 逃げる状態へ遷移.
+			SearchRandomMoveVector();	// 移動ベクトルを検索.
+		}
+		// 弾を複数発射.
+		BulletShotAnyWay( m_ShotAngle, PARAMETER.BulletAngle, PARAMETER.BulletSpeed, PARAMETER.ShotBulletCount );
+		m_ShotAngle += PARAMETER.ShotAngle;	// 角度の加算.
 
 		break;
 	default:
@@ -147,13 +174,54 @@ void STG::CEnemy::Shot()
 // 逃げる.
 void STG::CEnemy::Escape()
 {
+	// 移動速度を一定速度になるまで加算.
 	if( m_MoveSpeed < PARAMETER.MoveSpeed ) m_MoveSpeed += MOVE_SUB_VALUE;
-	m_vPosition.x += m_MoveSpeed;
+
+	// ベクトルを使用して移動.
+	m_vPosition.x += m_MoveVector.x * m_MoveSpeed;
+	m_vPosition.z += m_MoveVector.z * m_MoveSpeed;
+
+	m_MoveingDistance += m_MoveSpeed;	// 距離を加算.
+
+	// 移動距離が一定距離を超得たら.
+	if( m_MoveingDistance >= m_MoveingDistanceMax ){
+		SearchRandomMoveVector();	// 移動ベクトルを検索する.
+	}
+	// 画面外に出たら.
+	if( IsDisplayOut( E_WND_OUT_ADJ_SIZE ) == true ){
+		m_NowState = EState_Dead;	// 死亡.
+	}
 }
 
 // 死亡.
 void STG::CEnemy::Dead()
 {
+	m_vScale.x -= DEAD_SCALE_SUB_VALUE;	// スケールを加算.
+	m_vScale.y -= DEAD_SCALE_SUB_VALUE;	// スケールを加算.
+	m_vScale.z -= DEAD_SCALE_SUB_VALUE;	// スケールを加算.
+	m_FontRotation.z += DEAD_ROTATION_SPEED;	// 回転させる.
+
+	if( m_vScale.x > 0.0f ) return;
+	// スケールが 0.0 以下になれば.
+	m_IsActive	= false;		// 動作終了.
+	m_NowState	= EState_None;	// 何もない状態へ遷移.
+	// 座標を画面外へ.
+	m_vPosition	= { INIT_POSITION_Z, 0.0f, INIT_POSITION_Z };
+}
+
+// 当たった時の揺れ.
+void STG::CEnemy::HitShake()
+{
+	if( m_IsHitShake == false ) return;
+
+	m_ShakeCount -= SHAKE_SUB_VALUE;	// 揺れカウントを減算.
+	m_vPosition.x += sinf( static_cast<float>(D3DX_PI)		* m_ShakeCount ) * SHAKE_SPEED;
+	m_vPosition.z += sinf( static_cast<float>(D3DX_PI)*0.5f * m_ShakeCount ) * SHAKE_SPEED;
+
+	if( m_ShakeCount > 0.0f ) return;
+	// 揺れカウントが 0.0 以下になれば.
+	m_ShakeCount = SHAKE_COUNT_MAX;	// 揺れカウントを初期化.
+	m_IsHitShake = false;			// ヒットフラグを下す.
 }
 
 // 弾を撃つ.
@@ -181,6 +249,37 @@ void STG::CEnemy::BulletShotAnyWay(
 	}
 }
 
+// ライフ計算関数.
+void STG::CEnemy::LifeCalculation( const std::function<void(float&)>& proc )
+{
+	// 逃げる状態のみ攻撃を受ける.
+	if( m_NowState != EState_Escape ){
+		m_IsHitShake = true;	// ヒットフラグを立てる.
+		return;
+	}
+
+	proc( m_LifePoint );
+	m_IsHitShake = true;	// ヒットフラグを立てる.
+
+	if( m_LifePoint > 0.0f ) return;
+	// ライフが0以下になれば
+	m_NowState = EState_Dead;	// 死亡状態へ遷移.
+}
+
+// ランダムで移動ベクトルを検索.
+void STG::CEnemy::SearchRandomMoveVector()
+{
+	// 移動ベクトルをランダムから取得.
+	m_MoveVector.x = sinf( static_cast<float>(rand()) );
+	m_MoveVector.z = cosf( static_cast<float>(rand()) );
+
+	// 最大移動距離をランダムから取得.
+	m_MoveingDistanceMax = fabsf(cosf( static_cast<float>(rand()) )) * ESCAPE_MOVE_DISTANCE;
+	m_MoveingDistance = 0.0f;
+	BulletShot( m_ShotAngle, PARAMETER.BulletSpeed );
+	m_ShotAngle += PARAMETER.ShotAngle;	// 角度の加算.
+}
+
 // 当たり判定の作成.
 bool STG::CEnemy::CollisionInit()
 {
@@ -189,7 +288,7 @@ bool STG::CEnemy::CollisionInit()
 		&m_vRotation,
 		&m_vScale.x,
 		{0.0f, 0.0f, 0.0f},
-		1.0f,
-		2.0f*static_cast<float>(PARAMETER.Text.length()) ))) return false;
+		PARAMETER.TextSize,
+		PARAMETER.TextSize*2.0f*static_cast<float>(PARAMETER.Text.length()) ))) return false;
 	return true;
 }

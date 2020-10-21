@@ -10,7 +10,10 @@ namespace STG
 	class CActor;			// 規定クラス.
 	class CEnemy;			// 敵クラス.
 	class CEnemyFactory;	// 敵作成クラス.
+}
 
+namespace STG
+{
 	class CEnemyManager
 	{
 	public:

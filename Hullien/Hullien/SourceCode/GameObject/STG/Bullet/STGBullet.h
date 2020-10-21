@@ -26,6 +26,9 @@ namespace STG
 			const D3DXVECTOR3& pos,
 			const float& rot, 
 			const float& moveSpeed );
+
+		// 色の設定.
+		void SetColor( const D3DXVECTOR3& color ){ m_Color = { color.x, color.y, color.z, 1.0f }; }
 		// 撃ったか.
 		bool IsShot() const { return m_IsActive; }
 		// 当たった弾が消える設定.
@@ -36,8 +39,9 @@ namespace STG
 		bool CollisionInit();
 
 	private:
-		float	m_MoveSpeed;	// 移動速度.
-		bool	m_IsBulletToBulletCollJudge;	// 弾どうしの当たり判定を行うか.
+		D3DXVECTOR4 m_Color;						// 弾の色.
+		float		m_MoveSpeed;					// 移動速度.
+		bool		m_IsBulletToBulletCollJudge;	// 弾どうしの当たり判定を行うか.
 	};
 };
 

@@ -10,6 +10,8 @@
 **/
 class CGameObject
 {
+	// ウィンドウ外の調整値.
+	inline static const float WND_OUT_ADJ_SIZE = 300.0f;
 public:
 	CGameObject();
 	virtual ~CGameObject();
@@ -29,7 +31,7 @@ public:
 	virtual void SetPosition( const D3DXVECTOR3& vPos );
 
 	// 画面の外に出ているか.
-	bool IsDisplayOut();
+	bool IsDisplayOut( const float& adjSize = WND_OUT_ADJ_SIZE );
 
 protected:
 	EObjectTag	m_ObjectTag;	// オブジェクトタグ.

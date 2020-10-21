@@ -26,7 +26,7 @@ namespace STG
 		// ’e‚ÌXV.
 		virtual void BulletUpdate();
 		// ’e‚Ì•`‰æ.
-		virtual void BulletRender();
+		virtual void BulletRender( const D3DXVECTOR3& color = { 0.0f, 0.0f, 0.0f } );
 		// ’e‚ğŒ‚‚Â.
 		virtual void BulletShot( const float& rot, const float& moveSpeed );
 

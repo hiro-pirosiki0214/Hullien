@@ -2,8 +2,6 @@
 #include "..\Camera\CameraManager\CameraManager.h"
 #include "..\Common\SceneTexRenderer\SceneTexRenderer.h"
 
-// ウィンドウ外の調整値.
-static const float WND_OUT_ADJ_SIZE = 300.0f;
 
 /****************************************
 *	ゲームオブジェクト元クラス.
@@ -47,7 +45,7 @@ void CGameObject::SetPosition( const D3DXVECTOR3& vPos )
 //-----------------------------.
 // 画面の外に出ているか.
 //-----------------------------.
-bool CGameObject::IsDisplayOut()
+bool CGameObject::IsDisplayOut( const float& adjSize )
 {
 	// ビューポート行列.
 	D3DXMATRIX mViewport;
@@ -63,8 +61,8 @@ bool CGameObject::IsDisplayOut()
 	// D3DXVECTOR3と掛け合わせ.
 	D3DXVec3TransformCoord( &screenPos, &m_vPosition, &m );
 
-	if( -WND_OUT_ADJ_SIZE < screenPos.x && screenPos.x < WND_W + WND_OUT_ADJ_SIZE &&
-		-WND_OUT_ADJ_SIZE < screenPos.y && screenPos.y < WND_H + WND_OUT_ADJ_SIZE ) return false;	// 画面内.
+	if( -adjSize < screenPos.x && screenPos.x < WND_W + adjSize &&
+		-adjSize < screenPos.y && screenPos.y < WND_H + adjSize ) return false;	// 画面内.
 	// 画面外でもシャドウは描画する.
 	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ) return false;
 	

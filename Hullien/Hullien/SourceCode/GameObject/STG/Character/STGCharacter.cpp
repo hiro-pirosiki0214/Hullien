@@ -32,9 +32,12 @@ void STG::CCharacter::BulletUpdate()
 }
 
 // ’e‚Ì•`‰æ.
-void STG::CCharacter::BulletRender()
+void STG::CCharacter::BulletRender( const D3DXVECTOR3& color )
 {
-	for( auto& b : m_pBullets ) b->Render();
+	for( auto& b : m_pBullets ){
+		b->SetColor( color );
+		b->Render();
+	}
 }
 
 // ’e‚ğŒ‚‚Â.
