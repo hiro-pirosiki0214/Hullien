@@ -231,19 +231,22 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 	// ウィンドウを半透明化するよう.
 	/*
 	m_hWnd = CreateWindowEx(
-	WS_EX_LAYERED | WS_EX_TOPMOST, 
-	APP_NAME.c_str(), 
-	WND_TITLE.c_str(), 
-	WS_POPUP, 
-	pos_x, pos_y, 
-	rect.right - rect.left, 
-	rect.bottom - rect.top,NULL, NULL, 
-	hInstance,
-	NULL);
+		WS_EX_LAYERED | WS_EX_TOPMOST, 
+		APP_NAME.c_str(), 
+		WND_TITLE.c_str(), 
+		WS_POPUP, 
+		pos_x, pos_y, 
+		rect.right - rect.left, 
+		rect.bottom - rect.top,
+		NULL,
+		NULL, 
+		hInstance,
+		NULL);
 	if( SetLayeredWindowAttributes(m_hWnd, 0, 255, LWA_COLORKEY | LWA_ALPHA) == false ){
 		return E_FAIL;
 	}
 	*/
+	
 
 	// ウィンドウの表示.
 	ShowWindow( m_hWnd, SW_SHOW );
