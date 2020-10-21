@@ -52,6 +52,12 @@ void CGameClear::Update()
 	ChangeScene();
 #else
 	m_pSTGManager->Update();
+
+#ifdef _DEBUG
+	if( GetAsyncKeyState(VK_F4) & 0x0001 ){
+		m_pSceneManager->NextSceneMove();
+	}
+#endif	// #ifdef _DEBUG.
 #endif	// #ifndef ENDING_STG
 }
 

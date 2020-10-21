@@ -10,7 +10,7 @@ namespace STG
 		const char* MODEL_NAME = "ufo_mini";
 		const char* BULLET_MODEL_NAME = "item cure";
 		const float MOVE_SPEED = 0.4f;
-		const float BULLET_MOVE_SPEED	= 0.5f;	// ’e‚Ì‘¬“x.
+		const float BULLET_MOVE_SPEED	= 0.8f;	// ’e‚Ì‘¬“x.
 		const int	BULLET_COUNT_MAX	= 30;	// ’e‚ÌÅ‘å”.
 		const int	SHOT_INTERVAL_FRAME	= 15;	// ’e‚ğŒ‚‚ÂŠÔŠuƒtƒŒ[ƒ€.
 	public:
