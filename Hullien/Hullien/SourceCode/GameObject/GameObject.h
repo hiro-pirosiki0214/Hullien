@@ -29,6 +29,8 @@ public:
 	D3DXVECTOR3 GetPosition() const;
 	// 座標設定関数.
 	virtual void SetPosition( const D3DXVECTOR3& vPos );
+	// Y軸の回転値の設定.
+	void SetRotationY( const float& rotY );
 
 	// 画面の外に出ているか.
 	bool IsDisplayOut( const float& adjSize = WND_OUT_ADJ_SIZE );

@@ -22,6 +22,11 @@ class CGirl : public CCharacter
 		EAnimNo_Move,	// ˆÚ“®.
 		EAnimNo_Abduct,	// ˜A‚ê‹Ž‚ç‚ê‚Ä‚¢‚é.
 
+		EAnimNo_Max,
+
+		EAnimNo_Begin	= EAnimNo_Wait,
+		EAnimNo_End		= EAnimNo_Max,
+
 		Abduct_Max,
 	} typedef EAnimNo;
 

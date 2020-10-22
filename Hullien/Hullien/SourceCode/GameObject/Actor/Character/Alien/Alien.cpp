@@ -160,7 +160,7 @@ void CAlien::TargetRotation()
 	myVector.z = cosf( m_vRotation.y );
 
 	// 目的の座標へ向けて回転.
-	if( CCharacter::TargetRotation( m_MoveVector, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == false )
+	if( CCharacter::TargetRotation( m_MoveVector, ROTATIONAL_SPEED, TOLERANCE_RADIAN ) == false ) return;
 	m_vRotation.y			= m_TargetRotation.y;	// ターゲットへの回転取得.
 	m_BeforeMoveingPosition = m_vPosition;			// 現在の座標を記憶.
 	m_NowMoveState			= EMoveState::Move;		// 移動状態へ遷移.
@@ -326,9 +326,23 @@ void CAlien::GirlCollision( CActor* pActor )
 	if( m_NowState == EAlienState::Death )		return;	// 死亡していたら終了.
 	if( m_NowState == EAlienState::Fright )		return;	// 怯み状態なら終了.
 
+	// 球体の当たり判定.
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ){
+		// アームを片付けていなければ片付ける.
+		if( m_pArm->IsCleanUp() == false ){
+			m_AnimSpeed = 0.01;
+			SetAnimation( EAnimNo_Move, m_pAC );
+			m_pArm->SetCleanUpPreparation();
+		}
+		m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
+		m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
+		return;
+	}
+
 	if( m_NowState == EAlienState::Abduct ){
 		// 連れ去っている状態なのでアームの座標を設定する.
-		pActor->SetPosition( {m_pArm->GetGrabPosition().x, 0.0f, m_pArm->GetGrabPosition().z} );
+		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.5f, m_pArm->GetGrabPosition().z} );
+		pActor->SetRotationY( m_vRotation.y );
 		return;
 	} else {
 		// 既に連れ去っているか.
@@ -342,9 +356,6 @@ void CAlien::GirlCollision( CActor* pActor )
 			return;
 		}
 	}
-
-	// 球体の当たり判定.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 	
 	// 掴んでいなければ(アームを取り出してなければ).
 	if( m_pArm->IsGrab() == false ){
@@ -355,8 +366,20 @@ void CAlien::GirlCollision( CActor* pActor )
 		}
 		return;
 	} else {
+		//const float lenght = D3DXVec3Length( &D3DXVECTOR3(pActor->GetPosition()-m_vPosition) );
+		//// 目的の座標との距離が一定値より少ないか比較.
+		//if( lenght > m_pArm->GRAB_DISTANCE ){
+		//	// アームを片付けていなければ片付ける.
+		//	if( m_pArm->IsCleanUp() == false ){
+		//		m_AnimSpeed = 0.01;
+		//		SetAnimation( EAnimNo_Move, m_pAC );
+		//		m_pArm->SetCleanUpPreparation();
+		//	}
+		//	m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
+		//	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
+		//}
 		// アームの座標を設定する.
-		pActor->SetPosition( {m_pArm->GetGrabPosition().x, 0.0f, m_pArm->GetGrabPosition().z} );
+//		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.5f, m_pArm->GetGrabPosition().z} );
 	}
 
 	if( m_NowState == EAlienState::Abduct ) return;

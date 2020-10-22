@@ -22,8 +22,11 @@ CGirl::CGirl()
 	m_ObjectTag		= EObjectTag::Girl;
 	m_NowState		= ENowState::Protected;
 	m_NowMoveState	= EMoveState::Wait;
+	m_NowAnimNo		= EAnimNo_Wait;	// 現在のアニメーションを待機に設定.
+	m_OldAnimNo		= EAnimNo_None;	// 過去のアニメーションは無し.
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
 	m_pWarning		= std::make_unique<CWarning>();
+	m_AnimFrameList.resize( EAnimNo_Max );
 }
 
 CGirl::~CGirl()
@@ -33,12 +36,14 @@ CGirl::~CGirl()
 // 初期化関数.
 bool CGirl::Init()
 {
-	if( GetModel( MODEL_NAME ) == false ) return false;
+	if( GetModel( MODEL_NAME )	== false ) return false;
+	if( SetAnimFrameList()		== false ) return false;
 	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
-	if( ColliderSetting() == false ) return false;
-	if( m_pWarning->Init() == false ) return false;
-
-	m_pSkinMesh->ChangeAnimSet( 2 );
+	if( ColliderSetting()		== false ) return false;
+	if( m_pWarning->Init()		== false ) return false;
+	
+	// 待機アニメーションに変更.
+	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Wait, 0.0 );
 
 	return true;
 }
@@ -106,6 +111,7 @@ void CGirl::Collision( CActor* pActor )
 void CGirl::SetPosition( const D3DXVECTOR3& pos )
 {
 	m_vPosition = pos;
+	SetAnimationBlend( EAnimNo_Abduct );
 	m_NowState = ENowState::Abduct;
 }
 
@@ -146,6 +152,7 @@ void CGirl::Abduct()
 {
 	// 前回の座標が今の座標なら(連れ去れている状態で移動していない).
 	if( m_OldPosition == m_vPosition ){
+		m_vPosition.y	= 0.0f;
 		m_NowState		= ENowState::Move;		// 移動状態へ遷移.
 		m_NowMoveState	= EMoveState::Rotation;	// 移動の回転状態へ遷移.
 	}
@@ -167,6 +174,7 @@ void CGirl::TargetRotation()
 	if( CCharacter::TargetRotation( m_MoveVector, m_Parameter.RotatlonalSpeed, TOLERANCE_RADIAN ) == false ) return;
 	m_vRotation.y = targetRotation;		// ターゲットへの回転取得.
 	m_NowMoveState = EMoveState::Move;	// 移動状態へ遷移.
+	SetAnimationBlend( EAnimNo_Move );
 }
 
 // 目的の場所に向けて移動.
@@ -177,10 +185,10 @@ void CGirl::TargetMove()
 	// 移動ベクトルを使用して移動.
 	m_vPosition.x -= m_MoveVector.x * m_Parameter.MoveSpeed;
 	m_vPosition.z -= m_MoveVector.z * m_Parameter.MoveSpeed;
-
+	const float lenght = D3DXVec3Length( &D3DXVECTOR3(m_Parameter.InitPosition-m_vPosition) );
 	// 目的の座標との距離が一定値より少ないか比較.
-	if( D3DXVec3Length( &D3DXVECTOR3(m_Parameter.InitPosition-m_vPosition) ) >= m_Parameter.InitPosLenght ) return;
-
+	if( lenght >= m_Parameter.InitPosLenght ) return;
+	SetAnimationBlend( EAnimNo_Wait );
 	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
 }
 
@@ -236,7 +244,18 @@ bool  CGirl::ColliderSetting()
 
 // アニメーションフレームの設定.
 bool CGirl::SetAnimFrameList()
-{ 
+{
+	// 調整用アニメーションフレームのリストを用意.
+	const double animAdjFrames[] =
+	{
+		0.0f,
+		0.0f,
+		0.0f,
+	};
+	if( m_pSkinMesh == nullptr ) return false;
+	for( int i = EAnimNo_Begin; i < EAnimNo_End; i++ ){
+		m_AnimFrameList.at(i) = { 0.0, m_pSkinMesh->GetAnimPeriod(i)-animAdjFrames[i] };
+	}
 	return true; 
 }
 

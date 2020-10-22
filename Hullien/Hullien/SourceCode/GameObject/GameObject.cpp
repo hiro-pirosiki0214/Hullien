@@ -43,6 +43,14 @@ void CGameObject::SetPosition( const D3DXVECTOR3& vPos )
 }
 
 //-----------------------------.
+// Y²‚Ì‰ñ“]’l‚Ìİ’è.
+//-----------------------------.
+void CGameObject::SetRotationY( const float& rotY )
+{
+	m_vRotation.y = rotY;
+}
+
+//-----------------------------.
 // ‰æ–Ê‚ÌŠO‚Éo‚Ä‚¢‚é‚©.
 //-----------------------------.
 bool CGameObject::IsDisplayOut( const float& adjSize )
