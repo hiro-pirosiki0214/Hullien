@@ -23,7 +23,6 @@ class CAlien : public CCharacter
 	const float RISING_MOTHER_SHIP_SCALE_SUB_VALUE = 0.01f;
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
-	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;
 
 public:
 	// 宇宙人パラメータ.
@@ -117,6 +116,21 @@ protected:
 
 	} typedef EAlienState;
 
+	enum enAnimNo
+	{
+		EAnimNo_None = -1,
+
+		EAnimNo_Move,
+		EAnimNo_Arm,
+		EAnimNo_Damage,
+		EAnimNo_Dead,
+
+		EAnimNo_Max,
+
+		EAnimNo_Begin	= EAnimNo_Move,
+		EAnimNo_End		= EAnimNo_Max,
+	} typedef EAnimNo;
+
 	// 移動状態.
 	enum class enMoveState
 	{
@@ -199,8 +213,15 @@ protected:
 	// バリアとの当たり判定.
 	void BarrierCollision( CActor* pActor );
 
+	// アニメーションコントローラーの取得.
+	bool GetAnimationController();
+
+	// アニメーションフレームの設定.
+	virtual bool SetAnimFrameList() override;
+
 protected:
-	std::unique_ptr<CArm>	m_pArm;				// アームクラス.
+	std::unique_ptr<CArm>		m_pArm;			// アームクラス.
+	LPD3DXANIMATIONCONTROLLER	m_pAC;			// アニメーションコントローラー.
 	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
 	D3DXVECTOR3		m_TargetRotation;			// 目標の回転情報.
 	D3DXVECTOR3		m_KnockBackVector;

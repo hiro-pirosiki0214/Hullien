@@ -108,7 +108,7 @@ void CEventAlien::GirlCollision(CActor* pActor)
 	if (m_pCollManager->IsShereToShere(pActor->GetCollManager()) == false) return;
 
 	if (m_pArm->IsGrab() == false) {
-		m_pArm->SetAppearance();
+		m_pArm->SetAppearancePreparation();
 		return;
 	}
 	pActor->SetPosition(m_pArm->GetGrabPosition());

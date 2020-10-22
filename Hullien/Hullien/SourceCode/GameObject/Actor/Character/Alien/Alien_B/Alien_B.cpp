@@ -10,8 +10,6 @@
 #include "..\..\..\..\..\XAudio2\SoundManager.h"	
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
-#define IS_TEMP_MODEL_RENDER
-
 CAlienB::CAlienB()
 	: m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
 	, m_HasAimPlayer	( false )
@@ -30,27 +28,22 @@ CAlienB::~CAlienB()
 // 初期化関数.
 bool CAlienB::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
-	if( GetModel( MODEL_NAME ) == false ) return false;
-#else
-	// 既に読み込めていたら終了.
-	if( m_pTempStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
-	// モデルが読み込めてなければ false.
-	if( m_pTempStaticMesh == nullptr ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
-	if( ColliderSetting() == false ) return false;
-	if( m_pArm->Init() == false ) return false;
+	if( GetModel( MODEL_NAME )		== false ) return false;
+	if( GetAnimationController()	== false ) return false;
+	if( SetAnimFrameList()			== false ) return false;
+	if( ColliderSetting()			== false ) return false;
+	if( m_pArm->Init()				== false ) return false;
 	return true;
 }
 
 // 更新関数.
 void CAlienB::Update()
 {
+	// アニメーションフレームの更新.
+	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
 	CurrentStateUpdate();	// 現在の状態の更新.
 	// アーム.
-	m_pArm->SetPosition( m_vPosition );		// 座標をセット.
+	m_pArm->SetPosition( {m_vPosition.x, m_vPosition.y+5.5f, m_vPosition.z} );		// 座標をセット.
 	m_pArm->SetRotationY( m_vRotation.y );	// 回転情報をセット.
 	m_pArm->Update();						// 更新.
 }
@@ -60,30 +53,18 @@ void CAlienB::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pSkinMesh->Render();
+	m_pSkinMesh->Render( m_pAC );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
-#else
-	if( m_pTempStaticMesh == nullptr ) return;
 
-	if( m_pTempStaticMesh == nullptr ) return;
-	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vScale );
-	m_pTempStaticMesh->SetColor( { 0.0f, 0.8f, 0.0f, 1.0f } );
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pTempStaticMesh->Render();
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
+
 	m_pArm->Render();	// アームの描画.
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -102,7 +83,7 @@ void CAlienB::Collision( CActor* pActor )
 	if( m_HasAimPlayer == true ){
 		PlayerCollison( pActor );		// プレイヤーとの当たり判定.
 		// アームが片付けられてなければ片付ける.
-		if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUp();
+		if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUpPreparation();
 	} else {
 		GirlCollision( pActor );		// 女の子との当たり判定.
 	}
@@ -120,6 +101,7 @@ bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_vPosition		= spawnPos;					// スポーン座標の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
 	m_NowState		= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
+	m_AnimSpeed		= 0.0;						// アニメーション速度を止める.
 	return true;
 }
 
@@ -261,7 +243,6 @@ void CAlienB::AimPlayerDecision()
 	float playerLenght = D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) );
 
 	m_OldHasAimPlayer = m_HasAimPlayer;
-#if 1
 	// プレイヤーの狙う範囲を比較.
 	if( playerLenght <= m_Parameter.PlayerAimLenght ){
 		// プレイヤーのほうが近いのでプレイヤーを狙う.
@@ -272,21 +253,6 @@ void CAlienB::AimPlayerDecision()
 		m_HasAimPlayer = false;
 		SetMoveVector( m_TargetPosition );
 	}
-#else
-	// 女の子との距離を計算.
-	float girlLenght = D3DXVec3Length( &D3DXVECTOR3(m_TargetPosition - m_vPosition) );
-
-	// 女の子とプレイヤーの距離を比較.
-	if( playerLenght <= girlLenght ){
-		// プレイヤーのほうが近いのでプレイヤーを狙う.
-		m_HasAimPlayer = true;
-		SetMoveVector( m_vPlayerPos );
-	} else {
-		// 女の子のほうを狙う.
-		m_HasAimPlayer = false;
-		SetMoveVector( m_TargetPosition );
-	}
-#endif // #if 0.
 	if( m_OldHasAimPlayer == m_HasAimPlayer ) return;
 	m_NowMoveState = EMoveState::Rotation;
 }
@@ -294,7 +260,6 @@ void CAlienB::AimPlayerDecision()
 // 当たり判定の設定.
 bool CAlienB::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -306,28 +271,13 @@ bool CAlienB::ColliderSetting()
 		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
-#else
-	if( m_pTempStaticMesh == nullptr ) return false;
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
 	if( FAILED( m_pCollManager->InitCapsule( 
-		m_pTempStaticMesh->GetMesh(),
+		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		-1.0f,
 		0.0f ) )) return false;
-
 	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }

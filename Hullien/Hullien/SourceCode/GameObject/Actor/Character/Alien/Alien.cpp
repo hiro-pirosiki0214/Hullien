@@ -7,8 +7,6 @@
 #include "..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\Arm\Arm.h"
 
-#define IS_TEMP_MODEL_RENDER
-
 CAlien::CAlien()
 	: m_pArm					( nullptr )
 	, m_TargetPosition			( 0.0f, 0.0f, 0.0f )
@@ -30,6 +28,7 @@ CAlien::CAlien()
 	, m_IsDelete				( false )
 {
 	m_vScale = { 0.0f, 0.0f, 0.0f };
+	m_AnimFrameList.resize( EAnimNo_Max );
 }
 
 CAlien::~CAlien()
@@ -60,10 +59,18 @@ void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	bool isAttack = false;
 	proc( m_LifePoint, isAttack );
 	m_NowState = EAlienState::Fright;	// 怯み状態へ遷移.
+	SetAnimation( EAnimNo_Damage, m_pAC );
+	m_AnimSpeed = 0.01;
+
+	// アームを片付けていなければ片付ける.
+	if( m_pArm->IsCleanUp() == false ){
+		m_pArm->SetCleanUp();
+	}
 
 	if( m_LifePoint > 0.0f ) return;
 	// 体力が 0.0以下なら死亡状態へ遷移.
 	m_NowState = EAlienState::Death;
+	SetAnimation( EAnimNo_Dead, m_pAC );
 }
 
 // 現在の状態の更新関数.
@@ -200,10 +207,12 @@ void CAlien::Spawning()
 	}
 
 	// 高さが一定値より大きければ終了.
-	if( m_vPosition.y > INIT_POSITION_ADJ_HEIGHT ) return;
+	if( m_vPosition.y > 0.0f ) return;
 
 	CSoundManager::NoMultipleSEPlay("AlienApp");
-	m_NowState = EAlienState::Move;
+	m_AnimSpeed	= 0.01;
+	SetAnimation( EAnimNo_Move, m_pAC );
+	m_NowState	= EAlienState::Move;
 	m_NowMoveState = EMoveState::Rotation;
 }
 
@@ -252,12 +261,10 @@ void CAlien::KnockBack()
 // 怯み.
 void CAlien::Fright()
 {
-	m_InvincibleCount++;					// 無敵カウントを加算.
-	if( IsInvincibleTime( m_Parameter.InvincibleTime ) == false ) return;
+	if( m_AnimFrameList[EAnimNo_Damage].IsNowFrameOver() == false ) return;
 
-	m_InvincibleCount	= 0;	// 無敵カウントの初期化.
 	m_KnockBackCount	= 0;	// 無敵カウントの初期化.
-
+	SetAnimation( EAnimNo_Move, m_pAC );
 	m_NowState			= EAlienState::Move;	// 移動状態へ遷移.
 	m_NowMoveState		= EMoveState::Rotation;	// 移動の回転状態へ遷移.
 }
@@ -265,6 +272,9 @@ void CAlien::Fright()
 // 死亡.
 void CAlien::Death()
 {
+	if( m_AnimFrameList[EAnimNo_Dead].IsNowFrameOver() == false ) return;
+
+	m_AnimSpeed = 0.0;
 	m_DeathCount += DEATH_COUNT_ADD_VALUE;
 	m_DeathScale -= DEATH_SCALE_SUB_VALUE;
 	// モデルのサイズの計算.
@@ -318,13 +328,17 @@ void CAlien::GirlCollision( CActor* pActor )
 
 	if( m_NowState == EAlienState::Abduct ){
 		// 連れ去っている状態なのでアームの座標を設定する.
-		pActor->SetPosition( m_pArm->GetGrabPosition() );
+		pActor->SetPosition( {m_pArm->GetGrabPosition().x, 0.0f, m_pArm->GetGrabPosition().z} );
 		return;
 	} else {
 		// 既に連れ去っているか.
 		if( *m_pIsAlienOtherAbduct == true ){
 			// アームを片付けていなければ片付ける.
-			if( m_pArm->IsCleanUp() == false ) m_pArm->SetCleanUp();
+			if( m_pArm->IsCleanUp() == false ){
+				m_AnimSpeed = 0.01;
+				SetAnimation( EAnimNo_Move, m_pAC );
+				m_pArm->SetCleanUpPreparation();
+			}
 			return;
 		}
 	}
@@ -334,11 +348,15 @@ void CAlien::GirlCollision( CActor* pActor )
 	
 	// 掴んでいなければ(アームを取り出してなければ).
 	if( m_pArm->IsGrab() == false ){
-		m_pArm->SetAppearance();	// アームを取り出す.
+		m_pArm->SetAppearancePreparation();	// アームを取り出す.
+		SetAnimation( EAnimNo_Arm, m_pAC );
+		if( m_AnimFrameList[EAnimNo_Arm].IsNowFrameOver() == true ){
+			m_AnimSpeed = 0.0;
+		}
 		return;
 	} else {
 		// アームの座標を設定する.
-		pActor->SetPosition( m_pArm->GetGrabPosition() );
+		pActor->SetPosition( {m_pArm->GetGrabPosition().x, 0.0f, m_pArm->GetGrabPosition().z} );
 	}
 
 	if( m_NowState == EAlienState::Abduct ) return;
@@ -360,8 +378,43 @@ void CAlien::BarrierCollision( CActor* pActor )
 		m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
 		m_NowMoveState	= EMoveState::Move;			// 移動の移動状態へ遷移.
 		*m_pIsAlienOtherAbduct	= false;			// 女の子を連れ去るフラグを下す.
+		SetAnimation( EAnimNo_Move, m_pAC );
+		m_AnimSpeed = 0.01;
 	} else {
 		m_MoveSpeed		= m_Parameter.MoveSpeed;	// 通常の移動速度に戻す.
 		m_IsBarrierHit	= false;	// バリア衝突フラグを下す.
 	}
+}
+
+// アニメーションコントローラーの取得.
+bool CAlien::GetAnimationController()
+{
+	if( m_pSkinMesh == nullptr ) return false;
+	// アニメーションコントローラーのクローン作成.
+	if( FAILED( m_pSkinMesh->GetAnimController()->CloneAnimationController(
+		m_pSkinMesh->GetAnimationController()->GetMaxNumAnimationOutputs(),
+		m_pSkinMesh->GetAnimationController()->GetMaxNumAnimationSets(),
+		m_pSkinMesh->GetAnimationController()->GetMaxNumTracks(),
+		m_pSkinMesh->GetAnimationController()->GetMaxNumEvents(),
+		&m_pAC ) )) return false;
+	return true;
+}
+
+// アニメーションフレームの設定.
+bool CAlien::SetAnimFrameList()
+{
+	if( m_pSkinMesh == nullptr ) return false;
+	// 調整用アニメーションフレームのリストを用意.
+	const double animAdjFrames[] =
+	{
+		0.0f,
+		0.5f,
+		0.0f,
+		0.0f,
+	};
+	if( m_pSkinMesh == nullptr ) return false;
+	for( int i = EAnimNo_Begin; i < EAnimNo_End; i++ ){
+		m_AnimFrameList.at(i) = { 0.0, m_pSkinMesh->GetAnimPeriod(i)-animAdjFrames[i] };
+	}
+	return true;
 }

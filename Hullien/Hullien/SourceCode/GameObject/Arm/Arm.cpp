@@ -82,11 +82,14 @@ void CArm::Render()
 // 掴んでいる座標の取得.
 D3DXVECTOR3 CArm::GetGrabPosition()
 {
+	m_GrabPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * GRAB_DISTANCE;
+	m_GrabPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * GRAB_DISTANCE;
+	m_GrabPosition.y = m_vPosition.y;
 	return m_GrabPosition;
 }
 
 // 出現する用意.
-void CArm::SetAppearance()
+void CArm::SetAppearancePreparation()
 {
 	if( m_NowArmState == EArmState::Appearance ) return;
 	if( m_NowArmState == EArmState::Grab ) return;
@@ -102,7 +105,7 @@ void CArm::SetAppearance()
 }
 
 // 片づける用意.
-void CArm::SetCleanUp()
+void CArm::SetCleanUpPreparation()
 {
 	if( m_NowArmState == EArmState::CleanUp ) return;
 	if( m_NowArmState == EArmState::Appearance ) return;
@@ -114,6 +117,23 @@ void CArm::SetCleanUp()
 	m_AppearanceCount	= APPEARANCE_COUNT_MAX;
 	m_pAC->ResetTime();
 	m_pSkinMesh->ChangeAnimSet_StartPos( 0, 0.0, m_pAC );
+}
+
+// 完全に取り出す
+void CArm::SetAppearance()
+{
+	m_vScale = { 1.0f, 1.0f, 1.0f };
+	m_pSkinMesh->ChangeAnimSet_StartPos( 0, m_AnimEndFrame, m_pAC );
+	m_NowArmState  = EArmState::End;	// 終了.
+}
+
+// 完全に片づける.
+void CArm::SetCleanUp()
+{
+	m_vScale = { 0.0f, 0.0f, 0.0f };
+	m_pSkinMesh->ChangeAnimSet_StartPos( 0, 0.0, m_pAC );
+	m_AnimSpeed			= 0.0;				// アニメーション速度変更.
+	m_NowArmState		= EArmState::Start;	// 次の状態へ移動.
 }
 
 // 出現.

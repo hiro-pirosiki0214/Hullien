@@ -5,8 +5,7 @@
 
 class CAlienA : public CAlien
 {
-	const char* MODEL_NAME = "GhostB_s";
-	const char* MODEL_TEMP_NAME = "a";	// ‰¼ƒ‚ƒfƒ‹–¼.
+	const char* MODEL_NAME = "a_s";
 
 public:
 	CAlienA();

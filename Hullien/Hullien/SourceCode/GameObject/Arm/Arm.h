@@ -58,8 +58,13 @@ public:
 	D3DXVECTOR3 GetGrabPosition();
 
 	// 出現する用意.
-	void SetAppearance();
+	void SetAppearancePreparation();
 	// 片づける用意.
+	void SetCleanUpPreparation();
+
+	// 完全に取り出す
+	void SetAppearance();
+	// 完全に片づける.
 	void SetCleanUp();
 
 private:

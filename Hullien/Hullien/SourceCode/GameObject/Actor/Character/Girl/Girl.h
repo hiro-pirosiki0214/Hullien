@@ -9,10 +9,21 @@ class CGirl : public CCharacter
 {
 	// パラメータのファイルパス.
 	const char* PARAMETER_FILE_PATH = "Data\\GameParam\\Girl\\Girl.bin";
-	const char* MODEL_NAME			= "Towa_s";	// モデル名.
-	const char* MODEL_TEMP_NAME		= "yuri-dy";// 仮モデル名.
+	const char* MODEL_NAME			= "yuri-dy_s";	// モデル名.
 	const float TOLERANCE_RADIAN		= static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 	const float THRESHOLD_VALUE_RADIAN	= static_cast<float>(D3DXToRadian(140.0));	// しきい値.
+
+
+	enum enAnimNo
+	{
+		EAnimNo_None = -1,
+
+		EAnimNo_Wait,	// 待機.
+		EAnimNo_Move,	// 移動.
+		EAnimNo_Abduct,	// 連れ去られている.
+
+		Abduct_Max,
+	} typedef EAnimNo;
 
 	// 現在の状態.
 	enum class enNowState
@@ -75,6 +86,9 @@ private:
 	// 当たり判定の作成.
 	bool ColliderSetting();
 
+	// アニメーションフレームの設定.
+	virtual bool SetAnimFrameList() override;
+
 	// サウンド.
 	void Sound();
 
@@ -93,7 +107,6 @@ private:
 	float		m_CameraRadianX;// カメラのラジアン値.
 	bool		m_IsDanger;		// 危険かどうか.
 	bool		m_IsOnlyFirst;	//一度しか処理しない.
-	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;
 };
 
 #endif	// #ifndef GIRL_H.

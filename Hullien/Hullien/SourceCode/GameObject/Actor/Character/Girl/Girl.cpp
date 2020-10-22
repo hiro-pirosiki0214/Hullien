@@ -8,8 +8,6 @@
 #include "..\..\..\..\Common\DebugText\DebugText.h"
 #include "..\..\..\..\Utility\FileManager\FileManager.h"
 
-#define IS_TEMP_MODEL_RENDER
-
 CGirl::CGirl()
 	: m_Parameter			()
 	, m_pSearchCollManager	( nullptr )
@@ -20,14 +18,12 @@ CGirl::CGirl()
 	, m_CameraRadianX		( 0.0f )
 	, m_IsDanger			( false )
 	, m_IsOnlyFirst			( false )
-	, m_pStaticMesh			( nullptr )
 {
 	m_ObjectTag		= EObjectTag::Girl;
 	m_NowState		= ENowState::Protected;
 	m_NowMoveState	= EMoveState::Wait;
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
 	m_pWarning		= std::make_unique<CWarning>();
-	m_vPosition.y = 4.0f;
 }
 
 CGirl::~CGirl()
@@ -37,19 +33,12 @@ CGirl::~CGirl()
 // 初期化関数.
 bool CGirl::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( GetModel( MODEL_NAME ) == false ) return false;
-#else
-	// 既に読み込めていたら終了.
-	if( m_pStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pStaticMesh, MODEL_TEMP_NAME );
-	// モデルが読み込めてなければ false.
-	if( m_pStaticMesh == nullptr ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Parameter ) == false ) return false;
 	if( ColliderSetting() == false ) return false;
-	if ( m_pWarning->Init() == false ) return false;
+	if( m_pWarning->Init() == false ) return false;
+
+	m_pSkinMesh->ChangeAnimSet( 2 );
 
 	return true;
 }
@@ -91,14 +80,8 @@ void CGirl::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-	if( m_pStaticMesh == nullptr ) return;
 
-	m_pStaticMesh->SetPosition( m_vPosition );
-	m_pStaticMesh->SetRotation( m_vRotation );
-	m_pStaticMesh->SetScale( m_vScale );
-	m_pStaticMesh->Render();
-
-//	MeshRender();	// メッシュの描画.
+	MeshRender();	// メッシュの描画.
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -132,7 +115,7 @@ void CGirl::SpriteRender()
 	// 女の子が連れ去られている状態または危険な状態ならば警告を描画.
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
-		m_pWarning->SetPosition(m_vPosition);
+		m_pWarning->SetPosition({ m_vPosition.x, 5.0f, m_vPosition.z});
 		m_pWarning->Update();
 		m_pWarning->Render();
 	}
@@ -230,27 +213,12 @@ void CGirl::SearchCollision( CActor* pActor )
 // 当たり判定の作成.
 bool  CGirl::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
 	}
 	if( FAILED( m_pCollManager->InitSphere( 
 		m_pSkinMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
-#else
-	if( m_pStaticMesh == nullptr ) return false;
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	// 女の子の当たり判定.
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
@@ -263,9 +231,13 @@ bool  CGirl::ColliderSetting()
 		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SearchCollRadius ) )) return false;
-
 	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
+}
+
+// アニメーションフレームの設定.
+bool CGirl::SetAnimFrameList()
+{ 
+	return true; 
 }
 
 // サウンド.

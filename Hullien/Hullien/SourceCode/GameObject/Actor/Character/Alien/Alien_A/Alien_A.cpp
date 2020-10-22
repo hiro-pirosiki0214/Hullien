@@ -9,8 +9,6 @@
 #include "..\..\..\..\..\Utility\ImGuiManager\ImGuiManager.h"
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
-#define IS_TEMP_MODEL_RENDER
-
 CAlienA::CAlienA()
 {
 	m_ObjectTag = EObjectTag::Alien_A;
@@ -24,28 +22,24 @@ CAlienA::~CAlienA()
 // 初期化関数.
 bool CAlienA::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
-	if( GetModel( MODEL_NAME ) == false ) return false;
-#else
-	// 既に読み込めていたら終了.
-	if( m_pTempStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
-	// モデルが読み込めてなければ false.
-	if( m_pTempStaticMesh == nullptr ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
-	if( ColliderSetting() == false ) return false;
-	if( m_pArm->Init() == false ) return false;
+	if( GetModel( MODEL_NAME )		== false ) return false;
+	if( GetAnimationController()	== false ) return false;
+	if( SetAnimFrameList()			== false ) return false;
+	if( ColliderSetting()			== false ) return false;
+	if( m_pArm->Init()				== false ) return false;
 	return true;
 }
 
 // 更新関数.
 void CAlienA::Update()
 {
+	// アニメーションフレームの更新.
+	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
+
 	SetMoveVector( m_TargetPosition );	// 目的の座標のベクトルを取得.
 	CurrentStateUpdate();				// 現在の状態の更新
 	// アーム.
-	m_pArm->SetPosition( m_vPosition );		// 座標を設定.
+	m_pArm->SetPosition( {m_vPosition.x, m_vPosition.y+5.5f, m_vPosition.z} );		// 座標を設定.
 	m_pArm->SetRotationY( m_vRotation.y );	// 回転情報を設定.
 	m_pArm->Update();						// 更新.
 }
@@ -55,29 +49,17 @@ void CAlienA::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 	
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vScale );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
-	m_pSkinMesh->SetAnimSpeed( 0.01 );
+	m_pSkinMesh->SetColor( { 0.8f, 0.5f, 0.5f, 1.0f } );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pSkinMesh->Render();
+	m_pSkinMesh->Render( m_pAC );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
-#else
-	if( m_pTempStaticMesh == nullptr ) return;
-	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vScale );
-	m_pTempStaticMesh->SetColor( { 0.8f, 0.0f, 0.0f, 1.0f } );
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pTempStaticMesh->Render();
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
+
 	m_pArm->Render();	// アームの描画.
 
 #if _DEBUG
@@ -108,7 +90,7 @@ bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_vPosition			= spawnPos;					// スポーン座標の設定.
 	m_LifePoint			= m_Parameter.LifeMax;		// 体力の設定.
 	m_NowState			= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
-
+	m_AnimSpeed			= 0.0;						// アニメーション速度を止める.
 	return true;
 }
 
@@ -151,7 +133,6 @@ void CAlienA::Escape()
 // 当たり判定の設定.
 bool CAlienA::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -164,18 +145,4 @@ bool CAlienA::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
-#else
-	if( m_pTempStaticMesh == nullptr ) return false;
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }

@@ -85,13 +85,13 @@ bool CCharacter::TargetRotation( const D3DXVECTOR3& targetVec, const float& rotS
 }
 
 // アニメーション設定.
-void CCharacter::SetAnimation( const int& animNo )
+void CCharacter::SetAnimation( const int& animNo, LPD3DXANIMATIONCONTROLLER	pAc )
 {
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_NowAnimNo == animNo ) return;
 	m_OldAnimNo = m_NowAnimNo;
 	m_NowAnimNo = animNo;
-	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo );
+	m_pSkinMesh->ChangeAnimSet( m_NowAnimNo, pAc );
 	m_AnimFrameList.at(animNo).NowFrame = 0.0;
 }
 

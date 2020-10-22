@@ -179,7 +179,7 @@ private:
 	// エフェクトの設定.
 	bool EffectSetting();
 	// アニメーションフレームの設定.
-	bool SetAnimFrameList();
+	virtual bool SetAnimFrameList() override;
 
 	// エディット用の描画関数.
 	void EditRender();
