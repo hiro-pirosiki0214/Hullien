@@ -1,4 +1,6 @@
 #include "SoundManager.h"
+#include "..\Utility\FileManager\FileManager.h"
+
 #include <crtdbg.h>
 #include <filesystem>	// C++17 必須.
 namespace fs = std::filesystem;
@@ -104,8 +106,33 @@ void CSoundManager::CreateSoundData()
 		MessageBox(nullptr, errorMessage, "サウンドデータ作成失敗", MB_OK);
 	}
 
+	LoadVolume();	// 音量の読み込み.
+
 	GetInstance()->m_bEndCreate = true;
 }
+
+// 音量を読み込む
+bool CSoundManager::LoadVolume()
+{
+	if( CFileManager::BinaryReading( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_MaxVolume ) == false ) return false;
+
+	GetInstance()->m_fMasterVolume = GetInstance()->m_MaxVolume.Master;	// マスター.
+	GetInstance()->m_fMaxBGMVolume = GetInstance()->m_MaxVolume.BGM;		// BGM.
+	GetInstance()->m_fMaxSEVolume = GetInstance()->m_MaxVolume.SE;		// SE.
+
+	return true;
+}
+
+// 音量を保存する.
+bool CSoundManager::SaveVolume()
+{
+	GetInstance()->m_MaxVolume.Master = GetInstance()->m_fMasterVolume;	// マスター.
+	GetInstance()->m_MaxVolume.BGM = GetInstance()->m_fMaxBGMVolume;	// BGM.
+	GetInstance()->m_MaxVolume.SE =	GetInstance()->m_fMaxSEVolume;		// SE.
+	if( CFileManager::BinaryWriting( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_MaxVolume ) == false ) return false;
+	return true;
+}
+
 //========================================================================================
 //	BGM.
 //====

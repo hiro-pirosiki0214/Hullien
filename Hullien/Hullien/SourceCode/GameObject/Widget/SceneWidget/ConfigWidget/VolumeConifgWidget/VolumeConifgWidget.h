@@ -15,23 +15,57 @@ class CVolumeConfigWidget : public CWidget
 	const char* SPRITE_MASTER_NAME	= "MasterVolume";
 	const char* SPRITE_BGM_NAME		= "BGMVolume";
 	const char* SPRITE_SE_NAME		= "SEVolume";
+	const char* SPRITE_ICON_NAME	= "SelectIcon";
+	const char* SPRITE_RESET		= "ConfigReset";
+	const char* SPRITE_SAVE			= "ConfigSave";
 
 	const float BAR_POSITION_X = 200.0f;
+	const float DEFALUT_VOLUME = 1.0f;
 
-	// ボリュームの種類.
-	enum enVolumeType
+	// 設定の状態.
+	enum enConfigState
 	{
-		EVolumeType_None = -1,
+		EConfigState_None,
 
-		EVolumeType_Master,	// マスター.
-		EVolumeType_BGM,	// BGM.
-		EVolumeType_SE,		// SE.
+		EConfigState_Select,	// 選択状態.
+		EConfigState_Seting,	// 設定状態.
 
-		EVolumeType_Max,
+		EConfigState_Max,
+	} typedef EConfigState;
 
-		EVolumeType_Begin	= EVolumeType_Master,	// 始まり.
-		EVolumeType_End		= EVolumeType_Max,		// 終了.
+	// 選択の種類.
+	enum enSelectType
+	{
+		ESelectType_None = -1,
+
+		ESelectType_Master,	// マスター.
+		ESelectType_BGM,	// BGM.
+		ESelectType_SE,		// SE.
+
+		ESelectType_Reset,	// リセット.
+		ESelectType_Save,	// 保存.
+
+		ESelectType_Max,
+
+		ESelectType_Begin	= ESelectType_Master,	// 始まり.
+		ESelectType_End		= ESelectType_Max,		// 終了.
+		ESelectType_VolumeMax = ESelectType_SE+1
 	} typedef EVolumeType;
+
+	// スプライトの種類.
+	enum enSpriteNo
+	{
+		ESpriteNo_None = -1,
+
+		ESpriteNo_Master,		// マスター.
+		ESpriteNo_BGM,			// BGM.
+		ESpriteNo_SE,			// SE.
+		ESpriteNo_Reset,		// リセット.
+		ESpriteNo_Save,			// 保存.
+		ESpriteNo_SelectIcon,	// 選択中のアイコン.
+
+		ESpriteNo_Max,
+	} typedef ESpriteNo;
 
 public:
 	CVolumeConfigWidget();
@@ -44,11 +78,19 @@ public:
 	// 描画関数.
 	virtual void Render() override;
 
+	// 音量の設定をできるようにする.
+	void OnVolumeSeting();
+	// 音量の設定をできないようにする.
+	void OffVolumeSeting();
+
 private:
-	// 音量種類の選択.
-	void SelectVolumeType();
+	// 種類の選択.
+	void SelectType();
+	// 決定.
+	void Determination();
 	// 音量の設定.
 	void VolumeSeting();
+
 	// スプライト設定関数.
 	virtual bool SpriteSetting() override;
 
@@ -58,6 +100,7 @@ private:
 	std::vector<std::shared_ptr<CSprite>>	m_pSprites;			// 画像.
 	std::vector<D3DXVECTOR3>				m_SlinderPositions;	// スライダーの座標.
 	D3DXVECTOR3	m_CursorPosition;	// カーソルの座標.
+	int			m_NowConfigState;	// 現在の設定状態.
 	int			m_NowSelectVolume;	// 現在の選択している音量種類.
 };
 

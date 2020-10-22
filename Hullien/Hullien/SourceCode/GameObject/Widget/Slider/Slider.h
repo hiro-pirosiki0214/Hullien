@@ -41,6 +41,8 @@ public:
 	void AddValue( const float& value );
 	// ’l‚ğŒ¸‚ç‚·.
 	void SubValue( const float& value );
+	// ’l‚Ìİ’è.
+	void SetValue( const float& value ){ m_Value = value; }
 	// ’l‚Ìæ“¾.
 	float GetValue() const { return m_Value; }
 

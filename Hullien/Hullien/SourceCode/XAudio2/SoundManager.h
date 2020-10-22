@@ -21,6 +21,19 @@ class CSoundManager
 private:
 	// Soundデータが入っているディレクトリパス.
 	const char* FILE_PATH = "Data\\Sound";
+	const char* SETING_FAILE_PATH = "Data\\Config\\Volume.bin";
+	// 音量.
+	struct stVolume
+	{
+		float Master;
+		float BGM;
+		float SE;
+		stVolume()
+			: Master	( 1.0f )
+			, BGM		( 1.0f )
+			, SE		( 1.0f )
+		{}
+	} typedef SVolume;
 public:
 	CSoundManager();
 	virtual ~CSoundManager();
@@ -39,6 +52,11 @@ public:
 	static float GetBGMVolume() { return GetInstance()->m_fMaxBGMVolume; }
 	// ゲーム全体のSEの最大音量を取得.
 	static float GetGameSEVolume() { return GetInstance()->m_fMaxSEVolume * GetInstance()->m_fMasterVolume; }
+
+	// 音量を読み込む
+	static bool LoadVolume();
+	// 音量を保存する.
+	static bool SaveVolume();
 	//========================================================================================
 	//	BGM
 	//====
@@ -162,6 +180,7 @@ private:
 	float		m_BGMCount;			// BGMボリュームゲージ用.
 	float		m_SECount;			// SEボリュームゲージ用.
 
+	SVolume m_MaxVolume;
 									// 以下二つはスレッドで回さないとストリーミングの入れ込みを待ってからの変更になるため
 									// スレッドに回す.
 	std::thread m_BGMVolume;	// オプション画面で、BGMの音量を同時に変更するためのスレッド.

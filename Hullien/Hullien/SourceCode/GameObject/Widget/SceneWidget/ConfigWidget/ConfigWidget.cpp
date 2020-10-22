@@ -10,6 +10,7 @@
 **/
 CConfigWidget::CConfigWidget()
 	: m_pVolumeConfig	( nullptr )
+	, m_NowConfigState	( EConfigState_None )
 {
 	m_pVolumeConfig = std::make_unique<CVolumeConfigWidget>();
 }
@@ -28,13 +29,39 @@ bool CConfigWidget::Init()
 // 更新関数.
 void CConfigWidget::Update()
 {
-	m_pVolumeConfig->Update();	// 音量設定UIの更新.
+	if( GetAsyncKeyState('B') & 0x0001 ){
+		m_NowConfigState = EConfigState_Volume;
+		m_pVolumeConfig->OnVolumeSeting();
+	}
+	if( GetAsyncKeyState('V') & 0x0001 ){
+		m_NowConfigState = EConfigState_None;
+		m_pVolumeConfig->OffVolumeSeting();
+	}
+	switch( m_NowConfigState )
+	{
+	case EConfigState_Volume:
+		m_pVolumeConfig->Update();	// 音量設定UIの更新.
+		break;
+	case EConfigState_Key:
+		break;
+	default:
+		break;
+	}
 }
 
 // 描画関数.
 void CConfigWidget::Render()
 {
-	m_pVolumeConfig->Render();	// 音量設定UIの描画.
+	switch( m_NowConfigState )
+	{
+	case EConfigState_Volume:
+		m_pVolumeConfig->Render();	// 音量設定UIの描画.
+		break;
+	case EConfigState_Key:
+		break;
+	default:
+		break;
+	}
 }
 
 // スプライト設定関数.
