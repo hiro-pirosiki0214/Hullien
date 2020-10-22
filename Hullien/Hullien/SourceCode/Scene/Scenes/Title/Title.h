@@ -10,6 +10,7 @@
 
 class CRotLookAtCenter;
 class CTitleWidget;
+class CConfigWidget;
 
 /**********************************
 *	タイトルシーンクラス.
@@ -36,6 +37,7 @@ private:
 
 private:
 	std::unique_ptr<CTitleWidget>	m_pWidget;			// UIクラス.
+	std::unique_ptr<CConfigWidget>	m_pConfigWidget;	// 設定UIクラス.
 	bool							m_IsChangeScene;	// シーンの切り替えが可能か.
 };
 

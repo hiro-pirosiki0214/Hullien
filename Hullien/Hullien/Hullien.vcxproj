@@ -234,6 +234,8 @@
     <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConifgWidget\VolumeConifgWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp" />
@@ -246,6 +248,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Slider\Slider.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Widget.cpp" />
     <ClCompile Include="SourceCode\Light\LightBase.cpp" />
     <ClCompile Include="SourceCode\Light\LightManager\LightManager.cpp" />
@@ -393,6 +396,8 @@
     <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConifgWidget\VolumeConifgWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h" />
@@ -405,6 +410,7 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Slider\Slider.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Widget.h" />
     <ClInclude Include="SourceCode\Light\LightBase.h" />
     <ClInclude Include="SourceCode\Light\LightManager\LightManager.h" />

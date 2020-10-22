@@ -158,6 +158,9 @@
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Slider\Slider.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConifgWidget\VolumeConifgWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -324,5 +327,8 @@
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyParam.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Slider\Slider.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConifgWidget\VolumeConifgWidget.h" />
   </ItemGroup>
 </Project>

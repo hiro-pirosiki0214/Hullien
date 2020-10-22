@@ -27,7 +27,7 @@ public:
 
 	// インスタンスの取得.
 	static CSoundManager* GetInstance();
-	
+
 	// サウンドデータ作成.
 	static void CreateSoundData();
 
@@ -39,11 +39,11 @@ public:
 	static float GetBGMVolume() { return GetInstance()->m_fMaxBGMVolume; }
 	// ゲーム全体のSEの最大音量を取得.
 	static float GetGameSEVolume() { return GetInstance()->m_fMaxSEVolume * GetInstance()->m_fMasterVolume; }
-//========================================================================================
-//	BGM
-//====
+	//========================================================================================
+	//	BGM
+	//====
 	// スレッドを作ってBGMを再生する関数(外部呼出).
-	static void ThreadPlayBGM(const std::string& Name);
+	static void ThreadPlayBGM(const std::string& Name, const bool& LoopFlag = true);
 	// BGM停止関数.
 	static void StopBGM(const std::string Name);
 	// BGMフェードアウト関数.
@@ -60,9 +60,9 @@ public:
 	static bool GetIsPlayBGM(const std::string BGMName);
 	// BGMのピッチ設定.
 	static void SetBGMPitch(const std::string Name, const float Value);
-//========================================================================================
-//	SE
-//====
+	//========================================================================================
+	//	SE
+	//====
 	// SE再生関数.
 	static void PlaySE(const std::string& Name);
 	// 多重再生しないSE再生関数.
@@ -72,9 +72,9 @@ public:
 	// 同じ音源の全てのSEソース停止関数.
 	static void StopAllSE(const std::string Name);
 	// SEのVoiceソース内最大音量を設定.
-	static void SetSEVolume(const std::string Name,const float Volume);
+	static void SetSEVolume(const std::string Name, const float Volume);
 	// 指定した名前のSEが再生中かどうかを返す : 再生中ならtrue.
-	static bool GetIsPlaySE(const std::string Name,const size_t ArrayNum);
+	static bool GetIsPlaySE(const std::string Name, const size_t ArrayNum);
 	// 全体SE音量とは別のソース毎の音量をセット.
 	static void SetAnotherSEVolume(const std::string Name, const float& Volume);
 	// ソース内で設定されている音量を適用するかどうか.
@@ -82,36 +82,34 @@ public:
 
 	// 解放処理関数.
 	static void Release();
-//========================================================================================
-// オプション画面用全ソースのサウンド調整.
-// ループで呼ぶべきではない.
-//====
+	//========================================================================================
+	// オプション画面用全ソースのサウンド調整.
 	// マスター音量セット.
 	static void SetMasterVolume(float& MasterVolume);
-	// BGMの音量を変更できるようにする.
-	static void SetCanChangeBGMVolumeFlag();
-	// SEの音量を変更できるようにする.
-	static void SetCanChangeSEVolumeFlag();
-	// BGM,SEの音量を変更できないように.
-	static bool InitChangeSoundVolumeFlag();
-
+	// BGM,SEの音量を変更するためのスレッドを立ち上げる.
+	static void CreateChangeSoundVolumeThread();
+	// BGM,SEの音量を変更するためのスレッドを解放する.
+	static bool ReleaseChangeSoundVolumeThread();
 	// 個別でSEの音量を変更できるようにする.
 	static void SetSelectChangeSEVolumeFlag(std::string& sName, const bool& bFlag);
-//===========================================================
-// オプションで、音量を可視化する際に(今回はMAX10個)、オプションクラスが破壊されてもその値を維持する為の関数.
+	//===========================================================
+	// オプション用関数.
 	// マスター音量数画像として描画する画像数のセット.
-	static void SetDispMasterVolumeCount(const int Master) { GetInstance()->m_MasterCount = Master; }
+	static void SetDispMasterVolumeCount(const float Master) { GetInstance()->m_MasterCount = Master; }
 	// BGM音量数画像として描画する画像数のセット.
-	static void SetDispBGMVolumeCount(const int BGM) { GetInstance()->m_BGMCount = BGM; }
+	static void SetDispBGMVolumeCount(const float BGM) { GetInstance()->m_BGMCount = BGM; }
 	// SE音量数画像として描画する画像数のセット.
-	static void SetDispSEVolumeCount(const int SE) { GetInstance()->m_SECount = SE; }
+	static void SetDispSEVolumeCount(const float SE) { GetInstance()->m_SECount = SE; }
 	// マスター音量数画像として描画する画像数の取得関数.
-	static const int GetDispMasterVolumeCount()	{ return GetInstance()->m_MasterCount; }
+	static const float GetDispMasterVolumeCount() { return GetInstance()->m_MasterCount; }
 	// BGM音量数画像として描画する画像数の取得関数.
-	static const int GetDispBGMVolumeCount()		{ return GetInstance()->m_BGMCount; }
+	static const float GetDispBGMVolumeCount() { return GetInstance()->m_BGMCount; }
 	// SE音量数画像として描画する画像数の取得関数.
-	static const int GetDispSEVolumeCount()		{ return GetInstance()->m_SECount; }
+	static const float GetDispSEVolumeCount() { return GetInstance()->m_SECount; }
+
 	static void StateChangeVolumeThread(const bool& bFlag);
+	// オプション用スレッド動作済みかどうかのフラグ取得関数.
+	static const bool GetCreateOptionThread() { return GetInstance()->m_isCreateThread; }
 public:
 	float m_fMasterVolume;	// マスター音量.
 	float m_fMaxBGMVolume;	// BGM音量.	
@@ -119,6 +117,10 @@ public:
 private:
 	// BGM再生関数.
 	static void PlayBGM(const std::string Name, bool& isEnd);
+	// BGMの音量を変更できるようにする.
+	static void SetChangeBGMVolumeThread();
+	// SEの音量を変更できるようにする.
+	static void SetChangeSEVolumeThread();
 private:
 
 
@@ -153,21 +155,23 @@ private:
 	// BGM,SEの作成が終わった後かどうか.
 	bool	m_bEndCreate;
 
-//=================================================
-// 以下オプション画面用.
-// オプション画面がない場合はいらない.
-//====
-	int		m_MasterCount;		// オプション画面作成時、マスター音量設定を実装する場合の音量描画に使用.
-	int		m_BGMCount;			// オプション画面作成時、BGM音量設定を実装する場合の音量描画に使用.
-	int		m_SECount;			// オプション画面作成時、SE音量設定を実装する場合の音量描画に使用.
-	// 以下二つはスレッドで回さないとストリーミングの入れ込みを待ってからの変更になるため
-	// スレッドに回す.
+	//=================================================
+	// 以下オプション画面用.
+
+	float		m_MasterCount;		// Masterボリュームゲージ用.
+	float		m_BGMCount;			// BGMボリュームゲージ用.
+	float		m_SECount;			// SEボリュームゲージ用.
+
+									// 以下二つはスレッドで回さないとストリーミングの入れ込みを待ってからの変更になるため
+									// スレッドに回す.
 	std::thread m_BGMVolume;	// オプション画面で、BGMの音量を同時に変更するためのスレッド.
 	std::thread m_SEVolume;		// オプション画面で、SEの音量を同時に変更するためのスレッド.
 
 	bool	m_bMoveBGMThread;	// オプション画面で、BGMを設定と同時に変更するためのスレッド用変数.
 	bool	m_bMoveSEThread;	// オプション画面で、Seを設定と同時に変更するためのスレッド用変数.
-
+	bool	m_isCreateThread;	// 上の2つのスレッドが立ち上がっていうかどうか.
+								//------------------------------------------
+								// スレッドロック用.
 	bool	m_bResumeBGMThread;	// 条件変数.
 	bool	m_bResumeSEThread;	// 条件変数.
 	std::mutex m_BGMmtx;
