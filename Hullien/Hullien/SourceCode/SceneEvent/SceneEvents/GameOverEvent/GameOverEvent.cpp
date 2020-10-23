@@ -129,6 +129,7 @@ bool CGameOverEvent::GirlInit()
 {
 	if( m_pGirl->Init() == false ) return false;
 	m_stGirl.vPosition = GIRL_INITPOSITION;
+	m_pGirl->SetAnimation( girl::EAnimNo_Wait );
 	return true;
 }
 

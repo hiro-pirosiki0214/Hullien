@@ -24,12 +24,12 @@ class CGameOverEvent : public CEventBase
 	const float SCALE_MAX		= 1.0f;	// 大きさの最大.
 
 	// カメラ.
-	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 5.0f, -20.0f);	// カメラ初期位置.
+	const D3DXVECTOR3 CAMERA_INITPOSITION	= D3DXVECTOR3(0.3f, 5.0f, -30.0f);	// カメラ初期位置.
 	const float LOOKPOS_Y			= 6.0f;										// 注視位置.
-	const float CAMERA_RISE_SPEED	= 0.008f;									//カメラの上昇速度.
+	const float CAMERA_RISE_SPEED	= 0.027f;									//カメラの上昇速度.
 
 	// UFO.
-	const D3DXVECTOR3 UFO_INITPOSITION			= D3DXVECTOR3(0.0f, 10.0f, 0.0f);
+	const D3DXVECTOR3 UFO_INITPOSITION			= D3DXVECTOR3(0.0f, 20.0f, 0.0f);
 	const D3DXVECTOR3 DESTINATION_RUGHTFIRST	= D3DXVECTOR3(20.0f, 10.0f, 10.0f);		// 右移動Part1時の目的地.
 	const D3DXVECTOR3 DESTINATION_LEFT			= D3DXVECTOR3(-35.0f, 25.0f, 50.0f);	// 左移動時の目的地.
 	const D3DXVECTOR3 DESTINATION_RUGHTSECOND	= D3DXVECTOR3(50.0f, 50.0f, 100.0f);	// 右移動Part2時の目的地.
@@ -41,8 +41,8 @@ class CGameOverEvent : public CEventBase
 	const float UFO_MOVE_SPEED_BACK				= 8.0f;									// 奥移動時のUFO移動速度.
 
 	// 女の子.
-	const D3DXVECTOR3 GIRL_INITPOSITION = D3DXVECTOR3(0.0f, 4.0f, 0.0f);
-	const float GIRL_RISE_SPEED			= 0.03f;								//女の子の上昇速度.
+	const D3DXVECTOR3 GIRL_INITPOSITION = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	const float GIRL_RISE_SPEED			= 0.06f;								//女の子の上昇速度.
 	const float GIRL_SCALEDOWN_SPEED	= 0.005f;								//女の子の縮小速度.
 	const float GIRL_SCALEDOWN_STARTPOS	= 7.0f;									//女の子の縮小開始位置.
 

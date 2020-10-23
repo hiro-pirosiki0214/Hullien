@@ -2,8 +2,7 @@
 #define EVENT_CHARACTER_H
 
 #include "..\Actor.h"
-
-#define IS_TEMP_MODEL_RENDER	// 仮モデル表示.
+#include "..\Character\AnimationParamInfo.h"
 
 class CCollisionManager;
 
@@ -47,7 +46,6 @@ public:
 	}typedef SOptionalState;
 
 protected:
-	const float INIT_POSITION_ADJ_HEIGHT = 4.0f;	// 調整用座標の高さ.
 
 	// キャラクタの情報.
 	struct stCharacterParam : public SOptionalState
@@ -101,6 +99,8 @@ public:
 	void SetAnimation(const int& animNo);
 	// アニメーションをブレンドして設定.
 	void SetAnimationBlend(const int& animNo);
+	// アニメーション速度の設定.
+	void SetAnimSpeed( const double& speed ){ m_AnimSpeed = speed; }
 
 protected:
 	// メッシュの表示関数.
@@ -114,9 +114,7 @@ protected:
 
 protected:
 	std::shared_ptr<CDX9SkinMesh>	m_pSkinMesh;		// スキンメッシュ.
-#ifdef IS_TEMP_MODEL_RENDER
-	std::shared_ptr<CDX9StaticMesh>	m_pTempStaticMesh;	// 仮のモデルデータ.
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
+	anim::AAnimFrameList			m_AnimFrameList;	// アニメーションフレームのリスト.
 	int				m_NowAnimNo;				// 現在のアニメーション番号.
 	int				m_OldAnimNo;				// 過去のアニメーション番号.
 	double			m_AnimSpeed;				// アニメーション速度.

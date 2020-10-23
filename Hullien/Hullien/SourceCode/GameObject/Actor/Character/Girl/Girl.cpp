@@ -121,7 +121,7 @@ void CGirl::SpriteRender()
 	// 女の子が連れ去られている状態または危険な状態ならば警告を描画.
 	if (m_NowState == ENowState::Abduct || m_IsDanger == true)
 	{
-		m_pWarning->SetPosition({ m_vPosition.x, 5.0f, m_vPosition.z});
+		m_pWarning->SetPosition({ m_vPosition.x, m_vPosition.y+5.0f, m_vPosition.z});
 		m_pWarning->Update();
 		m_pWarning->Render();
 	}
@@ -152,7 +152,6 @@ void CGirl::Abduct()
 {
 	// 前回の座標が今の座標なら(連れ去れている状態で移動していない).
 	if( m_OldPosition == m_vPosition ){
-		m_vPosition.y	= 0.0f;
 		m_NowState		= ENowState::Move;		// 移動状態へ遷移.
 		m_NowMoveState	= EMoveState::Rotation;	// 移動の回転状態へ遷移.
 	}

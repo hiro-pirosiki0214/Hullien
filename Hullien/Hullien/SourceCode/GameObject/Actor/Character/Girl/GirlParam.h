@@ -23,4 +23,23 @@ struct stGirlParam : public CCharacter::SParameter
 	{}
 } typedef SGirlParam;
 
+namespace girl
+{
+	enum enAnimNo
+	{
+		EAnimNo_None = -1,
+
+		EAnimNo_Wait,	// ‘Ò‹@.
+		EAnimNo_Move,	// ˆÚ“®.
+		EAnimNo_Abduct,	// ˜A‚ê‹Ž‚ç‚ê‚Ä‚¢‚é.
+
+		EAnimNo_Max,
+
+		EAnimNo_Begin	= EAnimNo_Wait,
+		EAnimNo_End		= EAnimNo_Max,
+
+		Abduct_Max,
+	} typedef EAnimNo;
+}
+
 #endif	// #ifndef GIRL_PARAM_H.

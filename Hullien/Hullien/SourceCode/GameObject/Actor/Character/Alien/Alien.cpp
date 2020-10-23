@@ -327,17 +327,7 @@ void CAlien::GirlCollision( CActor* pActor )
 	if( m_NowState == EAlienState::Fright )		return;	// 怯み状態なら終了.
 
 	// 球体の当たり判定.
-	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ){
-		// アームを片付けていなければ片付ける.
-		if( m_pArm->IsCleanUp() == false ){
-			m_AnimSpeed = 0.01;
-			SetAnimation( EAnimNo_Move, m_pAC );
-			m_pArm->SetCleanUpPreparation();
-		}
-		m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
-		m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
-		return;
-	}
+	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
 	if( m_NowState == EAlienState::Abduct ){
 		// 連れ去っている状態なのでアームの座標を設定する.
@@ -365,21 +355,6 @@ void CAlien::GirlCollision( CActor* pActor )
 			m_AnimSpeed = 0.0;
 		}
 		return;
-	} else {
-		//const float lenght = D3DXVec3Length( &D3DXVECTOR3(pActor->GetPosition()-m_vPosition) );
-		//// 目的の座標との距離が一定値より少ないか比較.
-		//if( lenght > m_pArm->GRAB_DISTANCE ){
-		//	// アームを片付けていなければ片付ける.
-		//	if( m_pArm->IsCleanUp() == false ){
-		//		m_AnimSpeed = 0.01;
-		//		SetAnimation( EAnimNo_Move, m_pAC );
-		//		m_pArm->SetCleanUpPreparation();
-		//	}
-		//	m_NowState		= EAlienState::Move;		// 移動状態へ遷移.
-		//	m_NowMoveState	= EMoveState::Rotation;		// 移動の回転状態へ遷移.
-		//}
-		// アームの座標を設定する.
-//		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.5f, m_pArm->GetGrabPosition().z} );
 	}
 
 	if( m_NowState == EAlienState::Abduct ) return;
@@ -431,7 +406,7 @@ bool CAlien::SetAnimFrameList()
 	const double animAdjFrames[] =
 	{
 		0.0f,
-		0.5f,
+		0.0f,
 		0.0f,
 		0.0f,
 	};

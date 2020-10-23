@@ -148,7 +148,6 @@ bool CGameClearEvent::GirlInit()
 {
 	if( m_pGirl->Init() == false )return false;
 	m_stGirl.vPosition = m_pGirl->GetPosition();
-	m_stGirl.vPosition.y = 4.0f;
 	m_stGirl.vPosition.z = m_stPlayer.vPosition.z + INIT_GIRLPOSITION_Z;
 	m_stGirl.MoveSpeed = MOVE_SPEED;
 	return true;
@@ -275,6 +274,7 @@ void CGameClearEvent::RunTowardsUFO()
 
 	if (m_stPlayer.vPosition.z > m_vUFOPosition.z) return;
 	m_pPlayer->SetAnimationBlend(player::EAnimNo::EAnimNo_Wait);
+	m_pGirl->SetAnimationBlend(girl::EAnimNo::EAnimNo_Wait);
 	CSoundManager::PlaySE("UFOSucked");
 	NextStep();
 }
@@ -373,6 +373,8 @@ void CGameClearEvent::KickedOutAlien()
 
 	if (m_stCamera.ViewingAngle <= m_pEventCamera->ResetViewingAngle()) return;
 	CSoundManager::PlaySE("AlienFall");
+	m_pAlienA->SetAnimation( CEventAlien::EAnimNo_Move );
+	m_pAlienA->SetAnimSpeed( 0.0 );
 	NextStep();
 }
 

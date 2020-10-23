@@ -27,13 +27,10 @@ CEventGirl::~CEventGirl()
 // èâä˙âªä÷êî.
 bool CEventGirl::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if (GetModel(MODEL_NAME) == false) return false;
-#else
-	if (GetModel(MODEL_TEMP_NAME) == false) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
 	if (ColliderSetting() == false) return false;
-
+	m_NowAnimNo = girl::EAnimNo_Move;
+	m_pSkinMesh->ChangeAnimSet_StartPos( girl::EAnimNo_Move, 0.0f );
 	return true;
 }
 
@@ -136,7 +133,6 @@ void CEventGirl::SearchCollision(CActor * pActor)
 // ìñÇΩÇËîªíËÇÃçÏê¨.
 bool CEventGirl::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if (m_pSkinMesh == nullptr) return false;
 	if (m_pCollManager == nullptr) {
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -145,23 +141,10 @@ bool CEventGirl::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius))) return false;
-	return true;
-#else
-	if (m_pTempStaticMesh == nullptr) return false;
-	if (m_pCollManager == nullptr) {
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	// èóÇÃéqÇÃìñÇΩÇËîªíË.
-	if (FAILED(m_pCollManager->InitSphere(
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
 		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
+
 	// çıìGÇÃìñÇΩÇËîªíË.
 	if (FAILED(m_pSearchCollManager->InitSphere(
 		&m_vPosition,
@@ -171,5 +154,4 @@ bool CEventGirl::ColliderSetting()
 		m_Parameter.SearchCollRadius))) return false;
 
 	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }

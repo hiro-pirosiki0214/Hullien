@@ -51,28 +51,18 @@ void CEventCharacter::SetOptionalState(const SOptionalState& state)
 // メッシュの表示関数.
 void CEventCharacter::MeshRender()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if (m_pSkinMesh == nullptr) return;
 
 	m_pSkinMesh->SetPosition(m_vPosition);
 	m_pSkinMesh->SetRotation(m_vRotation);
-	m_pSkinMesh->SetScale(m_vSclae);
-	m_pSkinMesh->SetAnimSpeed(0.01);
+	m_pSkinMesh->SetScale(m_vScale);
+	m_pSkinMesh->SetAnimSpeed(m_AnimSpeed);
 	m_pSkinMesh->Render();
-#else
-	if (m_pTempStaticMesh == nullptr) return;
-
-	m_pTempStaticMesh->SetPosition(m_vPosition);
-	m_pTempStaticMesh->SetRotation(m_vRotation);
-	m_pTempStaticMesh->SetScale(m_vScale);
-	m_pTempStaticMesh->Render();
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
 }
 
 // モデルの取得関数
 bool CEventCharacter::GetModel(const char * modelName)
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	// 既に読み込めていたら終了.
 	if (m_pSkinMesh != nullptr) return true;
 	// モデルの取得.
@@ -80,15 +70,6 @@ bool CEventCharacter::GetModel(const char * modelName)
 	// モデルが読み込めてなければ false.
 	if (m_pSkinMesh == nullptr) return false;
 	return true;
-#else
-	// 既に読み込めていたら終了.
-	if (m_pTempStaticMesh != nullptr) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic(m_pTempStaticMesh, modelName);
-	// モデルが読み込めてなければ false.
-	if (m_pTempStaticMesh == nullptr) return false;
-	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }
 
 // アニメーション設定.

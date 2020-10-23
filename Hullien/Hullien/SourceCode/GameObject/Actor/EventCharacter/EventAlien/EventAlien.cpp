@@ -12,6 +12,7 @@ CEventAlien::CEventAlien()
 	, m_NowState				( EEventAlienState::None )
 	, m_vTargetPosition			( D3DXVECTOR3(0.0f, 0.0f, 0.0f) )
 {
+	m_AnimFrameList.resize( EAnimNo_Max );
 }
 
 
@@ -96,7 +97,7 @@ void CEventAlien::GirlCollision(CActor* pActor)
 	bool isAbduct = false;
 	if (m_NowState == EEventAlienState::Abduct) {
 		isAbduct = true;
-		pActor->SetPosition(m_pArm->GetGrabPosition());
+		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.5f, m_pArm->GetGrabPosition().z} );
 		return;
 	}
 	else {
@@ -111,7 +112,6 @@ void CEventAlien::GirlCollision(CActor* pActor)
 		m_pArm->SetAppearancePreparation();
 		return;
 	}
-	pActor->SetPosition(m_pArm->GetGrabPosition());
 
 	if (m_NowState == EEventAlienState::Abduct) return;
 	m_NowState = EEventAlienState::Abduct;

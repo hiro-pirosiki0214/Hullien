@@ -2,14 +2,14 @@
 #define EVENT_GIRL_H
 
 #include "..\EventCharacter.h"
+#include "..\..\Character\Girl\GirlParam.h"
 
 /****************************************
 *	イベント用女の子クラス.
 **/
 class CEventGirl : public CEventCharacter
 {
-	const char* MODEL_NAME = "Towa_s";	// モデル名.
-	const char* MODEL_TEMP_NAME = "yuri-dy";	// 仮モデル名.
+	const char* MODEL_NAME = "yuri-dy_s";	// モデル名.
 
 	// パラメータ.
 	struct stGirlParam : public SCharacterParam

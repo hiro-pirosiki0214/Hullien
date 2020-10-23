@@ -12,6 +12,7 @@
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\EventManager\EventManager.h"
 #include "..\..\..\GameObject\SkyDome\SkyDome.h"
+#include "..\..\..\GameObject\Arm\Arm.h"
 
 #include "..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
@@ -155,7 +156,6 @@ bool CGameStartEvent::PlayerInit()
 bool CGameStartEvent::GirlInit()
 {
 	if (m_pGirl->Init() == false) return false;
-	m_stGirl.vPosition.y = 4.0f;
 	m_stGirl.vPosition.z = m_stPlayer.vPosition.z + GIRL_DISTANCE_Z;
 	m_stGirl.vRotation.y = GIRL_DEFAULT_ROTATION_Y;
 	return true;
@@ -289,10 +289,12 @@ void CGameStartEvent::Skip()
 	m_stAlien.vScale = SCALE_MAX;
 	const D3DXVECTOR3 ALIEN_DESTINATION = { m_stAlien.vPosition.x, ALIEN_MOVEING_LIMIT_Y, ALIEN_MOVEING_LIMIT_Z };
 	m_stAlien.vPosition = ALIEN_DESTINATION;
+	m_pAlienA->SetArmAppearance();
 	// 女の子.
 	m_stGirl.vPosition.x = -0.015f;
 	m_stGirl.vPosition.y = m_stAlien.vPosition.y;
-	m_stGirl.vPosition.z = m_stAlien.vPosition.z - 5.5f;
+	m_stGirl.vPosition.z = m_stAlien.vPosition.z-CArm::GRAB_DISTANCE;
+	m_pGirl->SetAnimation(girl::EAnimNo::EAnimNo_Abduct);
 	// UFO.
 	m_pSpawnUFO->SetDisp( false );
 	CSoundManager::StopAllSE("UFOMove");
@@ -364,7 +366,7 @@ void CGameStartEvent::MoveUFO()
 	m_stPlayer.vPosition.z = 0.0f;
 	// 女の子の位置設定.
 	m_stGirl.vPosition.z = GIRL_DISTANCE_Z;
-
+	m_pGirl->SetAnimation(girl::EAnimNo::EAnimNo_Wait);
 	// UFO移動.
 	const D3DXVECTOR3 UFO_DESTINATION = { 0.0f, m_vUFOPosition.y, UFO_MOVEING_LIMIT_Z };
 	if (MoveDestination(m_vUFOPosition, UFO_DESTINATION, UFO_MOVE_SPEED) == false) return;
@@ -419,10 +421,13 @@ void CGameStartEvent::MoveAlien()
 
 	if (m_Count < WAIT_COUNT) return;
 	m_pAlienA->SetTargetPos( *m_pGirl.get() );
+	m_pAlienA->SetAnimSpeed( 0.01 );
+	m_pAlienA->SetAnimation( CEventAlien::EAnimNo_Move );
 	const D3DXVECTOR3 ALIEN_DESTINATION = m_pAlienA->GetTargetPosition();
 	if (MoveDestination(m_stAlien.vPosition, ALIEN_DESTINATION, ALIEN_RUN_SPEED) == false) return;
 	m_Count = 0;
 	NextStep();
+	m_pAlienA->SetAnimation( CEventAlien::EAnimNo_Arm );
 }
 
 // 女の子捕まる.
@@ -454,6 +459,7 @@ void CGameStartEvent::GetCaughtGirl()
 	else
 	{
 		ALIEN_DESTINATION = { m_stAlien.vPosition.x, m_stAlien.vPosition.y, ALIEN_MOVEING_LIMIT_Z };
+		m_pGirl->SetAnimation(girl::EAnimNo::EAnimNo_Abduct);
 	}
 	if (MoveDestination(m_stAlien.vPosition, ALIEN_DESTINATION, ALIEN_MOVE_SPEED) == false) return;
 	if (m_pAlienA->IsGrab() == false) return;
@@ -552,7 +558,7 @@ void CGameStartEvent::PlayerUp()
 			// 注視位置を女の子に移動.
 			D3DXVECTOR3 pos = m_stCamera.vLookPosition;
 			pos.x = m_stGirl.vPosition.x + 5.0f;
-			pos.y = m_stGirl.vPosition.y + 3.0f;
+			pos.y = m_stGirl.vPosition.y + 7.0f;
 			D3DXVec3Lerp(&m_stCamera.vLookPosition, &m_stCamera.vLookPosition, &pos, 0.25f);
 			if(m_pPlayer->IsSpecialAbility() == false) return;
 			// カメラの揺れ用カウント.
@@ -576,6 +582,7 @@ void CGameStartEvent::InvocatingBarrier()
 	// バリア.
 	m_pBarrier->SetTargetPos(*m_pGirl.get());
 	m_pBarrier->Update();
+	m_pGirl->SetAnimationBlend( girl::EAnimNo_Wait );
 
 	// 宇宙人とバリアの当たり判定.
 	m_pAlienA->Collision(m_pBarrier.get());
@@ -589,6 +596,7 @@ void CGameStartEvent::InvocatingBarrier()
 		// プレイヤーのアニメーション.
 		m_pPlayer->SetAnimationBlend(player::EAnimNo::EAnimNo_Wait);
 		m_pPlayer->SetAnimSpeed();
+		m_pGirl->SetAnimationBlend( girl::EAnimNo_Move );
 		NextStep();
 	}
 }
@@ -610,7 +618,7 @@ void CGameStartEvent::ReturnGirl()
 		D3DXVec3Lerp(&m_stCamera.vPosition, &m_stCamera.vPosition, &CAMERA_GAMEPOSITION, CAMERA_MOVE_SPEED);
 	}
 
-	const D3DXVECTOR3 GIRL_DESTINATION = { m_stGirl.vPosition.x, 4.0f, PRESERVE_GIRL_DISP_POSITION };
+	const D3DXVECTOR3 GIRL_DESTINATION = { m_stGirl.vPosition.x, 0.0f, PRESERVE_GIRL_DISP_POSITION };
 	if(MoveDestination(m_stGirl.vPosition, GIRL_DESTINATION, m_stGirl.MoveSpeed) == false) return;
 	NextStep();
 }
@@ -629,6 +637,8 @@ void CGameStartEvent::DispPreserveGirl()
 // ゲーム開始.
 void CGameStartEvent::GameStart()
 {
+	// 女の子のアニメーションを待機にさせる.
+	m_pGirl->SetAnimationBlend( girl::EAnimNo_Wait );
 	CSoundManager::FadeOutBGM("StartEventBGM");
 	m_IsEventEnd = true;
 }
