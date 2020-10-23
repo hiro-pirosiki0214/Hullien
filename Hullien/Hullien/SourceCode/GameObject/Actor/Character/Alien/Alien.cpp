@@ -330,8 +330,9 @@ void CAlien::GirlCollision( CActor* pActor )
 	if( m_pCollManager->IsShereToShere( pActor->GetCollManager() ) == false ) return;
 
 	if( m_NowState == EAlienState::Abduct ){
+		if( m_AnimFrameList[EAnimNo_Arm].IsNowFrameOver() == true ) m_AnimSpeed = 0.0;
 		// 連れ去っている状態なのでアームの座標を設定する.
-		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.5f, m_pArm->GetGrabPosition().z} );
+		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.0f, m_pArm->GetGrabPosition().z} );
 		pActor->SetRotationY( m_vRotation.y );
 		return;
 	} else {
@@ -406,7 +407,7 @@ bool CAlien::SetAnimFrameList()
 	const double animAdjFrames[] =
 	{
 		0.0f,
-		0.0f,
+		0.01f,
 		0.0f,
 		0.0f,
 	};

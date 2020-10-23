@@ -44,7 +44,7 @@ void CAlienB::Update()
 	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
 	CurrentStateUpdate();	// 現在の状態の更新.
 	// アーム.
-	m_pArm->SetPosition( {m_vPosition.x, m_vPosition.y+5.5f, m_vPosition.z} );		// 座標をセット.
+	m_pArm->SetPosition( {m_vPosition.x, m_vPosition.y+5.0f, m_vPosition.z} );		// 座標をセット.
 	m_pArm->SetRotationY( m_vRotation.y );	// 回転情報をセット.
 	m_pArm->Update();						// 更新.
 }

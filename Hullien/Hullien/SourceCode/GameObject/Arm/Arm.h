@@ -11,7 +11,7 @@ public:
 private:
 	const char* MODEL_NAME = "armsandwich_s";
 
-	const float APPEARANCE_ADD_VALUE	= 0.005f;	// 出現時の加算値.
+	const float APPEARANCE_ADD_VALUE	= 0.1f;		// 出現時の加算値.
 	const float APPEARANCE_COUNT_MAX	= 1.0f;		// 出現時の最大数.
 	const float CLEAN_UP_SUB_VALUE		= 0.015f;	// 片づけ時の減算値.
 	const float CLEAN_UP_COUNT_MIN		= 0.0f;		// 片づけ時の最小数.
