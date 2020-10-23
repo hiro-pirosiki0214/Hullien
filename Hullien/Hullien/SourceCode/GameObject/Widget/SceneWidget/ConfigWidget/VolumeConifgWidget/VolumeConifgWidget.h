@@ -22,6 +22,8 @@ class CVolumeConfigWidget : public CWidget
 	const float BAR_POSITION_X = 200.0f;
 	const float DEFALUT_VOLUME = 1.0f;
 
+	inline static const float INPUT_WAIT_TIME_MAX = 30.0f;	// 入力時の待機フレーム.
+
 	// 設定の状態.
 	enum enConfigState
 	{
@@ -44,6 +46,8 @@ class CVolumeConfigWidget : public CWidget
 
 		ESelectType_Reset,	// リセット.
 		ESelectType_Save,	// 保存.
+
+		EVolumeType_End,
 
 		ESelectType_Max,
 
@@ -82,6 +86,8 @@ public:
 	void OnVolumeSeting();
 	// 音量の設定をできないようにする.
 	void OffVolumeSeting();
+	// 保存終了.
+	bool IsSaveEnd();
 
 private:
 	// 種類の選択.
@@ -102,6 +108,9 @@ private:
 	D3DXVECTOR3	m_CursorPosition;	// カーソルの座標.
 	int			m_NowConfigState;	// 現在の設定状態.
 	int			m_NowSelectVolume;	// 現在の選択している音量種類.
+	int			m_OldSelectVolume;
+	float		m_InputWaitTime;	// 入力した際の待機時間.
+	bool		m_IsOneStep;		// 一回だけ動作.
 };
 
 #endif	// #ifndef VOLUME_CONFIG_WIDGET_H.

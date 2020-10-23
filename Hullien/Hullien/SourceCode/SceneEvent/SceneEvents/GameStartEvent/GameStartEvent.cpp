@@ -573,11 +573,17 @@ void CGameStartEvent::PlayerUp()
 // バリア発動.
 void CGameStartEvent::InvocatingBarrier()
 {
-
 	// カメラの揺れ.
 	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_X));
 	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_Y));
-	if (m_Count != 0) m_Count -= AMPLITUDE_SPEED;
+	if (m_Count != 0){
+		m_Count -= AMPLITUDE_SPEED;
+		// 画面の揺れに合わせてコントローラーのバイブをする.
+		CXInput::SetVibration( INPUT_VIBRATION_MAX, 0 );
+	} else {
+		// バイブをなくす.
+		CXInput::SetVibration( 0, 0 );
+	}
 
 	// バリア.
 	m_pBarrier->SetTargetPos(*m_pGirl.get());

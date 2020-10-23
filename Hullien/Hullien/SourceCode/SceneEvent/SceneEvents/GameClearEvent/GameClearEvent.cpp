@@ -392,6 +392,13 @@ void CGameClearEvent::FallAlien()
 	{
 		if(m_SwingCameraCount == 50) CSoundManager::PlaySE("FallDown");
 		if(m_SwingCameraCount != 0) m_SwingCameraCount--;
+		if (m_SwingCameraCount != 0){
+			m_SwingCameraCount--;
+			// 画面の揺れに合わせてコントローラーのバイブをする.
+			CXInput::SetVibration( 0, INPUT_VIBRATION_MAX );
+		} else {
+			CXInput::SetVibration( 0, 0 );
+		}
 		// カメラ揺らす.
 		m_stCamera.vLookPosition.y 
 			= m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Y * m_SwingCameraCount) * (m_SwingCameraCount * AMPLITUDE_LOOKPOS));

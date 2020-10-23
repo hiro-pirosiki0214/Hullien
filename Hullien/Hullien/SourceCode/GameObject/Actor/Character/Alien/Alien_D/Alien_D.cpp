@@ -8,8 +8,6 @@
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
-#define IS_TEMP_MODEL_RENDER
-
 CAlienD::CAlienD()
 	: m_pAttackRangeSprite	( nullptr )
 	, m_pLaserBeam			( nullptr )
@@ -28,25 +26,21 @@ CAlienD::~CAlienD()
 // 初期化関数.
 bool CAlienD::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
-	if( GetModel( MODEL_NAME ) == false ) return false;
-#else
-	// 既に読み込めていたら終了.
-	if( m_pTempStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
-	// モデルが読み込めてなければ false.
-	if( m_pTempStaticMesh == nullptr ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
-	if( GetSprite( SPRITE_NAME ) == false ) return false;
-	if( ColliderSetting() == false ) return false;
-	if( m_pLaserBeam->Init() == false ) return false; 
+	if( GetModel( MODEL_NAME )		== false ) return false;
+	if( GetAnimationController()	== false ) return false;
+	if( SetAnimFrameList()			== false ) return false;
+	if( GetSprite( SPRITE_NAME )	== false ) return false;
+	if( ColliderSetting()			== false ) return false;
+	if( m_pLaserBeam->Init()		== false ) return false;
+
+	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0, m_pAC );
 	return true;
 }
 
 // 更新関数.
 void CAlienD::Update()
 {
+	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
 	SetMoveVector( m_TargetPosition );	// 目的のベクトルを取得.
 	m_pLaserBeam->Update();	// レーザーの更新.
 	CurrentStateUpdate();	// 現在の状態の更新.
@@ -110,28 +104,16 @@ void CAlienD::SpriteRender()
 // モデルの描画.
 void CAlienD::ModelRender()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pSkinMesh->Render();
+	m_pSkinMesh->Render( m_pAC );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
-#else
-	if( m_pTempStaticMesh == nullptr ) return;
-	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vScale );
-	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, 1.0f } );
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pTempStaticMesh->Render();
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
 }
 
 // 攻撃範囲のスプライト描画.
@@ -212,6 +194,10 @@ void CAlienD::Attack()
 {
 	if( m_NowMoveState != EMoveState::Attack ) return;
 
+	if( m_AnimFrameList[m_NowAnimNo].IsNowFrameOver() == true ){
+		m_AnimSpeed = 0.0;
+	}
+
 	const float attackSpeed = m_IsAttackStart == false ? 
 		m_Parameter.AttackRangeAddValue : m_Parameter.AttackRangeSubValue;
 	m_AttackCount += attackSpeed;	// 攻撃カウントの追加.
@@ -242,6 +228,8 @@ void CAlienD::Attack()
 
 	if( m_AttackCount >= 0.0f ) return;
 	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
+	SetAnimation( EAnimNo_Move, m_pAC );
+	m_AnimSpeed = 0.0;
 }
 
 // 移動関数.
@@ -266,6 +254,7 @@ void CAlienD::VectorMove( const float& moveSpeed )
 	m_IsAttackStart	= false;	// 攻撃が始まるフラグを下す.
 	m_AttackCount	= 0.0f;		// 攻撃カウントを初期化,
 	m_NowMoveState	= EMoveState::Attack;	// 攻撃状態へ遷移.
+	SetAnimation( EAnimNo_Arm, m_pAC );
 }
 
 // 相手座標の設定.
@@ -308,7 +297,6 @@ bool CAlienD::GetSprite( const char* spriteName )
 // 当たり判定の設定.
 bool CAlienD::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -321,18 +309,4 @@ bool CAlienD::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	return true;
-#else
-	if( m_pTempStaticMesh == nullptr ) return false;
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }

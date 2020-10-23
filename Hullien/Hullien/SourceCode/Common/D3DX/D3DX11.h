@@ -36,6 +36,9 @@ public: //----- 関数 ------.
 	// BackBufferの設定.
 	static void SetBackBuffer();
 
+	// フルスクリーンの設定.
+	static bool SetFullScreen( const bool& isOn );
+
 private: //----- 関数 ------.
 		 // デバイス11の作成.
 	HRESULT InitDevice11();

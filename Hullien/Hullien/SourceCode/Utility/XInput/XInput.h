@@ -13,6 +13,8 @@
 static const int IDLE_THUMB_MAX		=  10000;	//!< スティックの遊び.
 static const int IDLE_THUMB_MIN		= -10000;	//!< スティックの遊び.
 static const int IDLE_TIGGER_MAX	=  100;		//!< トリガーボタンの遊び.
+static const WORD	INPUT_VIBRATION_MIN	= 0;
+static const WORD	INPUT_VIBRATION_MAX	= 65535;
 
 /**
 * @brief XInput Class(Singleton).
@@ -22,7 +24,6 @@ static const int IDLE_TIGGER_MAX	=  100;		//!< トリガーボタンの遊び.
 class CXInput : public CXInputConfig
 {
 	const int FOUR_LIMITED_CONTROLLER = 4;	//!< 接続コントローラの最大数.
-	
 public:
 	enum enBUTTON_STATE
 	{
@@ -216,6 +217,9 @@ public:
 	*/
 	static enBUTTON_STATE Back_Button( const int& connectNum = 0 );
 
+	//振動設定.
+	static bool SetVibration( WORD LMotorSpd, WORD RMotorSpd, const int& connectNum = 0 );
+
 	// ボタンの設定.
 	static void SetButton( enBUTTON_LIST before, enBUTTON_LIST after )
 	{ GetInstance()->CXInputConfig::SetButton( before, after ); }
@@ -262,9 +266,10 @@ private:
 	}
 
 private:
-	std::vector<XINPUT_STATE> m_State;	//!< 接続したコントローラーの状態.
-	int m_ConnectedCount;				//!< 接続したコントローラーの数.
-
+	std::vector<XINPUT_STATE>		m_State;		//!< 接続したコントローラーの状態.
+	std::vector<XINPUT_VIBRATION>	m_Vibration;	//!< バイブレーションの状態.
+	int		m_ConnectedCount;						//!< 接続したコントローラーの数.
+	bool	m_IsVibration;							//!< バイブレーションを行うか.
 	std::vector<std::unordered_map<INT, enBUTTON_STATE>> m_ButtonStateList;	//!< 入力されたボタンの状態.
 
 	// コピー・ムーブコンストラクタ, 代入演算子の削除.

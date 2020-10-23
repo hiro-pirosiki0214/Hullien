@@ -101,6 +101,12 @@ void CSceneManager::NextSceneMove()
 		m_NowScene	= m_NextScene;
 		m_NextScene = EScene::Title;
 		break;
+	case EScene::Config:
+		m_pScene		= std::make_shared<CTitle>( this );
+		m_IsGameOver	= false;
+		m_NowScene		= m_NextScene;
+		m_NextScene		= EScene::GameMain;
+		break;
 	default:
 		break;
 	}
@@ -113,6 +119,16 @@ void CSceneManager::EndGameClose()
 {
 	m_IsGameEnd = true;
 	PostMessage( m_hWnd, WM_CLOSE, 0, 0 );
+}
+
+//=================================.
+// ê›íËÉVÅ[ÉìÇ÷à⁄ìÆ.
+//=================================.
+void CSceneManager::ConfigSceneMove()
+{
+	m_pScene = std::make_shared<CConfig>( this );
+	m_IsLoadEnd = false;
+	m_NextScene	= EScene::Title;
 }
 
 //=================================.

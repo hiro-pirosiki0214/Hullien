@@ -1,8 +1,11 @@
 #include "XInput.h"
+#include <algorithm>
 
 CXInput::CXInput()
 	: m_State			( FOUR_LIMITED_CONTROLLER )
+	, m_Vibration		( FOUR_LIMITED_CONTROLLER )
 	, m_ConnectedCount	( 0 )
+	, m_IsVibration		( true )
 {
 	std::unordered_map<INT, enBUTTON_STATE> inputState;
 	inputState[XINPUT_GAMEPAD_DPAD_UP]			= enNOT_PUSHING;
@@ -25,7 +28,11 @@ CXInput::CXInput()
 }
 
 CXInput::~CXInput()
-{}
+{
+	for( int i = 0; i < GetInstance()->m_ConnectedCount; i++ ){
+		SetVibration( 0, 0, i );	// バイブレーションの初期化.
+	}
+}
 
 void CXInput::StatsUpdate()
 {
@@ -181,6 +188,21 @@ CXInput::enBUTTON_STATE CXInput::Back_Button( const int& connectNum )
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_BACK );
 }
 
+//--------------------------------.
+//振動設定.
+//--------------------------------.
+bool CXInput::SetVibration( WORD LMotorSpd, WORD RMotorSpd, const int& connectNum  )
+{
+	if( GetInstance()->m_IsVibration == false ) return false;
+	GetInstance()->m_Vibration[connectNum].wLeftMotorSpeed = std::clamp<WORD>( LMotorSpd, INPUT_VIBRATION_MIN, INPUT_VIBRATION_MAX );
+	GetInstance()->m_Vibration[connectNum].wRightMotorSpeed = std::clamp<WORD>( RMotorSpd, INPUT_VIBRATION_MIN, INPUT_VIBRATION_MAX );
+
+	if( ERROR_SUCCESS == XInputSetState(
+		connectNum, &GetInstance()->m_Vibration[connectNum] ) ){
+		return true;
+	}
+	return false;
+}
 
 void CXInput::ConnectCheck( const int& connectNum )
 {

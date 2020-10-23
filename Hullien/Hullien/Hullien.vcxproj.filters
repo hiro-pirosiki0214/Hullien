@@ -161,6 +161,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\Slider\Slider.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConifgWidget\VolumeConifgWidget.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Config\Config.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -330,5 +331,6 @@
     <ClInclude Include="SourceCode\GameObject\Widget\Slider\Slider.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConifgWidget\VolumeConifgWidget.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Config\Config.h" />
   </ItemGroup>
 </Project>

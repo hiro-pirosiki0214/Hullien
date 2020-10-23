@@ -17,6 +17,9 @@ CVolumeConfigWidget::CVolumeConfigWidget()
 	, m_CursorPosition		( 0.0f, 0.0f, 0.0f )
 	, m_NowConfigState		( EConfigState_Select )
 	, m_NowSelectVolume		( ESelectType_Master )
+	, m_OldSelectVolume		( ESelectType_Master )
+	, m_InputWaitTime		( 0.0f )
+	, m_IsOneStep			( false )
 {
 	m_pCursor = std::make_unique<CCursor>();
 	for( auto& v : m_pVolumeSlinders ) v = std::make_shared<CSlinder>();
@@ -44,16 +47,27 @@ bool CVolumeConfigWidget::Init()
 // 更新関数.
 void CVolumeConfigWidget::Update()
 {
+	m_InputWaitTime--;
 	switch( m_NowConfigState )
 	{
 	case EConfigState_Select:
 		SelectType();		// 設定する種類の選択.
 		Determination();	// 決定後の処理.
+		// キャンセル.
+		if( GetAsyncKeyState(VK_BACK) & 0x0001 || 
+			CXInput::A_Button() == CXInput::enPRESSED_MOMENT ){
+			m_NowSelectVolume = EVolumeType_End;
+			CSoundManager::PlaySE("CancelDetermination");
+		}
 		break;
 	case EConfigState_Seting:
 		VolumeSeting();		// 音量の設定.
-		if( GetAsyncKeyState(VK_BACK) & 0x0001 || GetAsyncKeyState(VK_RETURN) & 0x0001 )
+		// 決定.
+		if( GetAsyncKeyState(VK_RETURN) & 0x0001 ||
+			CXInput::B_Button() == CXInput::enPRESSED_MOMENT ){
+			CSoundManager::PlaySE("Determination");
 			m_NowConfigState = EConfigState_Select;
+		}
 		break;
 	default:
 		break;
@@ -91,40 +105,58 @@ void CVolumeConfigWidget::Render()
 // 音量の選択.
 void CVolumeConfigWidget::SelectType()
 {
-	if( GetAsyncKeyState(VK_UP) & 0x0001 ){
+	if( m_InputWaitTime > 0.0f ) return;
+
+	// 上に移動.
+	if( GetAsyncKeyState(VK_UP) & 0x0001 || CXInput::LThumbY_Axis() > IDLE_THUMB_MAX ){
 		m_NowSelectVolume--;
+		m_InputWaitTime = INPUT_WAIT_TIME_MAX;
 		m_NowSelectVolume = m_NowSelectVolume <= ESelectType_Master ? ESelectType_Master : m_NowSelectVolume;
-	}
-	if( GetAsyncKeyState(VK_DOWN) & 0x0001 ){
+	} 
+	// 下に移動.
+	if( GetAsyncKeyState(VK_DOWN) & 0x0001 || CXInput::LThumbY_Axis() < IDLE_THUMB_MIN ){
 		m_NowSelectVolume++;
+		m_InputWaitTime = INPUT_WAIT_TIME_MAX;
 		m_NowSelectVolume = m_NowSelectVolume >= ESelectType_Save ? ESelectType_Save : m_NowSelectVolume;
-	}
-	if( GetAsyncKeyState(VK_LEFT) & 0x0001 ){
+	} 
+	// 左に移動.
+	if( GetAsyncKeyState(VK_LEFT) & 0x0001 || CXInput::LThumbX_Axis() < IDLE_THUMB_MIN ){
 		if( m_NowSelectVolume >= ESelectType_Reset ){
 			m_NowSelectVolume--;
+			m_InputWaitTime = INPUT_WAIT_TIME_MAX;
 			m_NowSelectVolume = m_NowSelectVolume <= ESelectType_Master ? ESelectType_Master : m_NowSelectVolume;
 		}
-	}
-	if( GetAsyncKeyState(VK_RIGHT) & 0x0001 ){
+	} 
+	// 右に移動.
+	if( GetAsyncKeyState(VK_RIGHT) & 0x0001 || CXInput::LThumbX_Axis() > IDLE_THUMB_MAX ){
 		if( m_NowSelectVolume >= ESelectType_SE ){
 			m_NowSelectVolume++;
+			m_InputWaitTime = INPUT_WAIT_TIME_MAX;
 			m_NowSelectVolume = m_NowSelectVolume >= ESelectType_Save ? ESelectType_Save : m_NowSelectVolume;
 		}
+	}
+	// SEを鳴らす.
+	if( m_NowSelectVolume != m_OldSelectVolume ){
+		CSoundManager::PlaySE("MoveButtonSE");
+		m_OldSelectVolume = m_NowSelectVolume;
 	}
 }
 
 // 決定.
 void CVolumeConfigWidget::Determination()
 {
-	if(!(GetAsyncKeyState(VK_RETURN) & 0x0001 )) return;
+	if(!(GetAsyncKeyState(VK_RETURN) & 0x0001 ) && CXInput::B_Button() != CXInput::enPRESSED_MOMENT ) return;
 	switch( m_NowSelectVolume )
 	{
 	case ESelectType_Master:
 	case ESelectType_BGM:
 	case ESelectType_SE:
+		// 音量の設定へ移動.
 		m_NowConfigState = EConfigState_Seting;
+		CSoundManager::PlaySE("Determination");
 		break;
 	case ESelectType_Reset:
+		// 音量をリセットする.
 		m_pVolumeSlinders[ESelectType_Master]->SetValue( DEFALUT_VOLUME );
 		m_pVolumeSlinders[ESelectType_BGM]->SetValue( DEFALUT_VOLUME );
 		m_pVolumeSlinders[ESelectType_SE]->SetValue( DEFALUT_VOLUME );
@@ -134,7 +166,8 @@ void CVolumeConfigWidget::Determination()
 		m_NowSelectVolume = ESelectType_Master;
 		break;
 	case ESelectType_Save:
-		if( CSoundManager::SaveVolume() == true ) m_NowSelectVolume = ESelectType_Master;
+		// 音量を保存する.
+		if( CSoundManager::SaveVolume() == true ) m_NowSelectVolume = EVolumeType_End;
 		break;
 	default:
 		break;
@@ -144,11 +177,14 @@ void CVolumeConfigWidget::Determination()
 // 音量の設定.
 void CVolumeConfigWidget::VolumeSeting()
 {
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )
+	// 値を増やす.
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 || CXInput::LThumbX_Axis() > IDLE_THUMB_MAX )
 		m_pVolumeSlinders[m_NowSelectVolume]->AddValue( 0.01f );
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )
+	// 値を減らす.
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 || CXInput::LThumbX_Axis() < IDLE_THUMB_MIN )
 		m_pVolumeSlinders[m_NowSelectVolume]->SubValue( 0.01f );
-
+	
+	// 設定した値をサウンドマネージャーへ渡す.
 	switch( m_NowSelectVolume )
 	{
 	case ESelectType_Master:
@@ -168,6 +204,7 @@ void CVolumeConfigWidget::VolumeSeting()
 // 音量の設定をできるようにする.
 void CVolumeConfigWidget::OnVolumeSeting()
 {
+	if( m_IsOneStep == true ) return;
 	// 音量の設定を許可する.
 	CSoundManager::CreateChangeSoundVolumeThread();
 	CSoundManager::StateChangeVolumeThread( true );
@@ -176,6 +213,7 @@ void CVolumeConfigWidget::OnVolumeSeting()
 	m_pVolumeSlinders[ESelectType_Master]->SetValue( CSoundManager::GetInstance()->m_fMasterVolume );
 	m_pVolumeSlinders[ESelectType_BGM]->SetValue( CSoundManager::GetInstance()->m_fMaxBGMVolume );
 	m_pVolumeSlinders[ESelectType_SE]->SetValue( CSoundManager::GetInstance()->m_fMaxSEVolume );
+	m_IsOneStep = true;
 }
 
 // 音量の設定をできないようにする.
@@ -185,17 +223,27 @@ void CVolumeConfigWidget::OffVolumeSeting()
 	CSoundManager::StateChangeVolumeThread( false );
 }
 
+// 保存終了.
+bool CVolumeConfigWidget::IsSaveEnd()
+{
+	if( m_NowSelectVolume == EVolumeType_End ){
+		m_OldSelectVolume = m_NowSelectVolume = ESelectType_Master;
+		return true;
+	}
+	return false;
+}
+
 // スプライト設定関数.
 bool CVolumeConfigWidget::SpriteSetting()
 {
 	const char* spriteName[] =
 	{
-		SPRITE_MASTER_NAME,
-		SPRITE_BGM_NAME,
-		SPRITE_SE_NAME,
-		SPRITE_RESET,
-		SPRITE_SAVE,
-		SPRITE_ICON_NAME,
+		SPRITE_MASTER_NAME,	// マスター.
+		SPRITE_BGM_NAME,	// BGM.
+		SPRITE_SE_NAME,		// SE.
+		SPRITE_RESET,		// リセット.
+		SPRITE_SAVE,		// 保存.
+		SPRITE_ICON_NAME,	// アイコン.
 	};
 	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 

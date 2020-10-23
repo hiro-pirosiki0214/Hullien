@@ -11,19 +11,22 @@ class CTitleWidget : public CSceneWidget
 {
 private:
 	const char* SPRITE_BACKGROUND	= "BackGround";	//背景スプライト名.
-	const char* SPRITE_SELECTSTART	= "yessize";		//開始スプライト名.
-	const char* SPRITE_SELECTEXIT	= "nosize";	  			//終了スプライト名.
-	const char* SPRITE_TITLE		= "titlesize";				//タイトルスプライト名.
+	const char* SPRITE_SELECTSTART	= "yessize";	//開始スプライト名.
+	const char* SPRITE_SELECTCONFIG	= "Config";		//設定スプライト名.
+	const char* SPRITE_SELECTEXIT	= "nosize";	  	//終了スプライト名.
+	const char* SPRITE_TITLE		= "titlesize";	//タイトルスプライト名.
 
 	const int BACKGROUND	= 0;	//背景配列番号.
 	const int START			= 1;	//開始配列番号.
-	const int END			= 2;	//終了配列番号.
+	const int CONFIG		= 2;	//開始配列番号.
+	const int END			= 3;	//終了配列番号.
 
 public:
 	//選択状態.
 	enum class enSelectState
 	{
 		Start,		//開始.
+		Config,		//設定.
 		End,		//終了.
 	} typedef ESelectState;
 

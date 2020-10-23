@@ -6,19 +6,16 @@
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\DebugText\DebugText.h"
 #include "..\..\..\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h"
-#include "..\..\..\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h"
 #include "..\..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
-CTitle::CTitle(CSceneManager* pSceneManager)
-	: CSceneBase(pSceneManager)
-	, m_pWidget				( nullptr )
-	, m_pConfigWidget	( nullptr )
+CTitle::CTitle( CSceneManager* pSceneManager )
+	: CSceneBase		( pSceneManager )
+	, m_pWidget			( nullptr )
 	, m_IsChangeScene	( false )
 {
 	m_pWidget	= std::make_unique< CTitleWidget >();
-	m_pConfigWidget = std::make_unique<CConfigWidget>();
 	CFade::SetFadeOut();
 }
 
@@ -32,8 +29,8 @@ CTitle::~CTitle()
 bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
-	if( m_pConfigWidget->Init() == false ) return false;
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
+	// 現在ファイルから音量設定してるのでコメントアウト.
+//	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
 	CSoundManager::SetBGMVolume("TitleBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
 	return true;
@@ -49,10 +46,8 @@ void CTitle::Update()
 	if (CFade::GetIsFade() == true) return;
 
 	m_pWidget->Update();
-	m_pConfigWidget->Update();
 	//シーン切り替え.
 	ChangeScene();
-
 }
 
 //============================.
@@ -62,7 +57,6 @@ void CTitle::Render()
 {
 	if ( m_pWidget == nullptr ) return;
 	m_pWidget->Render();
-	m_pConfigWidget->Render();
 }
 
 //============================.
@@ -76,11 +70,19 @@ void CTitle::ChangeScene()
 	{
 		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
-		if(m_pWidget->GetSelectState() == CTitleWidget::ESelectState::Start) {
+		switch (m_pWidget->GetSelectState())
+		{
+		case CTitleWidget::ESelectState::Start:
 			CSoundManager::PlaySE("Determination");
-		}
-		else {
+			break;
+		case CTitleWidget::ESelectState::Config:
+			CSoundManager::PlaySE("Determination");
+			break;
+		case CTitleWidget::ESelectState::End:
 			CSoundManager::PlaySE("CancelDetermination");
+			break;
+		default:
+			break;
 		}
 		CSoundManager::FadeOutBGM("TitleBGM");
 		m_IsChangeScene = true;
@@ -96,6 +98,11 @@ void CTitle::ChangeScene()
 		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
 		while( CSoundManager::StopBGMThread("TitleBGM") == false);
 		m_pSceneManager->NextSceneMove();
+		break;
+	case CTitleWidget::ESelectState::Config:
+		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
+		while( CSoundManager::StopBGMThread("TitleBGM") == false);
+		m_pSceneManager->ConfigSceneMove();
 		break;
 	case CTitleWidget::ESelectState::End:
 		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;

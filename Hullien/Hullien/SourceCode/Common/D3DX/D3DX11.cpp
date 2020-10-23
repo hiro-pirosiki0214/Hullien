@@ -93,6 +93,32 @@ void CDirectX11::SetBackBuffer()
 }
 
 //-----------------------------------.
+// フルスクリーンの設定.
+//-----------------------------------.
+bool CDirectX11::SetFullScreen( const bool& isOn )
+{
+	// 現在のスクリーン情報を取得.
+	BOOL isState = FALSE;
+	GetInstance()->m_pSwapChain->GetFullscreenState( &isState, nullptr );
+	if( isOn == true ){
+		// 現在の状態がウィンドウ状態なら.
+		if( isState == FALSE ){
+			// フルスクリーンに変更.
+			GetInstance()->m_pSwapChain->SetFullscreenState( TRUE, nullptr );
+		}
+		return true;
+	} else {
+		// 現在の状態がフルスクリーンなら.
+		if( isState == TRUE ){
+			// ウィンドウに変更.
+			GetInstance()->m_pSwapChain->SetFullscreenState( FALSE, nullptr );
+		}
+		return false;
+	}
+	return true;
+}
+
+//-----------------------------------.
 // デバイス11の作成.
 //-----------------------------------.
 HRESULT CDirectX11::InitDevice11()

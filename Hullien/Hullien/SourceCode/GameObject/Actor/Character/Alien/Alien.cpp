@@ -62,9 +62,11 @@ void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	SetAnimation( EAnimNo_Damage, m_pAC );
 	m_AnimSpeed = 0.01;
 
-	// アームを片付けていなければ片付ける.
-	if( m_pArm->IsCleanUp() == false ){
-		m_pArm->SetCleanUp();
+	if( m_pArm != nullptr ){
+		// アームを片付けていなければ片付ける.
+		if( m_pArm->IsCleanUp() == false ){
+			m_pArm->SetCleanUp();
+		}
 	}
 
 	if( m_LifePoint > 0.0f ) return;

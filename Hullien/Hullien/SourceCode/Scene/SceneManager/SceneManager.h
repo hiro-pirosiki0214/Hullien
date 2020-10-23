@@ -13,6 +13,7 @@ enum class enSceneNo
 	GameMain,	// ゲームメイン.
 	GameClear,	// ゲームクリア.
 	GameOver,	// ゲームオーバー.
+	Config,		// 設定.
 
 	Edit,		// エディット.
 
@@ -38,6 +39,8 @@ public:
 	void NextSceneMove();
 	// ゲーム終了.
 	void EndGameClose();
+	// 設定シーンへ移動.
+	void ConfigSceneMove();
 	// ゲームオーバーの設定.
 	void OnGameOver(){ m_IsGameOver = true; }
 	// ゲームリトライ.
@@ -48,6 +51,7 @@ public:
 
 	// リトライしたか.
 	bool GetRetry() const { return m_IsRetry; }
+
 
 private:
 	// エディットシーンに変更.

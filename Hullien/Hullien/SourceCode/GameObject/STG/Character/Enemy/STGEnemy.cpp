@@ -5,6 +5,7 @@
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\..\Common\Font\Font.h"
+#include "..\..\..\..\Utility\XInput\XInput.h"
 
 STG::CEnemy::CEnemy()
 	: CEnemy	( STG::SEnemyParam() )
@@ -196,6 +197,7 @@ void STG::CEnemy::Escape()
 // 死亡.
 void STG::CEnemy::Dead()
 {
+	m_IsActive	= false;		// 動作終了.
 	m_vScale.x -= DEAD_SCALE_SUB_VALUE;	// スケールを加算.
 	m_vScale.y -= DEAD_SCALE_SUB_VALUE;	// スケールを加算.
 	m_vScale.z -= DEAD_SCALE_SUB_VALUE;	// スケールを加算.
@@ -203,7 +205,6 @@ void STG::CEnemy::Dead()
 
 	if( m_vScale.x > 0.0f ) return;
 	// スケールが 0.0 以下になれば.
-	m_IsActive	= false;		// 動作終了.
 	m_NowState	= EState_None;	// 何もない状態へ遷移.
 	// 座標を画面外へ.
 	m_vPosition	= { INIT_POSITION_Z, 0.0f, INIT_POSITION_Z };

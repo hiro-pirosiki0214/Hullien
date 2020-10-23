@@ -7,8 +7,7 @@ class CLaserBeam;	// レーザービームクラス.
 
 class CAlienD : public CAlien
 {
-	const char* MODEL_NAME = "GhostB_s";
-	const char* MODEL_TEMP_NAME = "ultiemate";	// 仮モデル名.
+	const char* MODEL_NAME = "ultemate_s";
 	const char* SPRITE_NAME = "AttackRange";
 
 	const D3DXVECTOR4 ATTACK_RANGE_COLOR		= { 0.8f, 0.0f, 0.0f, 0.0f };	// 赤色.

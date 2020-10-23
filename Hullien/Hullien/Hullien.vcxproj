@@ -258,6 +258,7 @@
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Config\Config.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp" />
@@ -421,6 +422,7 @@
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Config\Config.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\Editor\Editor.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h" />
