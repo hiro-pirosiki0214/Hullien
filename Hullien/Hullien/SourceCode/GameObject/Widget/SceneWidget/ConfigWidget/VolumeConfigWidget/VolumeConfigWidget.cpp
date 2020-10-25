@@ -1,4 +1,4 @@
-#include "VolumeConifgWidget.h"
+#include "VolumeConfigWidget.h"
 #include "..\..\..\..\..\Common\Sprite\CSprite.h"
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\..\Utility\XInput\XInput.h"

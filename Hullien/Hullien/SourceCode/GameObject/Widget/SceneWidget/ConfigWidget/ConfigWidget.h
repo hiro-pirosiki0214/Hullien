@@ -6,6 +6,7 @@
 
 class CCursor;
 class CVolumeConfigWidget;	// 音量設定UIクラス.
+class CCameraConfigWidget;	// カメラ設定UIクラス.
 
 /********************************************
 *	設定UIクラス.
@@ -15,16 +16,18 @@ class CConfigWidget : public CSceneWidget
 
 	const char* SPRITE_BACK = "ConfigBack";
 	const char* SPRITE_VOLUME = "Volume";
+	const char* SPRITE_CAMERA = "Camera";
 
 	const int BACKGROUND	= 0;	//背景配列番号.
 	const int VOLUME		= 1;	//開始配列番号.
+	const int CAMERA		= 2;	//開始配列番号.
 
 	enum enConfigState
 	{
 		EConfigState_None,
 
 		EConfigState_Volume,	// 音量の設定.
-		EConfigState_Key,		// キーの操作.
+		EConfigState_Camera,	// カメラの操作.
 
 		EConfigState_End,
 
@@ -58,6 +61,7 @@ private:
 	std::vector<std::shared_ptr<CSprite>>	m_pSprites;
 	std::unique_ptr<CCursor>				m_pCursor;			// カーソルクラス.
 	std::unique_ptr<CVolumeConfigWidget>	m_pVolumeConfig;	// 音量設定UI.
+	std::unique_ptr<CCameraConfigWidget>	m_pCameraConfig;	// カメラ設定UI.
 	int m_SelectState;		// 選択状態.
 	int	m_NowConfigState;	// 現在の設定の状態.
 };
