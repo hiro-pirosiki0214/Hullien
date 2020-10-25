@@ -194,16 +194,10 @@ void CAlienD::Attack()
 {
 	if( m_NowMoveState != EMoveState::Attack ) return;
 
-	if( m_AnimFrameList[m_NowAnimNo].IsNowFrameOver() == true ){
-		m_AnimSpeed = 0.0;
-	}
+	const double attackSpeed = m_IsAttackStart == false ? m_AnimSpeed : -m_AnimSpeed;
+	m_AttackCount += static_cast<float>(attackSpeed);	// 攻撃カウントの追加.
 
-	const float attackSpeed = m_IsAttackStart == false ? 
-		m_Parameter.AttackRangeAddValue : m_Parameter.AttackRangeSubValue;
-	m_AttackCount += attackSpeed;	// 攻撃カウントの追加.
-
-	// 攻撃カウントが攻撃時間より多くなれば攻撃を始める.
-	if( m_AttackCount >= ATTACK_TIME ){
+	if( m_AnimFrameList[m_NowAnimNo].NowFrame >= 0.7 ){
 		m_IsAttackStart = true;
 
 		// 相手への向きを取得.
@@ -211,25 +205,26 @@ void CAlienD::Attack()
 			m_TargetPosition.x - m_vPosition.x,
 			m_TargetPosition.z - m_vPosition.z );
 
-		// 相手との距離を測る.
-		const float lenght = D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) - m_Parameter.ControlPointTwoLenght;
+		D3DXVECTOR3 headPos = m_vPosition;
+		headPos.y += 15.0f;
+		headPos.x += sinf( radius ) * 3.5f;
+		headPos.z += cosf( radius ) * 3.5f;
 
 		// 上向き少し後ろに設定..
-		m_ControlPositions[0].x = m_vPosition.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
-		m_ControlPositions[0].y = m_vPosition.y + m_Parameter.ControlPointOneLenghtY;
-		m_ControlPositions[0].z = m_vPosition.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
+		m_ControlPositions[0].x = headPos.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
+		m_ControlPositions[0].y = headPos.y + m_Parameter.ControlPointOneLenghtY;
+		m_ControlPositions[0].z = headPos.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
 
 		// 上で設定したコントロールポジションを設定.
 		m_pLaserBeam->SetControlPointList( m_ControlPositions );
 
-		m_pLaserBeam->Shot( m_vPosition );	// ビームを打つ.
+		m_pLaserBeam->Shot( headPos );	// ビームを打つ.
 		CSoundManager::NoMultipleSEPlay("AlienDAttack");
 	}
 
-	if( m_AttackCount >= 0.0f ) return;
+	if( m_AnimFrameList[m_NowAnimNo].IsNowFrameOver() == false ) return;
 	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
 	SetAnimation( EAnimNo_Move, m_pAC );
-	m_AnimSpeed = 0.0;
 }
 
 // 移動関数.
