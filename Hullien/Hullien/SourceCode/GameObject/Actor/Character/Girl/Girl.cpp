@@ -27,6 +27,7 @@ CGirl::CGirl()
 	m_pSearchCollManager = std::make_shared<CCollisionManager>();
 	m_pWarning		= std::make_unique<CWarning>();
 	m_AnimFrameList.resize( EAnimNo_Max );
+	m_vPosition.z = 4.0f;
 }
 
 CGirl::~CGirl()

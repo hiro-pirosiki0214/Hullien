@@ -655,9 +655,9 @@ void CGameStartEvent::DispPreserveGirl()
 	// UIÇÃê›íË.
 	m_pWidget->SetWidgetState(CGameStartEventWidget::EWidgetState::Preserve_Girl);
 
-	const D3DXVECTOR3 GIRL_DESTINATION = { m_stGirl.vPosition.x, m_stGirl.vPosition.y, 0.0f };
+	const D3DXVECTOR3 GIRL_DESTINATION = { m_stGirl.vPosition.x, m_stGirl.vPosition.y, 4.0f };
 	if (MoveDestination(m_stGirl.vPosition, GIRL_DESTINATION, m_stGirl.MoveSpeed) == false) return;
-	 NextStep();
+	NextStep();
 }
 
 // ÉQÅ[ÉÄäJén.

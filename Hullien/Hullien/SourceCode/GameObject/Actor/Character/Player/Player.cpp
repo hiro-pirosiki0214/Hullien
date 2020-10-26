@@ -49,6 +49,7 @@ CPlayer::CPlayer()
 	, m_CameraCount					( CAMERA_COUNT_MAX )
 	, m_CameraLerp					( 0.0f )
 	, m_NowSPCameraStete			( player::ESPCameraState_Start )
+	, m_OneStepCmaeraSeting			( false )
 	, m_IsAttackSE					( false )
 {
 	m_ObjectTag = EObjectTag::Player;	// プレイヤータグを設定.
@@ -501,6 +502,12 @@ void CPlayer::CameraUpdate()
 {
 	// 死亡中なら終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == true ) return;
+
+	if( m_OneStepCmaeraSeting == false ){
+		m_pCamera->SetPosition( CCameraManager::GetPosition() );
+		m_OneStepCmaeraSeting = true;
+	}
+
 
 	// プレイヤーを注視して回転.
 	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
