@@ -161,6 +161,7 @@ void CAlienD::Move()
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
+	SetAnimation( EAnimNo_Move, m_pAC );
 	m_NowState		= EAlienState::Escape;	// “¦‚°‚éó‘Ô‚Ö‘JˆÚ.
 	m_NowMoveState	= EMoveState::Rotation;	// ˆÚ“®ó‘Ô‚ğ‰ñ“]‚·‚é.
 }

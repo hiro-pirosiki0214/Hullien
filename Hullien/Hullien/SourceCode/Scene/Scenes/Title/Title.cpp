@@ -32,6 +32,7 @@ bool CTitle::Load()
 	// 現在ファイルから音量設定してるのでコメントアウト.
 //	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
 	CSoundManager::SetBGMVolume("TitleBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
+	CSoundManager::ThreadPlayBGM("TitleBGM");
 
 	return true;
 }
@@ -41,8 +42,6 @@ bool CTitle::Load()
 //============================.
 void CTitle::Update()
 {
-	CSoundManager::ThreadPlayBGM("TitleBGM");
-
 	if (CFade::GetIsFade() == true) return;
 
 	m_pWidget->Update();
