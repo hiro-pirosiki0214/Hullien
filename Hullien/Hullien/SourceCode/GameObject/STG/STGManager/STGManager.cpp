@@ -9,6 +9,8 @@ CSTGManager::CSTGManager()
 	: m_pCamera			( nullptr )
 	, m_pPlayer			( nullptr )
 	, m_pEnemyManager	( nullptr )
+	, m_STGEndFrame		( 0.0f )
+	, m_STGNowFrame		( 0.0f )
 {
 	m_pCamera		= std::make_shared<CCamera>();
 	m_pPlayer		= std::make_shared<STG::CPlayer>();
@@ -24,12 +26,19 @@ bool CSTGManager::Init()
 {
 	if( m_pPlayer->Init()		== false ) return false;
 	if( m_pEnemyManager->Init()	== false ) return false;
+	m_STGEndFrame = m_pEnemyManager->GetSTGEndTime() + STG_END_FRAME;
+
+	m_pCamera->SetPosition( { 0.0f, 150.0f, 10.0f } );
+	m_pCamera->SetLookPosition( { 0.0f, 0.0f, 0.0f } );
+	CCameraManager::SetCamera( m_pCamera );
+
 	return true;
 }
 
 // 更新関数.
 void CSTGManager::Update()
 {
+	m_STGNowFrame++;
 	m_pPlayer->Controller();// プレイヤーの操作.
 	m_pPlayer->Update();	// プレイヤーの更新.
 
@@ -52,10 +61,6 @@ void CSTGManager::Update()
 			}
 		}
 	});
-
-	m_pCamera->SetPosition( { 0.0f, 150.0f, 10.0f } );
-	m_pCamera->SetLookPosition( { 0.0f, 0.0f, 0.0f } );
-	CCameraManager::SetCamera( m_pCamera );
 }
 
 // 描画関数.
@@ -63,4 +68,10 @@ void CSTGManager::Render()
 {
 	m_pPlayer->Render();		// プレイヤーの描画.
 	m_pEnemyManager->Render();	// 敵の描画.
+}
+
+// シューティングが終了したか.
+bool CSTGManager::IsSTGEnd()
+{
+	return m_STGNowFrame >= m_STGEndFrame;
 }

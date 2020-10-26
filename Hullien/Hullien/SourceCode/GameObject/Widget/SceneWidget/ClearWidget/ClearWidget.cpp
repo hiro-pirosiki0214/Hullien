@@ -7,7 +7,9 @@
 *	クリアUIクラス.
 **/
 CClearWidget::CClearWidget()
-	: m_pReturTitle	( nullptr )
+	: m_pReturTitle				( nullptr )
+	, m_SpriteDisappearCount	( SPRITE_DIDSPPEAR_TIME )
+	, m_SpriteAlpha				( 1.0f )
 {
 	m_pReturTitle = std::make_unique<CReturnTitle>();
 }
@@ -42,12 +44,25 @@ void CClearWidget::Render()
 {
 	//クリア文字.
 	if (m_pSprite == nullptr) return;
-	m_pSprite->SetDeprh( false );
-	m_pSprite->RenderUI();
-	m_pSprite->SetDeprh( true );
-
-	//タイトルに戻るボタン.
-	m_pReturTitle->Render();
+	if( m_SpriteDisappearCount <= 10.0f ){
+		m_SpriteAlpha -= 0.01f;
+		if( m_SpriteAlpha <= 0.0f ){
+			m_SpriteAlpha = 0.0f;
+		}
+	}
+	if( m_SpriteDisappearCount >= 0.0f ){
+		m_SpriteDisappearCount -= 0.1f;
+		m_pSprite->SetAlpha( m_SpriteAlpha );
+		m_pSprite->SetBlend( true );
+		m_pSprite->SetDeprh( false );
+		m_pSprite->RenderUI();
+		m_pSprite->SetDeprh( true );
+		m_pSprite->SetBlend( false );
+	}
+	if( m_IsSTGEnd == false ){
+		//タイトルに戻るボタン.
+		m_pReturTitle->Render();
+	}
 }
 
 bool CClearWidget::SpriteSetting()

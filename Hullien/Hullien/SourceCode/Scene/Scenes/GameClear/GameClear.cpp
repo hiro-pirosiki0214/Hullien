@@ -43,15 +43,24 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-#ifndef ENDING_STG
 	CSoundManager::ThreadPlayBGM("ClearBGM");
 
-	if (CFade::GetFadeState() == CFade::EFadeState::Out
+	if (CFade::GetFadeState() == CFade::EFadeState::Out 
 		&& CFade::GetIsFade() == true) return;
+#ifndef ENDING_STG
 	m_pClearWidget->Update();
 	ChangeScene();
 #else
-	m_pSTGManager->Update();
+	m_pClearWidget->Update();
+
+	if( m_pClearWidget->IsSpriteRenderEnd() == true ){
+		m_pSTGManager->Update();
+	}
+
+	if( m_pSTGManager->IsSTGEnd() == true ){
+		m_pClearWidget->SetIsSTGEnd();
+		ChangeScene();
+	}
 
 #ifdef _DEBUG
 	if( GetAsyncKeyState(VK_F4) & 0x0001 ){
@@ -66,10 +75,15 @@ void CGameClear::Update()
 //============================.
 void CGameClear::Render()
 {
-#ifndef ENDING_STG
-	if (m_pClearWidget == nullptr) return;
+	ModelRender();
 	m_pClearWidget->Render();
-#else
+}
+
+//============================.
+// ƒ‚ƒfƒ‹‚Ì•`‰æ.
+//============================.
+void CGameClear::ModelRender()
+{
 	//--------------------------------------------.
 	// •`‰æƒpƒX1.
 	//--------------------------------------------.
@@ -103,7 +117,6 @@ void CGameClear::Render()
 
 	CDirectX11::SetBackBuffer();
 	CSceneTexRenderer::Render();
-#endif	// #ifndef ENDING_STG
 }
 
 //============================.

@@ -59,6 +59,8 @@ namespace STG
 		virtual void Render() override;
 		// 当たり判定.
 		virtual void Collision( STG::CActor* pActor ) override;
+		// スポーン時間の取得.
+		float GetSpawnTime() const { return PARAMETER.SpawnTime; }
 
 	private:
 		// スポーン.

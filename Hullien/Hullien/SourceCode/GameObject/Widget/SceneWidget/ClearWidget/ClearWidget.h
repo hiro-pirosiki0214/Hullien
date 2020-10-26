@@ -10,6 +10,7 @@ class CReturnTitle;
 **/
 class CClearWidget : public CSceneWidget
 {
+	const float SPRITE_DIDSPPEAR_TIME = 15.0f;
 public:
 	CClearWidget();
 	virtual ~CClearWidget();
@@ -21,12 +22,18 @@ public:
 	//描画関数.
 	virtual void Render() override;
 
+	bool IsSpriteRenderEnd(){ return m_SpriteAlpha <= 0.0f; }
+	void SetIsSTGEnd(){ m_IsSTGEnd = true; }
+
 private:
 	// スプライト設定関数.
 	virtual bool SpriteSetting() override;
 
 private:
 	std::unique_ptr<CReturnTitle> m_pReturTitle;	//タイトルに戻るボタンクラス.
+	bool	m_IsSTGEnd;
+	float	m_SpriteDisappearCount;
+	float	m_SpriteAlpha;
 };
 
 #endif	//#ifndef CLEARWIDGET_H.

@@ -23,6 +23,8 @@ public:
 	virtual void Render() override;
 
 private:
+	// ƒ‚ƒfƒ‹‚Ì•`‰æ.
+	void ModelRender();
 	// ƒV[ƒ“Ø‚è‘Ö‚¦ŠÖ”.
 	void ChangeScene();
 
