@@ -439,10 +439,27 @@ void CGameStartEvent::GetCaughtGirl()
 	m_stCamera.vLookPosition.y = m_pPlayer->GetPosition().y + CAMERA_CORRECTION_PLAYERPOS_Y;
 	// UFOの設定.
 	m_pSpawnUFO->SetDisp(false);
+	// ダメージアニメーションの更新.
+	m_pPlayer->DamageAnimUpdate();
 	// 女の子が捕まったらプレイヤーを回転させる.
-	if (m_pGirl->GetIsDanger() == true)
+	if (m_pGirl->GetIsDanger() == true && m_pPlayer->IsEndDamageAnim() == true )
 	{
-		m_stPlayer.vRotation.y = m_pPlayer->RotationMoveRight(PLAYER_ROTATION_Y, m_stPlayer.RotationalSpeed);
+		// 女の子の方へ向くようにする.
+		const float rot = atan2f(
+			m_stPlayer.vPosition.x - m_stGirl.vPosition.x,
+			m_stPlayer.vPosition.z - m_stGirl.vPosition.z );
+		m_stPlayer.vRotation.y = m_pPlayer->RotationMoveRight(rot, m_stPlayer.RotationalSpeed);
+	}
+	// プレイヤーが宇宙人と衝突してなければ.
+	if( m_pPlayer->IsAlienHit() == false ){
+		m_pPlayer->SetAlienHit();
+		m_pPlayer->SetAnimation( player::EAnimNo_Damage );
+		m_stPlayer.vRotation.y = static_cast<float>(D3DXToRadian(270.0));
+	}
+	// プレイヤーがダメージアニメーション中は移動.
+	if( m_pPlayer->IsEndDamageAnim() == false ){
+		m_stPlayer.vPosition.x += sinf(m_stPlayer.vRotation.y)*0.3f;
+		m_stPlayer.vPosition.z += cosf(m_stPlayer.vRotation.y)*0.3f;
 	}
 
 	// 当たり判定.
@@ -478,6 +495,9 @@ void CGameStartEvent::InvocatingOrderBarrier()
 	// カメラの設定.
 	m_stCamera.vPosition = CAMERA_POSITION_ORDER_BARRIER;
 	m_stCamera.vLookPosition = m_pGirl->GetPosition();
+	m_stPlayer.vPosition = { 0.0f, 0.0f, 0.0f };	// プレイヤーの座標を初期値に設定.
+	m_stPlayer.vRotation.y = 0.0f;
+
 	// マザーシップの描画.
 	m_pMotherShipUFO->SetDisp(true);
 	// UIの設定.

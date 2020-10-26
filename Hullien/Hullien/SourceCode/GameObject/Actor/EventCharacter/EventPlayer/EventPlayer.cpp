@@ -18,6 +18,7 @@ CEventPlayer::CEventPlayer()
 	, m_SpecialAbility		(0.0f)
 	, m_IsYButtonPressed	(false)
 	, m_HasUsableSP			(false)
+	, m_IsAlienHit			(false)
 	, m_IsAttackSE			(false)
 {
 	m_ObjectTag = EObjectTag::Player;
@@ -104,6 +105,16 @@ bool CEventPlayer::IsSpecialAbility()
 	m_IsYButtonPressed = false;
 	m_HasUsableSP = false;	
 	return true;
+}
+
+// ダメージアニメーションの更新.
+void CEventPlayer::DamageAnimUpdate()
+{
+	if( m_IsAlienHit == false ) return;
+	m_AnimFrameList[player::EAnimNo_Damage].UpdateFrame( m_AnimSpeed );
+
+	if( m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver() == false ) return;
+	SetAnimationBlend( player::EAnimNo_Wait );
 }
 
 // 特殊能力操作関数.

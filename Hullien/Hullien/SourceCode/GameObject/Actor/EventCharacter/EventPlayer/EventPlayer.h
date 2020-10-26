@@ -67,6 +67,15 @@ public:
 	// 特殊能力.
 	bool IsSpecialAbility();
 
+	// 衝突したか.
+	bool IsAlienHit(){ return m_IsAlienHit; }
+	// 衝突.
+	void SetAlienHit(){ m_IsAlienHit = true; }
+	// ダメージアニメーションが終了したか.
+	bool IsEndDamageAnim(){ return m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver(); }
+	// ダメージアニメーションの更新.
+	void DamageAnimUpdate();
+
 private:
 	// 特殊能力操作関数.
 	void SPController();
@@ -99,8 +108,8 @@ private:
 	float											m_SpecialAbility;	// 特殊能力.
 	bool											m_IsYButtonPressed;	// Yボタンが押されたか.
 	bool											m_HasUsableSP;		// 特殊能力を使えるか.
+	bool											m_IsAlienHit;		// 宇宙人と当たったか.
 	bool											m_IsAttackSE;		// 攻撃SEを鳴らすか.
-
 };
 
 
