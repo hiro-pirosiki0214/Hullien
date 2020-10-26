@@ -6,10 +6,11 @@
 #include "..\..\..\..\Utility\XInput\XInput.h"
 
 STG::CPlayer::CPlayer()
-	: m_Direction	( 0.0f, 0.0f, 0.0f )
+	: m_Direction		( 0.0f, 0.0f, 0.0f )
+	, m_SpawnMoveSpeed	( MOVE_SPEED )
 {
-	m_IsActive		= true;
 	m_pCollManager	= std::make_shared<CCollisionManager>();
+	m_vPosition		= INIT_POSITION;
 }
 
 STG::CPlayer::~CPlayer()
@@ -29,6 +30,7 @@ bool STG::CPlayer::Init()
 // 更新関数.
 void STG::CPlayer::Update()
 {
+	SpawnMove();	// スポーン移動.
 	Move();			// 移動.
 	BulletUpdate();	// 弾の更新.
 }
@@ -57,6 +59,16 @@ void STG::CPlayer::Collision( STG::CActor* pActor )
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetColl() ) == false ) return;
 }
 
+// スポーン移動.
+void STG::CPlayer::SpawnMove()
+{
+	if( m_IsActive == true ) return;
+	m_vPosition.z -= m_SpawnMoveSpeed;
+	if( m_vPosition.z <= 40.0f ) m_SpawnMoveSpeed -= 0.005f;
+	if( m_SpawnMoveSpeed > 0.0f ) return;
+	m_IsActive = true;
+}
+
 // 移動関数.
 void STG::CPlayer::Move()
 {
@@ -68,6 +80,7 @@ void STG::CPlayer::Move()
 void STG::CPlayer::Controller()
 {
 	if( m_IsActive == false ) return;
+
 	// コントローラーのLスティックの傾きを取得.
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());

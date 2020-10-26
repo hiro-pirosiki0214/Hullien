@@ -8,6 +8,7 @@
 **/
 CClearWidget::CClearWidget()
 	: m_pReturTitle				( nullptr )
+	, m_IsSTGEnd				( false )
 	, m_SpriteDisappearCount	( SPRITE_DIDSPPEAR_TIME )
 	, m_SpriteAlpha				( 1.0f )
 {
@@ -42,7 +43,6 @@ void CClearWidget::Update()
 // 描画関数.
 void CClearWidget::Render()
 {
-	//クリア文字.
 	if (m_pSprite == nullptr) return;
 	if( m_SpriteDisappearCount <= 10.0f ){
 		m_SpriteAlpha -= 0.01f;
@@ -50,6 +50,7 @@ void CClearWidget::Render()
 			m_SpriteAlpha = 0.0f;
 		}
 	}
+	//クリア文字.
 	if( m_SpriteDisappearCount >= 0.0f ){
 		m_SpriteDisappearCount -= 0.1f;
 		m_pSprite->SetAlpha( m_SpriteAlpha );
@@ -59,10 +60,9 @@ void CClearWidget::Render()
 		m_pSprite->SetDeprh( true );
 		m_pSprite->SetBlend( false );
 	}
-	if( m_IsSTGEnd == false ){
-		//タイトルに戻るボタン.
-		m_pReturTitle->Render();
-	}
+
+	//タイトルに戻るボタン STG終了時に描画.
+	if( m_IsSTGEnd == true ) m_pReturTitle->Render();
 }
 
 bool CClearWidget::SpriteSetting()

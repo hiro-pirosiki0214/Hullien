@@ -13,6 +13,7 @@ namespace STG
 		const float BULLET_MOVE_SPEED	= 0.8f;	// 弾の速度.
 		const int	BULLET_COUNT_MAX	= 30;	// 弾の最大数.
 		const int	SHOT_INTERVAL_FRAME	= 15;	// 弾を撃つ間隔フレーム.
+		const D3DXVECTOR3 INIT_POSITION = { 0.0f, 0.0f, 70.0f };
 	public:
 		CPlayer();
 		virtual ~CPlayer();
@@ -29,6 +30,8 @@ namespace STG
 		void Controller();
 
 	private:
+		// スポーン移動.
+		void SpawnMove();
 		// 移動関数.
 		virtual void Move() override;
 		// 弾を撃つ操作関数.
@@ -42,6 +45,7 @@ namespace STG
 		
 	private:
 		D3DXVECTOR3 m_Direction;
+		float		m_SpawnMoveSpeed;
 	};
 };
 

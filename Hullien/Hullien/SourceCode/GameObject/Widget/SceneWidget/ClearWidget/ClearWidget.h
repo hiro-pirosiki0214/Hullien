@@ -10,7 +10,7 @@ class CReturnTitle;
 **/
 class CClearWidget : public CSceneWidget
 {
-	const float SPRITE_DIDSPPEAR_TIME = 15.0f;
+	const float SPRITE_DIDSPPEAR_TIME = 30.0f;
 public:
 	CClearWidget();
 	virtual ~CClearWidget();
