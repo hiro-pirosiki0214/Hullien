@@ -333,7 +333,7 @@ void CGame::StopBGM(const char* name)
 	// スプライトフェードが終了していなければ処理しない.
 	if (CFade::GetIsFade() == true) return;
 	// BGMを止める.
-	CSoundManager::StopBGMThread(name);
+	while( CSoundManager::StopBGMThread(name) == false);
 }
 
 // 全てのBGM停止.
