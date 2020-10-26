@@ -9,7 +9,9 @@
 **/
 CLifeGauge::CLifeGauge()
 	: m_pSprite			()
-	, m_GaugeState	()
+	, m_GaugeState		()
+	, m_OldLife			( 0.0f )
+	, m_IsOldLifeSet	( false )
 {
 }
 
@@ -30,8 +32,19 @@ bool CLifeGauge::Init()
 void CLifeGauge::Update()
 {
 	if ( m_pSprite.size() == 0 ) return;
-	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.Life / m_Parameter.LifeMax; 
+	// ‘O‰ñ‚Ìƒ‰ƒCƒt‚ªŽæ“¾‚Å‚«‚Ä‚¢‚È‚¯‚ê‚Î.
+	if( m_IsOldLifeSet == false ){
+		m_OldLife = m_Parameter.LifeMax;	// “ü‚ê‚é.
+		m_IsOldLifeSet = true;
+	}
+	m_GaugeState[GAUGE_NUM].vScale.x = m_Parameter.Life / m_Parameter.LifeMax;
 
+	// ’x‰„—pƒ‰ƒCƒt‚Ìˆ—.
+	if( m_OldLife - m_Parameter.Life > 0.0f ){
+		m_OldLife -= LIFE_DELAY_SUB_VALUE;
+		if( m_OldLife <= m_Parameter.Life ) m_OldLife = m_Parameter.Life;
+	}
+	m_GaugeState[GAUGEDELAY_NUM].vScale.x = m_OldLife / m_Parameter.LifeMax; 
 }
 
 // •`‰æŠÖ”.
@@ -59,7 +72,8 @@ bool CLifeGauge::SpriteSetting()
 	const char* spriteName[] =
 	{
 		SPRITE_GAUGEBACK,	//ƒQ[ƒW”wŒi.
-		SPRITE_GAUGE,		    //ƒQ[ƒW.
+		SPRITE_GAUGEDELAY,	//ƒQ[ƒW’x‰„.
+		SPRITE_GAUGE,		//ƒQ[ƒW.
 	};
 	const int spriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 

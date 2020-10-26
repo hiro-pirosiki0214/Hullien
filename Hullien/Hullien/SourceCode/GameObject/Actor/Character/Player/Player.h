@@ -232,7 +232,6 @@ private:
 	int				m_NowSPCameraStete;			// 特殊能力のカメラ状態.
 	
 	bool			m_OneStepCmaeraSeting;		// カメラの設定(一回だけ使用).
-	bool			m_IsAttackSE;				//攻撃SEを鳴らすか.
 };
 
 #endif	// #ifndef PLAYER_H.

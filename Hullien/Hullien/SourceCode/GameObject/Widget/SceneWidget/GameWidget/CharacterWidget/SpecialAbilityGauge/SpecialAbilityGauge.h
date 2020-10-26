@@ -10,7 +10,7 @@
 class CSpecialAbilityGauge : public CCharacterWidget
 {
 private:
-	const char* SPRITE_GAUGEBACK = "gage";	// ÉQÅ[ÉWîwåi.
+	const char* SPRITE_GAUGEBACK = "SPgage";	// ÉQÅ[ÉWîwåi.
 	const char* SPRITE_GAUGE = "SPgage";		// ÉQÅ[ÉW.		
 	const int     GAUGE_NUM = 1;						// ÉQÅ[ÉWÇÃîzóÒî‘çÜ.
 	const int     ONE = 1;									// àÍ.

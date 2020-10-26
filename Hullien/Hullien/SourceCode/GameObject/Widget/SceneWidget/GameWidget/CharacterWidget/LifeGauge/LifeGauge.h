@@ -10,10 +10,14 @@
 class CLifeGauge : public CCharacterWidget
 {
 private:
-	const char* SPRITE_GAUGEBACK = "gage";	//ゲージ背景.
-	const char* SPRITE_GAUGE			= "gage";	//ゲージ.		
-	const int     GAUGE_NUM = 1;						//ゲージの配列番号.
-	const int     ONE = 1;									//一.
+	const char* SPRITE_GAUGEBACK	= "gage";	//ゲージ背景.
+	const char* SPRITE_GAUGE		= "gage";	//ゲージ.
+	const char* SPRITE_GAUGEDELAY	= "gage";	//ゲージ遅延.
+	const int	GAUGE_NUM			= 2;		//ゲージの配列番号.
+	const int	GAUGEDELAY_NUM		= 1;		//ゲージの配列番号.
+	const int	ONE					= 1;		//一.
+
+	inline static float LIFE_DELAY_SUB_VALUE = 0.01f;
 
 public:
 	CLifeGauge();
@@ -35,6 +39,8 @@ private:
 private:
 	std::vector<std::shared_ptr<CSprite>> m_pSprite;	//スプライトクラス.
 	std::vector<SGaugeState> m_GaugeState;			//ゲージの情報.
+	float m_OldLife;
+	bool	m_IsOldLifeSet;
 };
 
 #endif	//#ifndef LIFEGAUGE_H

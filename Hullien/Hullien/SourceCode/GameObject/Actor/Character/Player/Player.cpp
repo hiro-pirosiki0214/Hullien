@@ -50,7 +50,6 @@ CPlayer::CPlayer()
 	, m_CameraLerp					( 0.0f )
 	, m_NowSPCameraStete			( player::ESPCameraState_Start )
 	, m_OneStepCmaeraSeting			( false )
-	, m_IsAttackSE					( false )
 {
 	m_ObjectTag = EObjectTag::Player;	// プレイヤータグを設定.
 	m_NowAnimNo = player::EAnimNo_Wait;	// 現在のアニメーションを待機に設定.
@@ -572,10 +571,10 @@ void CPlayer::AttackCollision( CActor* pActor )
 		isAttack = true;
 	});
 	
-	if (m_IsAttackSE == false)
-	{
+	// 音声を鳴らしてない状態なら.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_AttackSE ) == false ){
 		CSoundManager::PlaySE("PlayerAttackHit");
-		m_IsAttackSE = true;
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );
 	}
 }
 
@@ -836,6 +835,7 @@ void CPlayer::AttackAnimation()
 		}
 		// 新しくアニメーションをセットする.
 		SetAnimation( m_AttackDataQueue.front().AnimNo );
+		bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );
 	}
 	m_AttackDataQueue.front().Frame += m_AnimSpeed;	// フレームの更新.
 }
@@ -876,6 +876,7 @@ bool CPlayer::IsPushAttack()
 		SetAnimation( tmpAttackData.AnimNo );
 		CSoundManager::PlaySE("PlayerAttack");
 		CSoundManager::PlaySE("PlayerVoiceAttack1");
+		bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );
 		break;
 
 	case player::EAttackNo_Two:	// 攻撃2.
