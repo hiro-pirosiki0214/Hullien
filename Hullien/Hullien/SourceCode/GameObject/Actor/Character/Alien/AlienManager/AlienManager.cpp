@@ -157,7 +157,9 @@ void CAlienManager::SetDropItemList( CAlien* ailen )
 	if( ailen->GetAnyItem() == EItemList::Max ) return;
 
 	// 落とすアイテムの設定.
-	m_DropItemList[ailen->GetAnyItem()] = ailen->GetPosition();
+	D3DXVECTOR3 dropPos = ailen->GetPosition();
+	dropPos.y += 4.0f;	// 高めに調整.
+	m_DropItemList[ailen->GetAnyItem()] = dropPos;
 }
 
 // スポーンUFOの初期化.
