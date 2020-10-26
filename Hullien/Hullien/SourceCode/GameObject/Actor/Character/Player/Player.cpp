@@ -591,8 +591,14 @@ void CPlayer::AttackRangeDecision( CActor* pActor )
 	};
 	// ベクトルの長さ算出.
 	const float vec_length = sqrtf((vec.x * vec.x) + (vec.z * vec.z));
+	float rot = m_vRotation.y;
+	// 各値が有効範囲内なら移動ベクトルから回転値を算出.
+	if( m_MoveVector.x >= IDLE_THUMB_MAX || IDLE_THUMB_MIN >= m_MoveVector.x ||
+		m_MoveVector.z >= IDLE_THUMB_MAX || IDLE_THUMB_MIN >= m_MoveVector.z ){
+		rot = atan2f( m_MoveVector.x, m_MoveVector.z ) + m_pCamera->GetRadianX();
+	}
 	// プレイヤーの回転ベクトルを取得.
-	const D3DXVECTOR3 playerVec = { sinf(m_vRotation.y), 0.0f, cosf(m_vRotation.y), };
+	const D3DXVECTOR3 playerVec = { sinf(rot), 0.0f, cosf(rot), };
 
 	// 範囲の長さ.
 	const float range_Lenght = 20.0f;
@@ -605,17 +611,17 @@ void CPlayer::AttackRangeDecision( CActor* pActor )
 	// 内積を取得.
 	const float dot = vec.x * playerVec.x + vec.z * playerVec.z;
 	// 扇の範囲をcosにする.
-	const float fan_cos = cosf( static_cast<float>(D3DXToRadian(270.0*0.5)));
+	const float fan_cos = cosf( static_cast<float>(D3DXToRadian(180.0*0.5)));
 
 	// 点が範囲外であれば終了.
 	if( dot < fan_cos ) return;
 
 	// 長さが初期化状態なら長さを入れる.
-	if( m_AttackRangeLenght <= 0.0f ) m_AttackRangeLenght = vec_length;
+	if( m_AttackRangeLenght <= 0.0f ) m_AttackRangeLenght = dot;
 	// 前回の長さが今回の長さより大きければ終了.
-	if( m_AttackRangeLenght >= vec_length ) return;
+	if( m_AttackRangeLenght < dot ) return;
 
-	m_AttackRangeLenght	= vec_length;
+	m_AttackRangeLenght	= dot;
 	m_AttackVector		= vec;
 	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_AttackRange );
 
