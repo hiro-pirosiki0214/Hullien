@@ -27,8 +27,8 @@ class CPlayer : public CCharacter
 	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
 
 	// 足のボーン名.
-	const char* RIGHT_FOOT = "kaito_rifa_2_R_asi_4";
-	const char* LEFT_FOOT = "kaito_rifa_2_L_asi_4";
+	const char* RIGHT_FOOT	= "kaito_rifa_2_R_asi_4";
+	const char* LEFT_FOOT	= "kaito_rifa_2_L_asi_4";
 
 	// 声の音量.
 	const float VOICE_VOLUME = 1.5f;
@@ -146,6 +146,8 @@ private:
 
 	// 攻撃の当たり判定.
 	void AttackCollision( CActor* pActor );
+	// 攻撃範囲との判定.
+	void AttackRangeDecision( CActor* pActor );
 	// 特殊能力時のカメラ動作.
 	void SPCameraUpdate();
 
@@ -204,6 +206,7 @@ private:
 	D3DXVECTOR3						m_AttackPosition;			// 攻撃用当たり判定座標.
 
 	D3DXVECTOR3		m_GirlPosition;		// 女の子の座標.
+	D3DXVECTOR3		m_AttackVector;		// 攻撃時のベクトル.
 	D3DXVECTOR3		m_AvoidVector;		// 回避ベクトル.
 	D3DXVECTOR3		m_HitVector;		// 衝突時のベクトル.
 	D3DXVECTOR3		m_TargetVector;		// 目的のベクトル.
@@ -213,6 +216,7 @@ private:
 	float			m_SpecialAbility;		// 特殊能力.
 	unsigned char	m_StatusFlag;			// 現在の状態のフラグ.
 
+	float			m_AttackRangeLenght;		// 攻撃範囲のターゲットとの距離(比較用).
 	float			m_SpecialAbilityValue;		// 特殊能力回復力.
 	float			m_ItemSpecialAbilityValue;	// アイテム特殊能力回復値.
 	float			m_AttackPower;				// 攻撃力.

@@ -80,7 +80,7 @@ void CGameOverEvent::Update()
 
 	// デバッグ用.
 #if _DEBUG
-	DebugOperation();
+//	DebugOperation();
 #endif
 
 }
@@ -95,7 +95,7 @@ void CGameOverEvent::Render()
 
 	// デバッグ用.
 #if _DEBUG
-	DebugRender();
+//	DebugRender();
 #endif
 
 }

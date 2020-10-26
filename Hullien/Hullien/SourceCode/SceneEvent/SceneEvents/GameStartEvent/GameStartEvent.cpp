@@ -113,7 +113,7 @@ void CGameStartEvent::Render()
 	m_pBarrier->Render();
 	m_pMotherShipUFO->Render();
 
-	DebugRender();
+//	DebugRender();
 
 }
 
@@ -121,7 +121,7 @@ void CGameStartEvent::Render()
 void CGameStartEvent::SpriteRender()
 {
 	m_pWidget->Render();
-	DebugRender();
+//	DebugRender();
 }
 
 // ƒJƒƒ‰‰Šú‰»ŠÖ”.

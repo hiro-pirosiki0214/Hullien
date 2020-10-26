@@ -121,10 +121,11 @@ enum enStatusFlag : unsigned char
 
 	EStatusFlag_DuringAvoid		= 1 << 0,	// ‰ñ”ð’†‚©.
 	EStatusFlag_EndSPCameraMove	= 1 << 1,	// “ÁŽê”\—Í‚ÌƒJƒƒ‰‚ÌˆÚ“®‚ªI—¹‚µ‚½‚©.
-	EStatusFlag_UsableSP		= 1 << 2,	// “ÁŽê”\—Í‚ªŽg‚¦‚é‚©.
-	EStatusFlag_KnockBack		= 1 << 3,	// ƒmƒbƒNƒoƒbƒN’†‚©.
-	EStatusFlag_Dead			= 1 << 4,	// Ž€–S’†‚©.
-	EStatusFlag_AttackSE		= 1 << 5,	// UŒ‚SE‚ð–Â‚ç‚·‚©.
+	EStatusFlag_AttackRange		= 1 << 2,	// UŒ‚”ÍˆÍ‚É“G‚ª‚¢‚é‚©.
+	EStatusFlag_UsableSP		= 1 << 3,	// “ÁŽê”\—Í‚ªŽg‚¦‚é‚©.
+	EStatusFlag_KnockBack		= 1 << 4,	// ƒmƒbƒNƒoƒbƒN’†‚©.
+	EStatusFlag_Dead			= 1 << 5,	// Ž€–S’†‚©.
+	EStatusFlag_AttackSE		= 1 << 6,	// UŒ‚SE‚ð–Â‚ç‚·‚©.
 
 	EStatusFlag_Max,
 

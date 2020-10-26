@@ -94,7 +94,7 @@ void CGirl::Render()
 	if( m_pSearchCollManager == nullptr ) return;
 	m_pSearchCollManager->DebugRender();
 
-	DebugRender();
+//	DebugRender();
 #endif	// #if _DEBUG.
 }
 

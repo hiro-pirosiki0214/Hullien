@@ -5,7 +5,7 @@ CXInput::CXInput()
 	: m_State			( FOUR_LIMITED_CONTROLLER )
 	, m_Vibration		( FOUR_LIMITED_CONTROLLER )
 	, m_ConnectedCount	( 0 )
-	, m_IsVibration		( true )
+	, m_IsVibration		( false )
 {
 	std::unordered_map<INT, enBUTTON_STATE> inputState;
 	inputState[XINPUT_GAMEPAD_DPAD_UP]			= enNOT_PUSHING;

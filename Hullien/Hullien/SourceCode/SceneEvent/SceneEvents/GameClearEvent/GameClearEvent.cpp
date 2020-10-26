@@ -103,7 +103,7 @@ void CGameClearEvent::Render()
 	m_pAlienA->Render();		// ‰F’ˆlA‚Ì•`‰æ.
 
 #if 1
-	DebugRender();
+//	DebugRender();
 #endif
 
 }

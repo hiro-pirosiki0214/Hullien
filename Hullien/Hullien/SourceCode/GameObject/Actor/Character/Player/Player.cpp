@@ -30,6 +30,7 @@ CPlayer::CPlayer()
 	, m_AttackDataQueue				()
 	, m_AttackPosition				( ATTACK_COLLISION_INVALID_POS )
 	, m_GirlPosition				( 0.0f, 0.0f, 0.0f )
+	, m_AttackVector				( 0.0f, 0.0f, 0.0f )
 	, m_AvoidVector					( 0.0f, 0.0f, 0.0f )
 	, m_HitVector					( 0.0f, 0.0f, 0.0f )
 	, m_TargetVector				( 0.0f, 0.0f, 0.0f )
@@ -37,6 +38,7 @@ CPlayer::CPlayer()
 	, m_LifePoint					( 0.0f )
 	, m_SpecialAbility				( 0.0f )
 	, m_StatusFlag					( player::EStatusFlag_None )
+	, m_AttackRangeLenght			( 0.0f )
 	, m_SpecialAbilityValue			( 0.0f )
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
@@ -84,6 +86,9 @@ bool CPlayer::Init()
 	// 待機アニメーションに変更.
 	m_pSkinMesh->ChangeAnimSet_StartPos( player::EAnimNo_Wait, 0.0 );
 
+	// プレイヤーの回転ベクトルを取得.
+	m_AttackVector = { sinf(m_vRotation.y), 0.0f, cosf(m_vRotation.y), };
+
 	return true;
 }
 
@@ -115,6 +120,10 @@ void CPlayer::Update()
 	MoveSpeedUpUpdate();		// 移動速度UP更新.
 
 	CameraUpdate();				// カメラの更新.
+
+	// 攻撃範囲のフラグを下す.
+	bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackRange );
+	m_AttackRangeLenght = 0.0f;	// 攻撃範囲の長さを初期化.
 
 	// 体力が1/3になったらSEを鳴らす.
 	if (m_LifePoint <= m_Parameter.LifeMax / 3)
@@ -153,7 +162,8 @@ void CPlayer::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	AttackCollision( pActor );	// 攻撃時の当たり判定.
+	AttackCollision( pActor );		// 攻撃時の当たり判定.
+	AttackRangeDecision( pActor );	// 攻撃範囲の判定.
 }
 
 // 相手座標の設定関数.
@@ -250,7 +260,16 @@ void CPlayer::AttackController()
 		if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
 		m_AttackComboCount++;	// 攻撃カウントを加算.
 		// 攻撃データがキューに追加されたら終了.
-		if( IsPushAttack() == true ) return;
+		if( IsPushAttack() == true ){
+			// プレイヤーの索敵範囲外なら終了.
+			if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_AttackRange ) == true ){
+				m_vRotation.y = atan2f( m_AttackVector.x, m_AttackVector.z );
+			} else {
+				// プレイヤーの回転ベクトルを取得.
+				m_AttackVector = { sinf(m_vRotation.y), 0.0f, cosf(m_vRotation.y), };
+			}
+			return;
+		}
 		m_AttackComboCount--;	// 攻撃カウントを減算.
 	}
 }
@@ -367,12 +386,12 @@ void CPlayer::AttackMove()
 		if( ATTACK1_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack1].NowFrame && 
 			m_AnimFrameList[player::EAnimNo_Attack1].NowFrame <= ATTACK1_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
-			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
-			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
+			m_vPosition.x -= sinf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
+			m_vPosition.z -= cosf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
 
 			// 見えない壁との当たり判定.
-			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
-			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
 		}
 		break;
 
@@ -380,12 +399,12 @@ void CPlayer::AttackMove()
 		if( ATTACK2_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack2].NowFrame && 
 			m_AnimFrameList[player::EAnimNo_Attack2].NowFrame <= ATTACK2_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
-			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
-			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
+			m_vPosition.x -= sinf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
+			m_vPosition.z -= cosf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
 
 			// 見えない壁との当たり判定.
-			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
-			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
 		}
 		break;
 
@@ -393,12 +412,12 @@ void CPlayer::AttackMove()
 		if( ATTACK3_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack3].NowFrame && 
 			m_AnimFrameList[player::EAnimNo_Attack3].NowFrame <= ATTACK3_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
-			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
-			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
+			m_vPosition.x -= sinf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
+			m_vPosition.z -= cosf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
 
 			// 見えない壁との当たり判定.
-			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
-			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
 		}
 		break;
 
@@ -551,6 +570,48 @@ void CPlayer::AttackCollision( CActor* pActor )
 		CSoundManager::PlaySE("PlayerAttackHit");
 		m_IsAttackSE = true;
 	}
+}
+
+// 攻撃範囲との判定.
+void CPlayer::AttackRangeDecision( CActor* pActor )
+{
+	// プレイヤーと宇宙人とのベクトルを取得.
+	D3DXVECTOR3 vec =
+	{
+		m_vPosition.x - pActor->GetPosition().x,
+		0.0f,
+		m_vPosition.z - pActor->GetPosition().z,
+	};
+	// ベクトルの長さ算出.
+	const float vec_length = sqrtf((vec.x * vec.x) + (vec.z * vec.z));
+	// プレイヤーの回転ベクトルを取得.
+	const D3DXVECTOR3 playerVec = { sinf(m_vRotation.y), 0.0f, cosf(m_vRotation.y), };
+
+	// 範囲の長さ.
+	const float range_Lenght = 20.0f;
+	// 宇宙人との距離が一定範囲外なので終了.
+	if( vec_length > range_Lenght ) return;
+
+	// 単位ベクトルに変換.
+	D3DXVec3Normalize( &vec, &vec );
+
+	// 内積を取得.
+	const float dot = vec.x * playerVec.x + vec.z * playerVec.z;
+	// 扇の範囲をcosにする.
+	const float fan_cos = cosf( static_cast<float>(D3DXToRadian(270.0*0.5)));
+
+	// 点が範囲外であれば終了.
+	if( dot < fan_cos ) return;
+
+	// 長さが初期化状態なら長さを入れる.
+	if( m_AttackRangeLenght <= 0.0f ) m_AttackRangeLenght = vec_length;
+	// 前回の長さが今回の長さより大きければ終了.
+	if( m_AttackRangeLenght >= vec_length ) return;
+
+	m_AttackRangeLenght	= vec_length;
+	m_AttackVector		= vec;
+	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_AttackRange );
+
 }
 
 // 特殊能力時のカメラ動作.
@@ -828,7 +889,8 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return; // SPカメラが動作しているなら終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return; // ノックバック中なら終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return; // 死亡中なら終了.
-
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )		== true ) return; // 回避中なら終了.
+	
 	bool isAttack = false;
 	const float oldLifePoint = m_LifePoint;
 	proc( m_LifePoint, isAttack );
