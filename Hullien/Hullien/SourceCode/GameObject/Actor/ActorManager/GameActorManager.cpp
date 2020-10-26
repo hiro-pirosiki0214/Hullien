@@ -11,17 +11,18 @@
 #include "..\..\InvisibleWall\InvisibleWall.h"
 
 CGameActorManager::CGameActorManager()
-	: m_pSkyDome		( nullptr )
-	, m_pGroundStage	( nullptr )
-	, m_pPlayer			( nullptr )
-	, m_pGirl			( nullptr )
-	, m_pMotherShipUFO	( nullptr )
-	, m_pAlienManager	( nullptr )
-	, m_pItemManager	( nullptr )
-	, m_pBarrier		( nullptr )
-	, m_pInvisibleWall	( nullptr )
-	, m_ObjPositionList	()
-	, m_ObjPosListCount	( 0 )
+	: m_pSkyDome			( nullptr )
+	, m_pGroundStage		( nullptr )
+	, m_pPlayer				( nullptr )
+	, m_pGirl				( nullptr )
+	, m_pMotherShipUFO		( nullptr )
+	, m_pAlienManager		( nullptr )
+	, m_pItemManager		( nullptr )
+	, m_pBarrier			( nullptr )
+	, m_pInvisibleWall		( nullptr )
+	, m_ObjPositionList		()
+	, m_ObjPosListCount		( 0 )
+	, m_IsOllAnimationStop	( false )
 {
 	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_shared<CGroundStage>();
@@ -154,7 +155,9 @@ void CGameActorManager::SpriteRender()
 // ゲームオーバーかどうか.
 bool CGameActorManager::IsGameOver()
 {
-	return m_pPlayer->IsDead();
+	if( m_pPlayer->IsDead() == false ) return false;
+	AnimationStop();	// アニメーションを止める.
+	return true;
 }
 
 // 女の子を連れ去っているか.
@@ -182,4 +185,16 @@ void CGameActorManager::SetPositionList( CGameObject* pObj )
 	if( pObj == nullptr ) return;
 	m_ObjPosListCount++;	// オブジェクト数の加算.
 	m_ObjPositionList.emplace_back( pObj->GetObjectTag(), pObj->GetPosition() );
+}
+
+// アニメーションを止める.
+void CGameActorManager::AnimationStop()
+{
+	if( m_IsOllAnimationStop == true ) return;
+
+	m_pPlayer->StopAnimation();
+	m_pGirl->StopAnimation();
+	m_pAlienManager->StopAnimation();
+
+	m_IsOllAnimationStop = true;
 }

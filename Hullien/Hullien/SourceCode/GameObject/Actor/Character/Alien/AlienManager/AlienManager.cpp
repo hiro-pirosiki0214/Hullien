@@ -113,6 +113,12 @@ bool CAlienManager::IsGirlAbduct()
 	return m_IsRisingMotherShip;
 }
 
+// アニメーションを止める.
+void CAlienManager::StopAnimation()
+{
+	for( auto& a : m_AilenList ) a->StopAnimation();
+}
+
 // スポーン.
 void CAlienManager::Spawn()
 {

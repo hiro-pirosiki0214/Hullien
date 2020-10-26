@@ -37,6 +37,8 @@ public:
 	DropItemList GetDropItemList(){ return m_DropItemList; }
 	// 女の子を連れ去っているか.
 	bool IsGirlAbduct();
+	// アニメーションを止める.
+	void StopAnimation();
 
 private:
 	// スポーン.

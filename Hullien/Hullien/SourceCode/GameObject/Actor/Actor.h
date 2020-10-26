@@ -32,6 +32,8 @@ public:
 	virtual void SetTargetPos( CActor& actor ){}
 	// ベクトルの取得.
 	virtual void SetVector( const D3DXVECTOR3& vec ){};
+	// アニメーションを止める.
+	virtual void StopAnimation(){};
 
 	// 見えない壁の設定.
 	void SetBoxWall( SBoxWall* box ){ m_pBoxWall = box; }

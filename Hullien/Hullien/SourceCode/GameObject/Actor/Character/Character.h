@@ -34,6 +34,9 @@ public:
 	// スプライトの描画.
 	virtual void SpriteRender(){};
 
+	// アニメーションを止める.
+	virtual void StopAnimation() override { m_AnimSpeed = 0.0; }
+
 protected:
 	// メッシュの表示.
 	void MeshRender();

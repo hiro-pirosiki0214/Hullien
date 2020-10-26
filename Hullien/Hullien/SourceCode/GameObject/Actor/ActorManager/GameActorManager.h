@@ -48,6 +48,8 @@ public:
 private:
 	// 座標リストの設定.
 	void SetPositionList( CGameObject* pObj );
+	// アニメーションを止める.
+	void AnimationStop();
 
 private:
 	std::unique_ptr<CSkyDome>		m_pSkyDome;			// 背景.
@@ -61,7 +63,8 @@ private:
 	std::unique_ptr<CInvisibleWall>	m_pInvisibleWall;	// 見えない壁.
 
 	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
-	int m_ObjPosListCount;
+	int		m_ObjPosListCount;		// オブジェクトの座標リストの数.
+	bool	m_IsOllAnimationStop;	// 全部のアニメーションが停止したか.
 };
 
 #endif	// #ifndef CHARACTER_MANAGER_H.
