@@ -32,9 +32,9 @@ bool CGameClear::Load()
 {
 	if ( m_pClearWidget->Init() == false ) return false;
 	if( m_pSTGManager->Init() == false ) return false;
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
-	CSoundManager::SetBGMVolume("ClearBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
+	CSoundManager::ThreadPlayBGM("ClearBGM");
+	CSoundManager::FadeInBGM("ClearBGM");
 	return true;
 }
 
@@ -43,7 +43,6 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-	CSoundManager::ThreadPlayBGM("ClearBGM");
 
 	if (CFade::GetFadeState() == CFade::EFadeState::Out 
 		&& CFade::GetIsFade() == true) return;

@@ -20,13 +20,14 @@ CConfig::~CConfig()
 bool CConfig::Load()
 {
 	if( m_pConfigWidget->Init() == false ) return false;
+	CSoundManager::ThreadPlayBGM("TitleBGM");
+	CSoundManager::FadeInBGM("TitleBGM");
 	return true;
 }
 
 // XVŠÖ”.
 void CConfig::Update()
 {
-	CSoundManager::ThreadPlayBGM("TitleBGM");
 	if (CFade::GetIsFade() == true) return;
 	m_pConfigWidget->Update();
 	if( m_pConfigWidget->IsEndConfig()== true ){

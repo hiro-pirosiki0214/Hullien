@@ -8,17 +8,15 @@
 #include "..\SoundManager.h"
 
 CXAudio2PlaySE::CXAudio2PlaySE()
-	: m_pOggData(nullptr)
-	, m_CheckNonePlaySeVoice(0)
-	, m_RepeatPlaySe(0)
-	, m_bCanChangeSE(false)
-	, m_bisAnotherVolume(false)
-	, m_fSEVolume(1.0f)
-	, m_fAnotherVolume(0.2f)
+	: m_pOggData			( nullptr )
+	, m_CheckNonePlaySeVoice( 0 )
+	, m_RepeatPlaySe		( 0 )
+	, m_bCanChangeSE		( false )
+	, m_bisAnotherVolume	( false )
+	, m_fSEVolume			( 1.0f )
+	, m_fAnotherVolume		( 0.2f )
 {
-	for (int Array = 1; Array < SE_VOICE_SIZE; Array++) {
-		m_pSourceVoice[Array] = nullptr;
-	}
+	m_pSourceVoice[0] = nullptr;
 	InitSEFlag();
 }
 
@@ -79,6 +77,8 @@ int CXAudio2PlaySE::CheckPlaySeBuffer()
 // 指定された配列番号のSEが再生されているか.
 const bool CXAudio2PlaySE::IsPlayingSE(size_t ArrayNum)
 {
+	// SoundSourceがない場合リターン 0(再生していないときと同じ).
+	if (m_pSourceVoice[ArrayNum] == nullptr) return 0;
 	XAUDIO2_VOICE_STATE xState;
 	// SoundSourceのステート取得.
 	m_pSourceVoice[ArrayNum]->GetState(&xState);
@@ -96,12 +96,12 @@ bool CXAudio2PlaySE::Play(
 
 	// オプション画面中、ボイスソース音量も全体のSE音量に合わせて上げ下げに合わせられるように.
 	if (m_bCanChangeSE == false) {
-		if (m_fSEVolume >= CSoundManager::GetInstance()->m_fMaxSEVolume) {
-			m_fSEVolume = CSoundManager::GetInstance()->m_fMaxSEVolume;
+		if (m_fSEVolume >= CSoundManager::GetInstance()->m_stSound.SEVolume) {
+			m_fSEVolume = CSoundManager::GetInstance()->m_stSound.SEVolume;
 		}
 	}
 	else {
-		m_fSEVolume = CSoundManager::GetInstance()->m_fMaxSEVolume;
+		m_fSEVolume = CSoundManager::GetInstance()->m_stSound.SEVolume;
 	}
 
 	// このSEが再生されていなければ中に入り再生する.
@@ -164,12 +164,12 @@ bool CXAudio2PlaySE::NoMultiplePlay(std::shared_ptr<COggLoad> pWavData)
 	HRESULT hr;
 	// オプション画面中、ボイスソース音量も全体のSE音量に合わせて上げ下げに合わせられるように.
 	if (m_bCanChangeSE == false) {
-		if (m_fSEVolume >= CSoundManager::GetInstance()->m_fMaxSEVolume) {
-			m_fSEVolume = CSoundManager::GetInstance()->m_fMaxSEVolume;
+		if (m_fSEVolume >= CSoundManager::GetInstance()->m_stSound.SEVolume) {
+			m_fSEVolume = CSoundManager::GetInstance()->m_stSound.SEVolume;
 		}
 	}
 	else {
-		m_fSEVolume = CSoundManager::GetInstance()->m_fMaxSEVolume;
+		m_fSEVolume = CSoundManager::GetInstance()->m_stSound.SEVolume;
 	}
 
 
@@ -225,8 +225,7 @@ bool CXAudio2PlaySE::AllSeStop()
 {
 	if (m_pSourceVoice[0] == nullptr) return true;
 
-	for (int Array = 0; Array < SE_VOICE_SIZE; Array++) {
-		if (m_pSourceVoice[Array] == nullptr) continue;
+	for (size_t Array = 0; Array < SE_VOICE_SIZE; Array++) {
 		m_pSourceVoice[Array]->Stop(0);
 		m_pSourceVoice[Array]->FlushSourceBuffers();
 		m_isSePlayVoice[Array] = false;
@@ -277,14 +276,14 @@ bool CXAudio2PlaySE::SetSEVolume(float value, size_t Array)
 {
 	if (m_pSourceVoice[Array] == nullptr) return false;
 
-	m_pSourceVoice[Array]->SetVolume(value * CSoundManager::GetInstance()->m_fMasterVolume, 0);
+	m_pSourceVoice[Array]->SetVolume(value * CSoundManager::GetInstance()->m_stSound.MasterVolume, 0);
 	return true;
 }
 
 void CXAudio2PlaySE::DestoroySource()
 {
 	if (m_pSourceVoice[0] != nullptr) {
-		for (int Array = 0; Array < SE_VOICE_SIZE; Array++) {
+		for (size_t Array = 0; Array < SE_VOICE_SIZE; Array++) {
 			m_pSourceVoice[Array]->DestroyVoice();
 			m_pSourceVoice[Array] = nullptr;
 		}

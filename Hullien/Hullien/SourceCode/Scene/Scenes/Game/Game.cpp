@@ -27,6 +27,9 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_ContinueWidget	( nullptr )
 	, m_NowEventScene	( EEventSceneState::GameStart )
 	, m_NextSceneState	( ENextSceneState::None )
+	, m_WaitCount		( 0.0f )
+	, m_IsPlayGameBGM	( false )
+	, m_IsPlayDangerBGM	( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
@@ -56,9 +59,6 @@ bool CGame::Load()
 		m_NowEventScene = EEventSceneState::Game;
 		CFade::SetFadeOut();
 	}
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
-	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
-	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
 	return true;
 }
@@ -69,6 +69,7 @@ bool CGame::Load()
 void CGame::Update()
 {
 	CFog::Update();	// フォグの更新.
+
 
 	switch (m_NowEventScene)
 	{
@@ -194,15 +195,36 @@ void CGame::GameUpdate()
 {
 	if (m_GameObjManager->IsDanger() == false)
 	{
-		CSoundManager::ThreadPlayBGM("GameBGM");
-		CSoundManager::FadeInBGM("GameBGM");
-		CSoundManager::FadeOutBGM("DangerBGM");
+		if( m_IsPlayGameBGM == false ){
+			if( CSoundManager::GetMoveUpThread("GameBGM") == false ){
+				CSoundManager::ThreadPlayBGM( "GameBGM" );
+
+				CSoundManager::SetBGMVolume( "DangerBGM", 0.0f );
+				CSoundManager::ThreadPlayBGM("DangerBGM");
+			} else {
+				CSoundManager::AgainPlayBGM("GameBGM");
+			}
+			CSoundManager::StopBGM("DangerBGM");
+			CSoundManager::FadeInBGM("GameBGM");
+			m_IsPlayGameBGM = true;
+			m_IsPlayDangerBGM = false;
+		}
 	}
 	else
 	{
-		CSoundManager::ThreadPlayBGM("DangerBGM");
-		CSoundManager::FadeInBGM("DangerBGM");
-		CSoundManager::FadeOutBGM("GameBGM");
+		if( m_IsPlayDangerBGM == false ){
+			CSoundManager::StopBGM("GameBGM");
+			if( CSoundManager::GetMoveUpThread("DangerBGM") == false ){
+				CSoundManager::ThreadPlayBGM("DangerBGM");
+			} else {
+				CSoundManager::AgainPlayBGM("DangerBGM");
+			}
+			CSoundManager::BGMPointSeek("DangerBGM", 0, 0, 0.0 );
+			CSoundManager::FadeInBGM("DangerBGM");
+
+			m_IsPlayDangerBGM = true;
+			m_IsPlayGameBGM = false;
+		}
 	}
 
 	m_GameObjManager->Update();
@@ -339,6 +361,13 @@ void CGame::StopBGM(const char* name)
 // 全てのBGM停止.
 void CGame::StopAllBGM()
 {
+	// StopBGM で止められている場合、
+	// StopBGMThread が機能しないので一瞬だけ鳴らす.
+	CSoundManager::SetBGMVolume( "DangerBGM", 0.0f );
+	CSoundManager::SetBGMVolume( "GameBGM", 0.0f );
+	CSoundManager::AgainPlayBGM("DangerBGM");
+	CSoundManager::AgainPlayBGM("GameBGM");
+
 	StopBGM("StartEventBGM");
 	StopBGM("GameBGM");
 	StopBGM("DangerBGM");

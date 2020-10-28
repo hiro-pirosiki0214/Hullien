@@ -68,6 +68,11 @@ public:
 	DWORD GetSize();
 	// ファイルの位置をリセット
 	HRESULT ResetFile();
+	// ファイルの位置を指定して進める.
+	HRESULT SeekFile(double& Second);
+	// ファイルの現在位置(秒)を返す.
+	double GetFileFrame();
+
 	WAVEFORMATEX* GetFormat() { return m_WaveFormat; }
 //------------------------------------
 // SEオンリー.

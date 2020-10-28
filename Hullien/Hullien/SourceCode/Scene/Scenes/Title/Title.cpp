@@ -29,11 +29,9 @@ CTitle::~CTitle()
 bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
-	// 現在ファイルから音量設定してるのでコメントアウト.
-//	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
-	CSoundManager::SetBGMVolume("TitleBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
-	CSoundManager::ThreadPlayBGM("TitleBGM");
 
+	CSoundManager::ThreadPlayBGM("TitleBGM");
+	CSoundManager::FadeInBGM("TitleBGM");
 	return true;
 }
 

@@ -68,5 +68,5 @@ void clsXAudio2MasterVoice::Release()
 	GetInstance()->m_pMasterVoice = nullptr;
 	COM_SAFE_RELEASE(GetInstance()->m_pXAudioInterface);
 	GetInstance()->m_pXAudioInterface = nullptr;
-	//CoUninitialize();
+	CoUninitialize();
 }

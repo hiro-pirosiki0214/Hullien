@@ -56,8 +56,7 @@ CGameClearEvent::~CGameClearEvent()
 bool CGameClearEvent::Load()
 {
 	CFade::SetFadeOut();
-	CSoundManager::ThreadPlayBGM("ClearEventBGM");
-	CSoundManager::FadeInBGM("ClearEventBGM");
+
 
 	if( m_pGroundStage->Init() == false )	return false;	// ステージの初期化.
 	if( SpawnUFOInit() == false )			return false;	// UFOの初期化.
@@ -71,6 +70,9 @@ bool CGameClearEvent::Load()
 	m_IsEventEnd = false;
 	m_IsSkip = false;
 	m_Speed = static_cast<float>(D3DX_PI) * 0.05f;
+
+	CSoundManager::ThreadPlayBGM("ClearEventBGM");
+	CSoundManager::FadeInBGM("ClearEventBGM");
 
 	return true;
 }
@@ -454,10 +456,10 @@ void CGameClearEvent::MoveUFO()
 // 次のシーンに移動.
 void CGameClearEvent::NextScene()
 {
-	CSoundManager::FadeInBGM("ClearEventBGM");
+	CSoundManager::FadeOutBGM("ClearEventBGM");
 
 	if (CFade::GetIsFade() == true) return;
-	CSoundManager::StopBGMThread("ClearEventBGM");
+	while(CSoundManager::StopBGMThread("ClearEventBGM") == false);
 	m_IsEventEnd = true;
 }
 

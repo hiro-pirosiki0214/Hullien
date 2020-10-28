@@ -25,9 +25,9 @@ CVolumeConfigWidget::CVolumeConfigWidget()
 	for( auto& v : m_pVolumeSlinders ) v = std::make_shared<CSlinder>();
 
 	// Œ»Ý‚Ì‰¹—Ê‚Ì’l‚ÌŽæ“¾.
-	m_pVolumeSlinders[ESelectType_Master]->SetValue( CSoundManager::GetInstance()->m_fMasterVolume );
-	m_pVolumeSlinders[ESelectType_BGM]->SetValue( CSoundManager::GetInstance()->m_fMaxBGMVolume );
-	m_pVolumeSlinders[ESelectType_SE]->SetValue( CSoundManager::GetInstance()->m_fMaxSEVolume );
+	m_pVolumeSlinders[ESelectType_Master]->SetValue( CSoundManager::GetInstance()->m_stSound.MasterVolume );
+	m_pVolumeSlinders[ESelectType_BGM]->SetValue( CSoundManager::GetInstance()->m_stSound.BGMVolume );
+	m_pVolumeSlinders[ESelectType_SE]->SetValue( CSoundManager::GetInstance()->m_stSound.SEVolume );
 }
 
 CVolumeConfigWidget::~CVolumeConfigWidget()
@@ -160,9 +160,9 @@ void CVolumeConfigWidget::Determination()
 		m_pVolumeSlinders[ESelectType_Master]->SetValue( DEFALUT_VOLUME );
 		m_pVolumeSlinders[ESelectType_BGM]->SetValue( DEFALUT_VOLUME );
 		m_pVolumeSlinders[ESelectType_SE]->SetValue( DEFALUT_VOLUME );
-		CSoundManager::GetInstance()->m_fMasterVolume	= DEFALUT_VOLUME;
-		CSoundManager::GetInstance()->m_fMaxBGMVolume	= DEFALUT_VOLUME;
-		CSoundManager::GetInstance()->m_fMaxSEVolume	= DEFALUT_VOLUME;
+		CSoundManager::GetInstance()->m_stSound.MasterVolume	= DEFALUT_VOLUME;
+		CSoundManager::GetInstance()->m_stSound.BGMVolume		= DEFALUT_VOLUME;
+		CSoundManager::GetInstance()->m_stSound.SEVolume		= DEFALUT_VOLUME;
 		m_NowSelectVolume = ESelectType_Master;
 		break;
 	case ESelectType_Save:
@@ -188,13 +188,13 @@ void CVolumeConfigWidget::VolumeSeting()
 	switch( m_NowSelectVolume )
 	{
 	case ESelectType_Master:
-		CSoundManager::GetInstance()->m_fMasterVolume = m_pVolumeSlinders[m_NowSelectVolume]->GetValue();
+		CSoundManager::GetInstance()->m_stSound.MasterVolume = m_pVolumeSlinders[m_NowSelectVolume]->GetValue();
 		break;
 	case ESelectType_BGM:
-		CSoundManager::GetInstance()->m_fMaxBGMVolume = m_pVolumeSlinders[m_NowSelectVolume]->GetValue();
+		CSoundManager::GetInstance()->m_stSound.BGMVolume = m_pVolumeSlinders[m_NowSelectVolume]->GetValue();
 		break;
 	case ESelectType_SE:
-		CSoundManager::GetInstance()->m_fMaxSEVolume = m_pVolumeSlinders[m_NowSelectVolume]->GetValue();
+		CSoundManager::GetInstance()->m_stSound.SEVolume = m_pVolumeSlinders[m_NowSelectVolume]->GetValue();
 		break;
 	default:
 		break;
@@ -210,9 +210,9 @@ void CVolumeConfigWidget::OnVolumeSeting()
 	CSoundManager::StateChangeVolumeThread( true );
 
 	// Œ»Ý‚Ì‰¹—Ê‚Ì’l‚ÌŽæ“¾.
-	m_pVolumeSlinders[ESelectType_Master]->SetValue( CSoundManager::GetInstance()->m_fMasterVolume );
-	m_pVolumeSlinders[ESelectType_BGM]->SetValue( CSoundManager::GetInstance()->m_fMaxBGMVolume );
-	m_pVolumeSlinders[ESelectType_SE]->SetValue( CSoundManager::GetInstance()->m_fMaxSEVolume );
+	m_pVolumeSlinders[ESelectType_Master]->SetValue( CSoundManager::GetInstance()->m_stSound.MasterVolume );
+	m_pVolumeSlinders[ESelectType_BGM]->SetValue( CSoundManager::GetInstance()->m_stSound.BGMVolume );
+	m_pVolumeSlinders[ESelectType_SE]->SetValue( CSoundManager::GetInstance()->m_stSound.SEVolume );
 	m_IsOneStep = true;
 }
 

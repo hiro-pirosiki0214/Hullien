@@ -79,6 +79,8 @@ void CGirl::Update()
 
 	//警告.
 	WarningRotation();
+
+	m_IsDanger = false;
 }
 
 // 描画関数.
@@ -103,9 +105,9 @@ void CGirl::Render()
 void CGirl::Collision( CActor* pActor )
 {
 	if( pActor == nullptr ) return;
-	SearchCollision( pActor );
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
+	SearchCollision( pActor );
 }
 
 // 相手座標の設定関数.
@@ -200,7 +202,10 @@ void CGirl::SearchCollision( CActor* pActor )
 	if( m_pSearchCollManager->GetSphere() == nullptr ) return;
 
 	// 既に連れ去られていたら終了.
-	if( m_NowState == ENowState::Abduct ) return;
+	if( m_NowState == ENowState::Abduct ){
+		m_IsDanger = true;
+		return;
+	}
 
 	// 対象オブジェクトじゃなければ終了.
 	if( ( pActor->GetObjectTag() != EObjectTag::Alien_A ) &&
@@ -209,13 +214,20 @@ void CGirl::SearchCollision( CActor* pActor )
 		( pActor->GetObjectTag() != EObjectTag::Alien_D )) return;
 
 	// 球体の当たり判定.
-	if (m_pSearchCollManager->IsShereToShere(pActor->GetCollManager()) == false)
-	{
-		m_IsDanger = false;
-	}
-	else {
-		m_IsDanger = true;
-	}
+	if (m_pSearchCollManager->IsShereToShere(pActor->GetCollManager()) == false) return;
+	m_IsDanger = true;
+
+	// 敵が複数いた場合、衝突していても、
+	// 衝突していない敵がいた場合、
+	// false が上書きされてしまうので、
+	// 当たり判定を行う前に Updateで、
+	// 初期化してあげる.
+//	{
+//		m_IsDanger = false;
+//	}
+//	else {
+//		m_IsDanger = true;
+//	}
 }
 
 // 当たり判定の作成.

@@ -1,15 +1,11 @@
 #include "SoundManager.h"
-#include "..\Utility\FileManager\FileManager.h"
-
 #include <crtdbg.h>
 #include <filesystem>	// C++17 必須.
+#include "..\Utility\FileManager\FileManager.h"
 namespace fs = std::filesystem;
 
 namespace {
-	const float INIT_MASTER_VOLUME = 1.0f;
-	const float INIT_BGM_VOLUME = 1.0f;
-	const float INIT_SE_VOLUME = 1.0f;
-
+	const CSoundManager::SoundVolume INIT_VOLUME = { 0.5f,0.5f,0.5f };
 }
 
 CSoundManager::CSoundManager()
@@ -20,9 +16,6 @@ CSoundManager::CSoundManager()
 	, m_isCreateThread(false)
 	, m_bResumeBGMThread(true)
 	, m_bResumeSEThread(true)
-	, m_MasterCount(INIT_MASTER_VOLUME)
-	, m_BGMCount(INIT_BGM_VOLUME)
-	, m_SECount(INIT_SE_VOLUME)
 {
 	//---------------------------
 	// Mapコンテナのクリア.
@@ -35,9 +28,6 @@ CSoundManager::CSoundManager()
 	m_vsBGMNameList.clear();
 	m_vsSENameList.clear();
 	pSeSource.clear();
-	m_fMasterVolume = INIT_MASTER_VOLUME;	// マスター.
-	m_fMaxBGMVolume = INIT_BGM_VOLUME;		// BGM.
-	m_fMaxSEVolume = INIT_SE_VOLUME;		// SE.
 }
 
 CSoundManager::~CSoundManager()
@@ -48,7 +38,7 @@ CSoundManager* CSoundManager::GetInstance()
 {
 	static std::unique_ptr<CSoundManager> pInstance =
 		std::make_unique<CSoundManager>();	// インスタンスの作成.
-	return pInstance.get();
+	return pInstance.get();;
 }
 
 //========================================================================================
@@ -65,7 +55,7 @@ void CSoundManager::CreateSoundData()
 
 		if (extension != ".ogg" && extension != ".OGG") return;	// 拡張子が "Oggファイル" じゃなければ終了.
 
-																//ファイルパス内にBGMがなければSE.
+		//ファイルパス内にBGMがなければSE.
 		if (filePath.find("BGM") == std::string::npos) {
 			// WavLoadクラス作成.
 			GetInstance()->m_pOggWavData[fileName] = std::make_shared<COggLoad>();
@@ -106,19 +96,15 @@ void CSoundManager::CreateSoundData()
 		MessageBox(nullptr, errorMessage, "サウンドデータ作成失敗", MB_OK);
 	}
 
-	LoadVolume();	// 音量の読み込み.
+	LoadVolume();
 
 	GetInstance()->m_bEndCreate = true;
 }
 
-// 音量を読み込む
+// 音量を読み込む.
 bool CSoundManager::LoadVolume()
 {
-	if( CFileManager::BinaryReading( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_MaxVolume ) == false ) return false;
-
-	GetInstance()->m_fMasterVolume = GetInstance()->m_MaxVolume.Master;	// マスター.
-	GetInstance()->m_fMaxBGMVolume = GetInstance()->m_MaxVolume.BGM;		// BGM.
-	GetInstance()->m_fMaxSEVolume = GetInstance()->m_MaxVolume.SE;		// SE.
+	if( CFileManager::BinaryReading( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_stSound ) == false ) return false;
 
 	return true;
 }
@@ -126,16 +112,51 @@ bool CSoundManager::LoadVolume()
 // 音量を保存する.
 bool CSoundManager::SaveVolume()
 {
-	GetInstance()->m_MaxVolume.Master = GetInstance()->m_fMasterVolume;	// マスター.
-	GetInstance()->m_MaxVolume.BGM = GetInstance()->m_fMaxBGMVolume;	// BGM.
-	GetInstance()->m_MaxVolume.SE =	GetInstance()->m_fMaxSEVolume;		// SE.
-	if( CFileManager::BinaryWriting( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_MaxVolume ) == false ) return false;
+	if( CFileManager::BinaryWriting( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_stSound ) == false ) return false;
 	return true;
 }
 
 //========================================================================================
 //	BGM.
 //====
+
+void CSoundManager::BGMPointSeek(const std::string& Name, int Hour, int Minutes, double Second)
+{
+	GetInstance()->pBgmSource[Name]->BGMPointSeek(Hour,Minutes,Second);
+}
+
+double CSoundManager::GetBGMFrame(const std::string & Name)
+{
+	return GetInstance()->pBgmSource[Name]->GetNowPlayFrame();
+}
+
+// BGMソースの現在フレーム(秒)をdouble値で返す関数.
+bool CSoundManager::GetMoveUpThread(const std::string & Name)
+{
+	DWORD ThreadExitCode = -1;
+
+	GetExitCodeThread(GetInstance()->pBGMThread[Name].native_handle(), &ThreadExitCode);
+	// 4294967295が帰ってきたらスレッドが動いていないのでfalse.
+	if (ThreadExitCode == 0xFFFFFFFF) {
+		return false;
+	}
+	return true;
+}
+
+// BGM再開関数.
+void CSoundManager::AgainPlayBGM(const std::string Name)
+{
+	// mapコンテナにキーが存在してなければリターン.
+	if (GetInstance()->pBgmSource.find(Name) == GetInstance()->pBgmSource.end()) {
+		return;
+	}
+	// 存在しなければリターン.
+	if (GetInstance()->pBgmSource[Name] == nullptr) return;
+	// ゲーム終了フラグがたっていればリターン.
+	if (GetInstance()->m_bEndGame == true) return;
+	// 指定したBGM停止.
+	GetInstance()->pBgmSource[Name]->PlayStart();
+}
 
 // スレッドを作ってBGMを再生する関数(外部呼出).
 void CSoundManager::ThreadPlayBGM(const std::string& Name, const bool& LoopFlag)
@@ -178,8 +199,7 @@ void CSoundManager::PlayBGM(const std::string Name, bool& isEnd)
 	// ゲーム終了フラグがたっていればリターン.
 	if (GetInstance()->m_bEndGame == true) return;
 	// 再生.
-	GetInstance()->pBgmSource[Name]->Play(GetInstance()->m_pOggWavData[Name],
-		GetInstance()->m_pOggWavData[Name]->GetFileName(), isEnd);
+	GetInstance()->pBgmSource[Name]->Play(isEnd);
 }
 void CSoundManager::StateChangeVolumeThread(const bool& bFlag)
 {
@@ -281,9 +301,14 @@ bool CSoundManager::StopBGMThread(const std::string BGMName)
 	// 停止していたら0が返って来る.
 	if (ThreadExitCode == 0) {
 		if (GetInstance()->InThreadID[BGMName] == GetInstance()->pBGMThread[BGMName].get_id()) {
-			GetInstance()->pBGMThread[BGMName].detach();
+			GetInstance()->pBGMThread[BGMName].join();
 			GetInstance()->m_bisThreadRelease[BGMName] = true;
-			return true;
+			while (1)
+			{
+				if (GetInstance()->pBGMThread[BGMName].joinable() != true) {
+					return true;
+				}
+			}
 		}
 		return false;
 	}
@@ -308,6 +333,8 @@ bool CSoundManager::GetIsPlayBGM(const std::string BGMName)
 // BGMのピッチ設定.
 void CSoundManager::SetBGMPitch(const std::string Name, const float Value)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pBgmSource[Name] == nullptr) return;
 	GetInstance()->pBgmSource[Name]->SetPitch(Value);
 }
 
@@ -343,31 +370,43 @@ void CSoundManager::NoMultipleSEPlay(const std::string & Name)
 // SE停止関数.
 void CSoundManager::StopSE(const std::string Name, const size_t ArrayNum)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pSeSource[Name] == nullptr) return;
 	GetInstance()->pSeSource[Name]->SeStop(ArrayNum);
 }
 // 同じ音源の全てのSEソース停止関数.
 void CSoundManager::StopAllSE(const std::string Name)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pSeSource[Name] == nullptr) return;
 	GetInstance()->pSeSource[Name]->AllSeStop();
 }
 // SEのVoiceソース内最大音量を設定.
 void CSoundManager::SetSEVolume(const std::string Name, const float Volume)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pSeSource[Name] == nullptr) return;
 	GetInstance()->pSeSource[Name]->SetMaxSEVolume(Volume);
 }
 // 指定した名前のSEが再生中かどうかを返す : 再生中ならtrue.
 bool CSoundManager::GetIsPlaySE(const std::string Name, const size_t ArrayNum)
 {
+	// 存在しなければリターンfalse.
+	if (GetInstance()->pSeSource[Name] == nullptr) return false;
 	return GetInstance()->pSeSource[Name]->IsPlayingSE(ArrayNum);
 }
 // 全体SE音量とは別のソース毎の音量をセット.
 void CSoundManager::SetAnotherSEVolume(const std::string Name, const float & Volume)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pSeSource[Name] == nullptr) return;
 	GetInstance()->pSeSource[Name]->SetAnotherSEVolume(Volume);
 }
 // ソース内で設定されている音量を適用するかどうか.
 void CSoundManager::SetUseAnotherSEVolumeFlag(const std::string Name, const bool & bFlag)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pSeSource[Name] == nullptr) return;
 	GetInstance()->pSeSource[Name]->SetUseAnotherSEVolume(bFlag);
 }
 // 解放関数.
@@ -399,7 +438,7 @@ void CSoundManager::SetMasterVolume(float& MasterVolume)
 {
 	if (MasterVolume >= 1.0f) MasterVolume = 1.0f;
 	if (MasterVolume <= 0.0f) MasterVolume = 0.0f;
-	GetInstance()->m_fMasterVolume = MasterVolume;
+	GetInstance()->m_stSound.MasterVolume = MasterVolume;
 }
 
 void CSoundManager::CreateChangeSoundVolumeThread()
@@ -427,7 +466,7 @@ void CSoundManager::SetChangeBGMVolumeThread()
 			std::unique_lock<std::mutex> lk(GetInstance()->m_BGMmtx);			// mutex.
 			GetInstance()->m_BGMCv.wait(lk, [&] { return GetInstance()->m_bResumeBGMThread; });	// スレッドをm_bResumeBGMThreadがfalseの間ここでサスペンド(一切動かさない)、trueで再開.
 			for (size_t i = 0; i < GetInstance()->m_vsBGMNameList.size(); i++) {
-				GetInstance()->pBgmSource[GetInstance()->m_vsBGMNameList[i]]->SetBGMVolume(CSoundManager::GetInstance()->m_fMaxBGMVolume);	// 音量をセット.
+				GetInstance()->pBgmSource[GetInstance()->m_vsBGMNameList[i]]->SetBGMVolume(CSoundManager::GetInstance()->m_stSound.BGMVolume);	// 音量をセット.
 				if (GetInstance()->m_bMoveBGMThread == false) break;
 			}
 		}
@@ -454,7 +493,7 @@ void CSoundManager::SetChangeSEVolumeThread()
 			GetInstance()->m_SECv.wait(lk, [&] { return GetInstance()->m_bResumeSEThread; });	// スレッドをm_bResumeSEThreadがfalseの間ここでサスペンド(一切動かさない)、trueで再開.
 			for (size_t i = 0; i < GetInstance()->m_vsSENameList.size(); i++) {
 				GetInstance()->pSeSource[GetInstance()->m_vsSENameList[i]]->SetOperationSEVolumeFlag(true);
-				GetInstance()->pSeSource[GetInstance()->m_vsSENameList[i]]->SetMaxSEVolume(CSoundManager::GetInstance()->m_fMaxSEVolume);	// 音量をセット.
+				GetInstance()->pSeSource[GetInstance()->m_vsSENameList[i]]->SetMaxSEVolume(CSoundManager::GetInstance()->m_stSound.SEVolume);	// 音量をセット.
 			}
 		}
 		for (size_t i = 0; i < GetInstance()->m_vsSENameList.size(); i++) {
@@ -463,6 +502,7 @@ void CSoundManager::SetChangeSEVolumeThread()
 	};
 	GetInstance()->m_SEVolume = std::thread(SetSEVolme);
 }
+
 bool CSoundManager::ReleaseChangeSoundVolumeThread()
 {
 	GetInstance()->m_bResumeBGMThread = true;
@@ -480,7 +520,6 @@ bool CSoundManager::ReleaseChangeSoundVolumeThread()
 			}
 		}
 	}
-
 	if (GetInstance()->m_SEVolume.joinable() == true) {
 		GetInstance()->m_bMoveSEThread = false;
 		GetInstance()->m_SEVolume.join();
@@ -491,10 +530,13 @@ bool CSoundManager::ReleaseChangeSoundVolumeThread()
 			}
 		}
 	}
+	GetInstance()->m_isCreateThread = false;
 	return true;
 }
 
 void CSoundManager::SetSelectChangeSEVolumeFlag(std::string & sName, const bool & bFlag)
 {
+	// 存在しなければリターン.
+	if (GetInstance()->pSeSource[sName] == nullptr) return;
 	GetInstance()->pSeSource[sName]->SetOperationSEVolumeFlag(bFlag);
 }

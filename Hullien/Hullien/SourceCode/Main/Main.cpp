@@ -53,9 +53,7 @@ CMain::CMain()
 	CLightManager::SetLgiht( m_pLight );
 
 	// サウンドデータの設定.
-	CSoundManager::CreateSoundData();
-	CSoundManager::GetInstance()->m_fMasterVolume = 0.4f;
-	CSoundManager::SetMasterVolume(CSoundManager::GetInstance()->m_fMasterVolume);
+//	CSoundManager::CreateSoundData();
 }
 
 CMain::~CMain()
