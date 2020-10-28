@@ -90,7 +90,6 @@ VS_OUTPUT VS_Main(VS_INPUT input)
 	Out.LightDir	= normalize(g_vLightDir).xyz; // ライト方向.
 	Out.EyeVector	= normalize(g_vCamPos - Out.PosW).xyz; // 視点ベクトル.
 	Out.Tex = input.Tex; //　テクスチャ座標.
-
 	// 各ライトからの深度値の取得.
 	Out.ZDepth[0] = mul(input.Pos, g_LightWVP[0]);
 	Out.ZDepth[1] = mul(input.Pos, g_LightWVP[1]);

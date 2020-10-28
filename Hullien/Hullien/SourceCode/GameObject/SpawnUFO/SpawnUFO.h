@@ -11,6 +11,7 @@
 #include <random>
 
 class CActor;
+class CUFOLight;
 class CCollisionManager;	// 当たり判定クラス.
 
 class CSpawnUFO : public CGameObject
@@ -62,6 +63,7 @@ private:
 
 private:
 	std::shared_ptr<CDX9StaticMesh>		m_pStaticMesh;			// メッシュ.
+	std::shared_ptr<CUFOLight>			m_pUFOLight;			// UFOライト.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;			// 当たり判定クラス.
 	SSpawnUFOParam						m_SpawnParameter;		// スポーンパラメータ.
 	D3DXVECTOR3							m_SpawnPoint;			// スポーンポイント.

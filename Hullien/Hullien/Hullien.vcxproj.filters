@@ -163,6 +163,7 @@
     <ClCompile Include="SourceCode\Scene\Scenes\Config\Config.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\UFOLight\UFOLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -334,5 +335,6 @@
     <ClInclude Include="SourceCode\Scene\Scenes\Config\Config.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
   </ItemGroup>
 </Project>

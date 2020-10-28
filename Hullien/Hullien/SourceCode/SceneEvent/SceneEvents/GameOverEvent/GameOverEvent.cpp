@@ -90,8 +90,8 @@ void CGameOverEvent::Render()
 {
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
-	m_pUFO->Render();
 	m_pGirl->Render();
+	m_pUFO->Render();
 
 	// デバッグ用.
 #if _DEBUG

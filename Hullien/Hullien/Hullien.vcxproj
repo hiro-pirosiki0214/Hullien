@@ -228,6 +228,7 @@
     <ClCompile Include="SourceCode\GameObject\STG\Character\STGCharacter.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\STGActor.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\STGManager\STGManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\UFOLight\UFOLight.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.cpp" />
@@ -392,6 +393,7 @@
     <ClInclude Include="SourceCode\GameObject\STG\Character\STGCharacter.h" />
     <ClInclude Include="SourceCode\GameObject\STG\STGActor.h" />
     <ClInclude Include="SourceCode\GameObject\STG\STGManager\STGManager.h" />
+    <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.h" />

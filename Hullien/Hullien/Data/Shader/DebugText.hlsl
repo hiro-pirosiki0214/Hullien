@@ -35,5 +35,6 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 {
 	float4 color = g_Color * g_Texture.Sample(g_samLinear, input.Tex);
 	color.a *= g_fAlpha;
+	clip(color.a);
 	return color;
 }

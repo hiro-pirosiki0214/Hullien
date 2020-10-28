@@ -1,6 +1,7 @@
 #include "SpawnUFO.h"
 #include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\Resource\MeshResource\MeshResource.h"
+#include "..\UFOLight\UFOLight.h"
 #include "..\Actor\Character\Alien\Alien_A\Alien_A.h"
 #include "..\Actor\Character\Alien\Alien_B\Alien_B.h"
 #include "..\Actor\Character\Alien\Alien_C\Alien_C.h"
@@ -11,6 +12,7 @@
 CSpawnUFO::CSpawnUFO()
 	: m_pStaticMesh				( nullptr )
 	, m_pCollManager			( nullptr )
+	, m_pUFOLight				( nullptr )
 	, m_SpawnParameter			()
 	, m_SpawnPoint				{ 0.0f, 0.0f, 0.0f }
 	, m_pAbductUFOPosition		( nullptr )
@@ -24,6 +26,7 @@ CSpawnUFO::CSpawnUFO()
 	// ランダムシードの初期化.
 	std::random_device rd;
 	m_RandomSeed = std::mt19937( rd() );
+	m_pUFOLight = std::make_shared<CUFOLight>();
 }
 
 CSpawnUFO::~CSpawnUFO()
@@ -35,6 +38,7 @@ bool CSpawnUFO::Init()
 {
 	if( GetModel() == false ) return false;
 	if( CollisionSetting() == false ) return false;
+	if( m_pUFOLight->Init() == false ) return false;
 	return true;
 }
 
@@ -72,6 +76,9 @@ void CSpawnUFO::Render()
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+
+	m_pUFOLight->SetPosition( m_vPosition );
+	m_pUFOLight->Render();
 }
 
 // 宇宙人をスポーンさせる.

@@ -134,7 +134,7 @@ void CGameActorManager::Render()
 	m_pAlienManager->Render();	// 宇宙人達の描画.
 	m_pMotherShipUFO->Render();	// マザーシップの描画.
 	m_pItemManager->Render();	// アイテムの描画.
-//	m_pBarrier->Render();		// バリアの描画.
+	m_pBarrier->Render();		// バリアの描画.
 	m_pInvisibleWall->Render();	// 見えない壁の描画.
 
 	// エフェクトの描画.

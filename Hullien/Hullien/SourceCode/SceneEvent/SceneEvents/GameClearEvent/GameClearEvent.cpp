@@ -99,10 +99,10 @@ void CGameClearEvent::Render()
 {
 	m_pSkyDome->Render();		// ”wŒi‚Ì•`‰æ.
 	m_pGroundStage->Render();	// ƒXƒe[ƒW‚Ì•`‰æ.
-	m_pSpawnUFO->Render();		// UFO‚Ì•`‰æ.
 	m_pPlayer->Render();		// ƒvƒŒƒCƒ„[‚Ì•`‰æ.
 	m_pGirl->Render();			// —‚ÌŽq‚Ì•`‰æ.
 	m_pAlienA->Render();		// ‰F’ˆlA‚Ì•`‰æ.
+	m_pSpawnUFO->Render();		// UFO‚Ì•`‰æ.
 
 #if 1
 //	DebugRender();

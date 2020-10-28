@@ -34,7 +34,7 @@ public:
 	void Release();
 
 	// レンダリング用.
-	void Render();
+	void Render( const bool& isTrans = false );
 
 	// メッシュを取得.
 	LPD3DXMESH GetMesh() const { return m_pMeshForRay; }
@@ -145,7 +145,8 @@ private:
 	void RenderMesh(
 		D3DXMATRIX& mWorld, 
 		const D3DXMATRIX& mView, 
-		const D3DXMATRIX& mProj);
+		const D3DXMATRIX& mProj,
+		const bool& isTrans );
 	// 影の描画.
 	bool ShadowRender( const D3DXMATRIX& mWorld );
 	// 半透明の描画,

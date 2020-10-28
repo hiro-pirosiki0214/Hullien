@@ -106,10 +106,10 @@ void CGameStartEvent::Render()
 {
 	m_pSkyDome->Render();		// ”wŒi‚Ì•`‰æ.
 	m_pGroundStage->Render();	// ƒXƒe[ƒW‚Ì•`‰æ.
-	m_pSpawnUFO->Render();		// UFO‚Ì•`‰æ.
 	m_pPlayer->Render();		// ƒvƒŒƒCƒ„[‚Ì•`‰æ.
 	m_pGirl->Render();			// —‚Ìq‚Ì•`‰æ.
 	m_pAlienA->Render();		// ‰F’ˆA‚Ì•`‰æ.
+	m_pSpawnUFO->Render();		// UFO‚Ì•`‰æ.
 	m_pBarrier->Render();
 	m_pMotherShipUFO->Render();
 

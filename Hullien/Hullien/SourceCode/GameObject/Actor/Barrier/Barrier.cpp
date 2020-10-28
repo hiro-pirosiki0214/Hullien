@@ -78,7 +78,7 @@ void CBarrier::Render()
 	m_StaticMesh->SetScale( m_CollSphereRadius );
 	m_StaticMesh->SetColor( { 0.2f, 0.2f, 1.0f, 0.3f } );
 	m_StaticMesh->SetBlend( true );
-	m_StaticMesh->Render();
+	m_StaticMesh->Render( true );
 	m_StaticMesh->SetBlend( false );
 
 #if _DEBUG

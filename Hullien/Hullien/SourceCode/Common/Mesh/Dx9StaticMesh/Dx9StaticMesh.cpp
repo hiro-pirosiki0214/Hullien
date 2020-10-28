@@ -548,7 +548,7 @@ HRESULT CDX9StaticMesh::InitShader()
 //ﾚﾝﾀﾞﾘﾝｸﾞ用.
 //※DirectX内のﾚﾝﾀﾞﾘﾝｸﾞ関数.
 //  最終的に画面に出力するのはMainｸﾗｽのﾚﾝﾀﾞﾘﾝｸﾞ関数がやる.
-void CDX9StaticMesh::Render()
+void CDX9StaticMesh::Render( const bool& isTrans )
 {
 	//ﾜｰﾙﾄﾞ行列、ｽｹｰﾙ行列、回転行列、平行移動行列.
 	D3DXMATRIX mWorld, mScale, mRot, mTran;
@@ -578,28 +578,19 @@ void CDX9StaticMesh::Render()
 
 	// 影を描画したら終了.
 	if( ShadowRender( mWorld ) == true ) return;
-	if( TranslucentRender( mWorld ) == true ) return;
+	if( isTrans == false ){
+		if( TranslucentRender( mWorld ) == true ) return;
+	}
 
 	//使用するｼｪｰﾀﾞのｾｯﾄ.
 	m_pContext11->VSSetShader(m_pVertexShader, nullptr, 0);//頂点ｼｪｰﾀﾞ.
 	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
 
-														  // カスケードの数だけループ.
+	// カスケードの数だけループ.
 	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
 	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
-
-	static D3DXVECTOR4 fogtex = { 0.0f, 0.0f, 0.5f, 0.5f };
-
-	fogtex.x += 0.01f;
-	if (fogtex.x >= 1.0f) {
-		fogtex.x = 0.0f;
-	}
-	fogtex.z += 0.01f;
-	if (fogtex.z >= 1.0f) {
-		fogtex.z = 0.0f;
-	}
 
 	//ｼｪｰﾀﾞのｺﾝｽﾀﾝﾄﾊﾞｯﾌｧに各種ﾃﾞｰﾀを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -629,7 +620,8 @@ void CDX9StaticMesh::Render()
 
 		// ライトの行列を渡す.
 		for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
-			cb.mLightWVP[i] = mWorld * CLightManager::GetShadowVP()[i];
+			float f = isTrans == false ? 1.0f : 0.0f;
+			cb.mLightWVP[i] = (mWorld * CLightManager::GetShadowVP()[i]) * f;
 			D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
 		}
 		// カスケードの間隔幅を渡す.
@@ -672,14 +664,15 @@ void CDX9StaticMesh::Render()
 	//ﾒｯｼｭのﾚﾝﾀﾞﾘﾝｸﾞ.
 	D3DXMATRIX mView = CCameraManager::GetViewMatrix();
 	D3DXMATRIX mProj = CCameraManager::GetProjMatrix();
-	RenderMesh( mWorld, mView, mProj );
+	RenderMesh( mWorld, mView, mProj, isTrans );
 }
 
 //ﾚﾝﾀﾞﾘﾝｸﾞ関数(ｸﾗｽ内でのみ使用する).
 void CDX9StaticMesh::RenderMesh(
 	D3DXMATRIX& mWorld, 
 	const D3DXMATRIX& mView, 
-	const D3DXMATRIX& mProj )
+	const D3DXMATRIX& mProj,
+	const bool& isTrans )
 {
 	//ｼｪｰﾀﾞのｺﾝｽﾀﾝﾄﾊﾞｯﾌｧに各種ﾃﾞｰﾀを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
@@ -691,8 +684,9 @@ void CDX9StaticMesh::RenderMesh(
 	{
 		CBUFFER_PER_MESH cb;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ.
 
-								//ﾜｰﾙﾄﾞ行列を渡す.
-		cb.mW = mWorld;
+		//ﾜｰﾙﾄﾞ行列を渡す.
+		float f = isTrans == false ? 1.0f : 0.0f;
+		cb.mW = mWorld * f;
 		D3DXMatrixTranspose(&cb.mW, &cb.mW);
 
 		//ﾜｰﾙﾄﾞ,ﾋﾞｭｰ,ﾌﾟﾛｼﾞｪｸｼｮﾝ行列を渡す.
