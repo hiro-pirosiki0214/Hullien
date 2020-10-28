@@ -52,7 +52,7 @@ bool CGameActorManager::Init()
 	if( m_pItemManager->Init()		== false ) return false;	// アイテム管理の初期化.
 	// マザーシップの座標取取得.
 	m_pAlienManager->SetMotherShipUFOPos( m_pMotherShipUFO->GetPosition() );
-
+	m_pMotherShipUFO->DischargePreparation();
 	m_pPlayer->SetBoxWall( m_pInvisibleWall->GetBoxWall() );
 	m_pGirl->SetBoxWall( m_pInvisibleWall->GetBoxWall() );
 

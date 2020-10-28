@@ -15,7 +15,7 @@ CMotherShipUFO::CMotherShipUFO()
 	, m_IsDisp			( true )
 	, m_IsReturnAlien	( false )
 {
-	m_pUFOLight = std::make_unique<CUFOLight>( 2.0f, 1.5f );
+	m_pUFOLight = std::make_unique<CUFOLight>( 1.9f, 1.5f );
 }
 
 CMotherShipUFO::~CMotherShipUFO()
