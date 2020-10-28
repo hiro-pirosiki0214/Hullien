@@ -5,14 +5,17 @@
 #include "..\Actor\Actor.h"
 #include "..\..\Utility\FileManager\FileManager.h"
 #include "..\..\XAudio2\SoundManager.h"
+#include "..\UFOLight\UFOLight.h"
 
 CMotherShipUFO::CMotherShipUFO()
 	: m_pStaticMesh		( nullptr )
 	, m_pCollManager	( nullptr )
+	, m_pUFOLight		( nullptr )
 	, m_Param			()
 	, m_IsDisp			( true )
 	, m_IsReturnAlien	( false )
 {
+	m_pUFOLight = std::make_unique<CUFOLight>( 2.0f, 1.5f );
 }
 
 CMotherShipUFO::~CMotherShipUFO()
@@ -23,9 +26,9 @@ CMotherShipUFO::~CMotherShipUFO()
 bool CMotherShipUFO::Init()
 {
 	if( CFileManager::BinaryReading( PARAMETER_FILE_PATH, m_Param ) == false ) return false;
-	if( GetModel() == false ) return false;
-	if( CollisionSetting() == false ) return false;
-
+	if( GetModel()			== false ) return false;
+	if( CollisionSetting()	== false ) return false;
+	if( m_pUFOLight->Init() == false ) return false;
 	m_vPosition = m_Param.Position;
 
 	return true;
@@ -34,20 +37,24 @@ bool CMotherShipUFO::Init()
 // 更新関数.
 void CMotherShipUFO::Update()
 {
+	m_pUFOLight->Update();
 }
 
 // 描画関数.
 void CMotherShipUFO::Render()
 {
 	// 画面外なら終了.
-	if( IsDisplayOut() == true ) return;
-	if( m_pStaticMesh == nullptr ) return;
-	if( m_IsDisp == false ) return;
+	if( IsDisplayOut()	== true ) return;
+	if( m_pStaticMesh	== nullptr ) return;
+	if( m_IsDisp		== false ) return;
 
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pStaticMesh->Render();
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+
+	m_pUFOLight->SetPosition( m_vPosition );
+	m_pUFOLight->Render();
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -87,6 +94,31 @@ void CMotherShipUFO::SetParameter( const SMotherShipUFOParam& param )
 			m_Param.CollisionRadius );
 	}
 }
+
+// ライトを取り出す.
+void CMotherShipUFO::LightDischarge()
+{
+	m_pUFOLight->Discharge();
+}
+
+// ライトをしまう.
+void CMotherShipUFO::LightCleanUP()
+{
+	m_pUFOLight->CleanUP();
+}
+
+// 光を完全に放出する.
+void CMotherShipUFO::DischargePreparation()
+{
+	m_pUFOLight->DischargePreparation();
+}
+
+// 光を片づける.
+void CMotherShipUFO::CleanUPPreparation()
+{
+	m_pUFOLight->CleanUPPreparation();
+}
+
 
 // モデルの取得.
 bool CMotherShipUFO::GetModel()

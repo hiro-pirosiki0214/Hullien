@@ -110,8 +110,8 @@ void CGameStartEvent::Render()
 	m_pGirl->Render();			// 女の子の描画.
 	m_pAlienA->Render();		// 宇宙Aの描画.
 	m_pSpawnUFO->Render();		// UFOの描画.
-	m_pBarrier->Render();
 	m_pMotherShipUFO->Render();
+	m_pBarrier->Render();
 
 //	DebugRender();
 
@@ -177,6 +177,8 @@ bool CGameStartEvent::MotherShipUFOInit()
 {
 	if (m_pMotherShipUFO->Init() == false) return false;
 	m_pMotherShipUFO->SetDisp(false);
+	m_pMotherShipUFO->DischargePreparation();
+
 	return true;
 }
 
@@ -190,8 +192,10 @@ void CGameStartEvent::ActorUpdate()
 	// 宇宙人.
 	m_pAlienA->SetOptionalState( m_stAlien );
 	m_pAlienA->Update();
+	m_pMotherShipUFO->Update();
 	// UFOの位置設定.
 	m_pSpawnUFO->SetPosition( m_vUFOPosition );
+	m_pSpawnUFO->Update();
 }
 
 // カメラの更新関数.
@@ -390,6 +394,7 @@ void CGameStartEvent::StopUFO()
 
 	if (m_vUFOPosition.y < UFO_POSITION.y && m_Count >= WAIT_COUNT)
 	{
+		m_pSpawnUFO->LightDischarge();	// ライトを出す.
 		m_stAlien.vPosition = m_pSpawnUFO->GetPosition();
 		m_Count = 0.0f;
 		NextStep();

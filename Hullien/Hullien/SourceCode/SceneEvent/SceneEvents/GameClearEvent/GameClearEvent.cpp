@@ -131,6 +131,7 @@ bool CGameClearEvent::CameraInit()
 bool CGameClearEvent::SpawnUFOInit()
 {
 	if( m_pSpawnUFO->Init() == false ) return false;
+	m_pSpawnUFO->DischargePreparation();
 	m_vUFOPosition = INIT_UFOPOSITION;
 	return true;
 }
@@ -178,6 +179,7 @@ void CGameClearEvent::ActorUpdate()
 	// UFO.
 	m_pSpawnUFO->SetPosition( m_vUFOPosition );
 	m_pSpawnUFO->SetScale(m_vUFOScale);
+	m_pSpawnUFO->Update();
 }
 
 // カメラの更新関数.
@@ -302,6 +304,7 @@ void CGameClearEvent::SuckedIntoUFO()
 	m_stPlayer.IsDisp = false;
 	m_stGirl.IsDisp = false;
 	NextStep();
+	m_pSpawnUFO->LightCleanUP();
 }
 
 // UFOのアップ.

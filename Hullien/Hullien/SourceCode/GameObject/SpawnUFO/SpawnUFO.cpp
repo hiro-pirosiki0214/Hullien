@@ -133,6 +133,30 @@ void CSpawnUFO::SetSpawnParameter( const SSpawnUFOParam& param )
 	m_SpawnPoint.y	= m_SpawnParameter.SpawnPointHight;
 }
 
+// ライトを取り出す.
+void CSpawnUFO::LightDischarge()
+{
+	m_pUFOLight->Discharge();
+}
+
+// ライトをしまう.
+void CSpawnUFO::LightCleanUP()
+{
+	m_pUFOLight->CleanUP();
+}
+
+// 光を完全に放出する.
+void CSpawnUFO::DischargePreparation()
+{
+	m_pUFOLight->DischargePreparation();
+}
+
+// 光を片づける.
+void CSpawnUFO::CleanUPPreparation()
+{
+	m_pUFOLight->CleanUPPreparation();
+}
+
 // 宇宙人の作成.
 std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 {

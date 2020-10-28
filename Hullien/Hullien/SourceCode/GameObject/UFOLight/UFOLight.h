@@ -9,7 +9,11 @@ class CUFOLight : public CGameObject
 
 	const float SCALE_UP_HEIGHT_SPEED = 0.2f;
 	const float SCALE_UP_WEDTH_SPEED = 0.02f;
-	const float SCALE_MAX = 1.0f;
+	const float DEFAULT_SCALE_HEIGHT_MAX = 1.0f;
+	const float DEFAULT_SCALE_WEDTH_MAX = 1.0f;
+	
+	const float SCALE_HEIGHT_MAX;
+	const float SCALE_WEDTH_MAX;
 
 	enum class enUFOLightState
 	{
@@ -25,6 +29,7 @@ class CUFOLight : public CGameObject
 	} typedef EUFOLightState;
 public:
 	CUFOLight();
+	CUFOLight( const float& height, const float& wedht );
 	virtual ~CUFOLight();
 
 	// ‰Šú‰»ŠÖ”.
@@ -37,6 +42,10 @@ public:
 	void Discharge();
 	// Œõ‚ğ•Ğ‚Ã‚¯‚é.
 	void CleanUP();
+	// Œõ‚ğŠ®‘S‚É•úo‚·‚é.
+	void DischargePreparation();
+	// Œõ‚ğ•Ğ‚Ã‚¯‚é.
+	void CleanUPPreparation();
 
 private:
 	std::shared_ptr<CDX9StaticMesh>	m_pStaticMesh;

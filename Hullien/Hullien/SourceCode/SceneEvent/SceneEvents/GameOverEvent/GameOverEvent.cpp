@@ -120,6 +120,7 @@ bool CGameOverEvent::CameraInit()
 bool CGameOverEvent::SpawnUFOInit()
 {
 	if(m_pUFO->Init() == false ) return false;
+	m_pUFO->DischargePreparation();
 	m_vUFOPosition = UFO_INITPOSITION;
 	return true;
 }
@@ -138,7 +139,7 @@ void CGameOverEvent::ActorUpdate()
 {
 	// UFO.
 	m_pUFO->SetPosition( m_vUFOPosition );
-
+	m_pUFO->Update();
 	// —‚ÌŽq.
 	m_pGirl->SetOptionalState( m_stGirl );
 }
@@ -247,6 +248,7 @@ void CGameOverEvent::SuckedGirl()
 	else
 	{
 		m_WaitCount++;
+		m_pUFO->LightCleanUP();
 	}
 
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;

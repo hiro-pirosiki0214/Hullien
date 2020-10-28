@@ -39,7 +39,7 @@ class CGameStartEvent : public CEventBase
 	const float CAMERA_CORRECTION_PLAYERPOS_Y		= 8.0f;							// プレイヤーに対するカメラy座標補正値.
 	const float CAMERA_CORRECTION_UFOPOS_Y			= 7.0f;								// UFOに対するカメラy座標補正値.
 	const float CAMERA_CORRECTION_UFOPOS_Z			= 5.0f;								// UFOに対するカメラz座標補正値.
-	const float CAMERA_CORRECTIONALIENPOS_Y			= 1.0f;								// 宇宙人に対するカメラy座標補正値.
+	const float CAMERA_CORRECTIONALIENPOS_Y			= 4.0f;								// 宇宙人に対するカメラy座標補正値.
 	const float CAMERA_CORRECTION_PLAYERLOOK_Z		= 1.5f;								// プレイヤーに対するカメラの注視位置z座標補正値.
 	const float CAMERASWITCHING_POS_Z				= -40.0f;							// カメラ切り替えz座標,
 	const float CAMERA_ROTAION_MOVING_LIMIT_X = static_cast<float>(D3DXToRadian(-150)); // カメラのx座標回転値の限界.
