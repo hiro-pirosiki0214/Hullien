@@ -61,6 +61,13 @@ D3DXVECTOR3 CSpawnUFO::Collision(CActor * pActor)
 void CSpawnUFO::Update()
 {
 	m_SpawnCount++;
+	m_pUFOLight->Update();
+	if( GetAsyncKeyState('P') & 0x8000 ){
+		m_pUFOLight->Discharge();
+	}
+	if( GetAsyncKeyState('O') & 0x8000 ){
+		m_pUFOLight->CleanUP();
+	}
 }
 
 // •`‰æŠÖ”.

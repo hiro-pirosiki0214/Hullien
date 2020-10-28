@@ -5,7 +5,9 @@
 
 CUFOLight::CUFOLight()
 	: m_pStaticMesh	( nullptr )
+	, m_NowState	( EUFOLightState::None )
 {
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 }
 
 CUFOLight::~CUFOLight()
@@ -23,6 +25,49 @@ bool CUFOLight::Init()
 // çXêVä÷êî.
 void CUFOLight::Update()
 {
+	switch( m_NowState )
+	{
+	case EUFOLightState::Discharge:
+		if( m_vScale.y < SCALE_MAX ){
+			m_vScale.y += SCALE_UP_HEIGHT_SPEED;
+			if( m_vScale.y >= SCALE_MAX ){
+				m_vScale.y = SCALE_MAX;
+			}
+		}
+		if( m_vScale.x < SCALE_MAX ){
+			m_vScale.x += SCALE_UP_WEDTH_SPEED;
+			m_vScale.z += SCALE_UP_WEDTH_SPEED;
+			if( m_vScale.x >= SCALE_MAX ){
+				m_vScale.x = SCALE_MAX;
+				m_vScale.z = SCALE_MAX;
+				m_NowState = EUFOLightState::EndDischarge;
+			}
+		}
+		break;
+	case EUFOLightState::CleanUP:
+		if( m_vScale.y > 0.0f ){
+			m_vScale.y -= SCALE_UP_WEDTH_SPEED;
+			if( m_vScale.y <= 0.0f ){
+				m_vScale.y = 0.0f;
+			}
+		}
+		if( m_vScale.x > 0.0f ){
+			m_vScale.x -= SCALE_UP_HEIGHT_SPEED;
+			m_vScale.z -= SCALE_UP_HEIGHT_SPEED;
+			if( m_vScale.x <= 0.0f ){
+				m_vScale.x = 0.0f;
+				m_vScale.z = 0.0f;
+				m_NowState = EUFOLightState::EndCleanUP;
+			}
+		}
+		break;
+	case EUFOLightState::EndDischarge:
+		break;
+	case EUFOLightState::EndCleanUP:
+		break;
+	default:
+		break;
+	}
 }
 
 // ï`âÊä÷êî.
@@ -40,4 +85,16 @@ void CUFOLight::Render()
 	m_pStaticMesh->Render( true );
 	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	m_pStaticMesh->SetCoverage( false );
+}
+
+// åıÇï˙èoÇ∑ÇÈ.
+void CUFOLight::Discharge()
+{
+	m_NowState = EUFOLightState::Discharge;
+}
+
+// åıÇï–Ç√ÇØÇÈ.
+void CUFOLight::CleanUP()
+{
+	m_NowState = EUFOLightState::CleanUP;
 }

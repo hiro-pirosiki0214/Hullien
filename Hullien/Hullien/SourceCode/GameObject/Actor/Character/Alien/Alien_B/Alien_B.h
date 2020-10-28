@@ -6,6 +6,7 @@
 class CAlienB : public CAlien
 {
 	const char* MODEL_NAME = "b_s";
+	const char* ATTACK_EFFECT_NAME = "b_attackeffkt";
 
 public:
 	CAlienB();
@@ -17,13 +18,16 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// スポーン.
 	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
-
+	// ライフ計算関数.
+	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
 private:
 	// プレイヤー座標の設定.
 	void SetPlayerPos( CActor& actor );
@@ -52,6 +56,8 @@ private:
 
 	// 当たり判定の設定.
 	bool ColliderSetting();
+	// エフェクトの設定.
+	virtual bool EffectSetting() override;
 
 private:
 	D3DXVECTOR3 m_vPlayerPos;	// プレイヤーの座標.

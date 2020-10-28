@@ -7,6 +7,7 @@
 #include <random>
 
 class CArm;
+class CEffectManager;
 
 class CAlien : public CCharacter
 {
@@ -23,6 +24,7 @@ class CAlien : public CCharacter
 	const float RISING_MOTHER_SHIP_SCALE_SUB_VALUE = 0.01f;
 protected:
 	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
+	const char* HIT_EEFECT_NAME = "hiteffekt";
 
 public:
 	// 宇宙人パラメータ.
@@ -148,6 +150,9 @@ public:
 	CAlien();
 	virtual ~CAlien();
 
+	// エフェクトの描画.
+	virtual void EffectRender() override;
+
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
 	// ベクトルの取得.
@@ -218,10 +223,13 @@ protected:
 
 	// アニメーションフレームの設定.
 	virtual bool SetAnimFrameList() override;
+	// エフェクトの設定.
+	virtual bool EffectSetting();
 
 protected:
 	std::unique_ptr<CArm>		m_pArm;			// アームクラス.
 	LPD3DXANIMATIONCONTROLLER	m_pAC;			// アニメーションコントローラー.
+	std::vector<std::shared_ptr<CEffectManager>>	m_pEffects;
 	D3DXVECTOR3		m_TargetPosition;			// 女の子の座標.
 	D3DXVECTOR3		m_TargetRotation;			// 目標の回転情報.
 	D3DXVECTOR3		m_KnockBackVector;

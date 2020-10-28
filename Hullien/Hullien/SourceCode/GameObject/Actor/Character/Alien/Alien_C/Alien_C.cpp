@@ -23,6 +23,7 @@ bool CAlienC::Init()
 	if( GetAnimationController()	== false ) return false;
 	if( SetAnimFrameList()			== false ) return false;
 	if( ColliderSetting()			== false ) return false;
+	if( EffectSetting()				== false ) return false;
 	if( m_pArm->Init()				== false ) return false;
 	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0f, m_pAC );
 	return true;

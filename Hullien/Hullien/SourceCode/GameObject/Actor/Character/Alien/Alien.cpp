@@ -6,9 +6,12 @@
 #include "..\..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\Arm\Arm.h"
+#include "..\..\..\..\Common\Effect\EffectManager.h"
 
 CAlien::CAlien()
 	: m_pArm					( nullptr )
+	, m_pAC						( nullptr )
+	, m_pEffects				()
 	, m_TargetPosition			( 0.0f, 0.0f, 0.0f )
 	, m_TargetRotation			( 0.0f, 0.0f, 0.0f )
 	, m_KnockBackVector			( 0.0f, 0.0f, 0.0f )
@@ -33,6 +36,12 @@ CAlien::CAlien()
 
 CAlien::~CAlien()
 {
+}
+
+// エフェクトの描画.
+void CAlien::EffectRender()
+{
+	for( auto& e : m_pEffects ) e->Render();
 }
 
 // 相手座標の設定.
@@ -61,7 +70,7 @@ void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	m_NowState = EAlienState::Fright;	// 怯み状態へ遷移.
 	SetAnimation( EAnimNo_Damage, m_pAC );
 	m_AnimSpeed = 0.01;
-
+	m_pEffects[0]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
 	if( m_pArm != nullptr ){
 		// アームを片付けていなければ片付ける.
 		if( m_pArm->IsCleanUp() == false ){
@@ -417,6 +426,24 @@ bool CAlien::SetAnimFrameList()
 	if( m_pSkinMesh == nullptr ) return false;
 	for( int i = EAnimNo_Begin; i < EAnimNo_End; i++ ){
 		m_AnimFrameList.at(i) = { 0.0, m_pSkinMesh->GetAnimPeriod(i)-animAdjFrames[i] };
+	}
+	return true;
+}
+
+// エフェクトの設定.
+bool CAlien::EffectSetting()
+{
+	const char* effectNames[] =
+	{
+		HIT_EEFECT_NAME,
+	};
+	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
+	// メモリの最大値設定.
+	m_pEffects.reserve(effectNum);
+
+	for( int i = 0; i < effectNum; i++ ){
+		m_pEffects.emplace_back( std::make_shared<CEffectManager>() );
+		if( m_pEffects[i]->SetEffect( effectNames[i] ) == false ) return false;
 	}
 	return true;
 }

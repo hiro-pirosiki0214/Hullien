@@ -3,6 +3,7 @@
 #include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\Arm\Arm.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 #include "..\..\..\..\..\Utility\FileManager\FileManager.h"
 #include "..\..\..\..\..\Editor\EditRenderer\EditRenderer.h"
@@ -32,6 +33,7 @@ bool CAlienB::Init()
 	if( GetAnimationController()	== false ) return false;
 	if( SetAnimFrameList()			== false ) return false;
 	if( ColliderSetting()			== false ) return false;
+	if( EffectSetting()				== false ) return false;
 	if( m_pArm->Init()				== false ) return false;
 	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0f, m_pAC );
 	return true;
@@ -71,6 +73,18 @@ void CAlienB::Render()
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
+}
+
+// エフェクトの描画.
+void CAlienB::EffectRender()
+{
+	// ヒット時のエフェクト.
+	m_pEffects[0]->Render();
+
+	// 攻撃時のエフェクト.
+	m_pEffects[1]->SetLocation( m_vPosition );
+	m_pEffects[1]->SetScale( 0.5f );
+	m_pEffects[1]->Render();
 }
 
 // 当たり判定関数.
@@ -115,6 +129,33 @@ void CAlienB::SetTargetPos( CActor& actor )
 	CAlienB::SetPlayerPos( actor );
 }
 
+// ライフ計算関数.
+void CAlienB::LifeCalculation( const std::function<void(float&,bool&)>& proc )
+{
+	if( m_NowState == EAlienState::Spawn ) return;
+	if( m_NowState == EAlienState::Death ) return;
+	if( m_NowState == EAlienState::Fright ) return;
+
+	bool isAttack = false;
+	proc( m_LifePoint, isAttack );
+	m_NowState = EAlienState::Fright;	// 怯み状態へ遷移.
+	SetAnimation( EAnimNo_Damage, m_pAC );
+	m_AnimSpeed = 0.01;
+	m_pEffects[1]->Stop();
+	m_pEffects[0]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
+	if( m_pArm != nullptr ){
+		// アームを片付けていなければ片付ける.
+		if( m_pArm->IsCleanUp() == false ){
+			m_pArm->SetCleanUp();
+		}
+	}
+
+	if( m_LifePoint > 0.0f ) return;
+	// 体力が 0.0以下なら死亡状態へ遷移.
+	m_NowState = EAlienState::Death;
+	SetAnimation( EAnimNo_Dead, m_pAC );
+}
+
 // プレイヤー座標の設定.
 void CAlienB::SetPlayerPos( CActor& actor )
 {
@@ -146,6 +187,8 @@ void CAlienB::Move()
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
+	m_pEffects[1]->Stop();
+	SetAnimation( EAnimNo_Move, m_pAC );
 	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
 	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転へ遷移する.
 }
@@ -188,6 +231,7 @@ void CAlienB::VectorMove( const float& moveSpeed )
 	if( m_IsBarrierHit == true ) return;
 	m_NowMoveState	= EMoveState::Attack;
 	m_RotAccValue	= m_Parameter.AttackRotInitPower;
+	m_pEffects[1]->Play( m_vPosition );
 }
 
 // 攻撃関数.
@@ -280,5 +324,24 @@ bool CAlienB::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		-1.0f,
 		0.0f ) )) return false;
+	return true;
+}
+
+// エフェクトの設定.
+bool CAlienB::EffectSetting()
+{
+	const char* effectNames[] =
+	{
+		HIT_EEFECT_NAME,
+		ATTACK_EFFECT_NAME,
+	};
+	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
+	// メモリの最大値設定.
+	m_pEffects.reserve(effectNum);
+
+	for( int i = 0; i < effectNum; i++ ){
+		m_pEffects.emplace_back( std::make_shared<CEffectManager>() );
+		if( m_pEffects[i]->SetEffect( effectNames[i] ) == false ) return false;
+	}
 	return true;
 }

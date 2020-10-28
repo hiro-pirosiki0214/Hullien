@@ -31,6 +31,7 @@ bool CAlienD::Init()
 	if( SetAnimFrameList()			== false ) return false;
 	if( GetSprite( SPRITE_NAME )	== false ) return false;
 	if( ColliderSetting()			== false ) return false;
+	if( EffectSetting()				== false ) return false;
 	if( m_pLaserBeam->Init()		== false ) return false;
 
 	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0, m_pAC );
