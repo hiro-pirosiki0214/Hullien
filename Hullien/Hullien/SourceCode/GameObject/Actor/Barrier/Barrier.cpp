@@ -73,13 +73,13 @@ void CBarrier::Render()
 	if( m_StaticMesh == nullptr ) return;
 	if( m_pCollManager == nullptr ) return;
 
-	m_StaticMesh->SetPosition( m_vPosition );
-	m_StaticMesh->SetRotation( m_vRotation );
-	m_StaticMesh->SetScale( m_CollSphereRadius );
-	m_StaticMesh->SetColor( { 0.2f, 0.2f, 1.0f, 0.3f } );
-	m_StaticMesh->SetBlend( true );
-	m_StaticMesh->Render( true );
-	m_StaticMesh->SetBlend( false );
+	//m_StaticMesh->SetPosition( m_vPosition );
+	//m_StaticMesh->SetRotation( m_vRotation );
+	//m_StaticMesh->SetScale( m_CollSphereRadius );
+	//m_StaticMesh->SetColor( { 0.2f, 0.2f, 1.0f, 0.3f } );
+	//m_StaticMesh->SetBlend( true );
+	//m_StaticMesh->Render( true );
+	//m_StaticMesh->SetBlend( false );
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
@@ -104,6 +104,7 @@ void CBarrier::EffectRender()
 	if( m_pCollManager == nullptr ) return;
 
 	// エフェクトを描画.
+	m_pEffect->SetScale( 0.3f );
 	m_pEffect->Render();
 
 #if _DEBUG

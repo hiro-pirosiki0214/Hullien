@@ -33,7 +33,7 @@ public:
 private:
 	// シェーダー名.
 	const char* SHADER_NAME = "Data\\Shader\\SceneTexRenderer.hlsl";
-	const float CLEAR_BACK_COLOR[4] = { 1.0f, 1.0f, 1.0f, 1.0f };	// バックカラー.
+	const float CLEAR_BACK_COLOR[4] = { 1.0f, 0.0f, 0.0f, 1.0f };	// バックカラー.
 
 public:
 	//======================================

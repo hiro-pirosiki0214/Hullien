@@ -3,7 +3,7 @@
 
 namespace
 {
-	const float CAMERA_MOVE_SPEED				= 5.0f;		// カメラの移動速度.
+	const float CAMERA_MOVE_SPEED				= 0.1f;		// カメラの移動速度.
 	const float CAMERA_POS_CAMERA_LOOK_DISTANCE = 15.0f;	// カメラと視点の距離.
 	const float MOUSE_MOVE_SPEED				= 0.02f;	// マウスの移動速度.
 	const float RADIAN_THRESHOLD_X_MAX			= 360.0f;	// ラジアンXの最大しきい値.
