@@ -17,7 +17,7 @@ private:
 	const char* SPRITE_MAP_BACK = "minimapsize";		//ミニマップ背景スプライト名.
 	const char* SPRITE_DEFAULT_ICON = "mapiconsize";	//標準アイコンスプライト名.
 	const int	MAP_BACK = 0;							//ミニマップ背景配列番号.
-
+	const float MAP_ICON_POSITION_CORRECTION_VALUE	= 0.55f;
 	// アイコン情報.
 	struct stIconInfo
 	{
@@ -39,9 +39,12 @@ private:
 	{
 		Player = 0,
 		Girl,
-		Alien,
+		Alien_A,
+		Alien_B,
+		Alien_C,
 		Alien_D,
 		Item,
+		MotherShipUFO,
 	}typedef EIconType;
 
 public:

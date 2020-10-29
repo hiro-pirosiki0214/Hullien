@@ -18,6 +18,8 @@ enum class enObjectTagList
 	AttackUpItem,		// 攻撃力UPアイテム.
 	MoveSpeedUpItem,	// 移動速度UPアイテム.
 
+	MotherShipUFO,		// マザーシップUFO.
+
 	LaserBeam,			// レーザービーム.
 	Explosion,			// 爆発.
 	Bariier,			// バリア.

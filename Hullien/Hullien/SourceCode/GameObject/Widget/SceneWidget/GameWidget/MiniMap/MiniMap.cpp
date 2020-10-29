@@ -55,8 +55,8 @@ void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 
 		// 位置情報の更新.
 		if (m_IconList[objCount].Pos == obj.second) return;
-		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - (obj.second.x * 0.25f);
-		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + (obj.second.z * 0.25f);
+		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - (obj.second.x * MAP_ICON_POSITION_CORRECTION_VALUE);
+		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + (obj.second.z * MAP_ICON_POSITION_CORRECTION_VALUE);
 		objCount++;
 	}
 }
@@ -100,7 +100,7 @@ void CMiniMap::SpriteSetting(OBJLIST objList)
 	if (m_ObjPosListCount > objList.size())
 	{
 		m_ObjPosListCount = objList.size();
-		m_IconList.resize(objList.size());
+		m_IconList.resize(objList.size()+1);	// マップ下地の分+1.
 		m_IconList.shrink_to_fit();
 		return;
 	}
@@ -142,9 +142,13 @@ int CMiniMap::SetAnimNumber(const EObjectTag& tag)
 		animNumber = static_cast<int>(EIconType::Girl);
 		break;
 	case EObjectTag::Alien_A:
+		animNumber = static_cast<int>(EIconType::Alien_A);
+		break;
 	case EObjectTag::Alien_B:
+		animNumber = static_cast<int>(EIconType::Alien_B);
+		break;
 	case EObjectTag::Alien_C:
-		animNumber = static_cast<int>(EIconType::Alien);
+		animNumber = static_cast<int>(EIconType::Alien_C);
 		break;
 	case EObjectTag::Alien_D:
 		animNumber = static_cast<int>(EIconType::Alien_D);
@@ -154,6 +158,9 @@ int CMiniMap::SetAnimNumber(const EObjectTag& tag)
 	case EObjectTag::LifeRecoveryItem:
 	case EObjectTag::MoveSpeedUpItem:
 		animNumber = static_cast<int>(EIconType::Item);
+		break;
+	case EObjectTag::MotherShipUFO:
+		animNumber = static_cast<int>(EIconType::MotherShipUFO);
 		break;
 	default:
 		break;

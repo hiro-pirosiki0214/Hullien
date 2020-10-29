@@ -16,6 +16,7 @@ CMotherShipUFO::CMotherShipUFO()
 	, m_IsReturnAlien	( false )
 {
 	m_pUFOLight = std::make_unique<CUFOLight>( 1.9f, 1.5f );
+	m_ObjectTag = EObjectTag::MotherShipUFO;
 }
 
 CMotherShipUFO::~CMotherShipUFO()
