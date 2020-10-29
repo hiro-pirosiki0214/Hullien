@@ -17,7 +17,7 @@ private:
 	const int	GAUGEDELAY_NUM		= 1;		//ƒQ[ƒW‚Ì”z—ñ”Ô†.
 	const int	ONE					= 1;		//ˆê.
 
-	inline static float LIFE_DELAY_SUB_VALUE = 0.01f;
+	inline static float LIFE_DELAY_SUB_VALUE = 0.005f;
 
 public:
 	CLifeGauge();
