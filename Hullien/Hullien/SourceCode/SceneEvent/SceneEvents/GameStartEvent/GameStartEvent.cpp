@@ -111,7 +111,7 @@ void CGameStartEvent::Render()
 	m_pAlienA->Render();		// ‰F’ˆA‚Ì•`‰æ.
 	m_pSpawnUFO->Render();		// UFO‚Ì•`‰æ.
 	m_pMotherShipUFO->Render();
-	m_pBarrier->Render();
+	m_pBarrier->EffectRender();
 
 //	DebugRender();
 

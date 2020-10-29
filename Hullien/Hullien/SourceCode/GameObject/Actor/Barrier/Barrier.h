@@ -8,7 +8,7 @@ class CEventActor;
 class CBarrier : public CActor
 {
 	const char* MODEL_NAME = "Barrier";
-	const char* EFFECT_NAME = "barrier_effect_8";	// エフェクトの名前.
+	const char* EFFECT_NAME = "barrier_effect";	// エフェクトの名前.
 
 	const float COLLISION_SPHERE_RDIUS_MAX = 20.0f;
 	const float COLLISION_SPHERE_RDIUS_ADD_VALUE = 1.0f;

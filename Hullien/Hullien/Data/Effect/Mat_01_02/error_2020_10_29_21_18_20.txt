@@ -1,0 +1,9 @@
+System.IO.DirectoryNotFoundException: パス 'C:\Users\reiya\Downloads\11_02_Sample\11_02_Sample\Texture\Mat_01_02\resources\languages\languages.txt' の一部が見つかりませんでした。
+   場所 System.IO.__Error.WinIOError(Int32 errorCode, String maybeFullPath)
+   場所 System.IO.FileStream.Init(String path, FileMode mode, FileAccess access, Int32 rights, Boolean useRights, FileShare share, Int32 bufferSize, FileOptions options, SECURITY_ATTRIBUTES secAttrs, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   場所 System.IO.FileStream..ctor(String path, FileMode mode, FileAccess access, FileShare share, Int32 bufferSize, FileOptions options, String msgPath, Boolean bFromProxy, Boolean useLongPath, Boolean checkHost)
+   場所 System.IO.StreamReader..ctor(String path, Encoding encoding, Boolean detectEncodingFromByteOrderMarks, Int32 bufferSize, Boolean checkHost)
+   場所 System.IO.StreamReader..ctor(String path, Encoding encoding)
+   場所 System.IO.File.InternalReadAllLines(String path, Encoding encoding)
+   場所 Effekseer.Program.Exec(Boolean gui, String input, String output, String export, String format, Single magnification)
+   場所 Effekseer.Program.Main(String[] args)
