@@ -92,6 +92,7 @@ void CEditor::Update()
 		m_pExplosionEdit->Update();
 		break;
 	case EEditScenes::ItemEdit:
+		m_pItemEdit->Update();
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->Update();
@@ -144,6 +145,7 @@ void CEditor::ModelRender()
 	case EEditScenes::Explosion:
 		break;
 	case EEditScenes::ItemEdit:
+		m_pItemEdit->ModelRender();
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->ModelRender();
@@ -181,6 +183,7 @@ void CEditor::ModelRender()
 		m_pExplosionEdit->ModelRender();
 		break;
 	case EEditScenes::ItemEdit:
+		m_pItemEdit->ModelRender();
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->ModelRender();
@@ -221,6 +224,7 @@ void CEditor::ModelRender()
 		m_pExplosionEdit->ModelRender();
 		break;
 	case EEditScenes::ItemEdit:
+		m_pItemEdit->ModelRender();
 		break;
 	case EEditScenes::MotherShipUFOEdit:
 		m_pMotherShipUFOEdit->ModelRender();
