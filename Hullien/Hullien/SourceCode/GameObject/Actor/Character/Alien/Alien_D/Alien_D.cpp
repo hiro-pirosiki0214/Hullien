@@ -63,6 +63,25 @@ void CAlienD::Render()
 #endif	// #if _DEBUG.
 }
 
+// エフェクトの描画.
+void CAlienD::EffectRender()
+{
+	// ヒット時のエフェクト.
+	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
+	m_pEffects[EEffectNo_Hit]->Render();
+
+	// スポーンエフェクト.
+	m_pEffects[EEffectNo_Spawn]->SetLocation( m_vPosition );
+	m_pEffects[EEffectNo_Spawn]->SetScale( 5.0f );
+	m_pEffects[EEffectNo_Spawn]->Render();
+
+	// 死亡エフェクト.
+	m_pEffects[EEffectNo_Dead]->Render();
+
+	// レーザーエフェクト.
+	m_pLaserBeam->EffectRender();
+}
+
 // 当たり判定関数.
 void CAlienD::Collision( CActor* pActor )
 {
@@ -85,7 +104,7 @@ bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_vPosition		= spawnPos;					// スポーン座標の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
 	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
-	
+	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
 	// レーザーの移動速度の設定.
 	m_pLaserBeam->SetMoveSpped( m_Parameter.LaserMoveSpeed );
 	// レーザーの麻痺時間の設定.

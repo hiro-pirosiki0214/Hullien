@@ -1,6 +1,7 @@
 #include "LaserBeam.h"
 #include "..\..\..\Collider\CollsionManager\CollsionManager.h"
-
+#include "..\..\..\Common\Effect\EffectManager.h"
+#include "..\..\..\Resource\EffectResource\EffectResource.h"
 #include "..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\..\Common\Shader\Trajectory\Trajectory.h"
@@ -8,6 +9,7 @@
 
 CLaserBeam::CLaserBeam()
 	: m_pTrajectory			( nullptr )
+	, m_pEffect				( nullptr )
 	, m_MoveSpeed			( DEFAULT_MOVE_SPEED )
 	, m_ParalysisTime		( DEFAULT_PARALYSIS_TIME )
 	, m_TargetPosition		( 0.0f, 0.0f, 0.0f )
@@ -22,6 +24,7 @@ CLaserBeam::CLaserBeam()
 {
 	m_ObjectTag = EObjectTag::LaserBeam;
 	m_pTrajectory = std::make_unique<CTrajectory>();
+	m_pEffect = std::make_shared<CEffectManager>();
 	m_VertexPointList.reserve( MAX_TRAJECTORY_COUNT );
 }
 
@@ -33,7 +36,8 @@ CLaserBeam::~CLaserBeam()
 // 初期化関数.
 bool CLaserBeam::Init()
 {
-	if( CollisionSetting() == false ) return false; 
+	if( CollisionSetting() == false ) return false;
+	if( GetEffect() == false ) return false; 
 	if( FAILED( m_pTrajectory->Init( nullptr, nullptr ) ) ) return false;
 	return true;
 }
@@ -67,6 +71,7 @@ void CLaserBeam::Update()
 	// カウントがタイム以上になればショットフラグを下す.
 	if( m_FrameCount >= m_FrameTime ){
 		m_IsEndAttack = true;
+		m_pEffect->Play( m_vPosition );
 	}
 }
 
@@ -75,7 +80,7 @@ void CLaserBeam::Render()
 {
 	if( ( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Trans ) &&
 		( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::GBuffer )) return;
-	
+
 	if( m_VertexPointList.size() >= 2 ){
 		m_pTrajectory->Render();
 	}
@@ -86,6 +91,12 @@ void CLaserBeam::Render()
 #if _DEBUG
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
+}
+
+// エフェクトの描画.
+void CLaserBeam::EffectRender()
+{
+	m_pEffect->Render();
 }
 
 // 当たり判定関数.
@@ -246,4 +257,11 @@ void CLaserBeam::CreateVertex()
 	if( m_VertexPointList.size() < 2 ) return;
 
 	m_pTrajectory->CreateVertexBuffer( m_VertexPointList );
+}
+
+// エフェクトの取得.
+bool CLaserBeam::GetEffect()
+{
+	if( m_pEffect->SetEffect( EFFECT_NAME ) == false ) return false;
+	return true;
 }

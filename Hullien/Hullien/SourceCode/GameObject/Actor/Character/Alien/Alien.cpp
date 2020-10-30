@@ -44,6 +44,14 @@ void CAlien::EffectRender()
 	// ヒット時のエフェクト.
 	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
 	m_pEffects[EEffectNo_Hit]->Render();
+
+	// スポーンエフェクト.
+	m_pEffects[EEffectNo_Spawn]->SetLocation( m_vPosition );
+	m_pEffects[EEffectNo_Spawn]->SetScale( 5.0f );
+	m_pEffects[EEffectNo_Spawn]->Render();
+
+	// 死亡エフェクト.
+	m_pEffects[EEffectNo_Dead]->Render();
 }
 
 // 相手座標の設定.
@@ -83,6 +91,7 @@ void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	if( m_LifePoint > 0.0f ) return;
 	// 体力が 0.0以下なら死亡状態へ遷移.
 	m_NowState = EAlienState::Death;
+	m_pEffects[EEffectNo_Dead]->Play( m_vPosition );
 	SetAnimation( EAnimNo_Dead, m_pAC );
 }
 
@@ -441,7 +450,6 @@ bool CAlien::EffectSetting()
 		SPAWN_EFFECT_NAME,		// スポーンエフェクト.
 		DEAD_EFFECT_NAME,		// 死亡エフェクト.
 		ATTACK_EFFECT_NAME,		// 攻撃エフェクト.
-		PARALYSIS_EFFECT_NAME,	// 麻痺エフェクト.
 	};
 	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
 	// メモリの最大値設定.

@@ -94,10 +94,18 @@ void CAlienB::EffectRender()
 	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
 	m_pEffects[EEffectNo_Hit]->Render();
 
+	// スポーンエフェクト.
+	m_pEffects[EEffectNo_Spawn]->SetLocation( m_vPosition );
+	m_pEffects[EEffectNo_Spawn]->Render();
+
+	// 死亡アニメーション.
+	m_pEffects[EEffectNo_Dead]->Render();
+
 	// 攻撃時のエフェクト.
 	m_pEffects[EEffectNo_Attack]->SetLocation( m_vPosition );
 	m_pEffects[EEffectNo_Attack]->SetScale( 0.5f );
 	m_pEffects[EEffectNo_Attack]->Render();
+
 }
 
 // 当たり判定関数.
@@ -130,6 +138,7 @@ bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
 	m_NowState		= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 	m_AnimSpeed		= 0.0;						// アニメーション速度を止める.
+	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
 
@@ -154,8 +163,8 @@ void CAlienB::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	m_NowState = EAlienState::Fright;	// 怯み状態へ遷移.
 	SetAnimation( EAnimNo_Damage, m_pAC );
 	m_AnimSpeed = 0.01;
-	m_pEffects[1]->Stop();
-	m_pEffects[0]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
+	m_pEffects[EEffectNo_Attack]->Stop();
+	m_pEffects[EEffectNo_Hit]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
 	if( m_pArm != nullptr ){
 		// アームを片付けていなければ片付ける.
 		if( m_pArm->IsCleanUp() == false ){
@@ -167,6 +176,7 @@ void CAlienB::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	// 体力が 0.0以下なら死亡状態へ遷移.
 	m_NowState = EAlienState::Death;
 	m_NowMoveState = EMoveState::Wait;
+	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
 	SetAnimation( EAnimNo_Dead, m_pAC );
 }
 
@@ -201,7 +211,7 @@ void CAlienB::Move()
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
 	if( m_NowState == EAlienState::Abduct ) return;
-	m_pEffects[1]->Stop();
+	m_pEffects[EEffectNo_Attack]->Stop();
 	SetAnimation( EAnimNo_Move, m_pAC );
 	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
 	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転へ遷移する.
@@ -245,7 +255,7 @@ void CAlienB::VectorMove( const float& moveSpeed )
 	if( m_IsBarrierHit == true ) return;
 	m_NowMoveState	= EMoveState::Attack;
 	m_RotAccValue	= m_Parameter.AttackRotInitPower;
-	m_pEffects[1]->Play( m_vPosition );
+	m_pEffects[EEffectNo_Attack]->Play( m_vPosition );
 }
 
 // 攻撃関数.

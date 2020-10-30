@@ -25,10 +25,9 @@ class CAlien : public CCharacter
 protected:
 	const float MODEL_ALPHA_MAX			= 1.0f;				// モデルアルファの最大値.
 	const char* HIT_EEFECT_NAME			= "hiteffekt";		// ヒットエフェクト.
-	const char* SPAWN_EFFECT_NAME		= "hiteffekt";		// スポーンエフェクト.
-	const char* DEAD_EFFECT_NAME		= "hiteffekt";		// 死亡エフェクト.
+	const char* SPAWN_EFFECT_NAME		= "b_attackeffkt";	// スポーンエフェクト.
+	const char* DEAD_EFFECT_NAME		= "b_attackeffkt";	// 死亡エフェクト.
 	const char* ATTACK_EFFECT_NAME		= "b_attackeffkt";	// 攻撃エフェクト.
-	const char* PARALYSIS_EFFECT_NAME	= "b_attackeffkt";	// 麻痺エフェクト.
 
 public:
 	// 宇宙人パラメータ.
@@ -156,10 +155,9 @@ protected:
 		EEffectNo_None = -1,
 
 		EEffectNo_Hit,			// ヒット.
-		EEffectNo_Spaen,		// スポーン.
+		EEffectNo_Spawn,		// スポーン.
 		EEffectNo_Dead,			// 死亡.
 		EEffectNo_Attack,		// 攻撃.
-		EEffectNo_Paralysis,	// 麻痺.
 
 		EEffectNo_Max,
 	} typedef EEffectNo;

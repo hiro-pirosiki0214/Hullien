@@ -3,6 +3,7 @@
 #include "..\..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\Arm\Arm.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 #include "..\..\..\..\..\Utility\FileManager\FileManager.h"
 #include "..\..\..\..\..\Editor\EditRenderer\EditRenderer.h"
@@ -93,6 +94,7 @@ bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_LifePoint			= m_Parameter.LifeMax;		// 体力の設定.
 	m_NowState			= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 	m_AnimSpeed			= 0.0;						// アニメーション速度を止める.
+	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
 

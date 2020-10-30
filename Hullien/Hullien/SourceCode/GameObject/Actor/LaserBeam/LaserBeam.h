@@ -5,6 +5,7 @@
 #include <list>
 
 class CTrajectory;	// 軌跡.
+class CEffectManager;
 
 class CLaserBeam : public CActor
 {
@@ -13,6 +14,7 @@ class CLaserBeam : public CActor
 	const int	MAX_TRAJECTORY_COUNT		= 50;	// 軌跡の最大頂点数.
 	const int	TRAJECTORY_TIME				= 1;	// 軌跡の頂点加算時間.
 	const int	TRAJECTORY_END_ADD_VALUE	= 8;	// 軌跡が終了する際の加算値.
+	const char*	EFFECT_NAME					= "b_attackeffkt";
 public:
 	CLaserBeam();
 	virtual ~CLaserBeam();
@@ -23,6 +25,8 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 
@@ -59,8 +63,12 @@ private:
 	// 頂点の作成.
 	void CreateVertex();
 
+	// エフェクトの取得.
+	bool GetEffect();
+
 private:
-	std::unique_ptr<CTrajectory> m_pTrajectory;	// 軌跡描画クラス.
+	std::unique_ptr<CTrajectory>	m_pTrajectory;	// 軌跡描画クラス.
+	std::shared_ptr<CEffectManager>	m_pEffect;		// エフェクト.
 	float		m_MoveSpeed;		// 移動速度.
 	float		m_ParalysisTime;	// 麻痺時間.
 	D3DXVECTOR3	m_TargetPosition;	// 攻撃対象の座標.

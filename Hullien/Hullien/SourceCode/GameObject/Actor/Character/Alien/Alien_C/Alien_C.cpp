@@ -4,6 +4,7 @@
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\..\Arm\Arm.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
 CAlienC::CAlienC()
@@ -93,6 +94,7 @@ bool CAlienC::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 	m_LifePoint		= m_Parameter.LifeMax;	// 体力の設定.
 	m_NowState		= EAlienState::Spawn;	// 現在の状態をスポーンに変更.
 	m_AnimSpeed		= 0.0;					// アニメーション速度を止める.
+	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
 
