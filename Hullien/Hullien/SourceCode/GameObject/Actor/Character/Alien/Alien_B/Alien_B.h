@@ -7,7 +7,6 @@ class CAlienB : public CAlien
 {
 	const char* MODEL_NAME = "b_s";
 	const char* ATTACK_MODEL_NAME	= "b_attack";
-	const char* ATTACK_EFFECT_NAME = "b_attackeffkt";
 
 public:
 	CAlienB();
@@ -57,8 +56,6 @@ private:
 
 	// 当たり判定の設定.
 	bool ColliderSetting();
-	// エフェクトの設定.
-	virtual bool EffectSetting() override;
 	// 攻撃モデルの取得.
 	bool GetAttackModel();
 

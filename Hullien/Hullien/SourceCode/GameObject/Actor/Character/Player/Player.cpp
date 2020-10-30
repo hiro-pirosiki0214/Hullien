@@ -782,6 +782,7 @@ void CPlayer::ParalysisUpdate()
 {
 	if( m_pEffectTimers[player::EEffectTimerNo_Paralysis]->Update() == false ) return;
 	m_AnimSpeed = DEFAULT_ANIM_SPEED;
+	m_pEffects[player::EEffectNo_Paralysis]->Stop();
 }
 
 // 攻撃アニメーション.
@@ -985,6 +986,7 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 	proc( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->SetTime( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->Set();
+	m_pEffects[player::EEffectNo_Paralysis]->Play( m_vPosition );
 	m_AnimSpeed = 0.0;
 	CSoundManager::NoMultipleSEPlay("PlayerVoiceParalysis");
 }
@@ -1035,6 +1037,7 @@ bool CPlayer::EffectSetting()
 		ATTACK_THREE_EFFECT_NAME,
 		SPECIAL_ABILITY_EFFECT_NAME,
 		AVOIDANCE_EFFECT_NAME,
+		PARALYSIS_EFFECT_NAME,
 	};
 	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
 	// メモリの最大値設定.

@@ -41,7 +41,9 @@ CAlien::~CAlien()
 // エフェクトの描画.
 void CAlien::EffectRender()
 {
-	for( auto& e : m_pEffects ) e->Render();
+	// ヒット時のエフェクト.
+	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
+	m_pEffects[EEffectNo_Hit]->Render();
 }
 
 // 相手座標の設定.
@@ -435,7 +437,11 @@ bool CAlien::EffectSetting()
 {
 	const char* effectNames[] =
 	{
-		HIT_EEFECT_NAME,
+		HIT_EEFECT_NAME,		// ヒットエフェクト.
+		SPAWN_EFFECT_NAME,		// スポーンエフェクト.
+		DEAD_EFFECT_NAME,		// 死亡エフェクト.
+		ATTACK_EFFECT_NAME,		// 攻撃エフェクト.
+		PARALYSIS_EFFECT_NAME,	// 麻痺エフェクト.
 	};
 	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
 	// メモリの最大値設定.

@@ -25,6 +25,8 @@ class CPlayer : public CCharacter
 	const char* SPECIAL_ABILITY_EFFECT_NAME	= "uvtest";
 	// 回避エフェクト名.
 	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
+	// 麻痺エフェクト名.
+	const char* PARALYSIS_EFFECT_NAME		= "uvtest";
 
 	// 足のボーン名.
 	const char* RIGHT_FOOT	= "kaito_rifa_2_R_asi_4";

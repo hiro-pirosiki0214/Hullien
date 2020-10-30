@@ -91,12 +91,13 @@ void CAlienB::Render()
 void CAlienB::EffectRender()
 {
 	// ヒット時のエフェクト.
-	m_pEffects[0]->Render();
+	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
+	m_pEffects[EEffectNo_Hit]->Render();
 
 	// 攻撃時のエフェクト.
-	m_pEffects[1]->SetLocation( m_vPosition );
-	m_pEffects[1]->SetScale( 0.5f );
-	m_pEffects[1]->Render();
+	m_pEffects[EEffectNo_Attack]->SetLocation( m_vPosition );
+	m_pEffects[EEffectNo_Attack]->SetScale( 0.5f );
+	m_pEffects[EEffectNo_Attack]->Render();
 }
 
 // 当たり判定関数.
@@ -337,25 +338,6 @@ bool CAlienB::ColliderSetting()
 		m_Parameter.SphereAdjPos,
 		-1.0f,
 		0.0f ) )) return false;
-	return true;
-}
-
-// エフェクトの設定.
-bool CAlienB::EffectSetting()
-{
-	const char* effectNames[] =
-	{
-		HIT_EEFECT_NAME,
-		ATTACK_EFFECT_NAME,
-	};
-	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
-	// メモリの最大値設定.
-	m_pEffects.reserve(effectNum);
-
-	for( int i = 0; i < effectNum; i++ ){
-		m_pEffects.emplace_back( std::make_shared<CEffectManager>() );
-		if( m_pEffects[i]->SetEffect( effectNames[i] ) == false ) return false;
-	}
 	return true;
 }
 

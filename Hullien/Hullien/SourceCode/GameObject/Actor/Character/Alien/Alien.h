@@ -15,16 +15,20 @@ class CAlien : public CCharacter
 	const float TOLERANCE_RADIAN = static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 	const float BARRIER_HIT_MOVE_SPEED = -5.0f;	// バリアと衝突時の移動速度.
 	const float ADD_SCALE_VALUE = 0.03f;
-	const float SCALE_MAX = 1.0f;
-	const float DOWN_SPEED = 0.02f;
-	const int KNOCK_BACK_TIME = 5;
+	const float SCALE_MAX		= 1.0f;
+	const float DOWN_SPEED		= 0.02f;
+	const int KNOCK_BACK_TIME	= 5;
 	const float DEATH_COUNT_ADD_VALUE = 0.005f;
 	const float DEATH_SCALE_SUB_VALUE = 0.005f;
-	const float DEATH_SCALE_PI = 6.0f*static_cast<float>(D3DX_PI);
+	const float DEATH_SCALE_PI	= 6.0f*static_cast<float>(D3DX_PI);
 	const float RISING_MOTHER_SHIP_SCALE_SUB_VALUE = 0.01f;
 protected:
-	const float MODEL_ALPHA_MAX = 1.0f;	// モデルアルファの最大値.
-	const char* HIT_EEFECT_NAME = "hiteffekt";
+	const float MODEL_ALPHA_MAX			= 1.0f;				// モデルアルファの最大値.
+	const char* HIT_EEFECT_NAME			= "hiteffekt";		// ヒットエフェクト.
+	const char* SPAWN_EFFECT_NAME		= "hiteffekt";		// スポーンエフェクト.
+	const char* DEAD_EFFECT_NAME		= "hiteffekt";		// 死亡エフェクト.
+	const char* ATTACK_EFFECT_NAME		= "b_attackeffkt";	// 攻撃エフェクト.
+	const char* PARALYSIS_EFFECT_NAME	= "b_attackeffkt";	// 麻痺エフェクト.
 
 public:
 	// 宇宙人パラメータ.
@@ -145,6 +149,20 @@ protected:
 
 		Max,
 	} typedef EMoveState;
+
+	// エフェクト番号.
+	enum enEffectNo
+	{
+		EEffectNo_None = -1,
+
+		EEffectNo_Hit,			// ヒット.
+		EEffectNo_Spaen,		// スポーン.
+		EEffectNo_Dead,			// 死亡.
+		EEffectNo_Attack,		// 攻撃.
+		EEffectNo_Paralysis,	// 麻痺.
+
+		EEffectNo_Max,
+	} typedef EEffectNo;
 
 public:
 	CAlien();

@@ -93,6 +93,7 @@ enum enEffectNo
 	EEffectNo_AttackThree,		// UŒ‚3.
 	EEffectNo_SP,				// “Áê”\—Í.
 	EEffectNo_Avoidance,		// ‰ñ”ğ.
+	EEffectNo_Paralysis,		// –ƒáƒ.
 	
 	EEffectNo_Max,
 } typedef EEffectNo;
