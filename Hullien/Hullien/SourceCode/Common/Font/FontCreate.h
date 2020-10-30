@@ -6,8 +6,9 @@
 
 class CFontCreate
 {
-	const char* FONT_PATH = "Data\\Font\\mplus-1p-medium.ttf";
-	const int FONT_BMP_SIZE = 256;
+	const char*	FONT_PATH = "Data\\Font\\UDDigiKyokashoN-B.ttf";
+	const char*	FONT_NAME = "UD ÉfÉWÉ^Éã ã≥â»èëëÃ N-B";
+	const int	FONT_BMP_SIZE = 256;
 public:
 	CFontCreate( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
 	~CFontCreate();

@@ -7,6 +7,7 @@
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 CAlienD::CAlienD()
 	: m_pAttackRangeSprite	( nullptr )
@@ -30,6 +31,7 @@ bool CAlienD::Init()
 	if( GetAnimationController()	== false ) return false;
 	if( SetAnimFrameList()			== false ) return false;
 	if( GetSprite( SPRITE_NAME )	== false ) return false;
+	if( EffectSetting()				== false ) return false;
 	if( ColliderSetting()			== false ) return false;
 	if( EffectSetting()				== false ) return false;
 	if( m_pLaserBeam->Init()		== false ) return false;

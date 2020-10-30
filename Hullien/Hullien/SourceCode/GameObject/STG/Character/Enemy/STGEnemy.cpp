@@ -86,7 +86,6 @@ void STG::CEnemy::Render()
 	m_pFont->SetScale( m_vScale );
 	m_pFont->Render( PARAMETER.Text );
 
-
 #ifdef _DEBUG
 	m_pCollManager->DebugRender();
 #endif	// #ifdef _DEBUG.
