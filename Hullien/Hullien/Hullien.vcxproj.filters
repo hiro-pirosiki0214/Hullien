@@ -336,5 +336,12 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
+    <ClInclude Include="SourceCode\Main\Resource\resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Icon.ico" />
   </ItemGroup>
 </Project>

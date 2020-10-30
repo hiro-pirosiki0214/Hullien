@@ -23,6 +23,8 @@
 #include "..\Common\Font\FontCreate.h"
 #include "..\Common\Font\Font.h"
 
+#include "Resource/resource.h"
+
 LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 
 CMain::CMain()
@@ -178,11 +180,11 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 	wc.style			= windowStyle;
 	wc.lpfnWndProc		= WndProc;
 	wc.hInstance		= hInstance;
-	wc.hIcon			= LoadIcon( nullptr, IDI_APPLICATION );
+	wc.hIcon			= LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) );
 	wc.hCursor			= LoadCursor( nullptr, IDC_ARROW );
 	wc.hbrBackground	= (HBRUSH)RGB(0, 0, 0);
 	wc.lpszClassName	= APP_NAME.c_str();
-	wc.hIconSm			= LoadIcon( nullptr, IDI_APPLICATION );
+	wc.hIconSm			= LoadIcon( hInstance, IDI_APPLICATION );
 
 	// ウィンドウクラスをWindowsに登録.
 	if( !RegisterClassEx( &wc ) ){

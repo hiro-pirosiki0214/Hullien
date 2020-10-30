@@ -12,7 +12,8 @@
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
 CAlienB::CAlienB()
-	: m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
+	: m_pAttackMesh		( nullptr )
+	, m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
 	, m_HasAimPlayer	( false )
 	, m_OldHasAimPlayer	( false )
 	, m_RotAccValue		( 0.0f )
@@ -30,6 +31,7 @@ CAlienB::~CAlienB()
 bool CAlienB::Init()
 {
 	if( GetModel( MODEL_NAME )		== false ) return false;
+	if( GetAttackModel()			== false ) return false;
 	if( GetAnimationController()	== false ) return false;
 	if( SetAnimFrameList()			== false ) return false;
 	if( ColliderSetting()			== false ) return false;
@@ -57,16 +59,26 @@ void CAlienB::Render()
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
 	if( m_pSkinMesh == nullptr ) return;
+	if( m_pAttackMesh == nullptr ) return;
 
-	m_pSkinMesh->SetPosition( m_vPosition );
-	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vScale );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
-	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pSkinMesh->Render( m_pAC );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-
+	if( m_NowMoveState == EMoveState::Attack ){
+		m_pAttackMesh->SetPosition( m_vPosition );
+		m_pAttackMesh->SetRotation( m_vRotation );
+		m_pAttackMesh->SetScale( m_vScale );
+		m_pAttackMesh->SetColor( { 0.8f, 0.2f, 0.2f, 1.0f } );
+		m_pAttackMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+		m_pAttackMesh->Render( m_pAC );
+		m_pAttackMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	} else {
+		m_pSkinMesh->SetPosition( m_vPosition );
+		m_pSkinMesh->SetRotation( m_vRotation );
+		m_pSkinMesh->SetScale( m_vScale );
+		m_pSkinMesh->SetColor( { 0.8f, 0.2f, 0.2f, 1.0f } );
+		m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
+		m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+		m_pSkinMesh->Render( m_pAC );
+		m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	}
 
 	m_pArm->Render();	// アームの描画.
 #if _DEBUG
@@ -153,6 +165,7 @@ void CAlienB::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	if( m_LifePoint > 0.0f ) return;
 	// 体力が 0.0以下なら死亡状態へ遷移.
 	m_NowState = EAlienState::Death;
+	m_NowMoveState = EMoveState::Wait;
 	SetAnimation( EAnimNo_Dead, m_pAC );
 }
 
@@ -343,5 +356,17 @@ bool CAlienB::EffectSetting()
 		m_pEffects.emplace_back( std::make_shared<CEffectManager>() );
 		if( m_pEffects[i]->SetEffect( effectNames[i] ) == false ) return false;
 	}
+	return true;
+}
+
+// 攻撃モデルの取得.
+bool CAlienB::GetAttackModel()
+{
+	// 既に読み込めていたら終了.
+	if( m_pAttackMesh != nullptr ) return true;
+	// モデルの取得.
+	CMeshResorce::GetStatic( m_pAttackMesh, ATTACK_MODEL_NAME );
+	// モデルが読み込めてなければ false.
+	if( m_pAttackMesh == nullptr ) return false;
 	return true;
 }

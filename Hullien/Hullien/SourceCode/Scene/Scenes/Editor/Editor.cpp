@@ -139,6 +139,7 @@ void CEditor::ModelRender()
 		m_pSpawnEdit->ModelRender();
 		break;
 	case EEditScenes::AlienParam:
+		m_pAlienParamEdit->ModelRender();
 		break;
 	case EEditScenes::Explosion:
 		break;
@@ -174,6 +175,7 @@ void CEditor::ModelRender()
 		m_pSpawnEdit->ModelRender();
 		break;
 	case EEditScenes::AlienParam:
+		m_pAlienParamEdit->ModelRender();
 		break;
 	case EEditScenes::Explosion:
 		m_pExplosionEdit->ModelRender();
@@ -213,6 +215,7 @@ void CEditor::ModelRender()
 		m_pSpawnEdit->ModelRender();
 		break;
 	case EEditScenes::AlienParam:
+		m_pAlienParamEdit->ModelRender();
 		break;
 	case EEditScenes::Explosion:
 		m_pExplosionEdit->ModelRender();

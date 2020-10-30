@@ -6,6 +6,7 @@
 class CAlienB : public CAlien
 {
 	const char* MODEL_NAME = "b_s";
+	const char* ATTACK_MODEL_NAME	= "b_attack";
 	const char* ATTACK_EFFECT_NAME = "b_attackeffkt";
 
 public:
@@ -58,13 +59,16 @@ private:
 	bool ColliderSetting();
 	// エフェクトの設定.
 	virtual bool EffectSetting() override;
+	// 攻撃モデルの取得.
+	bool GetAttackModel();
 
 private:
+	std::shared_ptr<CDX9StaticMesh>	m_pAttackMesh;
 	D3DXVECTOR3 m_vPlayerPos;	// プレイヤーの座標.
 	bool	m_HasAimPlayer;		// プレイヤーを狙うかどうか.
 	bool	m_OldHasAimPlayer;	// 前回プレイヤーを狙っていたか.
 	float	m_RotAccValue;		// 回転加速値.
-	bool	m_IsAttackSE;			//攻撃SEを鳴らすか.
+	bool	m_IsAttackSE;		//攻撃SEを鳴らすか.
 };
 
 #endif	// #ifndef ALIEN_B_H.

@@ -4,15 +4,29 @@
 #include "..\..\Resource\MeshResource\MeshResource.h"
 #include "..\..\Utility\FileManager\FileManager.h"
 #include "..\..\GameObject\Actor\Character\Alien\AlienList.h"
+#include "..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
+#include "..\..\Resource\MeshResource\MeshResource.h"
 
 #include <filesystem>
 
 namespace fs = std::filesystem;
 
 CAlienParamEdit::CAlienParamEdit()
-	: m_AlienParamList	()
-	, m_Index			( 0 )
+	: m_AlienParamList		()
+	, m_pSkinMeshs			()
+	, m_AlienPathList		()
+	, m_AlienNameList		()
+	, m_AlienNameColorList	( 4 )
+	, m_Index				( 0 )
+
 {
+	m_AlienNameColorList =
+	{
+		D3DXVECTOR4( 0.2f, 0.8f, 0.2f, 1.0f ),
+		D3DXVECTOR4( 0.8f, 0.2f, 0.2f, 1.0f ),
+		D3DXVECTOR4( 0.2f, 0.2f, 0.8f, 1.0f ),
+		D3DXVECTOR4( 0.8f, 0.8f, 0.2f, 1.0f ),
+	};
 }
 
 CAlienParamEdit::~CAlienParamEdit()
@@ -23,6 +37,7 @@ CAlienParamEdit::~CAlienParamEdit()
 bool CAlienParamEdit::Init()
 {
 	if( FileAllReading() == false ) return false;
+	if( GetModel() == false ) return false;
 	return true;
 }
 
@@ -54,6 +69,16 @@ void CAlienParamEdit::Render()
 // モデルの描画.
 void CAlienParamEdit::ModelRender()
 {
+	if( m_pSkinMeshs.at(m_Index) == nullptr ) return;
+
+	m_pSkinMeshs[m_Index]->SetPosition( { 0.0f, 0.0f, 0.0f } );
+	m_pSkinMeshs[m_Index]->SetRotation( { 0.0f, 0.0f, 0.0f } );
+	m_pSkinMeshs[m_Index]->SetScale( { 1.0f, 1.0f, 1.0f } );
+	m_pSkinMeshs[m_Index]->SetColor( m_AlienNameColorList[m_Index] );
+	m_pSkinMeshs[m_Index]->SetAnimSpeed( 0.01 );
+	m_pSkinMeshs[m_Index]->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pSkinMeshs[m_Index]->Render();
+	m_pSkinMeshs[m_Index]->SetRasterizerState( CCommon::enRS_STATE::None );
 }
 
 // 全ファイルの読み込み.
@@ -92,12 +117,6 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	if( m_AlienParamList.empty() == true ) return;
 
 	auto& s = m_AlienParamList[index];
-	bool hasMovedSillider = false;
-	auto checkSetIndex = [&]()
-	{
-		if (hasMovedSillider == false) return;
-		m_Index = index;
-	};
 
 	EAlienList alienType = static_cast<EAlienList>(index);
 
@@ -115,9 +134,9 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 
 	switch( alienType )
 	{
-	case EAlienList::A:
-		break;
 	case EAlienList::Ada:
+	case EAlienList::A:
+		m_Index = index / 2;
 		break;
 	case EAlienList::B:
 	case EAlienList::Bda:
@@ -128,8 +147,10 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 		ImGui::InputFloat( u8"攻撃時の回転加算値", &s.AttackRotAddValue );
 		ImGui::InputFloat( u8"攻撃移動速度", &s.AttackMoveSpeed );
 		ImGui::InputFloat( u8"攻撃移動範囲", &s.AttackMoveRange );
+		m_Index = index / 2;
 		break;
 	case EAlienList::C:
+		m_Index = index / 2;
 		break;
 	case EAlienList::D:
 		ImGui::InputFloat( u8"レーザーの移動速度", &s.LaserMoveSpeed );
@@ -143,6 +164,7 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 		ImGui::InputFloat( u8"ベジェ曲線の一つ目操作座標のy座標の距離", &s.ControlPointOneLenghtY );
 		ImGui::InputFloat( u8"ベジェ曲線の二つ目操作座標の距離", &s.ControlPointTwoLenght );
 		ImGui::InputFloat( u8"ベジェ曲線の二つ目操作座標のy座標の距離", &s.ControlPointTwoLenghtY );
+		m_Index = index / 2+1;
 		break;
 	default:
 		break;
@@ -164,4 +186,28 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 
 
 	ImGui::PopItemWidth();
+}
+
+// モデルの初期化.
+bool CAlienParamEdit::GetModel()
+{
+	//読み込むモデル名設定.
+	const char* modelNames[] =
+	{
+		A_MODEL_NAME,
+		B_MODEL_NAME,
+		C_MODEL_NAME,
+		D_MODEL_NAME,
+	};
+	const int modelMax = sizeof(modelNames) / sizeof(modelNames[0]);
+
+	// 各情報の設定.
+	for( int no = 0; no < modelMax; no++ )
+	{
+		m_pSkinMeshs.emplace_back();
+		if( CMeshResorce::GetSkin( m_pSkinMeshs[no], modelNames[no] ) == false ) return false;
+		m_pSkinMeshs.back()->ChangeAnimSet_StartPos( 0, 0.0 );
+	}
+
+	return true;
 }

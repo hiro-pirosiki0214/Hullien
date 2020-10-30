@@ -58,7 +58,7 @@ void CAlienC::Render()
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
 	m_pSkinMesh->SetScale( m_vScale );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
+	m_pSkinMesh->SetColor( { 0.2f, 0.2f, 0.8f, 1.0f } );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
 	m_pSkinMesh->Render( m_pAC );
