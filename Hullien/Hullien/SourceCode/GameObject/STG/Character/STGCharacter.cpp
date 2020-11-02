@@ -4,6 +4,7 @@
 STG::CCharacter::CCharacter()
 	: m_pBullets	()
 	, m_ShotCount	( 0 )
+	, m_LifePoint	( 0.0f )
 {
 }
 

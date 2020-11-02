@@ -100,7 +100,6 @@ namespace STG
 		D3DXVECTOR3	m_FontRotation;			// フォントの回転値.
 		EState		m_NowState;				// 現在の状態.
 		float		m_MoveSpeed;			// 移動速度.
-		float		m_LifePoint;			// 体力.
 		float		m_MoveingDistance;		// 移動距離.
 		float		m_MoveingDistanceMax;	// 移動距離.
 		int			m_SpawnCount;			// スポーンカウント.

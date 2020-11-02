@@ -8,9 +8,11 @@
 STG::CPlayer::CPlayer()
 	: m_Direction		( 0.0f, 0.0f, 0.0f )
 	, m_SpawnMoveSpeed	( MOVE_SPEED )
+	, m_IsDead			( false )
 {
 	m_pCollManager	= std::make_shared<CCollisionManager>();
 	m_vPosition		= INIT_POSITION;
+	m_LifePoint		= LIFE_POINT_MAX;
 }
 
 STG::CPlayer::~CPlayer()
@@ -32,6 +34,7 @@ void STG::CPlayer::Update()
 {
 	SpawnMove();	// スポーン移動.
 	Move();			// 移動.
+	DeadUpdate();	// 死亡処理.
 	BulletUpdate();	// 弾の更新.
 }
 
@@ -39,8 +42,8 @@ void STG::CPlayer::Update()
 void STG::CPlayer::Render()
 {
 	if( m_pStaticMesh == nullptr ) return;
-	MeshRender();	// メッシュの描画.
-	BulletRender();	// 弾の描画.
+	MeshRender();					// メッシュの描画.
+	BulletRender( BULLET_COLOR );	// 弾の描画.
 
 #ifdef _DEBUG
 	m_pCollManager->DebugRender();
@@ -64,7 +67,7 @@ void STG::CPlayer::SpawnMove()
 {
 	if( m_IsActive == true ) return;
 	m_vPosition.z -= m_SpawnMoveSpeed;
-	if( m_vPosition.z <= 40.0f ) m_SpawnMoveSpeed -= 0.005f;
+	if( m_vPosition.z <= SPAWN_END_POS_Z ) m_SpawnMoveSpeed -= SPAWN_SPEED_SUB;
 	if( m_SpawnMoveSpeed > 0.0f ) return;
 	m_IsActive = true;
 }
@@ -72,9 +75,31 @@ void STG::CPlayer::SpawnMove()
 // 移動関数.
 void STG::CPlayer::Move()
 {
+	if( m_IsActive == false ) return;
+	if( m_IsDead == true ) return;
 	m_vPosition.x -= m_MoveVector.x * MOVE_SPEED;
 	m_vPosition.z -= m_MoveVector.z * MOVE_SPEED;
-	OutDispMove();
+	OutDispMove();	// 画面外に行った際の処理.
+}
+
+// 死亡後処理.
+void STG::CPlayer::DeadUpdate()
+{
+	if( m_IsDead == false ) return;
+
+	m_vScale.x -= DEAD_SPEED;
+	m_vScale.y -= DEAD_SPEED;
+	m_vScale.z -= DEAD_SPEED;
+	m_vRotation.y += DEAD_SPEED;
+
+	if( m_vScale.x > 0.0f ) return;
+	m_vRotation.y		= 0.0f;
+	m_vScale			= { 1.0f, 1.0f, 1.0f };
+	m_IsDead			= false;
+	m_IsActive			= false;
+	m_SpawnMoveSpeed	= MOVE_SPEED;
+	m_LifePoint			= LIFE_POINT_MAX;
+	m_vPosition			= INIT_POSITION;
 }
 
 // 操作関数.
@@ -107,6 +132,7 @@ void STG::CPlayer::Controller()
 		m_Direction.z >= IDLE_THUMB_MAX || IDLE_THUMB_MIN >= m_Direction.z ){
 		m_vRotation.y = atan2( m_Direction.x, m_Direction.z );	// 回転値を取得.
 	}
+
 	// 弾を撃つ操作.
 	ShotController();
 }
@@ -132,8 +158,10 @@ void STG::CPlayer::ShotController()
 // ライフ計算関数.
 void STG::CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 {
-	float life = 0.0f;
-	proc( life );
+	proc( m_LifePoint );
+
+	if( m_LifePoint > 0.0f ) return;
+	m_IsDead = true;
 }
 
 // 画面外に行った時の処理.

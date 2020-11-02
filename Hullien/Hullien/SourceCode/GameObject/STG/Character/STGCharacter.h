@@ -32,7 +32,8 @@ namespace STG
 
 	protected:
 		std::vector<std::shared_ptr<CBullet>> m_pBullets;
-		int m_ShotCount;
+		int			m_ShotCount;	// ’e‚ÌŒ‚‚Á‚½”.
+		float		m_LifePoint;	// ‘Ì—Í.
 	};
 
 };
