@@ -19,7 +19,8 @@ Texture2D g_ToonMap		: register(t5); // toonシェーダー用のテクスチャ.
 Texture2D g_FogTexture	: register(t6); // フォグ用のテクスチャ.
 // サンプラ.
 SamplerState g_SamLinear		: register(s0); //サンプラーはレジスターs(n).
-SamplerState g_ShadowSamLinear	: register(s1);
+SamplerState g_ToonSamLinear	: register(s1);
+SamplerState g_ShadowSamLinear	: register(s2);
 
 struct FOG
 {
@@ -243,7 +244,7 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 	p = p * 0.5f + 0.5f;
 	p = p * p;
 	// 計算結果よりトゥーンシェーダー用のテクスチャから色をフェッチする
-	float4 toonColor = g_ToonMap.Sample(g_SamLinear, float2(p, 0.0f));
+	float4 toonColor = g_ToonMap.Sample(g_ToonSamLinear, float2(p, 0.0f));
 	color *= toonColor * g_fIntensity.x;
 	
 	//-----高さフォグ処理------.

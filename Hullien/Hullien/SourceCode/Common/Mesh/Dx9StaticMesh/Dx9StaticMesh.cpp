@@ -26,6 +26,7 @@ CDX9StaticMesh::CDX9StaticMesh()
 	, m_pVertexBuffer(nullptr)
 	, m_ppIndexBuffer(nullptr)
 	, m_pSampleLinear(nullptr)
+	, m_pToonSampleLinear(nullptr)
 	, m_pShadowMapSampler(nullptr)
 
 	, m_pMesh(nullptr)
@@ -283,8 +284,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 	ZeroMemory(&samDesc, sizeof(samDesc));
 	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;//ØÆ±Ì¨ÙÀ(üŒ`•âŠÔ).
 													 //POINT:‚‘¬‚¾‚ª‘e‚¢.
-	samDesc.AddressU
-		= D3D11_TEXTURE_ADDRESS_WRAP;//×¯Ëßİ¸ŞÓ°ÄŞ(WRAP:ŒJ‚è•Ô‚µ).
+	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;//×¯Ëßİ¸ŞÓ°ÄŞ(WRAP:ŒJ‚è•Ô‚µ).
 	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	//MIRROR: ”½“]ŒJ‚è•Ô‚µ.
@@ -295,6 +295,16 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		&samDesc, &m_pSampleLinear)))//(out)»İÌß×.
 	{
 		_ASSERT_EXPR(false, L"»İÌß×ì¬¸”s");
+		return E_FAIL;
+	}
+
+	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	if (FAILED(
+		m_pDevice11->CreateSamplerState(&samDesc, &m_pToonSampleLinear)))
+	{
 		return E_FAIL;
 	}
 
@@ -346,6 +356,7 @@ void CDX9StaticMesh::Release()
 	//Ò¯¼­ÃŞ°À‚Ì‰ğ•ú.
 	SAFE_RELEASE(m_pMesh);
 	SAFE_RELEASE(m_pShadowMapSampler);
+	SAFE_RELEASE(m_pToonSampleLinear);
 	SAFE_RELEASE(m_pFogTexture);
 	SAFE_RELEASE(m_pToonTexture);
 	SAFE_RELEASE(m_pSampleLinear);
@@ -590,8 +601,8 @@ void CDX9StaticMesh::Render( const bool& isTrans )
 	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
-	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
-
+	m_pContext11->PSSetSamplers( 1, 1, &m_pToonSampleLinear );
+	m_pContext11->PSSetSamplers( 2, 1, &m_pShadowMapSampler );
 	//¼ª°ÀŞ‚Ìºİ½ÀİÄÊŞ¯Ì§‚ÉŠeíÃŞ°À‚ğ“n‚·.
 	D3D11_MAPPED_SUBRESOURCE pData;
 	//ÊŞ¯Ì§“à‚ÌÃŞ°À‚Ì‘‚«Š·‚¦ŠJn‚ÉMap.

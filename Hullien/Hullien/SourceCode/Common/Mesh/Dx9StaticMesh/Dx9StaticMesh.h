@@ -125,7 +125,8 @@ private:
 	ID3D11Buffer*				m_pVertexBuffer;	//頂点ﾊﾞｯﾌｧ.
 	ID3D11Buffer**				m_ppIndexBuffer;	//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ.
 	ID3D11SamplerState*			m_pSampleLinear;	//ｻﾝﾌﾟﾗ:ﾃｸｽﾁｬに各種ﾌｨﾙﾀをかける.
-	ID3D11SamplerState*			 m_pShadowMapSampler;// シャドウマップ用サンプラー.
+	ID3D11SamplerState*			m_pToonSampleLinear;
+	ID3D11SamplerState*			m_pShadowMapSampler;// シャドウマップ用サンプラー.
 
 	LPD3DXMESH			m_pMesh;		//ﾒｯｼｭｵﾌﾞｼﾞｪｸﾄ.
 	LPD3DXMESH			m_pMeshForRay;	//ﾚｲとﾒｯｼｭ用.

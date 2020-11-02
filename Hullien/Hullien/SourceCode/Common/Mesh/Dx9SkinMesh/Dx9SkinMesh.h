@@ -154,6 +154,7 @@ private:
 
 	//Dx11.
 	ID3D11SamplerState*		m_pSampleLinear;
+	ID3D11SamplerState*		m_pToonSampleLinear;
 	ID3D11SamplerState*		m_pShadowMapSampler;	// シャドウマップ用サンプラー.
 	ID3D11VertexShader*		m_pVertexShader;
 	ID3D11PixelShader*		m_pPixelShader;
