@@ -65,17 +65,6 @@ void CRotLookAtCenter::DegreeVerticalMove( const float& movePower )
 		m_VerticalMin, m_VerticalMin );
 }
 
-// カメラ座標取得関数.
-D3DXVECTOR3 CRotLookAtCenter::GetPosition() const
-{
-	D3DXVECTOR3 pos;	// 本来の座標.
-	// カメラ位置を算出.
-	pos.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
-	pos.y = m_vPosition.y;
-	pos.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
-	return pos;
-}
-
 //-------------------------------.
 // カメラと注視点の長さ設定.
 //-------------------------------.

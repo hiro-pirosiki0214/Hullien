@@ -3,18 +3,22 @@
 
 #include <memory>
 
+#include "..\..\..\Global.h"
+
 namespace STG
 {
 	class CPlayer;			// プレイヤークラス.
 	class CEnemyManager;	// 敵管理クラス.
 }
-class CCamera;
+class CSkyDome;	// 背景.
+class CCamera;	// カメラ.
 
 class CSTGManager
 {
 
-	const float STG_END_FRAME = 30*60;
-
+	const float STG_END_FRAME	= 30*60;	// STGの終了フレーム.
+	const D3DXVECTOR3 CAMERA_POSITION		= { 0.0f, 150.0f, 10.0f };
+	const D3DXVECTOR3 CAMERA_LOOK_POSITION	= { 0.0f, 0.0f, 0.0f };
 public:
 	CSTGManager();
 	~CSTGManager();
@@ -30,6 +34,7 @@ public:
 
 private:
 	std::shared_ptr<CCamera>			m_pCamera;
+	std::unique_ptr<CSkyDome>			m_pSkyDome;			// 背景.
 	std::shared_ptr<STG::CPlayer>		m_pPlayer;			// プレイヤークラス.
 	std::unique_ptr<STG::CEnemyManager>	m_pEnemyManager;	// 敵管理クラス.
 	float	m_STGEndFrame;	// STGの終了フレーム.

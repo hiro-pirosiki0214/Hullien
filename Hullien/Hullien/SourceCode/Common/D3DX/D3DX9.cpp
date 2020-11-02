@@ -1,9 +1,8 @@
 #include "D3DX9.h"
 
-LPDIRECT3DDEVICE9 CDirectX9::m_pDevice9 = nullptr;
-
 CDirectX9::CDirectX9()
-	: m_hWnd	( nullptr )
+	: m_hWnd		( nullptr )
+	, m_pDevice9	( nullptr )
 {
 }
 
@@ -12,13 +11,23 @@ CDirectX9::~CDirectX9()
 }
 
 //-----------------------------------.
+// インスタンスの取得.
+//-----------------------------------.
+CDirectX9* CDirectX9::GetInstance()
+{
+	static std::unique_ptr<CDirectX9> pInstance = 
+		std::make_unique<CDirectX9>();
+	return pInstance.get();
+}
+
+//-----------------------------------.
 // DirectX9の構築.
 //-----------------------------------.
 HRESULT CDirectX9::Create( HWND hWnd )
 {
-	m_hWnd = hWnd;
+	GetInstance()->m_hWnd = hWnd;
 
-	if( FAILED( CreateDevice9() )) return E_FAIL;
+	if( FAILED( GetInstance()->CreateDevice9() )) return E_FAIL;
 
 	return S_OK;
 }
@@ -26,10 +35,12 @@ HRESULT CDirectX9::Create( HWND hWnd )
 //-----------------------------------.
 // DirectX9の解放.
 //-----------------------------------.
-void CDirectX9::Release()
+HRESULT CDirectX9::Release()
 {
-	SAFE_RELEASE( m_pDevice9 );
-	m_hWnd = nullptr;
+	SAFE_RELEASE( GetInstance()->m_pDevice9 );
+	GetInstance()->m_hWnd = nullptr;
+
+	return S_OK;
 }
 
 //-----------------------------------.

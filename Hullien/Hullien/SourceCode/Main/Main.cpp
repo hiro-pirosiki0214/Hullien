@@ -29,14 +29,12 @@ LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 
 CMain::CMain()
 	: m_hWnd			( nullptr )
-	, m_pDirectX9		( nullptr )
 	, m_pFrameRate		( nullptr )
 	, m_pCamera			( nullptr )
 	, m_pLight			( nullptr )
 	, m_pSceneManager	( nullptr )
 	, m_pLoadManager	( nullptr )
 {
-	m_pDirectX9		= std::make_unique<CDirectX9>();
 	m_pFrameRate	= std::make_unique<CFrameRate>( FPS );
 	m_pCamera		= std::make_shared<CCamera>();
 	m_pLight		= std::make_shared<CLightBase>();
@@ -44,8 +42,8 @@ CMain::CMain()
 	m_pLoadManager	= std::make_unique<CLoadManager>();
 
 	// カメラの初期化.
-	m_pCamera->SetPosition( D3DXVECTOR3( 0.0f, 1.0f, 30.0f ) );		// 座標.
-	m_pCamera->SetLookPosition( D3DXVECTOR3( 0.0f, 2.0f, 0.0f ) );	// 視点座標.
+	m_pCamera->SetPosition( D3DXVECTOR3( 0.0f, 10.0f, 10.0f ) );		// 座標.
+	m_pCamera->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );	// 視点座標.
 	// カメラのセット.
 	CCameraManager::SetCamera( m_pCamera );
 
@@ -68,7 +66,7 @@ CMain::~CMain()
 HRESULT CMain::Init()
 {
 	// DirectX9の構築.
-	if( FAILED( m_pDirectX9->Create( m_hWnd ) )) return E_FAIL;
+	if( FAILED( CDirectX9::Create( m_hWnd ) )) return E_FAIL;
 	// DirectX11の構築.
 	if( FAILED( CDirectX11::Create( m_hWnd ) )) return E_FAIL;
 	// シーンテクスチャの初期化.
@@ -98,7 +96,7 @@ void CMain::Release()
 	CSoundManager::Release();
 	CImGuiManager::Release();
 	CDirectX11::Release();
-	m_pDirectX9->Release();
+	CDirectX9::Release();
 }
 
 //====================================.
@@ -114,7 +112,7 @@ HRESULT CMain::Load()
 	m_pLoadManager->LoadResource( m_hWnd,
 		CDirectX11::GetDevice(), 
 		CDirectX11::GetContext(), 
-		m_pDirectX9->GetDevice() );
+		CDirectX9::GetDevice() );
 
 	return S_OK;
 }

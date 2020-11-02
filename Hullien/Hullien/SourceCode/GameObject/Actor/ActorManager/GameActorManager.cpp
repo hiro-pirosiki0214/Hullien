@@ -65,7 +65,7 @@ void CGameActorManager::Update()
 	m_ObjPosListCount = 0;		// カウントの初期化.
 	m_ObjPositionList.clear();	// リストの初期化.
 
-	m_pSkyDome->SetPosition( m_pPlayer->GetPosition() );
+//	m_pSkyDome->SetPosition( m_pPlayer->GetPosition() );
 
 	// プレイヤーの更新.
 	m_pPlayer->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.

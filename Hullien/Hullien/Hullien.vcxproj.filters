@@ -11,6 +11,7 @@
     <FxCompile Include="Data\Shader\SceneTexRenderer.hlsl" />
     <FxCompile Include="Data\Shader\Trajectory.hlsl" />
     <FxCompile Include="Data\Shader\FXAA.hlsl" />
+    <FxCompile Include="Data\Shader\SkyDome.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\ImGui\imgui.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\UFOLight\UFOLight.cpp" />
+    <ClCompile Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -337,6 +339,7 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
+    <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

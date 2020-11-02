@@ -47,7 +47,6 @@ void CAlien::EffectRender()
 
 	// スポーンエフェクト.
 	m_pEffects[EEffectNo_Spawn]->SetLocation( m_vPosition );
-	m_pEffects[EEffectNo_Spawn]->SetScale( 5.0f );
 	m_pEffects[EEffectNo_Spawn]->Render();
 
 	// 死亡エフェクト.

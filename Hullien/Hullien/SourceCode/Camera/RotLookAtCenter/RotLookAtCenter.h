@@ -28,8 +28,6 @@ public:  //------ 関数 -------.
 	void DegreeVerticalMove( const float& movePower );
 	// ラジアンの取得関数.
 	float GetRadianX() const { return m_vDegree.x; }
-	// カメラ座標取得関数.
-	virtual D3DXVECTOR3 GetPosition() const override;
 	// カメラと注視点の長さ設定.
 	void SetLength( const float& length );
 	// 高さの設定.
