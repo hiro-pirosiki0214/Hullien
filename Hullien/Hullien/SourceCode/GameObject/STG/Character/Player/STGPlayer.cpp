@@ -74,6 +74,7 @@ void STG::CPlayer::Move()
 {
 	m_vPosition.x -= m_MoveVector.x * MOVE_SPEED;
 	m_vPosition.z -= m_MoveVector.z * MOVE_SPEED;
+	OutDispMove();
 }
 
 // ‘€ìŠÖ”.
@@ -133,6 +134,17 @@ void STG::CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 {
 	float life = 0.0f;
 	proc( life );
+}
+
+// ‰æ–ÊŠO‚És‚Á‚½‚Ìˆ—.
+void STG::CPlayer::OutDispMove()
+{
+	if( OUT_POSITION_X < m_vPosition.x || m_vPosition.x < -OUT_POSITION_X ){
+		m_vPosition.x += m_MoveVector.x * MOVE_SPEED;
+	}
+	if( OUT_POSITION_Z < m_vPosition.z || m_vPosition.z < -OUT_POSITION_Z ){
+		m_vPosition.z += m_MoveVector.z * MOVE_SPEED;
+	}
 }
 
 // “–‚½‚è”»’è‚Ìì¬.

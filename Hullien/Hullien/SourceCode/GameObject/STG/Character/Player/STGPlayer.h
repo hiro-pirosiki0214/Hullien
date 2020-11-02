@@ -14,6 +14,8 @@ namespace STG
 		const int	BULLET_COUNT_MAX	= 30;	// 弾の最大数.
 		const int	SHOT_INTERVAL_FRAME	= 15;	// 弾を撃つ間隔フレーム.
 		const D3DXVECTOR3 INIT_POSITION = { 0.0f, 0.0f, 70.0f };
+		const float OUT_POSITION_X = 100.0f;
+		const float OUT_POSITION_Z = 55.0f;
 	public:
 		CPlayer();
 		virtual ~CPlayer();
@@ -39,6 +41,9 @@ namespace STG
 
 		// ライフ計算関数.
 		virtual void LifeCalculation( const std::function<void(float&)>& ) override;
+
+		// 画面外に行った時の処理.
+		void OutDispMove();
 
 		// 当たり判定の作成.
 		bool CollisionInit();

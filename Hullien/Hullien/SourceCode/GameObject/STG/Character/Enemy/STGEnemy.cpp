@@ -80,7 +80,7 @@ void STG::CEnemy::Render()
 			PARAMETER.BulletCollDisappear*0.4f
 		} );	// ’e‚Ì•`‰æ.
 
-	m_pFont->SetColor( { 0.0f, 0.0f, 0.0f, 1.0f } );
+	m_pFont->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
 	m_pFont->SetPosition( m_vPosition );
 	m_pFont->SetRotation( m_FontRotation );
 	m_pFont->SetScale( m_vScale );

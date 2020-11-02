@@ -43,11 +43,25 @@ void CGameObject::SetPosition( const D3DXVECTOR3& vPos )
 }
 
 //-----------------------------.
+// X²‚Ì‰ñ“]’l‚Ìİ’è.
+//-----------------------------.
+void CGameObject::SetRotationX( const float& rotX )
+{
+	m_vRotation.x = rotX;
+}
+//-----------------------------.
 // Y²‚Ì‰ñ“]’l‚Ìİ’è.
 //-----------------------------.
 void CGameObject::SetRotationY( const float& rotY )
 {
 	m_vRotation.y = rotY;
+}
+//-----------------------------.
+// Z²‚Ì‰ñ“]’l‚Ìİ’è.
+//-----------------------------.
+void CGameObject::SetRotationZ( const float& rotZ )
+{
+	m_vRotation.z = rotZ;
 }
 
 //-----------------------------.

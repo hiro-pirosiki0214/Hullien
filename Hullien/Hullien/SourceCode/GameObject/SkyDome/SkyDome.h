@@ -7,7 +7,7 @@ class CSkyDomeModel;
 
 class CSkyDome : public CGameObject
 {
-	const char* MODEL_NAME = "Data\\Mesh\\space\\skydome.x";	// ƒ‚ƒfƒ‹–¼.
+	const char* MODEL_NAME = "Data\\Mesh\\space\\space.x";	// ƒ‚ƒfƒ‹–¼.
 
 public:
 	CSkyDome();

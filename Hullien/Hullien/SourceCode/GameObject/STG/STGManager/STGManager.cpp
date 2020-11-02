@@ -13,6 +13,7 @@ CSTGManager::CSTGManager()
 	, m_pEnemyManager	( nullptr )
 	, m_STGEndFrame		( 0.0f )
 	, m_STGNowFrame		( 0.0f )
+	, m_SkyDomeRotX		( 0.0f )
 {
 	m_pCamera		= std::make_shared<CCamera>();
 	m_pSkyDome		= std::make_unique<CSkyDome>();
@@ -43,6 +44,9 @@ bool CSTGManager::Init()
 void CSTGManager::Update()
 {
 	m_STGNowFrame++;
+
+	m_SkyDomeRotX += SKY_DOME_SCROLL_SPEED;
+	m_pSkyDome->SetRotationX( m_SkyDomeRotX );
 	m_pSkyDome->Update();
 
 	m_pPlayer->Controller();// ƒvƒŒƒCƒ„[‚Ì‘€ì.
