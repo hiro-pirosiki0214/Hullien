@@ -72,6 +72,12 @@ public:
 	void SetFadeInFlag(bool BGMFadeInFlag) { m_bFadeInStart = BGMFadeInFlag; }
 	// フェードインフラグのゲッター.
 	bool GetFadeInFlag() { return m_bFadeInStart; }
+	// 解放処理で取り残されないように.
+	void HundleIsSignal( const bool& isEnd = false )
+	{
+		if( isEnd == false ) return;
+		SetEvent( m_Callback.event );
+	}
 //-----------------------------------------------------
 // 再生位置系.
 

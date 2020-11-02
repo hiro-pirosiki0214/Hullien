@@ -291,6 +291,9 @@ bool CSoundManager::StopBGMThread(const std::string BGMName)
 	}
 	// 再生時に設定したフラグをtrueにして、BGMを停止に向かわせる.
 	GetInstance()->m_bisEndThread[BGMName] = true;
+
+	GetInstance()->pBgmSource[BGMName]->HundleIsSignal( GetInstance()->m_bisEndThread[BGMName] );
+
 	DWORD ThreadExitCode = -1;
 	// スレッドが停止したかどうかをID取得で取得.
 	GetExitCodeThread(GetInstance()->pBGMThread[BGMName].native_handle(), &ThreadExitCode);
