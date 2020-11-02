@@ -16,8 +16,6 @@ public:
 	static double GetFPS(){ return FRAME_TIME; }
 
 private:
-
-private:
 	static double	m_OutFPS;
 	double			m_FrameTime;
 	LARGE_INTEGER	m_StartTime;
