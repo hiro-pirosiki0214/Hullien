@@ -7,6 +7,7 @@
 #include "..\Common.h"
 
 class CDebugTextShader;
+class CFont;
 
 // デバッグテキストクラス.
 class CDebugText : public CCommon
@@ -45,14 +46,6 @@ public:
 	// サイズの取得.
 	static float GetScale(){ return GetInstance()->m_vScale.x*10.0f; };
 private:
-	// フォントレンダリング関数.
-	void RenderFont( int FontIndex, float x, float y );
-	// モデルの作成.
-	HRESULT InitModel();
-	// サンプラの作成.
-	HRESULT InitSampleLinear();
-	// テクスチャ作成.
-	HRESULT InitTexture();
 
 	template <class T>
 	std::string to_std_string(const T& x)
@@ -75,13 +68,7 @@ private:
 	}
 
 private:
-	ID3D11Buffer*				m_pVertexBuffer[100];	// 頂点バッファ.
-	ID3D11SamplerState*			m_pSampleLinear;		// サンプラ:テクスチャに各種フィルタをかける.
-	ID3D11ShaderResourceView*	m_pAsciiTexture;		// テクスチャ.
-
-	std::unique_ptr<CDebugTextShader> m_pShader;		// シェーダー.
-
-	float		m_fKerning[100];	// カーニング.
+	std::unique_ptr<CFont>		m_pFont;				// フォント.
 
 private:
 	// コピー・ムーブコンストラクタ, 代入演算子の削除.

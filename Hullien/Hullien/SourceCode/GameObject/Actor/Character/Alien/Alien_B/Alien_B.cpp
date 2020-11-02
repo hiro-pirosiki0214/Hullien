@@ -61,13 +61,14 @@ void CAlienB::Render()
 	if( m_pSkinMesh == nullptr ) return;
 	if( m_pAttackMesh == nullptr ) return;
 
+#if 0
 	if( m_NowMoveState == EMoveState::Attack ){
 		m_pAttackMesh->SetPosition( m_vPosition );
 		m_pAttackMesh->SetRotation( m_vRotation );
 		m_pAttackMesh->SetScale( m_vScale );
 		m_pAttackMesh->SetColor( { 0.8f, 0.2f, 0.2f, 1.0f } );
 		m_pAttackMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-		m_pAttackMesh->Render( m_pAC );
+		m_pAttackMesh->Render();
 		m_pAttackMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	} else {
 		m_pSkinMesh->SetPosition( m_vPosition );
@@ -79,6 +80,16 @@ void CAlienB::Render()
 		m_pSkinMesh->Render( m_pAC );
 		m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
 	}
+#else 
+	m_pSkinMesh->SetPosition( m_vPosition );
+	m_pSkinMesh->SetRotation( m_vRotation );
+	m_pSkinMesh->SetScale( m_vScale );
+	m_pSkinMesh->SetColor( { 0.8f, 0.2f, 0.2f, 1.0f } );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
+	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pSkinMesh->Render( m_pAC );
+	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+#endif
 
 	m_pArm->Render();	// ƒA[ƒ€‚Ì•`‰æ.
 #if _DEBUG

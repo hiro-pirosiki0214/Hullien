@@ -107,7 +107,7 @@ HRESULT CMain::Load()
 	CDebugText::Init(
 		CDirectX11::GetDevice(),
 		CDirectX11::GetContext(),
-		38.0f, D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+		0.25f, D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 	// 各リソースの読み込み.
 	m_pLoadManager->LoadResource( m_hWnd,
 		CDirectX11::GetDevice(), 

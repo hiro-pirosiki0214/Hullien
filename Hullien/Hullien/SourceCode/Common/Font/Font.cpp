@@ -30,6 +30,7 @@ HRESULT CFont::Init( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
 void CFont::RenderUI( const std::string& text )
 {
 	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ) return;
+	m_vScale.y = m_vScale.y*1.2f;
 	// 文字数分ループ.
 	for( int i = 0; i < static_cast<int>(text.length()); i++ ){
 		std::string f = text.substr( i, 1 );
@@ -126,10 +127,10 @@ HRESULT CFont::CreateVerTexBuffer()
 {
 	CSpriteShader::VERTEX verticesUI[] =
 	{
-		D3DXVECTOR3(-FONT_SIZE,  FONT_SIZE, 0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),
-		D3DXVECTOR3(-FONT_SIZE, -FONT_SIZE, 0.0f ),	D3DXVECTOR2( 0.0f, 0.0f ),
-		D3DXVECTOR3( FONT_SIZE,  FONT_SIZE, 0.0f ),	D3DXVECTOR2( 1.0f, 1.0f ),
-		D3DXVECTOR3( FONT_SIZE, -FONT_SIZE, 0.0f ),	D3DXVECTOR2( 1.0f, 0.0f )
+		D3DXVECTOR3( 0.0f,			 FONT_SIZE*2.0f,	0.0f ),	D3DXVECTOR2( 0.0f, 1.0f ),
+		D3DXVECTOR3( 0.0f,			 0.0f,			0.0f ),	D3DXVECTOR2( 0.0f, 0.0f ),
+		D3DXVECTOR3( FONT_SIZE*2.0f, FONT_SIZE*2.0f,0.0f ),	D3DXVECTOR2( 1.0f, 1.0f ),
+		D3DXVECTOR3( FONT_SIZE*2.0f, 0.0f,			0.0f ),	D3DXVECTOR2( 1.0f, 0.0f )
 	};
 	// 最大要素数を算出する.
 	UINT uVerMax = sizeof(verticesUI) / sizeof(verticesUI[0]);
