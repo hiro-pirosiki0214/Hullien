@@ -14,6 +14,7 @@ CTitle::CTitle( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
 	, m_pWidget			( nullptr )
 	, m_IsChangeScene	( false )
+	, m_IsDecision		( false )
 {
 	m_pWidget	= std::make_unique< CTitleWidget >();
 	CFade::SetFadeOut();
@@ -41,8 +42,8 @@ bool CTitle::Load()
 void CTitle::Update()
 {
 	if (CFade::GetIsFade() == true) return;
-
-	m_pWidget->Update();
+	// 決定してない場合UIの更新.
+	if( m_IsDecision == false ) m_pWidget->Update();
 	//シーン切り替え.
 	ChangeScene();
 }
@@ -83,6 +84,7 @@ void CTitle::ChangeScene()
 		}
 		CSoundManager::FadeOutBGM("TitleBGM");
 		m_IsChangeScene = true;
+		m_IsDecision = true;
 	}
 
 	// フェードイン状態かつフェード中なら処理しない.
