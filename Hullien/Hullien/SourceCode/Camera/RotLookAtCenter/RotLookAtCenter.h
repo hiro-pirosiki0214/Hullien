@@ -12,20 +12,21 @@ private: //------ 定数 -------.
 	const float DEFAULT_VERTICAL_MAX	= 90.0f;	// 縦回転の最大サイズ.
 	const float DEFAULT_VERTICAL_MIN	= 0.0f;		// 縦回転の最小サイズ.
 	const float DEFAULT_MOVE_SPEED		= 0.01f;	// 移動速度.
-	// カメラ設定ファイルのパス.
-	const char*	CONFIG_FILE_PATH		= "Data\\Config\\Camera.bin";
 
+public:
+	// カメラ設定ファイルのパス.
+	inline static const char*	CONFIG_FILE_PATH		= "Data\\Config\\Camera.bin";
 	// カメラ設定の状態.
-	struct stCongifState
+	struct stConfigState
 	{
 		bool	IsReverse;	// 反転するか.
 		float	MoveSpeed;	// 移動速度.
 
-		stCongifState()
+		stConfigState()
 			: IsReverse	( false )
 			, MoveSpeed	( 0.01f )
 		{}
-	} typedef SCongifState;
+	} typedef SConfigState;
 
 public:  //------ 関数 -------.
 	CRotLookAtCenter();

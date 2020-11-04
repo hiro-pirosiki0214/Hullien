@@ -18,7 +18,7 @@ CRotLookAtCenter::CRotLookAtCenter( const bool& isLoad )
 	: CRotLookAtCenter	()
 {
 	if( isLoad == false ) return;
-	SCongifState conState;
+	SConfigState conState;
 	if( CFileManager::BinaryReading( CONFIG_FILE_PATH, conState ) == false ) return;
 	// ƒJƒƒ‰‚ğ”»’è‚·‚é‚©.
 	if( conState.IsReverse == true ){

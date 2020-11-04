@@ -64,10 +64,7 @@ void CConfigWidget::Update()
 		break;
 	case EConfigState_Camera:
 		m_pCameraConfig->Update();
-		if( GetAsyncKeyState(VK_BACK) & 0x0001 || CXInput::A_Button() == CXInput::enPRESSED_MOMENT ){
-			m_NowConfigState = EConfigState_None;
-			CSoundManager::PlaySE("CancelDetermination");
-		}
+		if( m_pCameraConfig->IsEnd() == true ) m_NowConfigState = EConfigState_None;
 		break;
 	default:
 		break;

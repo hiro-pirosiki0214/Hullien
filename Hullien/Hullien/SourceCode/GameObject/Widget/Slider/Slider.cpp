@@ -84,7 +84,7 @@ void CSlinder::SetPosition( const D3DXVECTOR3& vPos )
 void CSlinder::SetIconPosition()
 {
 	// 値と計算して、アイコンの位置を設定.
-	const float x = m_BackBarImageWidthSize * (m_Value/VALUE_MAX);
+	const float x = m_BackBarImageWidthSize * ((m_Value-VALUE_MIN)/VALUE_MAX);
 	m_BarImageWidthSize.x = x / m_BackBarImageWidthSize;
 	m_BarImageWidthSize.x *= m_vScale.x;
 	m_BarImageWidthSize.y *= m_vScale.y;
