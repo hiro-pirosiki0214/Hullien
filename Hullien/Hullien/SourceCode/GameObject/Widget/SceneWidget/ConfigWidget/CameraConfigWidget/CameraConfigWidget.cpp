@@ -58,10 +58,10 @@ void CCameraConfigWidget::Update()
 		}
 		break;
 	case ESelectState_CameraControl:
-		CameraControlUpdate();
+		CameraControlUpdate();	// カメラ操作設定の更新.
 		break;
 	case ESelectState_CameraSpeed:
-		CameraSpeedUpdate();
+		CameraSpeedUpdate();	// カメラ速度設定の更新.
 		break;
 	default:
 		break;
@@ -78,17 +78,21 @@ void CCameraConfigWidget::Render()
 	switch( m_NowConfigState )
 	{
 	case ESelectState_Select:
-		m_pSprites[5]->SetPosition( { -500.0f, 0.0f, 0.0f } );
+		// アイコンの座標を画面外に設定.
+		m_pSprites[ESpriteNo_Icon]->SetPosition( { -500.0f, 0.0f, 0.0f } );
+
+		// カーソルの座標を現在選択している場所に設定.
 		m_pCursor->SetPosition( m_pSprites[m_NowSelectState-2]->GetRenderPos() );
 		m_pCursor->Render();
 		break;
 	case ESelectState_CameraControl:
-		m_pSprites[5]->SetPosition( { -500.0f, 0.0f, 0.0f } );
-		m_pCursor->SetPosition( m_pSprites[2+m_NowControlState]->GetRenderPos() );
+		// カーソルの座標を現在選択している場所に設定.
+		m_pCursor->SetPosition( m_pSprites[ESpriteNo_Choise+m_NowControlState]->GetRenderPos() );
 		m_pCursor->Render();
 		break;
 	case ESelectState_CameraSpeed:
-		m_pSprites[5]->SetPosition( m_pSpeedSlinder->GetIconPosition() );
+		// アイコンの座標をスライダーのアイコンの座標に設定する.
+		m_pSprites[ESpriteNo_Icon]->SetPosition( m_pSpeedSlinder->GetIconPosition() );
 		break;
 	default:
 		break;
@@ -97,18 +101,19 @@ void CCameraConfigWidget::Render()
 	int no = 0;
 	for( auto& s : m_pSprites ){
 		if( no == 2 ){
+			// 通常か反転かの選択しているカーソルの座標を調整する.
 			D3DXVECTOR3 pos;
 			if( m_ConfigState.IsReverse == false ){
-				pos = m_pSprites[3]->GetRenderPos();
+				pos = m_pSprites[ESpriteNo_Normal]->GetRenderPos();
 			} else {
-				pos = m_pSprites[4]->GetRenderPos();
+				pos = m_pSprites[ESpriteNo_Inversoin]->GetRenderPos();
 			}
 			pos.y += s->GetSpriteSize().y/2.3f;
 			s->SetPosition( pos );
 		}
 		s->SetDeprh(false);
 		s->RenderUI();
-		s->SetDeprh(false);
+		s->SetDeprh(true);
 		no++;
 	}
 }
@@ -246,7 +251,7 @@ bool CCameraConfigWidget::SpriteSetting()
 	for( int sprite = 0; sprite < SpriteMax; sprite++ ){
 		m_pSprites.emplace_back(CSpriteResource::GetSprite(spriteName[sprite]));
 		if( m_pSprites[sprite] == nullptr ) return false;
-		if( sprite != 1 ) continue;
+		if( sprite != ESpriteNo_Speed ) continue;
 		m_SlinderPosition = m_pSprites[sprite]->GetRenderPos();
 		m_SlinderPosition.x += 200.0f;
 		m_SlinderPosition.y += m_pSprites[sprite]->GetSpriteSize().y/2.0f;

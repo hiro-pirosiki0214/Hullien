@@ -22,9 +22,9 @@ class CCameraConfigWidget : public CWidget
 	{
 		ESelectState_None,
 
-		ESelectState_Select,
-		ESelectState_CameraControl,
-		ESelectState_CameraSpeed,
+		ESelectState_Select,			// 選択状態.
+		ESelectState_CameraControl,		// 操作状態.
+		ESelectState_CameraSpeed,		// 速度状態.
 
 		ESelectState_Max,
 	} typedef ESelectState;
@@ -38,6 +38,20 @@ class CCameraConfigWidget : public CWidget
 
 		ECameraControlState_Max,
 	} typedef ECameraControlState;
+
+	enum enSpriteNo
+	{
+		ESpriteNo_None = -1,
+
+		ESpriteNo_Control,		// 操作.
+		ESpriteNo_Speed,		// 速度.
+		ESpriteNo_Choise,		// 選択.
+		ESpriteNo_Normal,		// 通常.
+		ESpriteNo_Inversoin,	// 反転.
+		ESpriteNo_Icon,			// アイコン.
+
+		ESpriteNo_Max,
+	} typedef ESpriteNo;
 
 public:
 	CCameraConfigWidget();
