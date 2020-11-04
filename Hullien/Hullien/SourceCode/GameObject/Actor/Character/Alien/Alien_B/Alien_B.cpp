@@ -37,7 +37,7 @@ bool CAlienB::Init()
 	if( ColliderSetting()			== false ) return false;
 	if( EffectSetting()				== false ) return false;
 	if( m_pArm->Init()				== false ) return false;
-	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0f, m_pAC );
+	m_pSkinMesh->ChangeAnimSet_StartPos( alien::EAnimNo_Move, 0.0f, m_pAC );
 	return true;
 }
 
@@ -102,20 +102,20 @@ void CAlienB::Render()
 void CAlienB::EffectRender()
 {
 	// ヒット時のエフェクト.
-	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
-	m_pEffects[EEffectNo_Hit]->Render();
+	m_pEffects[alien::EEffectNo_Hit]->SetScale( 2.0f );
+	m_pEffects[alien::EEffectNo_Hit]->Render();
 
 	// スポーンエフェクト.
-	m_pEffects[EEffectNo_Spawn]->SetLocation( m_vPosition );
-	m_pEffects[EEffectNo_Spawn]->Render();
+	m_pEffects[alien::EEffectNo_Spawn]->SetLocation( m_vPosition );
+	m_pEffects[alien::EEffectNo_Spawn]->Render();
 
 	// 死亡アニメーション.
-	m_pEffects[EEffectNo_Dead]->Render();
+	m_pEffects[alien::EEffectNo_Dead]->Render();
 
 	// 攻撃時のエフェクト.
-	m_pEffects[EEffectNo_Attack]->SetLocation( m_vPosition );
-	m_pEffects[EEffectNo_Attack]->SetScale( 0.5f );
-	m_pEffects[EEffectNo_Attack]->Render();
+	m_pEffects[alien::EEffectNo_Attack]->SetLocation( m_vPosition );
+	m_pEffects[alien::EEffectNo_Attack]->SetScale( 0.5f );
+	m_pEffects[alien::EEffectNo_Attack]->Render();
 
 }
 
@@ -141,15 +141,15 @@ void CAlienB::Collision( CActor* pActor )
 bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
-	if( m_NowState != EAlienState::None ) return true;
+	if( m_NowState != alien::EAlienState::None ) return true;
 	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
 	m_vPosition		= spawnPos;					// スポーン座標の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
-	m_NowState		= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
+	m_NowState		= alien::EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 	m_AnimSpeed		= 0.0;						// アニメーション速度を止める.
-	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
+	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
 
@@ -165,17 +165,17 @@ void CAlienB::SetTargetPos( CActor& actor )
 // ライフ計算関数.
 void CAlienB::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 {
-	if( m_NowState == EAlienState::Spawn ) return;
-	if( m_NowState == EAlienState::Death ) return;
-	if( m_NowState == EAlienState::Fright ) return;
+	if( m_NowState == alien::EAlienState::Spawn ) return;
+	if( m_NowState == alien::EAlienState::Death ) return;
+	if( m_NowState == alien::EAlienState::Fright ) return;
 
 	bool isAttack = false;
 	proc( m_LifePoint, isAttack );
-	m_NowState = EAlienState::Fright;	// 怯み状態へ遷移.
-	SetAnimation( EAnimNo_Damage, m_pAC );
+	m_NowState = alien::EAlienState::Fright;	// 怯み状態へ遷移.
+	SetAnimation( alien::EAnimNo_Damage, m_pAC );
 	m_AnimSpeed = 0.01;
-	m_pEffects[EEffectNo_Attack]->Stop();
-	m_pEffects[EEffectNo_Hit]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
+	m_pEffects[alien::EEffectNo_Attack]->Stop();
+	m_pEffects[alien::EEffectNo_Hit]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
 	if( m_pArm != nullptr ){
 		// アームを片付けていなければ片付ける.
 		if( m_pArm->IsCleanUp() == false ){
@@ -185,10 +185,10 @@ void CAlienB::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 
 	if( m_LifePoint > 0.0f ) return;
 	// 体力が 0.0以下なら死亡状態へ遷移.
-	m_NowState = EAlienState::Death;
-	m_NowMoveState = EMoveState::Wait;
-	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
-	SetAnimation( EAnimNo_Dead, m_pAC );
+	m_NowState = alien::EAlienState::Death;
+	m_NowMoveState = alien::EMoveState::Wait;
+	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
+	SetAnimation( alien::EAnimNo_Dead, m_pAC );
 }
 
 // プレイヤー座標の設定.
@@ -221,11 +221,11 @@ void CAlienB::Move()
 	}
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
-	if( m_NowState == EAlienState::Abduct ) return;
-	m_pEffects[EEffectNo_Attack]->Stop();
-	SetAnimation( EAnimNo_Move, m_pAC );
-	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
-	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転へ遷移する.
+	if( m_NowState == alien::EAlienState::Abduct ) return;
+	m_pEffects[alien::EEffectNo_Attack]->Stop();
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
+	m_NowState		= alien::EAlienState::Escape;	// 逃げる状態へ遷移.
+	m_NowMoveState	= alien::EMoveState::Rotation;	// 移動状態を回転へ遷移する.
 }
 
 // 拐う.
@@ -255,7 +255,7 @@ void CAlienB::Escape()
 // 移動関数.
 void CAlienB::VectorMove( const float& moveSpeed )
 {
-	if( m_NowMoveState != EMoveState::Move ) return;
+	if( m_NowMoveState != alien::EMoveState::Move ) return;
 
 	// ベクトルを使用して移動.
 	m_vPosition.x -= m_MoveVector.x * moveSpeed;
@@ -264,15 +264,15 @@ void CAlienB::VectorMove( const float& moveSpeed )
 	// プレイヤーの座標と宇宙人の座標を比較.
 	if( D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) ) >= m_Parameter.AttackLenght ) return;
 	if( m_IsBarrierHit == true ) return;
-	m_NowMoveState	= EMoveState::Attack;
+	m_NowMoveState	= alien::EMoveState::Attack;
 	m_RotAccValue	= m_Parameter.AttackRotInitPower;
-	m_pEffects[EEffectNo_Attack]->Play( m_vPosition );
+	m_pEffects[alien::EEffectNo_Attack]->Play( m_vPosition );
 }
 
 // 攻撃関数.
 void CAlienB::Attack()
 {
-	if( m_NowMoveState != EMoveState::Attack ) return;
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;
 
 	// 回転.
 	m_vRotation.y += (m_Parameter.AttackRotPower - fabsf(m_RotAccValue));
@@ -290,7 +290,7 @@ void CAlienB::Attack()
 	}
 
 	if( m_RotAccValue > -m_Parameter.AttackRotPower ) return;
-	m_NowMoveState = EMoveState::Wait;
+	m_NowMoveState = alien::EMoveState::Wait;
 	m_IsAttackSE = false;
 }
 
@@ -299,9 +299,9 @@ void CAlienB::PlayerCollison( CActor* pActor )
 {
 	// オブジェクトのタグがプレイヤーじゃなければ終了.
 	if( pActor->GetObjectTag() != EObjectTag::Player ) return;
-	if( m_NowMoveState != EMoveState::Attack ) return;	// 攻撃状態じゃなければ終了.
-	if( m_NowState == EAlienState::Death ) return;	// 死亡していたら終了.
-	if( m_NowState == EAlienState::Fright ) return;	// 怯み状態なら終了.
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;	// 攻撃状態じゃなければ終了.
+	if( m_NowState == alien::EAlienState::Death ) return;	// 死亡していたら終了.
+	if( m_NowState == alien::EAlienState::Fright ) return;	// 怯み状態なら終了.
 	
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetCollManager() ) == false ) return;
 	// 現在の移動ベクトルを設定.
@@ -317,7 +317,7 @@ void CAlienB::PlayerCollison( CActor* pActor )
 // プレイヤーを狙うか判定.
 void CAlienB::AimPlayerDecision()
 {
-	if( m_NowMoveState == EMoveState::Attack ) return;
+	if( m_NowMoveState == alien::EMoveState::Attack ) return;
 
 	// プレイヤーとの距離を計算.
 	float playerLenght = D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) );
@@ -334,7 +334,7 @@ void CAlienB::AimPlayerDecision()
 		SetMoveVector( m_TargetPosition );
 	}
 	if( m_OldHasAimPlayer == m_HasAimPlayer ) return;
-	m_NowMoveState = EMoveState::Rotation;
+	m_NowMoveState = alien::EMoveState::Rotation;
 }
 
 // 当たり判定の設定.

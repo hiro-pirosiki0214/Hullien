@@ -340,6 +340,7 @@
     <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

@@ -26,7 +26,7 @@ CSpawnUFO::CSpawnUFO()
 	// ランダムシードの初期化.
 	std::random_device rd;
 	m_RandomSeed = std::mt19937( rd() );
-	m_pUFOLight = std::make_shared<CUFOLight>();
+	m_pUFOLight = std::make_shared<CUFOLight>( 1.65f, 1.4f );
 }
 
 CSpawnUFO::~CSpawnUFO()
@@ -120,7 +120,7 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 }
 
 // 宇宙人のパラメータリストを設定する.
-void CSpawnUFO::SetAlienParameterList( std::vector<CAlien::SAlienParam>* alienParamList )
+void CSpawnUFO::SetAlienParameterList( std::vector<SAlienParam>* alienParamList )
 {
 	m_pAlienParamList = alienParamList;
 }

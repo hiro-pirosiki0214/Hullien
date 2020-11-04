@@ -58,7 +58,7 @@ private:
 private:
 	std::vector<std::shared_ptr<CAlien>>	m_AilenList;		// 宇宙人リスト.
 	std::vector<CSpawnUFO>					m_SpawnUFOList;		// スポーンUFOリスト.
-	std::vector<CAlien::SAlienParam>		m_AlienParamList;	// 宇宙人パラメータリスト.
+	std::vector<SAlienParam>				m_AlienParamList;	// 宇宙人パラメータリスト.
 	std::vector<CExplosion>		m_ExplosionList;	// 爆発リスト.
 	CExplosion::SExplosionParam	m_ExplosionParam;	// 爆発パラメーター.
 	DropItemList m_DropItemList;		// 落とすアイテムのリスト.

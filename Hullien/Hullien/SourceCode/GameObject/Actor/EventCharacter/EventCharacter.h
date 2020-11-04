@@ -39,7 +39,7 @@ public:
 			, ModelAlpha		( 1.0f )
 			, MoveSpeed			( 0.1f )
 			, RotationalSpeed	( 0.01f )
-			, ScaleSpeed		( 0.03f )
+			, ScaleSpeed		( 0.006f )
 			, AlphaSpeed		( 0.03f )
 			, IsDisp			( true )
 		{}

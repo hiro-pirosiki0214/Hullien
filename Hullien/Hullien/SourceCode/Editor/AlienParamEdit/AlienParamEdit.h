@@ -2,7 +2,7 @@
 #define ALIEN_PARAM_EDIT_H
 
 #include "..\EditBase.h"
-#include "..\..\GameObject\Actor\Character\Alien\Alien.h"
+#include "..\..\GameObject\Actor\Character\Alien\AlienParam.h"
 
 #include <vector>
 
@@ -31,16 +31,16 @@ private:
 	// 全ファイルの読み込み.
 	bool FileAllReading();
 	// ファイルの読み込み.
-	bool FileReading( const char* fileName, CAlien::SAlienParam& param );
+	bool FileReading( const char* fileName, SAlienParam& param );
 	// ファイルの書き込み.
-	bool FileWriting( const char* fileName, CAlien::SAlienParam& param );
+	bool FileWriting( const char* fileName, SAlienParam& param );
 	// スポーン情報の描画.
 	void SpawnParamRender( const int& index );
 	// モデルの初期化.
 	bool GetModel();
 
 private:
-	std::vector<CAlien::SAlienParam>				m_AlienParamList;
+	std::vector<SAlienParam>						m_AlienParamList;
 	std::vector<std::shared_ptr<CDX9SkinMesh>>		m_pSkinMeshs;
 	std::vector<std::string>						m_AlienPathList;
 	std::vector<std::string>						m_AlienNameList;

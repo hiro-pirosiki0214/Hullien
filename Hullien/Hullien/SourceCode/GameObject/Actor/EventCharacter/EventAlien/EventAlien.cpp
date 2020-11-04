@@ -11,6 +11,8 @@ CEventAlien::CEventAlien()
 	, m_pAbductUFOPosition		( nullptr )
 	, m_NowState				( EEventAlienState::None )
 	, m_vTargetPosition			( D3DXVECTOR3(0.0f, 0.0f, 0.0f) )
+	, m_IsBarrierHit			( false )
+	, m_Speed					( 0.0f )
 {
 	m_AnimFrameList.resize( EAnimNo_Max );
 }

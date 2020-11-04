@@ -189,7 +189,7 @@ bool CAlienManager::ReadAlienParamList()
 
 	for( const auto& l : readList ){
 		// 各宇宙人のパラメータ読み込み.
-		CAlien::SAlienParam param = {};
+		SAlienParam param = {};
 		CFileManager::BinaryReading( l.c_str(), param );
 		m_AlienParamList.emplace_back( param );
 	}

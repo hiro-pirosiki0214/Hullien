@@ -36,7 +36,7 @@ bool CAlienD::Init()
 	if( EffectSetting()				== false ) return false;
 	if( m_pLaserBeam->Init()		== false ) return false;
 
-	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0, m_pAC );
+	m_pSkinMesh->ChangeAnimSet_StartPos( alien::EAnimNo_Move, 0.0, m_pAC );
 	return true;
 }
 
@@ -67,16 +67,16 @@ void CAlienD::Render()
 void CAlienD::EffectRender()
 {
 	// ヒット時のエフェクト.
-	m_pEffects[EEffectNo_Hit]->SetScale( 2.0f );
-	m_pEffects[EEffectNo_Hit]->Render();
+	m_pEffects[alien::EEffectNo_Hit]->SetScale( 2.0f );
+	m_pEffects[alien::EEffectNo_Hit]->Render();
 
 	// スポーンエフェクト.
-	m_pEffects[EEffectNo_Spawn]->SetLocation( m_vPosition );
-	m_pEffects[EEffectNo_Spawn]->SetScale( 5.0f );
-	m_pEffects[EEffectNo_Spawn]->Render();
+	m_pEffects[alien::EEffectNo_Spawn]->SetLocation( m_vPosition );
+	m_pEffects[alien::EEffectNo_Spawn]->SetScale( 5.0f );
+	m_pEffects[alien::EEffectNo_Spawn]->Render();
 
 	// 死亡エフェクト.
-	m_pEffects[EEffectNo_Dead]->Render();
+	m_pEffects[alien::EEffectNo_Dead]->Render();
 
 	// レーザーエフェクト.
 	m_pLaserBeam->EffectRender();
@@ -97,14 +97,14 @@ void CAlienD::Collision( CActor* pActor )
 bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
-	if( m_NowState != EAlienState::None ) return true;
+	if( m_NowState != alien::EAlienState::None ) return true;
 	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
 	m_vPosition		= spawnPos;					// スポーン座標の設定.
 	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
-	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
-	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
+	m_NowState = alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
+	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	// レーザーの移動速度の設定.
 	m_pLaserBeam->SetMoveSpped( m_Parameter.LaserMoveSpeed );
 	// レーザーの麻痺時間の設定.
@@ -142,7 +142,7 @@ void CAlienD::ModelRender()
 void CAlienD::AttackRangeSpriteRender()
 {
 	if( m_pAttackRangeSprite == nullptr ) return;
-	if( m_NowMoveState != EMoveState::Attack ) return;
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;
 
 	D3DXVECTOR4 color;
 	if( m_IsAttackStart == true ){
@@ -182,10 +182,10 @@ void CAlienD::Move()
 	CAlien::WaitMove();		// 待機.
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
-	if( m_NowState == EAlienState::Abduct ) return;
-	SetAnimation( EAnimNo_Move, m_pAC );
-	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
-	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
+	if( m_NowState == alien::EAlienState::Abduct ) return;
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
+	m_NowState		= alien::EAlienState::Escape;	// 逃げる状態へ遷移.
+	m_NowMoveState	= alien::EMoveState::Rotation;	// 移動状態を回転する.
 }
 
 // 拐う.
@@ -215,7 +215,7 @@ void CAlienD::Escape()
 // 攻撃関数.
 void CAlienD::Attack()
 {
-	if( m_NowMoveState != EMoveState::Attack ) return;
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;
 
 	const double attackSpeed = m_IsAttackStart == false ? m_AnimSpeed : -m_AnimSpeed;
 	m_AttackCount += static_cast<float>(attackSpeed);	// 攻撃カウントの追加.
@@ -246,14 +246,14 @@ void CAlienD::Attack()
 	}
 
 	if( m_AnimFrameList[m_NowAnimNo].IsNowFrameOver() == false ) return;
-	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
-	SetAnimation( EAnimNo_Move, m_pAC );
+	m_NowMoveState = alien::EMoveState::Wait;	// 待機状態へ遷移.
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
 }
 
 // 移動関数.
 void CAlienD::VectorMove( const float& moveSpeed )
 {
-	if( m_NowMoveState != EMoveState::Move ) return;
+	if( m_NowMoveState != alien::EMoveState::Move ) return;
 
 	// ベクトルを使用して移動.
 	m_vPosition.x -= m_MoveVector.x * moveSpeed;
@@ -261,7 +261,7 @@ void CAlienD::VectorMove( const float& moveSpeed )
 
 	// 再度座標を検索し、回転するか比較.
 	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ){
-		m_NowMoveState	= EMoveState::Rotation;	// 回転状態へ遷移.
+		m_NowMoveState	= alien::EMoveState::Rotation;	// 回転状態へ遷移.
 		m_IsAttackStart = false;	// 攻撃が始まるフラグを下す.
 		return;
 	}
@@ -271,8 +271,8 @@ void CAlienD::VectorMove( const float& moveSpeed )
 	if( m_pLaserBeam->IsEndAttack() == false ) return;
 	m_IsAttackStart	= false;	// 攻撃が始まるフラグを下す.
 	m_AttackCount	= 0.0f;		// 攻撃カウントを初期化,
-	m_NowMoveState	= EMoveState::Attack;	// 攻撃状態へ遷移.
-	SetAnimation( EAnimNo_Arm, m_pAC );
+	m_NowMoveState	= alien::EMoveState::Attack;	// 攻撃状態へ遷移.
+	SetAnimation( alien::EAnimNo_Attack, m_pAC );
 }
 
 // 相手座標の設定.

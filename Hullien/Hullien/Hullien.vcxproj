@@ -298,6 +298,7 @@
     <ClInclude Include="Library\ImGui\imstb_textedit.h" />
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
     <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />
     <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h" />

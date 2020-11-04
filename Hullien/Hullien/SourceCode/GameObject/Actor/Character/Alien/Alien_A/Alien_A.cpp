@@ -29,7 +29,7 @@ bool CAlienA::Init()
 	if( ColliderSetting()			== false ) return false;
 	if( EffectSetting()				== false ) return false;
 	if( m_pArm->Init()				== false ) return false;
-	m_pSkinMesh->ChangeAnimSet_StartPos( EAnimNo_Move, 0.0f, m_pAC );
+	m_pSkinMesh->ChangeAnimSet_StartPos( alien::EAnimNo_Move, 0.0f, m_pAC );
 	return true;
 }
 
@@ -86,15 +86,15 @@ void CAlienA::Collision( CActor* pActor )
 bool CAlienA::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
-	if( m_NowState != EAlienState::None ) return true;
+	if( m_NowState != alien::EAlienState::None ) return true;
 	m_Parameter = param;	// パラメータを設定.
 	// 初期化に失敗したら終了.
 	if( Init() == false ) return false;
 	m_vPosition			= spawnPos;					// スポーン座標の設定.
 	m_LifePoint			= m_Parameter.LifeMax;		// 体力の設定.
-	m_NowState			= EAlienState::Spawn;		// 現在の状態をスポーンに変更.
+	m_NowState			= alien::EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 	m_AnimSpeed			= 0.0;						// アニメーション速度を止める.
-	m_pEffects[EEffectNo_Spawn]->Play( m_vPosition );
+	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
 
