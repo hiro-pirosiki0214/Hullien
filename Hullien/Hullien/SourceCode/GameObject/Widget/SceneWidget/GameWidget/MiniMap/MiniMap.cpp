@@ -11,7 +11,6 @@
 CMiniMap::CMiniMap()
 	: m_IconList		()
 	, m_ObjPosListCount	( 0 )
-
 {
 }
 
@@ -72,9 +71,17 @@ void CMiniMap::Render()
 		l.pSprite->SetPosition(l.Pos );
 		l.pSprite->SetAnimNumber(l.AnimNumber );
 		l.pSprite->SetDeprh( false );
+		l.pSprite->SetBlend( true );
 		l.pSprite->RenderUI();
+		l.pSprite->SetBlend( false );
 		l.pSprite->SetDeprh( true );
 	}
+	// マップの描画.
+	m_pSprite->SetDeprh( false );
+	m_pSprite->SetBlend( true );
+	m_pSprite->RenderUI();
+	m_pSprite->SetBlend( false );
+	m_pSprite->SetDeprh( true );
 }
 
 // スプライト設定関数.
@@ -87,6 +94,9 @@ bool CMiniMap::SpriteSetting()
 	m_IconList[MAP_BACK].pSprite = CSpriteResource::GetSprite(SPRITE_MAP_BACK);
 	m_IconList[MAP_BACK].Pos = m_IconList[MAP_BACK].pSprite->GetRenderPos();
 	if(m_IconList[MAP_BACK].pSprite == nullptr ) return false;
+
+	m_pSprite = CSpriteResource::GetSprite(SPRITE_MAP_FRONT);
+	if( m_pSprite == nullptr ) return false;
 
 	return true;
 }

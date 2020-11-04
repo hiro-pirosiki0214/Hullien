@@ -55,11 +55,10 @@ void CSpecialAbilityGauge::Render()
 
 	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
-		if (sprite == 2 && m_GaugeState[GAUGE_NUM].vScale.x != SCALE_MAX) continue;
+		if (sprite == 1 && m_GaugeState[GAUGE_NUM].vScale.x != SCALE_MAX) continue;
 
-//		m_pSprite[sprite]->SetPosition(m_GaugeState[sprite].vPosition);
 		m_pSprite[sprite]->SetScale(m_GaugeState[sprite].vScale);
-//		m_pSprite[sprite]->SetAnimNumber(m_GaugeState[sprite].AnimNum);
+		m_pSprite[sprite]->SetAnimNumber(m_GaugeState[sprite].AnimNum);
 		m_pSprite[sprite]->SetAlpha(m_Alpha[sprite]);
 
 		m_pSprite[sprite]->SetDeprh( false );
@@ -78,9 +77,8 @@ bool CSpecialAbilityGauge::SpriteSetting()
 	//“Ç‚Ýž‚ÞƒXƒvƒ‰ƒCƒg–¼Ý’è.
 	const char* spriteName[] =
 	{
-		SPRITE_GAUGEBACK,	//ƒQ[ƒW”wŒi.
 		SPRITE_GAUGE,		    //ƒQ[ƒW.
-		SPRITE_GAUGE,			//ƒQ[ƒW.
+		SPRITE_GAUGE,		    //ƒQ[ƒW.
 	};
 	const int spriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 
@@ -95,10 +93,9 @@ bool CSpecialAbilityGauge::SpriteSetting()
 		if (m_pSprite[sprite] == nullptr) return false;
 	}
 
-	m_GaugeState[0].AnimNum = 1;
-	m_GaugeState[1].AnimNum = 0;
-	m_GaugeState[2].AnimNum = 2;
-	m_Alpha[2] = 0.0f;
+	m_GaugeState[0].AnimNum = 0;
+	m_GaugeState[1].AnimNum = 1;
+	m_Alpha[1] = 0.0f;
 
 	return true;
 }
@@ -109,10 +106,10 @@ void CSpecialAbilityGauge::ShineBar()
 	switch (m_FadeState)
 	{
 	case CWidget::EFadeState::In:
-		if (m_Alpha[2] >= ALPHA_MAX) { SetFadeOut(FADE_OUT_SPEED); }
+		if (m_Alpha[1] >= ALPHA_MAX) { SetFadeOut(FADE_OUT_SPEED); }
 		break;
 	case CWidget::EFadeState::Out:
-		if (m_Alpha[2] <= 0.0f) { m_FadeState = CWidget::EFadeState::Finish; }
+		if (m_Alpha[1] <= 0.0f) { m_FadeState = CWidget::EFadeState::Finish; }
 		break;
 	case CWidget::EFadeState::Finish:
 		m_WaitTime++;
@@ -128,5 +125,5 @@ void CSpecialAbilityGauge::ShineBar()
 	}
 
 	if (m_FadeState == CWidget::EFadeState::Finish) return;
-	FadeUpdate(m_Alpha[2]);
+	FadeUpdate(m_Alpha[1]);
 }

@@ -10,15 +10,14 @@
 class CSpecialAbilityGauge : public CCharacterWidget
 {
 private:
-	const char* SPRITE_GAUGEBACK = "abilityGauge";	// ゲージ背景.
-	const char* SPRITE_GAUGE = "abilityGauge";		// ゲージ.		
-	const int     GAUGE_NUM = 1;						// ゲージの配列番号.
-	const int     ONE = 1;									// 一.
-	const int	 WAITTIME_MAX = 100;				//最大待機時間.
-	const float  POS_Y = 50.0f;							// ゲージ描画位置y座標.
-	const float  FADE_IN_SPEED = 0.1f;				//フェードイン速度.
-	const float  FADE_OUT_SPEED = 0.01f;			//フェードアウト速度.
-	const float  SCALE_MAX = 1.0f;						//大きさの最大.
+	const char*	SPRITE_GAUGE		= "abilityGauge";	// ゲージ.		
+	const int	GAUGE_NUM			= 0;				// ゲージの配列番号.
+	const int	ONE					= 1;				// 一.
+	const int	WAITTIME_MAX		= 100;				//最大待機時間.
+	const float	POS_Y				= 50.0f;			// ゲージ描画位置y座標.
+	const float	FADE_IN_SPEED		= 0.1f;				//フェードイン速度.
+	const float	FADE_OUT_SPEED		= 0.01f;			//フェードアウト速度.
+	const float	SCALE_MAX			= 1.0f;				//大きさの最大.
 
 
 public:
@@ -39,11 +38,11 @@ private:
 	void ShineBar();
 
 private:
-	std::vector<std::shared_ptr<CSprite>> m_pSprite;			// スプライトクラス.
-	std::vector<SGaugeState>					m_GaugeState;	//ゲージの情報.
-	std::vector<float>								m_Alpha;				//透過値.
-	int													m_WaitTime;		//待機時間.
-	bool												m_IsOnlyFirst;		//一度だけ処理する.
+	std::vector<std::shared_ptr<CSprite>>	m_pSprite;			// スプライトクラス.
+	std::vector<SGaugeState>				m_GaugeState;	//ゲージの情報.
+	std::vector<float>						m_Alpha;				//透過値.
+	int										m_WaitTime;		//待機時間.
+	bool									m_IsOnlyFirst;		//一度だけ処理する.
 
 };
 

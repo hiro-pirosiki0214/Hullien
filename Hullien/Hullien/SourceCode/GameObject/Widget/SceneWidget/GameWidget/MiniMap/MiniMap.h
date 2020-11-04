@@ -14,7 +14,8 @@ class CMiniMap : public CSceneWidget
 private:
 	typedef std::vector<std::pair<EObjectTag, D3DXVECTOR3>> OBJLIST;
 
-	const char* SPRITE_MAP_BACK = "minimapsize";		//ミニマップ背景スプライト名.
+	const char* SPRITE_MAP_BACK		= "minimapBase";		//ミニマップ背景スプライト名.
+	const char* SPRITE_MAP_FRONT	= "minimapWaku";		//ミニマップ背景スプライト名.
 	const char* SPRITE_DEFAULT_ICON = "mapiconsize";	//標準アイコンスプライト名.
 	const int	MAP_BACK = 0;							//ミニマップ背景配列番号.
 	const float MAP_ICON_POSITION_CORRECTION_VALUE	= 0.55f;
