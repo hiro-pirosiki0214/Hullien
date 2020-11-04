@@ -22,7 +22,7 @@ private:
 	// Soundデータが入っているディレクトリパス.
 	const char* FILE_PATH = "Data\\Sound";
 	// バイナリデータが入ってるパス.
-	const char* SETING_FAILE_PATH = "Data\\Sound\\Data.bin";
+	const char* SETING_FAILE_PATH = "Data\\Config\\Volume.bin";
 public:
 	struct SoundVolume
 	{
