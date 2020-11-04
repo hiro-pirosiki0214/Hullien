@@ -11,9 +11,25 @@ private: //------ 定数 -------.
 	const float DEFAULT_HORIZONTAL_MIN	= 0.0f;		// 横回転の最小サイズ.
 	const float DEFAULT_VERTICAL_MAX	= 90.0f;	// 縦回転の最大サイズ.
 	const float DEFAULT_VERTICAL_MIN	= 0.0f;		// 縦回転の最小サイズ.
+	const float DEFAULT_MOVE_SPEED		= 0.01f;	// 移動速度.
+	// カメラ設定ファイルのパス.
+	const char*	CONFIG_FILE_PATH		= "Data\\Config\\Camera.bin";
+
+	// カメラ設定の状態.
+	struct stCongifState
+	{
+		bool	IsReverse;	// 反転するか.
+		float	MoveSpeed;	// 移動速度.
+
+		stCongifState()
+			: IsReverse	( false )
+			, MoveSpeed	( 0.01f )
+		{}
+	} typedef SCongifState;
 
 public:  //------ 関数 -------.
 	CRotLookAtCenter();
+	CRotLookAtCenter( const bool& isLoad );
 	virtual ~CRotLookAtCenter();
 
 	// 更新.
@@ -24,6 +40,10 @@ public:  //------ 関数 -------.
 
 	// 横方向の回転.
 	void DegreeHorizontalMove( const float& movePower );
+	// 横方向の右回転.
+	void DegreeHorizontalRightMove();
+	// 横方向の左回転.
+	void DegreeHorizontalLeftMove();
 	// 縦方向の回転.
 	void DegreeVerticalMove( const float& movePower );
 	// ラジアンの取得関数.
@@ -38,12 +58,14 @@ public:  //------ 関数 -------.
 	void SetVerticalDegree( const float& max, const float& min );
 
 private: //------ 変数 -------.
-	D3DXVECTOR2 m_vDegree;	// カメラの角度.
-	float m_Length;			// カメラと注視点の長さ.
-	float m_HorizontalMax;	// 横方向の最大サイズ.
-	float m_HorizontalMin;	// 横方向の最小サイズ.
-	float m_VerticalMax;	// 縦方向の最大サイズ.
-	float m_VerticalMin;	// 縦方向の最小サイズ.
+	D3DXVECTOR2		m_vDegree;			// カメラの角度.
+	float			m_Length;			// カメラと注視点の長さ.
+	float			m_HorizontalMax;	// 横方向の最大サイズ.
+	float			m_HorizontalMin;	// 横方向の最小サイズ.
+	float			m_VerticalMax;		// 縦方向の最大サイズ.
+	float			m_VerticalMin;		// 縦方向の最小サイズ.
+	float			m_RightMoveSpeed;	// 右の移動速度.
+	float			m_LeftMoveSpeed;	// 左の移動速度.
 };
 
 #endif	// #ifndef ROTATION_LOOK_AT_CENTER_CAMERA_H.

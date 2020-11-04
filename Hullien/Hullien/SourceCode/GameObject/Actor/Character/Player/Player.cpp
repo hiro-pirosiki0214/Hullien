@@ -54,7 +54,7 @@ CPlayer::CPlayer()
 	m_ObjectTag = EObjectTag::Player;	// プレイヤータグを設定.
 	m_NowAnimNo = player::EAnimNo_Wait;	// 現在のアニメーションを待機に設定.
 	m_OldAnimNo = player::EAnimNo_None;	// 過去のアニメーションは無し.
-	m_pCamera	= std::make_shared<CRotLookAtCenter>();
+	m_pCamera	= std::make_shared<CRotLookAtCenter>( true );
 	m_pSPCamera = std::make_shared<CCamera>();
 	m_AnimFrameList.resize( player::EAnimNo_Max );
 	for( auto& e : m_pEffectTimers ) e = std::make_shared<CEffectTimer>();
@@ -236,14 +236,14 @@ void CPlayer::CameraController()
 	// カメラの回転移動.
 	// 横方向.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
-		m_pCamera->DegreeHorizontalMove(  m_Parameter.CameraMoveSpeed );	// 右方向.
+		m_pCamera->DegreeHorizontalRightMove();	// 右方向.
 	if( CXInput::RThumbX_Axis() <= IDLE_THUMB_MIN ) 
-		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// 左方向.
+		m_pCamera->DegreeHorizontalLeftMove();	// 左方向.
 
 	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) 
-		m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);	// 右方向.
+		m_pCamera->DegreeHorizontalRightMove();	// 右方向.
 	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )
-		m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);	// 左方向.
+		m_pCamera->DegreeHorizontalLeftMove();	// 左方向.
 }
 
 // 攻撃操作関数.
