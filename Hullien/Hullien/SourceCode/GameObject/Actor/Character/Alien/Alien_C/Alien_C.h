@@ -9,6 +9,7 @@ class CAlienC : public CAlien
 
 public:
 	CAlienC();
+	CAlienC( const SAlienParam* pParam );
 	virtual ~CAlienC();
 
 	// 初期化関数.
@@ -20,7 +21,7 @@ public:
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// スポーン.
-	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
+	virtual bool Spawn( const D3DXVECTOR3& spawnPos ) override;
 
 private:
 	// スポーン.

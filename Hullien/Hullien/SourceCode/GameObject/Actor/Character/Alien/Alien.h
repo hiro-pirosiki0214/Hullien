@@ -22,8 +22,11 @@ protected:
 	inline static const char* DEAD_EFFECT_NAME		= "uvtest";			// 死亡エフェクト.
 	inline static const char* ATTACK_EFFECT_NAME	= "uvtest";			// 攻撃エフェクト.
 
+	const SAlienParam*	pPARAMETER;	// パラメータのポインタ : 外部から取得.
+
 public:
 	CAlien();
+	CAlien( const SAlienParam* pParam );
 	virtual ~CAlien();
 
 	// エフェクトの描画.
@@ -34,7 +37,7 @@ public:
 	// ベクトルの取得.
 	virtual void SetVector( const D3DXVECTOR3& vec ) override;
 	// スポーン.
-	virtual bool Spawn( const SAlienParam& param, const D3DXVECTOR3& spawnPos ) = 0;
+	virtual bool Spawn( const D3DXVECTOR3& spawnPos ) = 0;
 
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
@@ -111,7 +114,6 @@ protected:
 	D3DXVECTOR3				m_KnockBackVector;			// ノックバックの移動ベクトル.
 	D3DXVECTOR3				m_BeforeMoveingPosition;	// 移動前の座標.
 	D3DXVECTOR3*			m_pAbductUFOPosition;		// UFOの座標.
-	SAlienParam				m_Parameter;				// パラメータ.
 	alien::EAlienState		m_NowState;					// 現在の状態.
 	alien::EMoveState		m_NowMoveState;				// 現在の移動状態.
 	EItemList				m_HasAnyItem;				// どのアイテムを持っているか.

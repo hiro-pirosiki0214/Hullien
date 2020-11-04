@@ -13,6 +13,7 @@ CSpawnUFO::CSpawnUFO()
 	: m_pStaticMesh				( nullptr )
 	, m_pCollManager			( nullptr )
 	, m_pUFOLight				( nullptr )
+	, m_AilenList				()
 	, m_SpawnParameter			()
 	, m_SpawnPoint				{ 0.0f, 0.0f, 0.0f }
 	, m_pAbductUFOPosition		( nullptr )
@@ -20,6 +21,7 @@ CSpawnUFO::CSpawnUFO()
 	, m_FrameCount				( 0 )
 	, m_SpawnCount				( 0 )
 	, m_AlienIndex				( 0 )
+	, m_AlienSpawnCount			( 0 )
 	, m_IsDisp					( true ) 
 	, m_RandomSeed				()
 {
@@ -62,12 +64,6 @@ void CSpawnUFO::Update()
 {
 	m_SpawnCount++;
 	m_pUFOLight->Update();
-	if( GetAsyncKeyState('P') & 0x8000 ){
-		m_pUFOLight->Discharge();
-	}
-	if( GetAsyncKeyState('O') & 0x8000 ){
-		m_pUFOLight->CleanUP();
-	}
 }
 
 // 描画関数.
@@ -99,30 +95,27 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	if( m_SpawnCount < m_SpawnParameter.SpawnTime*FPS ) return;
 	if( m_pAbductUFOPosition == nullptr ) return;
 
-	alienList.emplace_back( AlienFactory() );	// 宇宙人の追加.
-	// 追加したエイリアンがnullなら削除して、終了.
-	if( alienList.back() == nullptr ){
-		alienList.pop_back();
-		return;
-	}
-
-	// 宇宙人のパラメータリストが空なら終了.
-	if( m_pAlienParamList->empty() == true ) return;
-	if( m_pAlienParamList->size() <= static_cast<size_t>(m_AlienIndex) ) return;
+	alienList.emplace_back( m_AilenList[m_AlienSpawnCount] );	// 宇宙人の追加.
 
 	// リストにあったパラメータとスポーン座標を設定し、スポーンさせる.
-	alienList.back()->Spawn( m_pAlienParamList->at(m_AlienIndex), m_SpawnPoint );
+	alienList.back()->Spawn( m_SpawnPoint );
 	// 連れ去るUFOの座標を設定.
 	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
 	// アイテムの設定.
 	alienList.back()->SetItem( ProbabilityGetItem( static_cast<EAlienList>(m_AlienIndex) == EAlienList::D ) );
 	m_SpawnCount = 0;
+	m_AlienSpawnCount++;
 }
 
 // 宇宙人のパラメータリストを設定する.
 void CSpawnUFO::SetAlienParameterList( std::vector<SAlienParam>* alienParamList )
 {
 	m_pAlienParamList = alienParamList;
+	m_AilenList.reserve( m_SpawnParameter.MaxAlienCount );
+	for( int i = 0; i < m_SpawnParameter.MaxAlienCount; i++ ){
+		m_AilenList.emplace_back( AlienFactory() );	// 宇宙人の追加.
+		m_AilenList.back()->Init();
+	}
 }
 
 // スポーンパラメータの設定.
@@ -131,6 +124,7 @@ void CSpawnUFO::SetSpawnParameter( const SSpawnUFOParam& param )
 	m_SpawnParameter = param;
 	m_SpawnPoint	= m_vPosition = m_SpawnParameter.Position;
 	m_SpawnPoint.y	= m_SpawnParameter.SpawnPointHight;
+	m_SpawnCount = m_SpawnParameter.SpawnTime*FPS/2;
 }
 
 // ライトを取り出す.
@@ -167,27 +161,27 @@ std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 	{
 	case EAlienList::A:
 		m_AlienIndex = static_cast<int>(alienNo);
-		return std::make_shared<CAlienA>();
+		return std::make_shared<CAlienA>( &m_pAlienParamList->at(m_AlienIndex) );
 
 	case EAlienList::Ada:
 		m_AlienIndex = static_cast<int>(alienNo);
-		return std::make_shared<CAlienA>();
+		return std::make_shared<CAlienA>( &m_pAlienParamList->at(m_AlienIndex) );
 
 	case EAlienList::B:
 		m_AlienIndex = static_cast<int>(alienNo);
-		return std::make_shared<CAlienB>();
+		return std::make_shared<CAlienB>( &m_pAlienParamList->at(m_AlienIndex) );
 
 	case EAlienList::Bda:
 		m_AlienIndex = static_cast<int>(alienNo);
-		return std::make_shared<CAlienB>();
+		return std::make_shared<CAlienB>( &m_pAlienParamList->at(m_AlienIndex) );
 
 	case EAlienList::C:
 		m_AlienIndex = static_cast<int>(alienNo);
-		return std::make_shared<CAlienC>();
+		return std::make_shared<CAlienC>( &m_pAlienParamList->at(m_AlienIndex) );
 
 	case EAlienList::D:
 		m_AlienIndex = static_cast<int>(alienNo);
-		return std::make_shared<CAlienD>();
+		return std::make_shared<CAlienD>( &m_pAlienParamList->at(m_AlienIndex) );
 	default:
 		break;
 	}

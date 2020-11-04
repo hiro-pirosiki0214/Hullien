@@ -55,8 +55,8 @@ public:
 	void SetScale(const D3DXVECTOR3& scale) { m_vScale = scale; }
 	// 当たり判定(イベントで使用).
 	D3DXVECTOR3 Collision(CActor* pActor);
-private:
 
+private:
 	// 宇宙人の作成.
 	std::shared_ptr<CAlien> AlienFactory();
 	// 宇宙人番号の取得.
@@ -74,6 +74,7 @@ private:
 private:
 	std::shared_ptr<CDX9StaticMesh>		m_pStaticMesh;			// メッシュ.
 	std::shared_ptr<CUFOLight>			m_pUFOLight;			// UFOライト.
+	std::vector<std::shared_ptr<CAlien>>m_AilenList;			// 宇宙人リスト.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;			// 当たり判定クラス.
 	SSpawnUFOParam						m_SpawnParameter;		// スポーンパラメータ.
 	D3DXVECTOR3							m_SpawnPoint;			// スポーンポイント.
@@ -82,7 +83,7 @@ private:
 	int	m_FrameCount;	// 経過フレームカウント.
 	int m_SpawnCount;	// スポーンカウント.
 	int m_AlienIndex;	// 宇宙人.
-
+	int	m_AlienSpawnCount;
 	bool m_IsDisp;		//描画フラグ.
 
 	std::mt19937 m_RandomSeed;	// ランダムシード.

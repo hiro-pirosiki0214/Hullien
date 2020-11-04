@@ -10,7 +10,12 @@
 #include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 CAlienD::CAlienD()
-	: m_pAttackRangeSprite	( nullptr )
+	: CAlienD	( nullptr )
+{}
+
+CAlienD::CAlienD( const SAlienParam* pParam )
+	: CAlien				( pParam )
+	, m_pAttackRangeSprite	( nullptr )
 	, m_pLaserBeam			( nullptr )
 	, m_ControlPositions	( 1 )
 	, m_AttackCount			( 0.0f )
@@ -27,6 +32,7 @@ CAlienD::~CAlienD()
 // 初期化関数.
 bool CAlienD::Init()
 {
+	if( pPARAMETER					== nullptr ) return false;
 	if( GetModel( MODEL_NAME )		== false ) return false;
 	if( GetAnimationController()	== false ) return false;
 	if( SetAnimFrameList()			== false ) return false;
@@ -94,21 +100,18 @@ void CAlienD::Collision( CActor* pActor )
 }
 
 // スポーン.
-bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
+bool CAlienD::Spawn( const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != alien::EAlienState::None ) return true;
-	m_Parameter = param;	// パラメータを設定.
-	// 初期化に失敗したら終了.
-	if( Init() == false ) return false;
 	m_vPosition		= spawnPos;					// スポーン座標の設定.
-	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
-	m_NowState = alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
+	m_LifePoint		= pPARAMETER->LifeMax;		// 体力の設定.
+	m_NowState = alien::EAlienState::Spawn;		// 現在の状態をスポーンに変更.
 	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	// レーザーの移動速度の設定.
-	m_pLaserBeam->SetMoveSpped( m_Parameter.LaserMoveSpeed );
+	m_pLaserBeam->SetMoveSpped( pPARAMETER->LaserMoveSpeed );
 	// レーザーの麻痺時間の設定.
-	m_pLaserBeam->SetParalysisTime( m_Parameter.ParalysisTime );
+	m_pLaserBeam->SetParalysisTime( pPARAMETER->ParalysisTime );
 
 	if (CSoundManager::GetIsPlaySE("AlienDApp", 0) == false)
 	{
@@ -156,9 +159,9 @@ void CAlienD::AttackRangeSpriteRender()
 	}
 
 	// 攻撃範囲スプライトの描画.
-	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_Parameter.AttackRangeSpritePosY, m_TargetPosition.z } );
+	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, pPARAMETER->AttackRangeSpritePosY, m_TargetPosition.z } );
 	m_pAttackRangeSprite->SetRotation( { static_cast<float>(D3DXToRadian(90)), 0.0f, 0.0f } );
-	m_pAttackRangeSprite->SetScale( m_Parameter.AttackRangeSpriteScale );	
+	m_pAttackRangeSprite->SetScale( pPARAMETER->AttackRangeSpriteScale );	
 	m_pAttackRangeSprite->SetColor( color );
 	m_pAttackRangeSprite->SetBlend( true );
 	m_pAttackRangeSprite->SetRasterizerState( CCommon::enRS_STATE::Back );
@@ -234,9 +237,9 @@ void CAlienD::Attack()
 		headPos.z += cosf( radius ) * 3.5f;
 
 		// 上向き少し後ろに設定..
-		m_ControlPositions[0].x = headPos.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
-		m_ControlPositions[0].y = headPos.y + m_Parameter.ControlPointOneLenghtY;
-		m_ControlPositions[0].z = headPos.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
+		m_ControlPositions[0].x = headPos.x + sinf( radius ) * pPARAMETER->ControlPointOneLenght;
+		m_ControlPositions[0].y = headPos.y + pPARAMETER->ControlPointOneLenghtY;
+		m_ControlPositions[0].z = headPos.z + cosf( radius ) * pPARAMETER->ControlPointOneLenght;
 
 		// 上で設定したコントロールポジションを設定.
 		m_pLaserBeam->SetControlPointList( m_ControlPositions );
@@ -260,14 +263,14 @@ void CAlienD::VectorMove( const float& moveSpeed )
 	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
 	// 再度座標を検索し、回転するか比較.
-	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ){
+	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= pPARAMETER->ResearchLenght ){
 		m_NowMoveState	= alien::EMoveState::Rotation;	// 回転状態へ遷移.
 		m_IsAttackStart = false;	// 攻撃が始まるフラグを下す.
 		return;
 	}
 
 	// プレイヤーとの距離が一定値より低いか比較.
-	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= m_Parameter.AttackLenght ) return;
+	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= pPARAMETER->AttackLenght ) return;
 	if( m_pLaserBeam->IsEndAttack() == false ) return;
 	m_IsAttackStart	= false;	// 攻撃が始まるフラグを下す.
 	m_AttackCount	= 0.0f;		// 攻撃カウントを初期化,
@@ -324,7 +327,7 @@ bool CAlienD::ColliderSetting()
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
+		pPARAMETER->SphereAdjPos,
+		pPARAMETER->SphereAdjRadius ) )) return false;
 	return true;
 }

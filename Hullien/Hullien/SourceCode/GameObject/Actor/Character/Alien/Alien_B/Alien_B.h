@@ -10,6 +10,7 @@ class CAlienB : public CAlien
 
 public:
 	CAlienB();
+	CAlienB( const SAlienParam* pParam );
 	virtual ~CAlienB();
 
 	// 初期化関数.
@@ -23,7 +24,7 @@ public:
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// スポーン.
-	virtual bool Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos ) override;
+	virtual bool Spawn( const D3DXVECTOR3& spawnPos ) override;
 	// 相手座標の設定.
 	virtual void SetTargetPos( CActor& actor ) override;
 	// ライフ計算関数.
@@ -65,7 +66,7 @@ private:
 	bool	m_HasAimPlayer;		// プレイヤーを狙うかどうか.
 	bool	m_OldHasAimPlayer;	// 前回プレイヤーを狙っていたか.
 	float	m_RotAccValue;		// 回転加速値.
-	bool	m_IsAttackSE;		//攻撃SEを鳴らすか.
+	bool	m_IsAttackSE;		// 攻撃SEを鳴らすか.
 };
 
 #endif	// #ifndef ALIEN_B_H.

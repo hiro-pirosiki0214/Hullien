@@ -12,7 +12,12 @@
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
 CAlienB::CAlienB()
-	: m_pAttackMesh		( nullptr )
+	: CAlienB	( nullptr )
+{}
+
+CAlienB::CAlienB( const SAlienParam* pParam )
+	: CAlien			( pParam )
+	, m_pAttackMesh		( nullptr )
 	, m_vPlayerPos		( 0.0f, 0.0f, 0.0f )
 	, m_HasAimPlayer	( false )
 	, m_OldHasAimPlayer	( false )
@@ -30,6 +35,7 @@ CAlienB::~CAlienB()
 // 初期化関数.
 bool CAlienB::Init()
 {
+	if( pPARAMETER					== nullptr ) return false;
 	if( GetModel( MODEL_NAME )		== false ) return false;
 	if( GetAttackModel()			== false ) return false;
 	if( GetAnimationController()	== false ) return false;
@@ -138,17 +144,14 @@ void CAlienB::Collision( CActor* pActor )
 }
 
 // スポーン.
-bool CAlienB::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
+bool CAlienB::Spawn( const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != alien::EAlienState::None ) return true;
-	m_Parameter = param;	// パラメータを設定.
-	// 初期化に失敗したら終了.
-	if( Init() == false ) return false;
-	m_vPosition		= spawnPos;					// スポーン座標の設定.
-	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
-	m_NowState		= alien::EAlienState::Spawn;		// 現在の状態をスポーンに変更.
-	m_AnimSpeed		= 0.0;						// アニメーション速度を止める.
+	m_vPosition		= spawnPos;						// スポーン座標の設定.
+	m_LifePoint		= pPARAMETER->LifeMax;			// 体力の設定.
+	m_NowState		= alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
+	m_AnimSpeed		= 0.0;							// アニメーション速度を止める.
 	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
@@ -262,10 +265,10 @@ void CAlienB::VectorMove( const float& moveSpeed )
 	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
 	// プレイヤーの座標と宇宙人の座標を比較.
-	if( D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) ) >= m_Parameter.AttackLenght ) return;
+	if( D3DXVec3Length( &D3DXVECTOR3(m_vPlayerPos - m_vPosition) ) >= pPARAMETER->AttackLenght ) return;
 	if( m_IsBarrierHit == true ) return;
 	m_NowMoveState	= alien::EMoveState::Attack;
-	m_RotAccValue	= m_Parameter.AttackRotInitPower;
+	m_RotAccValue	= pPARAMETER->AttackRotInitPower;
 	m_pEffects[alien::EEffectNo_Attack]->Play( m_vPosition );
 }
 
@@ -275,13 +278,13 @@ void CAlienB::Attack()
 	if( m_NowMoveState != alien::EMoveState::Attack ) return;
 
 	// 回転.
-	m_vRotation.y += (m_Parameter.AttackRotPower - fabsf(m_RotAccValue));
-	m_RotAccValue -= m_Parameter.AttackRotAddValue;	// 回転加速度を加算.
+	m_vRotation.y += (pPARAMETER->AttackRotPower - fabsf(m_RotAccValue));
+	m_RotAccValue -= pPARAMETER->AttackRotAddValue;	// 回転加速度を加算.
 
 	// 加速度が移動範囲なら移動.
-	if( -m_Parameter.AttackMoveRange <= m_RotAccValue && m_RotAccValue <= m_Parameter.AttackMoveRange ){
-		m_vPosition.x -= m_MoveVector.x * m_Parameter.AttackMoveSpeed;
-		m_vPosition.z -= m_MoveVector.z * m_Parameter.AttackMoveSpeed;
+	if( -pPARAMETER->AttackMoveRange <= m_RotAccValue && m_RotAccValue <= pPARAMETER->AttackMoveRange ){
+		m_vPosition.x -= m_MoveVector.x * pPARAMETER->AttackMoveSpeed;
+		m_vPosition.z -= m_MoveVector.z * pPARAMETER->AttackMoveSpeed;
 	}
 	if (m_IsAttackSE == false)
 	{
@@ -289,7 +292,7 @@ void CAlienB::Attack()
 		m_IsAttackSE = true;
 	}
 
-	if( m_RotAccValue > -m_Parameter.AttackRotPower ) return;
+	if( m_RotAccValue > -pPARAMETER->AttackRotPower ) return;
 	m_NowMoveState = alien::EMoveState::Wait;
 	m_IsAttackSE = false;
 }
@@ -309,7 +312,7 @@ void CAlienB::PlayerCollison( CActor* pActor )
 	// プレイヤーの体力を減らす.
 	pActor->LifeCalculation( [&]( float& life, bool& isAttack )
 	{
-		life -= m_Parameter.AttackPower;
+		life -= pPARAMETER->AttackPower;
 		isAttack = true;
 	});
 }
@@ -324,7 +327,7 @@ void CAlienB::AimPlayerDecision()
 
 	m_OldHasAimPlayer = m_HasAimPlayer;
 	// プレイヤーの狙う範囲を比較.
-	if( playerLenght <= m_Parameter.PlayerAimLenght ){
+	if( playerLenght <= pPARAMETER->PlayerAimLenght ){
 		// プレイヤーのほうが近いのでプレイヤーを狙う.
 		m_HasAimPlayer = true;
 		SetMoveVector( m_vPlayerPos );
@@ -349,14 +352,14 @@ bool CAlienB::ColliderSetting()
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
+		pPARAMETER->SphereAdjPos,
+		pPARAMETER->SphereAdjRadius ) )) return false;
 	if( FAILED( m_pCollManager->InitCapsule( 
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
+		pPARAMETER->SphereAdjPos,
 		-1.0f,
 		0.0f ) )) return false;
 	return true;

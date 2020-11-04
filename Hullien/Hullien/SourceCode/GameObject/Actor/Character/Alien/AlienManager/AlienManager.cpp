@@ -33,7 +33,7 @@ bool CAlienManager::Init()
 	if( SpawnUFOInit() == false )			return false;
 	if( ReadAlienParamList() == false )		return false;
 	if( ReadExplosionParam() == false )		return false;
-
+	
 	return true;
 }
 
@@ -171,9 +171,10 @@ bool CAlienManager::SpawnUFOInit()
 	for( const auto& s : spawnPramList ){
 		m_SpawnUFOList.emplace_back();
 		m_SpawnUFOList.back().Init();
-		m_SpawnUFOList.back().SetSpawnParameter( s );
 		m_SpawnUFOList.back().SetAbductUFOPosition( &m_MotherShipUFOPos );
+		m_SpawnUFOList.back().SetSpawnParameter( s );
 	}
+	m_AilenList.reserve( spawnPramList[0].MaxAlienCount );
 	return true;
 }
 

@@ -8,6 +8,11 @@
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
 CAlienC::CAlienC()
+	: CAlienC	( nullptr )
+{}
+
+CAlienC::CAlienC( const SAlienParam* pParam )
+	: CAlien	( pParam )
 {
 	m_ObjectTag = EObjectTag::Alien_C;
 	m_pArm = std::make_unique<CArm>();
@@ -20,6 +25,7 @@ CAlienC::~CAlienC()
 // 初期化関数.
 bool CAlienC::Init()
 {
+	if( pPARAMETER					== nullptr ) return false;
 	if( GetModel( MODEL_NAME )		== false ) return false;
 	if( GetAnimationController()	== false ) return false;
 	if( SetAnimFrameList()			== false ) return false;
@@ -83,17 +89,14 @@ void CAlienC::Collision( CActor* pActor )
 }
 
 // スポーン.
-bool CAlienC::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
+bool CAlienC::Spawn( const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
 	if( m_NowState != alien::EAlienState::None ) return true;
-	m_Parameter = param;	// パラメータを設定.
-	// 初期化に失敗したら終了.
-	if( Init() == false ) return false;
-	m_vPosition		= spawnPos;				// スポーン座標の設定.
-	m_LifePoint		= m_Parameter.LifeMax;	// 体力の設定.
+	m_vPosition		= spawnPos;						// スポーン座標の設定.
+	m_LifePoint		= pPARAMETER->LifeMax;			// 体力の設定.
 	m_NowState		= alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
-	m_AnimSpeed		= 0.0;					// アニメーション速度を止める.
+	m_AnimSpeed		= 0.0;							// アニメーション速度を止める.
 	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
@@ -146,7 +149,7 @@ bool CAlienC::ColliderSetting()
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
+		pPARAMETER->SphereAdjPos,
+		pPARAMETER->SphereAdjRadius ) )) return false;
 	return true;
 }

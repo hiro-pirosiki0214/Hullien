@@ -9,7 +9,12 @@
 #include "..\..\..\..\Common\Effect\EffectManager.h"
 
 CAlien::CAlien()
-	: m_pArm					( nullptr )
+	: CAlien	( nullptr )
+{}
+
+CAlien::CAlien( const SAlienParam* pParam )
+	: pPARAMETER				( pParam )
+	, m_pArm					( nullptr )
 	, m_pAC						( nullptr )
 	, m_pEffects				()
 	, m_TargetPosition			( 0.0f, 0.0f, 0.0f )
@@ -17,7 +22,6 @@ CAlien::CAlien()
 	, m_KnockBackVector			( 0.0f, 0.0f, 0.0f )
 	, m_pAbductUFOPosition		( nullptr )
 	, m_BeforeMoveingPosition	( 0.0f, 0.0f, 0.0f )
-	, m_Parameter				()
 	, m_NowState				( alien::EAlienState::None )
 	, m_NowMoveState			( alien::EMoveState::None )
 	, m_HasAnyItem				( EItemList::None )
@@ -58,6 +62,7 @@ void CAlien::SetTargetPos( CActor& actor )
 {
 	SetGirlPos( actor );
 }
+
 // ベクトルの取得.
 void CAlien::SetVector( const D3DXVECTOR3& vec )
 {
@@ -181,7 +186,7 @@ void CAlien::TargetRotation()
 	myVector.z = cosf( m_vRotation.y );
 
 	// 目的の座標へ向けて回転.
-	if( CCharacter::TargetRotation( m_MoveVector, m_Parameter.RotationalSpeed, TOLERANCE_RADIAN ) == false ) return;
+	if( CCharacter::TargetRotation( m_MoveVector, pPARAMETER->RotationalSpeed, TOLERANCE_RADIAN ) == false ) return;
 	m_vRotation.y			= m_TargetRotation.y;	// ターゲットへの回転取得.
 	m_BeforeMoveingPosition = m_vPosition;			// 現在の座標を記憶.
 	m_NowMoveState			= alien::EMoveState::Move;		// 移動状態へ遷移.
@@ -198,7 +203,7 @@ void CAlien::VectorMove( const float& moveSpeed )
 
 	// 再度目的の座標を探すか比較.
 	// 回転時に記憶した座標と現在の座標の距離が一定以上なら.
-	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ) 
+	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= pPARAMETER->ResearchLenght ) 
 		m_NowMoveState = alien::EMoveState::Rotation;	// 回転状態へ移動.
 
 	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= 1.0f ) return;
@@ -211,7 +216,7 @@ void CAlien::WaitMove()
 {
 	if( m_NowMoveState != alien::EMoveState::Wait ) return;
 	m_WaitCount++;	// 待機カウント加算.
-	if( m_WaitCount < m_Parameter.WaitTime*FPS ) return;
+	if( m_WaitCount < pPARAMETER->WaitTime*FPS ) return;
 	m_NowMoveState	= alien::EMoveState::Rotation;	// 移動状態を回転する.
 	m_WaitCount		= 0;	// 待機カウントの初期化.
 }
@@ -222,9 +227,9 @@ void CAlien::Spawning()
 	// スケールの加算.
 	m_vScale += 
 	{
-		m_Parameter.SpawnScaleAddValue, 
-		m_Parameter.SpawnScaleAddValue,
-		m_Parameter.SpawnScaleAddValue
+		pPARAMETER->SpawnScaleAddValue, 
+		pPARAMETER->SpawnScaleAddValue,
+		pPARAMETER->SpawnScaleAddValue
 	};
 
 	// 大きさが一定値以上なら.
@@ -232,7 +237,7 @@ void CAlien::Spawning()
 		m_vScale = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
 	}
 
-	m_vPosition.y -= m_Parameter.SpawnDownSpeed;	// 高さを下げる.
+	m_vPosition.y -= pPARAMETER->SpawnDownSpeed;	// 高さを下げる.
 	if( m_vPosition.y <= 0.0f ){
 		m_vPosition.y = 0.0f;
 	}
@@ -283,7 +288,7 @@ void CAlien::Abduct()
 void CAlien::KnockBack()
 {
 	m_KnockBackCount++;	// 無敵カウントを加算.
-	if( m_KnockBackCount <= m_Parameter.KnockBackTime ){
+	if( m_KnockBackCount <= pPARAMETER->KnockBackTime ){
 		m_vRotation.y = atan2( m_KnockBackVector.x, m_KnockBackVector.z ) + static_cast<float>(D3DX_PI);
 		m_vPosition.x -= m_KnockBackVector.x;
 		m_vPosition.z -= m_KnockBackVector.z;
@@ -307,8 +312,8 @@ void CAlien::Death()
 	if( m_AnimFrameList[alien::EAnimNo_Dead].IsNowFrameOver() == false ) return;
 
 	m_AnimSpeed = 0.0;
-	m_DeathCount += m_Parameter.DeadCountAddValue;
-	m_DeathScale -= m_Parameter.DeadScaleSubValue;
+	m_DeathCount += pPARAMETER->DeadCountAddValue;
+	m_DeathScale -= pPARAMETER->DeadScaleSubValue;
 	// モデルのサイズの計算.
 	const float scale = m_DeathScale*exp(-m_DeathCount)*sinf(DEATH_SCALE_PI*m_DeathCount);
 	m_vScale = { scale, scale, scale };
@@ -340,9 +345,9 @@ void CAlien::Escape()
 // マザーシップに昇っている.
 void CAlien::RisingMotherShip()
 {
-	m_vScale.x -= m_Parameter.MotherShipUpScaleSubValue;
-	m_vScale.y -= m_Parameter.MotherShipUpScaleSubValue;
-	m_vScale.z -= m_Parameter.MotherShipUpScaleSubValue;
+	m_vScale.x -= pPARAMETER->MotherShipUpScaleSubValue;
+	m_vScale.y -= pPARAMETER->MotherShipUpScaleSubValue;
+	m_vScale.z -= pPARAMETER->MotherShipUpScaleSubValue;
 	if( m_vScale.x > 0.0f ) return;
 	m_IsDelete = true;	// 死亡フラグを立てる.
 }
@@ -406,13 +411,13 @@ void CAlien::BarrierCollision( CActor* pActor )
 		CSoundManager::PlaySE("BarrierHit");
 		m_MoveSpeed		= BARRIER_HIT_MOVE_SPEED;	// バリア衝突時の移動速度に変更する.
 		m_IsBarrierHit	= true;						// バリア衝突フラグを立てる.
-		m_NowState		= alien::EAlienState::Move;		// 移動状態へ遷移.
-		m_NowMoveState	= alien::EMoveState::Move;			// 移動の移動状態へ遷移.
+		m_NowState		= alien::EAlienState::Move;	// 移動状態へ遷移.
+		m_NowMoveState	= alien::EMoveState::Move;	// 移動の移動状態へ遷移.
 		*m_pIsAlienOtherAbduct	= false;			// 女の子を連れ去るフラグを下す.
 		SetAnimation( alien::EAnimNo_Move, m_pAC );
 		m_AnimSpeed = 0.01;
 	} else {
-		m_MoveSpeed		= m_Parameter.MoveSpeed;	// 通常の移動速度に戻す.
+		m_MoveSpeed		= pPARAMETER->MoveSpeed;	// 通常の移動速度に戻す.
 		m_IsBarrierHit	= false;	// バリア衝突フラグを下す.
 	}
 }
