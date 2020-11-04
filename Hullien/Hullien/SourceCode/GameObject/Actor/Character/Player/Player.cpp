@@ -8,6 +8,7 @@
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h"
+#include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h"
 #include "..\..\..\..\Common\Effect\EffectManager.h"
 #include "..\..\Item\EffectTimer\EffectTimer.h"
@@ -1151,6 +1152,7 @@ void CPlayer::EditRender()
 // ウィジェット設定.
 bool CPlayer::WidgetSetting()
 {
+	m_pWidget.emplace_back(std::make_shared<CBackGauge>());
 	m_pWidget.emplace_back(std::make_shared<CLifeGauge>());
 	m_pWidget.emplace_back(std::make_shared<CSpecialAbilityGauge>());
 

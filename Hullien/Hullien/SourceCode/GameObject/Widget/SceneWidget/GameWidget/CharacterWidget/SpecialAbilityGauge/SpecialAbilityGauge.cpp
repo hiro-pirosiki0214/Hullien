@@ -57,16 +57,16 @@ void CSpecialAbilityGauge::Render()
 	{
 		if (sprite == 2 && m_GaugeState[GAUGE_NUM].vScale.x != SCALE_MAX) continue;
 
-		m_pSprite[sprite]->SetPosition(m_GaugeState[sprite].vPosition);
+//		m_pSprite[sprite]->SetPosition(m_GaugeState[sprite].vPosition);
 		m_pSprite[sprite]->SetScale(m_GaugeState[sprite].vScale);
-		m_pSprite[sprite]->SetAnimNumber(m_GaugeState[sprite].AnimNum);
+//		m_pSprite[sprite]->SetAnimNumber(m_GaugeState[sprite].AnimNum);
 		m_pSprite[sprite]->SetAlpha(m_Alpha[sprite]);
 
-		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->SetDeprh( false );
+		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->RenderUI();
-		m_pSprite[sprite]->SetDeprh( true );
 		m_pSprite[sprite]->SetBlend( false );
+		m_pSprite[sprite]->SetDeprh( true );
 	}
 }
 

@@ -51,7 +51,9 @@ void CLimitTime::Render()
 		m_pSprite[sprite]->SetPosition( m_vPosition[sprite] );
 		m_pSprite[sprite]->SetAnimNumber( m_Anim[sprite] );
 		m_pSprite[sprite]->SetDeprh( false );
+		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->RenderUI();
+		m_pSprite[sprite]->SetBlend( false );
 		m_pSprite[sprite]->SetDeprh( true );
 	}
 }

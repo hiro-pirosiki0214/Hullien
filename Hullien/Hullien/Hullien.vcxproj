@@ -241,6 +241,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.cpp" />
@@ -299,6 +300,7 @@
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
     <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />
     <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h" />

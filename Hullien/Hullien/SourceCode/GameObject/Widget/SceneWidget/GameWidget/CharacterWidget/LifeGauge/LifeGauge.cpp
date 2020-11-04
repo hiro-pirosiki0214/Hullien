@@ -54,11 +54,13 @@ void CLifeGauge::Render()
 
 	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
-		m_pSprite[sprite]->SetPosition( m_GaugeState[sprite].vPosition );
+//		m_pSprite[sprite]->SetPosition( m_GaugeState[sprite].vPosition );
 		m_pSprite[sprite]->SetScale( m_GaugeState[sprite].vScale );
-		m_pSprite[sprite]->SetAnimNumber( m_GaugeState[sprite].AnimNum );
+//		m_pSprite[sprite]->SetAnimNumber( m_GaugeState[sprite].AnimNum );
 		m_pSprite[sprite]->SetDeprh( false );
+		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->RenderUI();
+		m_pSprite[sprite]->SetBlend( false );
 		m_pSprite[sprite]->SetDeprh( true );
 	}
 }
@@ -71,7 +73,6 @@ bool CLifeGauge::SpriteSetting()
 	//読み込むスプライト名設定.
 	const char* spriteName[] =
 	{
-		SPRITE_GAUGEBACK,	//ゲージ背景.
 		SPRITE_GAUGEDELAY,	//ゲージ遅延.
 		SPRITE_GAUGE,		//ゲージ.
 	};

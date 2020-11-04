@@ -64,7 +64,9 @@ void CWarning::RenderDangerSign()
 {
 	m_pSprite[DANGER_SIGN]->SetPosition(m_vPosition);
 	m_pSprite[DANGER_SIGN]->SetDeprh(false);
+	m_pSprite[DANGER_SIGN]->SetBlend(true);
 	m_pSprite[DANGER_SIGN]->Render(true);	// ビルボードにする.
+	m_pSprite[DANGER_SIGN]->SetBlend(false);
 	m_pSprite[DANGER_SIGN]->SetDeprh(true);
 }
 
@@ -89,6 +91,8 @@ void CWarning::RenderDangerArrow()
 	m_pSprite[DANGER_ARROW]->SetPosition( m_vPosition);
 	m_pSprite[DANGER_ARROW]->SetRotation(m_vRotation);
 	m_pSprite[DANGER_ARROW]->SetDeprh(false);
+	m_pSprite[DANGER_ARROW]->SetBlend(true);
 	m_pSprite[DANGER_ARROW]->RenderUI();
+	m_pSprite[DANGER_ARROW]->SetBlend(false);
 	m_pSprite[DANGER_ARROW]->SetDeprh(true);
 }
