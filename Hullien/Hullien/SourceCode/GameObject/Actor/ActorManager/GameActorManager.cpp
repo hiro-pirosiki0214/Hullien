@@ -65,12 +65,10 @@ void CGameActorManager::Update()
 	m_ObjPosListCount = 0;		// カウントの初期化.
 	m_ObjPositionList.clear();	// リストの初期化.
 
-//	m_pSkyDome->SetPosition( m_pPlayer->GetPosition() );
-
 	// プレイヤーの更新.
 	m_pPlayer->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 	m_pPlayer->Update();						// 更新.
-	SetPositionList( m_pPlayer.get() );	// 座標リストの設定.
+	
 
 	// バリアを使えるか.
 	if( m_pPlayer->IsSpecialAbility() == true ) m_pBarrier->Init();	// バリアの初期化.
@@ -78,7 +76,6 @@ void CGameActorManager::Update()
 	// 女の子の更新.
 	m_pGirl->Update();
 	m_pGirl->SetCameraRadianX(m_pPlayer->GetCameraRadianX());	//カメラのラジアン値取得.
-	SetPositionList( m_pGirl.get() );	// 座標リストの設定.
 	m_pBarrier->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 
 	// バリアの更新.
@@ -109,9 +106,6 @@ void CGameActorManager::Update()
 			m_pMotherShipUFO->Collision( pActor );
 		} );
 
-	// マザーシップの座標を設定.
-	SetPositionList( m_pMotherShipUFO.get() );
-
 	// アイテムリストがあればアイテムを落とす.
 	m_pItemManager->Drop( m_pAlienManager->GetDropItemList() );
 	// アイテムの更新.
@@ -122,6 +116,10 @@ void CGameActorManager::Update()
 			SetPositionList( pActor );				// 座標リストの設定.
 			pActor->Collision( m_pPlayer.get() );	// アイテムの当たり判定.
 		} );
+
+	SetPositionList( m_pGirl.get() );			// 女の子座標を設定.
+	SetPositionList( m_pPlayer.get() );			// プレイヤー座標を設定.
+	SetPositionList( m_pMotherShipUFO.get() );	// マザーシップの座標を設定.
 }
 
 // 描画関数.
