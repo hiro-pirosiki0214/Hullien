@@ -9,7 +9,7 @@
 class CReturnTitle : public CWidget
 {
 private:
-	const char* SPRITE_NAME = "ReturnTitle";	//スプライトのファイル名.
+	const char* SPRITE_NAME = "title";	//スプライトのファイル名.
 	const float	 ALPHA_SPEED = 0.01f;				//透過速度.
 
 public:

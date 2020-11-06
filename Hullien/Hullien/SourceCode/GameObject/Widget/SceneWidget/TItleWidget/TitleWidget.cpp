@@ -51,7 +51,9 @@ void CTitleWidget::Render()
 	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
 		m_pSprite[sprite]->SetDeprh(false);
+		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->RenderUI();
+		m_pSprite[sprite]->SetBlend( false );
 		m_pSprite[sprite]->SetDeprh(true);
 
 		if (sprite != BACKGROUND) continue;

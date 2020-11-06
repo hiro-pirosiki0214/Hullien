@@ -6,7 +6,8 @@
 *	カーソルクラス.
 **/
 CCursor::CCursor()
-	:	m_vOldPosition(D3DXVECTOR3( 0.0f, 0.0f ,0.0f ))
+	:	m_pSelectSprite(nullptr)
+	,	m_vOldPosition(D3DXVECTOR3( 0.0f, 0.0f ,0.0f ))
 	,	m_Acceleration( 0.0f )
 {
 	m_vScale.x = 0.0f;
@@ -35,14 +36,25 @@ void CCursor::Render()
 {
 	if (m_pSprite == nullptr) return;
 
-	m_vPosition.x -= 150.0f;
-	m_vPosition.y -= 20.0f;
+	m_vPosition.x -= 55.0f;
+	m_vPosition.y -= 5.0f;
 	m_pSprite->SetPosition( m_vPosition );
 	m_pSprite->SetScale( m_vScale );
 
 	m_pSprite->SetDeprh( false );
+	m_pSprite->SetBlend( true );
 	m_pSprite->RenderUI();
+	m_pSprite->SetBlend( false );
 	m_pSprite->SetDeprh( true );
+
+	m_SlectPosition = m_vPosition;
+	m_SlectPosition.x -= 10.0f;
+	m_pSelectSprite->SetPosition( m_SlectPosition );
+	m_pSelectSprite->SetDeprh( false );
+	m_pSelectSprite->SetBlend( true );
+	m_pSelectSprite->RenderUI();
+	m_pSelectSprite->SetBlend( false );
+	m_pSelectSprite->SetDeprh( true );
 }
 
 // スプライト設定関数.
@@ -51,7 +63,9 @@ bool CCursor::SpriteSetting()
 	if (m_pSprite != nullptr) return true;
 	m_pSprite = CSpriteResource::GetSprite(SPRITE_NAME);
 	if (m_pSprite == nullptr) return false;
-
+	m_pSelectSprite = CSpriteResource::GetSprite(SPRITE_NAME2);
+	if (m_pSelectSprite == nullptr) return false;
+	m_SlectPosition = m_pSelectSprite->GetRenderPos();
 	return true;
 }
 
