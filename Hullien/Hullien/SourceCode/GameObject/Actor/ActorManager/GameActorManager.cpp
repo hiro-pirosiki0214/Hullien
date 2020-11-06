@@ -184,7 +184,11 @@ void CGameActorManager::SetPositionList( CGameObject* pObj )
 {
 	if( pObj == nullptr ) return;
 	m_ObjPosListCount++;	// オブジェクト数の加算.
-	m_ObjPositionList.emplace_back( pObj->GetObjectTag(), pObj->GetPosition() );
+	m_ObjPositionList.emplace_back( 
+		pObj->GetObjectTag(),	// タグの取得.
+		std::pair<D3DXVECTOR3, float>(
+			pObj->GetPosition(),	// 座標の取得.
+			pObj->GetRotatinY()));	// Y軸回転値の取得.
 }
 
 // アニメーションを止める.

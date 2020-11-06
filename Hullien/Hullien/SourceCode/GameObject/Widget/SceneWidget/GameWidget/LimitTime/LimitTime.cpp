@@ -7,12 +7,12 @@
 *	制限時間クラス.
 **/
 CLimitTime::CLimitTime()
-	: m_pSprite			()
-	, m_vPosition		()
-	, m_Anim				()
+	: m_pSprites	()
+	, m_vPosition	()
+	, m_Anim		()
 	, m_FrameCount	( 0 )
 	, m_Seconds		( LIMITTIME_MAX )
-	, m_IsFinish			( false )
+	, m_IsFinish	( false )
 {
 }
 
@@ -36,7 +36,7 @@ bool CLimitTime::Init()
 // 更新関数.
 void CLimitTime::Update()
 {
-	if (m_pSprite.size() == 0) return;
+	if (m_pSprites.size() == 0) return;
 
 	CountDown();	//カウントダウン.
 }
@@ -44,24 +44,30 @@ void CLimitTime::Update()
 // 描画関数.
 void CLimitTime::Render()
 {
-	if( m_pSprite.size() == 0 ) return;
+	if( m_pSprites.size() == 0 ) return;
 
-	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
+	m_pSprite->SetDeprh( false );
+	m_pSprite->SetBlend( true );
+	m_pSprite->RenderUI();
+	m_pSprite->SetBlend( false );
+	m_pSprite->SetDeprh( true );
+
+	for (size_t sprite = 0; sprite < m_pSprites.size(); sprite++)
 	{
-		m_pSprite[sprite]->SetPosition( m_vPosition[sprite] );
-		m_pSprite[sprite]->SetAnimNumber( m_Anim[sprite] );
-		m_pSprite[sprite]->SetDeprh( false );
-		m_pSprite[sprite]->SetBlend( true );
-		m_pSprite[sprite]->RenderUI();
-		m_pSprite[sprite]->SetBlend( false );
-		m_pSprite[sprite]->SetDeprh( true );
+		m_pSprites[sprite]->SetPosition( m_vPosition[sprite] );
+		m_pSprites[sprite]->SetAnimNumber( m_Anim[sprite] );
+		m_pSprites[sprite]->SetDeprh( false );
+		m_pSprites[sprite]->SetBlend( true );
+		m_pSprites[sprite]->RenderUI();
+		m_pSprites[sprite]->SetBlend( false );
+		m_pSprites[sprite]->SetDeprh( true );
 	}
 }
 
 // スプライト設定関数.
 bool CLimitTime::SpriteSetting()
 {
-	if( m_pSprite.size() != 0 ) return true;
+	if( m_pSprites.size() != 0 ) return true;
 
 	const char* spriteName[] =
 	{
@@ -72,9 +78,13 @@ bool CLimitTime::SpriteSetting()
 
 	for (int sprite = 0; sprite < spriteMax; sprite++)
 	{
-		m_pSprite.emplace_back( CSpriteResource::GetSprite( spriteName[sprite] ));
-		if ( m_pSprite[sprite] == nullptr ) return false;
+		m_pSprites.emplace_back( CSpriteResource::GetSprite( spriteName[sprite] ));
+		if ( m_pSprites[sprite] == nullptr ) return false;
 	}
+
+	m_pSprite = CSpriteResource::GetSprite( SPRITE_TIME_BACK );
+	if ( m_pSprite == nullptr ) return false;
+
 
 	return true;
 }
@@ -90,7 +100,7 @@ bool CLimitTime::PositionSetting()
 		{TENTIME_INITPOS},
 	};
 
-	for (size_t pos = 0; pos < m_pSprite.size(); pos++)
+	for (size_t pos = 0; pos < m_pSprites.size(); pos++)
 	{
 		m_vPosition.emplace_back( vPos[pos] );
 		if ( m_vPosition[pos] == nullptr ) return false;
@@ -104,7 +114,7 @@ bool CLimitTime::AnimSetting()
 {
 	if ( m_Anim.size() != 0 ) return true;
 
-	for (size_t anim = 0; anim < m_pSprite.size(); anim++)
+	for (size_t anim = 0; anim < m_pSprites.size(); anim++)
 	{
 		m_Anim.emplace_back( 0 );
 	}
@@ -118,7 +128,7 @@ void CLimitTime::CountDown()
 	FramesToSeconds();	// フレームから秒に変換.
 
 	int Array = 0;
-	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
+	for (size_t sprite = 0; sprite < m_pSprites.size(); sprite++)
 	{
 		const int fPow = static_cast<int>(pow(TEN, Array));
 		// アニメーション番号の設定.

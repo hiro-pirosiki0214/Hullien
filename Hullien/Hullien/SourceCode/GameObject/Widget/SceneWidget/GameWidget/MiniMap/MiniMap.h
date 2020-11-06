@@ -12,7 +12,8 @@ class CGameActorManager;	//アクタ管理クラス.
 class CMiniMap : public CSceneWidget
 {
 private:
-	typedef std::vector<std::pair<EObjectTag, D3DXVECTOR3>> OBJLIST;
+	typedef std::pair<D3DXVECTOR3, float> pos_rot_pair;	// 座標と回転のペア.
+	typedef std::vector<std::pair<EObjectTag, pos_rot_pair>> OBJLIST;
 
 	const char* SPRITE_MAP_BACK		= "minimapBase";		//ミニマップ背景スプライト名.
 	const char* SPRITE_MAP_FRONT	= "minimapWaku";		//ミニマップ背景スプライト名.
@@ -24,12 +25,14 @@ private:
 	{
 		std::shared_ptr<CSprite> pSprite;	// スプライト.
 		D3DXVECTOR3 Pos;					// 位置.
+		D3DXVECTOR3 Rot;					// 回転.
 		EObjectTag EObjTag;					// タグ.
 		int AnimNumber;						// アニメーション番号.
 
 		stIconInfo()
 			: pSprite	( nullptr )
 			, Pos		(D3DXVECTOR3(0.0f,0.0f,0.0f))
+			, Rot		(D3DXVECTOR3(0.0f,0.0f,0.0f))
 			, EObjTag	(EObjectTag::Max)
 			, AnimNumber (0)
 		{}

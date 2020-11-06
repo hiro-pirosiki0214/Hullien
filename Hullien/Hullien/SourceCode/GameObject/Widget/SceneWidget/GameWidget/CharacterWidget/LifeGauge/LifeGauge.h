@@ -12,9 +12,11 @@ class CLifeGauge : public CCharacterWidget
 private:
 	const char* SPRITE_GAUGE		= "hpGauge";	//ゲージ.
 	const char* SPRITE_GAUGEDELAY	= "hpGauge";	//ゲージ遅延.
+	const char* SPRITE_GAUGE_NAME	= "hp";			//HP文字.
+	const int	HP_NAME_NUM			= 2;		//HP文字の配列番号.
 	const int	GAUGE_NUM			= 1;		//ゲージの配列番号.
 	const int	GAUGEDELAY_NUM		= 0;		//ゲージの配列番号.
-	const int	ONE					= 1;		//一.
+	const int	ONE					= 2;		//一.
 
 	inline static float LIFE_DELAY_SUB_VALUE = 0.005f;
 

@@ -42,6 +42,12 @@ void CGameObject::SetPosition( const D3DXVECTOR3& vPos )
 	m_vPosition = vPos;
 }
 
+// Y²‚Ì‰ñ“]’l‚Ìæ“¾.
+float CGameObject::GetRotatinY() const
+{
+	return m_vRotation.y;
+}
+
 //-----------------------------.
 // X²‚Ì‰ñ“]’l‚Ìİ’è.
 //-----------------------------.

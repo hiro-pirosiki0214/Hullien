@@ -29,6 +29,8 @@ public:
 	D3DXVECTOR3 GetPosition() const;
 	// 座標設定関数.
 	virtual void SetPosition( const D3DXVECTOR3& vPos );
+	// Y軸の回転値の取得.
+	float GetRotatinY() const;
 	// X軸の回転値の設定.
 	void SetRotationX( const float& rotX );
 	// Y軸の回転値の設定.

@@ -53,9 +53,10 @@ void CMiniMap::SetObjPosition(CGameActorManager* pObj)
 		}
 
 		// 位置情報の更新.
-		if (m_IconList[objCount].Pos == obj.second) return;
-		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - (obj.second.x * MAP_ICON_POSITION_CORRECTION_VALUE);
-		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + (obj.second.z * MAP_ICON_POSITION_CORRECTION_VALUE);
+		if (m_IconList[objCount].Pos == obj.second.first) return;
+		m_IconList[objCount].Pos.x = m_IconList[MAP_BACK].pSprite->GetRenderPos().x - (obj.second.first.x * MAP_ICON_POSITION_CORRECTION_VALUE);
+		m_IconList[objCount].Pos.y = m_IconList[MAP_BACK].pSprite->GetRenderPos().y + (obj.second.first.z * MAP_ICON_POSITION_CORRECTION_VALUE);
+		m_IconList[objCount].Rot.z = obj.second.second;
 		objCount++;
 	}
 }
@@ -69,6 +70,7 @@ void CMiniMap::Render()
 		// タグがNoneならば非表示.
 		if (l.EObjTag == EObjectTag::None) continue;
 		l.pSprite->SetPosition(l.Pos );
+		l.pSprite->SetRotation(l.Rot );
 		l.pSprite->SetAnimNumber(l.AnimNumber );
 		l.pSprite->SetDeprh( false );
 		l.pSprite->SetBlend( true );

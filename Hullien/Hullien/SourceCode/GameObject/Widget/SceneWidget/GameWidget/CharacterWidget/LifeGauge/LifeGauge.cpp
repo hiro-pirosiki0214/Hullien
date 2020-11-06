@@ -75,6 +75,7 @@ bool CLifeGauge::SpriteSetting()
 	{
 		SPRITE_GAUGEDELAY,	//ÉQÅ[ÉWíxâÑ.
 		SPRITE_GAUGE,		//ÉQÅ[ÉW.
+		SPRITE_GAUGE_NAME,	//HP.
 	};
 	const int spriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
 
@@ -85,6 +86,7 @@ bool CLifeGauge::SpriteSetting()
 		m_pSprite[sprite] = CSpriteResource::GetSprite( spriteName[sprite] );
 		m_GaugeState.emplace_back();
 		m_GaugeState[sprite].AnimNum = (spriteMax - ONE) - sprite;
+		if( sprite == HP_NAME_NUM ) m_GaugeState[sprite].AnimNum = 1;
 		if ( m_pSprite[sprite] == nullptr ) return false;
 	}
 

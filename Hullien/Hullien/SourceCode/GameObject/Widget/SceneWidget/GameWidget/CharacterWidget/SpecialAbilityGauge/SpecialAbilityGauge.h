@@ -10,7 +10,8 @@
 class CSpecialAbilityGauge : public CCharacterWidget
 {
 private:
-	const char*	SPRITE_GAUGE		= "abilityGauge";	// ゲージ.		
+	const char*	SPRITE_GAUGE		= "abilityGauge";	// ゲージ.
+	const char* SPRITE_GAUGE_NAME	= "ability";
 	const int	GAUGE_NUM			= 0;				// ゲージの配列番号.
 	const int	ONE					= 1;				// 一.
 	const int	WAITTIME_MAX		= 100;				//最大待機時間.

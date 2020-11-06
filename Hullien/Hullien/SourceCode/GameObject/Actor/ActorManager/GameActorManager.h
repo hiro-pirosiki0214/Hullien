@@ -21,7 +21,6 @@ class CInvisibleWall;	// 見えない壁.
 class CGameActorManager
 {
 	const float GIRL_LIMIT_POS_Y = 5.0f;	//女の子がUFOに吸い込まれた時の限界値.
-
 public:
 	CGameActorManager();
 	~CGameActorManager();
@@ -35,7 +34,7 @@ public:
 	// スプライトの描画.
 	void SpriteRender();
 	// オブジェクト座標リストの取得.
-	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	GetObjPositionList() const { return m_ObjPositionList; }
+	std::vector<std::pair<EObjectTag, std::pair<D3DXVECTOR3, float>>>	GetObjPositionList() const { return m_ObjPositionList; }
 	// ゲームオーバーかどうか.
 	bool IsGameOver();
 	// 女の子を連れ去っているか.
@@ -62,7 +61,7 @@ private:
 	std::shared_ptr<CBarrier>		m_pBarrier;			// バリア.
 	std::unique_ptr<CInvisibleWall>	m_pInvisibleWall;	// 見えない壁.
 
-	std::vector<std::pair<EObjectTag, D3DXVECTOR3>>	m_ObjPositionList;
+	std::vector<std::pair<EObjectTag, std::pair<D3DXVECTOR3, float>>>	m_ObjPositionList;
 	int		m_ObjPosListCount;		// オブジェクトの座標リストの数.
 	bool	m_IsOllAnimationStop;	// 全部のアニメーションが停止したか.
 };
