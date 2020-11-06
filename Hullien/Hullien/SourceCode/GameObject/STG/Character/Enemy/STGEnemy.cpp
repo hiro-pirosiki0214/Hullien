@@ -121,15 +121,11 @@ void STG::CEnemy::Move()
 	if( m_MoveSpeed > 0.0f ) return;
 
 	m_NowState = EState_Shot;
-	// ’e‚Ì”‚Æ‰~‚ÌŠÔŠu‚Å‰Šú“x‚ğæ“¾‚·‚é.
-	const float startDegree =
-		static_cast<float>(PARAMETER.ShotBulletCount*D3DXToDegree(PARAMETER.BulletAngle)) -
-		static_cast<float>((PARAMETER.ShotBulletCount+1)*(D3DXToDegree(PARAMETER.BulletAngle)/2));
+
 	// ‘Šè‚ÌŠp“x‚ğæ“¾.
 	m_ShotAngle = atan2(
 		m_vPosition.x - m_TargetPositon.x,
 		m_vPosition.z - m_TargetPositon.z );
-	m_ShotAngle -= static_cast<float>(D3DXToRadian(startDegree));
 }
 
 // ’e‚ğŒ‚‚Â.

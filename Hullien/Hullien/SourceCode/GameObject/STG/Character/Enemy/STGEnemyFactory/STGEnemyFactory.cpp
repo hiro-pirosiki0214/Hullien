@@ -62,7 +62,7 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 				enemyParam.BulletCollDisappear = std::stoi(buff);
 				break;
 			case EEnemyParamNo_BulletAngle:
-				enemyParam.BulletAngle = std::stof(buff);
+				enemyParam.BulletAngle =  static_cast<float>( D3DXToRadian( std::stof(buff) ));
 				break;
 			case EEnemyParamNo_BulletCountMax:
 				enemyParam.BulletCountMax = std::stoi(buff);
@@ -77,7 +77,7 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 				enemyParam.ShotBulletCount = std::stoi(buff);
 				break;
 			case EEnemyParamNo_ShotAngle:
-				enemyParam.ShotAngle = std::stof(buff);
+				enemyParam.ShotAngle = static_cast<float>( D3DXToRadian( std::stof(buff) ));
 				break;
 			case EEnemyParamNo_ShotNumber:
 				enemyParam.ShotNumber = std::stoi(buff);
