@@ -38,7 +38,7 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 			switch( no )
 			{
 			case EEnemyParamNo_SpawnTime:
-				enemyParam.SpawnTime = std::stof(buff);
+				enemyParam.SpawnTime = std::stof(buff) * FPS;
 				break;
 			case EEnemyParamNo_PositionX:
 				enemyParam.PositionX = std::stof(buff);

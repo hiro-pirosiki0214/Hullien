@@ -39,6 +39,20 @@ namespace STG
 		{}
 	} typedef SEnemyParam;
 
+	// 現在の状態.
+	enum class enEnemyState
+	{
+		None,
+
+		Spawn,	// スポーン.
+		Move,	// 移動.
+		Shot,	// 撃つ.
+		Escape,	// 逃げる.
+		Dead,	// 死亡.
+
+		Max,
+	} typedef EEnemyState;
+
 	// 敵のパラメータ番号.
 	enum enEnemyParamNo
 	{

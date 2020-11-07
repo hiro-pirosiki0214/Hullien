@@ -16,7 +16,7 @@ STG::CEnemy::CEnemy( const STG::SEnemyParam& param )
 	: PARAMETER				( param )
 	, m_pFont				( nullptr )
 	, m_FontRotation		( FONT_ROTATION )
-	, m_NowState			( EState_Spawn )
+	, m_NowState			( STG::EEnemyState::Spawn )
 	, m_MoveSpeed			( 0.0f )
 	, m_MoveingDistance		( 0.0f )
 	, m_MoveingDistanceMax	( 0.0f )
@@ -25,6 +25,7 @@ STG::CEnemy::CEnemy( const STG::SEnemyParam& param )
 	, m_NowShotBulletCount	( 0 )
 	, m_IsHitShake			( false )
 	, m_ShakeCount			( SHAKE_COUNT_MAX )
+	, m_EscapeCount			( ESCAPE_COUNT_MAX )
 {
 	m_pFont			= std::make_unique<CFont>();
 	m_pCollManager	= std::make_shared<CCollisionManager>();
@@ -58,12 +59,12 @@ void STG::CEnemy::Update()
 
 	switch( m_NowState )
 	{
-	case EState_Spawn:	Spawn();	break;	// スポーン.
-	case EState_Move:	Move();		break;	// 移動.
-	case EState_Shot:	Shot();		break;	// 弾を撃つ.
-	case EState_Escape: Escape();	break;	// 逃げる.
-	case EState_Dead:	Dead();		break;	// 死亡.
-	default:						break;
+	case STG::EEnemyState::Spawn:	Spawn();	break;	// スポーン.
+	case STG::EEnemyState::Move:	Move();		break;	// 移動.
+	case STG::EEnemyState::Shot:	Shot();		break;	// 弾を撃つ.
+	case STG::EEnemyState::Escape:	Escape();	break;	// 逃げる.
+	case STG::EEnemyState::Dead:	Dead();		break;	// 死亡.
+	default:									break;
 	}
 
 	HitShake();		// ヒット時の揺れ.
@@ -75,8 +76,8 @@ void STG::CEnemy::Render()
 	BulletRender( 
 		{ 
 			1.0f,
-			PARAMETER.BulletCollDisappear*0.4f, 
-			PARAMETER.BulletCollDisappear*0.4f
+			PARAMETER.BulletCollDisappear*BULLET_COLOR, 
+			PARAMETER.BulletCollDisappear*BULLET_COLOR
 		} );	// 弾の描画.
 
 	m_pFont->SetColor( { 1.0f, 1.0f, 1.0f, 1.0f } );
@@ -93,11 +94,11 @@ void STG::CEnemy::Render()
 // 当たり判定.
 void STG::CEnemy::Collision( STG::CActor* pActor )
 {
-	if( m_IsActive			== false ) return;	// 自分が動作してなければ終了.
 	if( pActor->GetActive()	== false ) return;	// 相手が動作してなければ終了.
-
 	// 弾の数だけあたり判定を行う.
 	for( auto& b : m_pBullets ) b->Collision( pActor );
+
+	if( m_IsActive			== false ) return;	// 自分が動作してなければ終了.
 	// カプセルの当たり判定.
 	if( m_pCollManager->IsCapsuleToCapsule( pActor->GetColl() ) == false ) return;
 }
@@ -106,8 +107,8 @@ void STG::CEnemy::Collision( STG::CActor* pActor )
 void STG::CEnemy::Spawn()
 {
 	m_SpawnCount++;
-	if( m_SpawnCount < PARAMETER.SpawnTime*FPS ) return;
-	m_NowState = EState_Move;
+	if( m_SpawnCount < PARAMETER.SpawnTime ) return;
+	m_NowState = STG::EEnemyState::Move;
 	m_IsActive = true;
 }
 
@@ -120,7 +121,7 @@ void STG::CEnemy::Move()
 
 	if( m_MoveSpeed > 0.0f ) return;
 
-	m_NowState = EState_Shot;
+	m_NowState = STG::EEnemyState::Shot;
 
 	// 相手の角度を取得.
 	m_ShotAngle = atan2(
@@ -137,13 +138,13 @@ void STG::CEnemy::Shot()
 	float angle = m_ShotAngle;
 	for( int i = 0; i < PARAMETER.AnyBulletCountMax; i++ ){
 		if( m_NowShotBulletCount < PARAMETER.BulletCountMax ){
-			BulletShot( angle, PARAMETER.BulletSpeed );
+			STG::CCharacter::BulletShot( angle, PARAMETER.BulletSpeed );
 			angle += PARAMETER.ShotAngle;
 			m_NowShotBulletCount++;
 		}
 	}
 	if( m_NowShotBulletCount == PARAMETER.BulletCountMax ){
-		m_NowState = EState_Escape;
+		m_NowState = STG::EEnemyState::Escape;
 	}
 	m_ShotAngle += PARAMETER.BulletAngle;	// 角度の加算.
 	m_ShotCount = 0;
@@ -159,15 +160,18 @@ void STG::CEnemy::Escape()
 	m_vPosition.x += m_MoveVector.x * m_MoveSpeed;
 	m_vPosition.z += m_MoveVector.z * m_MoveSpeed;
 
-	m_MoveingDistance += m_MoveSpeed;	// 距離を加算.
-
+	m_EscapeCount--;	// 逃げるカウントの減算.
+	// 逃げるカウントが 0.0 より大きければ.
+	if( m_EscapeCount > 0.0f ){
+		m_MoveingDistance += m_MoveSpeed;	// 距離を加算.
+	}
 	// 移動距離が一定距離を超得たら.
 	if( m_MoveingDistance >= m_MoveingDistanceMax ){
 		SearchRandomMoveVector();	// 移動ベクトルを検索する.
 	}
 	// 画面外に出たら.
 	if( IsDisplayOut( E_WND_OUT_ADJ_SIZE ) == true ){
-		m_NowState = EState_Dead;	// 死亡.
+		m_NowState = STG::EEnemyState::Dead;	// 死亡.
 	}
 }
 
@@ -182,7 +186,7 @@ void STG::CEnemy::Dead()
 
 	if( m_vScale.x > 0.0f ) return;
 	// スケールが 0.0 以下になれば.
-	m_NowState	= EState_None;	// 何もない状態へ遷移.
+	m_NowState	= STG::EEnemyState::None;	// 何もない状態へ遷移.
 	// 座標を画面外へ.
 	m_vPosition	= { INIT_POSITION_Z, 0.0f, INIT_POSITION_Z };
 }
@@ -202,36 +206,11 @@ void STG::CEnemy::HitShake()
 	m_IsHitShake = false;			// ヒットフラグを下す.
 }
 
-// 弾を撃つ.
-void STG::CEnemy::BulletShot( const float& rot, const float& moveSpeed )
-{
-	STG::CCharacter::BulletShot( rot, moveSpeed );
-}
-
-// 弾を撃つ(複数).
-void STG::CEnemy::BulletShotAnyWay( 
-	const float& rot, 
-	const float& angle, 
-	const float& moveSpeed,
-	const int& bulletCount )
-{
-	float addrot = rot;	// 現在の角度を取得.
-	int count = 0;		// 撃った弾のカウント.
-	for( auto& b : m_pBullets ){
-		// 撃った弾が指定した弾と同じになれば終了.
-		if( count == bulletCount ) return;
-		// 弾が撃てなければもう一度.
-		if( b->Shoot( m_vPosition, addrot, moveSpeed ) == false ) continue;
-		addrot += angle;	// 角度の加算.
-		count++;			// 撃った弾の加算.
-	}
-}
-
 // ライフ計算関数.
 void STG::CEnemy::LifeCalculation( const std::function<void(float&)>& proc )
 {
 	// 逃げる状態のみ攻撃を受ける.
-	if( m_NowState != EState_Escape ){
+	if( m_NowState != STG::EEnemyState::Escape ){
 		m_IsHitShake = true;	// ヒットフラグを立てる.
 		return;
 	}
@@ -241,7 +220,7 @@ void STG::CEnemy::LifeCalculation( const std::function<void(float&)>& proc )
 
 	if( m_LifePoint > 0.0f ) return;
 	// ライフが0以下になれば
-	m_NowState = EState_Dead;	// 死亡状態へ遷移.
+	m_NowState = STG::EEnemyState::Dead;	// 死亡状態へ遷移.
 }
 
 // ランダムで移動ベクトルを検索.
