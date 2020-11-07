@@ -133,37 +133,20 @@ void STG::CEnemy::Shot()
 {
 	m_ShotCount++;
 	if( m_ShotCount != PARAMETER.ShotIntervalFrame ) return;
-	switch( PARAMETER.ShotNumber )
-	{
-	case 0:
-		break;
-	case 1:
-		// 撃った弾が最大数に達すれば.
-		if( m_NowShotBulletCount == PARAMETER.BulletCountMax ){
-			m_NowState = EState_Escape;	// 逃げる状態へ遷移.
-			SearchRandomMoveVector();	// 移動ベクトルを検索.
-		}
-		// 弾を一つずつ発射.
-		BulletShot( m_ShotAngle, PARAMETER.BulletSpeed );
-		m_ShotAngle += PARAMETER.ShotAngle;	// 角度の加算.
 
-		break;
-	case 2:
-		// 撃った弾が最大数に達すれば.
-		if( m_NowShotBulletCount == PARAMETER.AnyBulletCountMax ){
-			m_NowState = EState_Escape;	// 逃げる状態へ遷移.
-			SearchRandomMoveVector();	// 移動ベクトルを検索.
+	float angle = m_ShotAngle;
+	for( int i = 0; i < PARAMETER.AnyBulletCountMax; i++ ){
+		if( m_NowShotBulletCount < PARAMETER.BulletCountMax ){
+			BulletShot( angle, PARAMETER.BulletSpeed );
+			angle += PARAMETER.ShotAngle;
+			m_NowShotBulletCount++;
 		}
-		// 弾を複数発射.
-		BulletShotAnyWay( m_ShotAngle, PARAMETER.BulletAngle, PARAMETER.BulletSpeed, PARAMETER.ShotBulletCount );
-		m_ShotAngle += PARAMETER.ShotAngle;	// 角度の加算.
-
-		break;
-	default:
-		break;
 	}
+	if( m_NowShotBulletCount == PARAMETER.BulletCountMax ){
+		m_NowState = EState_Escape;
+	}
+	m_ShotAngle += PARAMETER.BulletAngle;	// 角度の加算.
 	m_ShotCount = 0;
-	m_NowShotBulletCount++;
 }
 
 // 逃げる.

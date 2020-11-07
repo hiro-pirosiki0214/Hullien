@@ -15,14 +15,12 @@ namespace STG
 		float		LifePoint;			// ƒ‰ƒCƒt.
 		float		MoveSpeed;			// ˆÚ“®‘¬“x.
 		float		BulletSpeed;		// ’e‚Ì‘¬“x.
+		int			BulletCountMax;		// ’e”.
+		int			AnyBulletCountMax;	// nWay”.
+		float		BulletAngle;		// Šp“x.
+		float		ShotAngle;			// nWayŠp“x.
+		int			ShotIntervalFrame;	// ’e‚ğŒ‚‚ÂŠÔŠu.
 		int			BulletCollDisappear;// ’e‚ªÕ“Ë‚µ‚½Û‚ÉÁ‚¦‚é‚©.
-		float		BulletAngle;		// ’e‚ÌŠp“x.
-		int			BulletCountMax;		// ’e‚ÌÅ‘å”.
-		int			AnyBulletCountMax;	// •¡”’e‚ğŒ‚‚ÂÛ‚ÌÅ‘å”.
-		int			ShotIntervalFrame;	// ’e‚ğŒ‚‚ÂŠÔŠuƒtƒŒ[ƒ€.
-		int			ShotBulletCount;	// ˆê”­‚Åo‚é’e”.
-		float		ShotAngle;			// Œ‚‚Â‚ÌŠp“x.
-		int			ShotNumber;			// ’e‚Ì”Ô†.
 
 		stEnemyParam()
 			: SpawnTime				( 0.0f )
@@ -32,14 +30,12 @@ namespace STG
 			, LifePoint				( 0.0f )
 			, MoveSpeed				( 0.0f )
 			, BulletSpeed			( 0.0f )
-			, BulletCollDisappear	( 0 )
-			, BulletAngle			( 0.0f )
 			, BulletCountMax		( 0 )
 			, AnyBulletCountMax		( 0 )
-			, ShotIntervalFrame		( 0 )
-			, ShotBulletCount		( 0 )
+			, BulletAngle			( 0.0f )
 			, ShotAngle				( 0.0f )
-			, ShotNumber			( 0 )
+			, ShotIntervalFrame		( 0 )
+			, BulletCollDisappear	( 0 )
 		{}
 	} typedef SEnemyParam;
 
@@ -55,19 +51,17 @@ namespace STG
 		EEnemyParamNo_LifePoint,			// ‘Ì—Í.
 		EEnemyParamNo_MoveSpeed,			// ˆÚ“®‘¬“x.
 		EEnemyParamNo_BulletSpeed,			// ’e‚Ì‘¬“x.
-		EEnemyParamNo_BulletCollDisappear,	// ’e‚ªÕ“Ë‚µ‚½Û‚ÉÁ‚¦‚é‚©.
-		EEnemyParamNo_BulletAngle,			// ’e‚ÌŠp“x.
 		EEnemyParamNo_BulletCountMax,		// ’e‚ÌÅ‘å”.
 		EEnemyParamNo_AnyBulletCountMax,	// •¡”’e‚ğŒ‚‚ÂÛ‚ÌÅ‘å”.
-		EEnemyParamNo_ShotIntervalFrame,	// ’e‚ğŒ‚‚ÂŠÔŠuƒtƒŒ[ƒ€.
-		EEnemyParamNo_ShotBulletCount,		// ˆê”­‚Åo‚é’e”.
+		EEnemyParamNo_BulletAngle,			// ’e‚ÌŠp“x.
 		EEnemyParamNo_ShotAngle,			// Œ‚‚Â‚ÌŠp“x.
-		EEnemyParamNo_ShotNumber,			// ’e‚Ì”Ô†.
+		EEnemyParamNo_ShotIntervalFrame,	// ’e‚ğŒ‚‚ÂŠÔŠuƒtƒŒ[ƒ€.
+		EEnemyParamNo_BulletCollDisappear,	// ’e‚ªÕ“Ë‚µ‚½Û‚ÉÁ‚¦‚é‚©.
 
 		EEnemyParamNo_Max,
 
 		EEnemyParamNo_Start	= EEnemyParamNo_SpawnTime,
-		EEnemyParamNo_End	= EEnemyParamNo_ShotNumber,
+		EEnemyParamNo_End	= EEnemyParamNo_BulletCollDisappear,
 	} typedef EEnemyParamNo;
 };
 #endif	// #ifndef STG_ENEMY_PARAM_H.

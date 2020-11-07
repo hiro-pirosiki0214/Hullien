@@ -58,29 +58,23 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 			case EEnemyParamNo_BulletSpeed:
 				enemyParam.BulletSpeed = std::stof(buff);
 				break;
-			case EEnemyParamNo_BulletCollDisappear:
-				enemyParam.BulletCollDisappear = std::stoi(buff);
-				break;
-			case EEnemyParamNo_BulletAngle:
-				enemyParam.BulletAngle =  static_cast<float>( D3DXToRadian( std::stof(buff) ));
-				break;
 			case EEnemyParamNo_BulletCountMax:
 				enemyParam.BulletCountMax = std::stoi(buff);
 				break;
 			case EEnemyParamNo_AnyBulletCountMax:
 				enemyParam.AnyBulletCountMax = std::stoi(buff);
 				break;
-			case EEnemyParamNo_ShotIntervalFrame:
-				enemyParam.ShotIntervalFrame = std::stoi(buff);
-				break;
-			case EEnemyParamNo_ShotBulletCount:
-				enemyParam.ShotBulletCount = std::stoi(buff);
+			case EEnemyParamNo_BulletAngle:
+				enemyParam.BulletAngle =  static_cast<float>( D3DXToRadian( std::stof(buff) ));
 				break;
 			case EEnemyParamNo_ShotAngle:
 				enemyParam.ShotAngle = static_cast<float>( D3DXToRadian( std::stof(buff) ));
 				break;
-			case EEnemyParamNo_ShotNumber:
-				enemyParam.ShotNumber = std::stoi(buff);
+			case EEnemyParamNo_ShotIntervalFrame:
+				enemyParam.ShotIntervalFrame = std::stoi(buff);
+				break;
+			case EEnemyParamNo_BulletCollDisappear:
+				enemyParam.BulletCollDisappear = std::stoi(buff);
 				break;
 			default:
 				break;
