@@ -19,7 +19,7 @@ private:
 	// 警告矢印.
 	const float RIGHT_POSITION_X	= WND_W - 90.0f;		//右表示のy座標.
 	const float LEFT_POSITION_X		= 70.0f;					//左表示のy座標.
-	const float ARROWPOSITION_Y		= WND_H / 2;			//矢印のy座標.
+	const float ARROWPOSITION_Y		= WND_H / 2 - 40;			//矢印のy座標.
 	const float RIGHT_ROTATION		= 0.0f;					//右表示の回転値.
 	const float LEFT_ROTATION		= static_cast<float>(D3DXToDegree(180.0));	//左表示の回転値.
 
