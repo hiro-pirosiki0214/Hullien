@@ -6,6 +6,7 @@
 *	タイトルに戻るボタンクラス.
 **/
 CReturnTitle::CReturnTitle()
+	: m_pSprites	()
 {
 	//フェードイン設定.
 	SetFadeIn(ALPHA_SPEED);
@@ -52,20 +53,45 @@ void CReturnTitle::Render()
 {
 	if ( m_pSprite == nullptr ) return;
 
+	// ボタンスプライトの表示.
+	m_pSprite->SetPosition( m_vPosition );
 	m_pSprite->SetAlpha(m_Alpha);
-
 	m_pSprite->SetBlend( true );
 	m_pSprite->SetDeprh( false );
 	m_pSprite->RenderUI();
 	m_pSprite->SetDeprh( true );
 	m_pSprite->SetBlend( false );
+	// 文字スプライトの表示.
+	for( auto& s : m_pSprites ){
+		s->SetAlpha(m_Alpha);
+		s->SetBlend( true );
+		s->SetDeprh( false );
+		s->RenderUI();
+		s->SetDeprh( true );
+		s->SetBlend( false );
+	}
 }
 
 bool CReturnTitle::SpriteSetting()
 {
 	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite(SPRITE_NAME);
+	m_pSprite = CSpriteResource::GetSprite(SPRITE_BUTTON_NAME);
 	if (m_pSprite == nullptr) return false;
 
+	const char* spriteName[] =
+	{
+		SPRITE_TITLE_NAME,
+		SPRITE_PUSH_NAME
+	};
+	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
+
+	// メモリの最大値設定.
+	m_pSprites.reserve(SpriteMax);
+	for( int sprite = 0; sprite < SpriteMax; sprite++ ){
+		m_pSprites.emplace_back(CSpriteResource::GetSprite(spriteName[sprite]));
+		if( m_pSprites[sprite] == nullptr ) return false;
+	}
+	m_vPosition = m_pSprites[1]->GetRenderPos();
+	m_vPosition.x -= m_pSprite->GetSpriteSize().x;
 	return true;
 }

@@ -9,8 +9,12 @@
 **/
 class CGameStartEventWidget : public CEventWidget
 {
+	const char* SPRITE_BUTTON_NAME			= "buttonY";	//スプライトのファイル名.
+	const char* SPRITE_PUSH_NAME			= "push";	//スプライトのファイル名.
+	const char* SPRITE_PRESERVE_GIRL_NAME	= "PreserveGirl";
+
 	const int	PUSH_YBUTTON	= 0;		// Yボタン指示の配列番号.
-	const int	PRESERVE_GIRL	= 1;		// 女の子を守る指示の配列番号.
+	const int	PRESERVE_GIRL	= 2;		// 女の子を守る指示の配列番号.
 	const float ALPHA_SPEED		= 0.05f;	// 透過速度.
 	const float WAITCOUNT_MAX	= 100.0f;	// 待機カウント最大.
 
@@ -46,12 +50,13 @@ private:
 	virtual bool SpriteSetting() override;
 
 private:
-	std::vector<std::shared_ptr<CSprite>>	m_pSprite;			// スプライトクラス.
+	std::vector<std::shared_ptr<CSprite>>	m_pSprites;			// スプライトクラス.
 	std::vector<bool>						m_IsDisp;			// 描画フラグ.
+	D3DXVECTOR3								m_ButtonPos;
 	EWidgetState							m_WidgetState;		// UIの情報.
 	float									m_Alpha;			// 透過値.
 	float									m_WaitCount;		// 待機カウント.
-	bool									m_IsDispEnd;			// 描画終了.
+	bool									m_IsDispEnd;		// 描画終了.
 };
 
 #endif	//#ifndef GAMESTART_EVENT_WIDGET_H.
