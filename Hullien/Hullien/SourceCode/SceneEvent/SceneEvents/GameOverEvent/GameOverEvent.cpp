@@ -182,7 +182,7 @@ void CGameOverEvent::SceneSetting()
 	}
 
 	// スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
 		m_SkipWaitCount++;
 
@@ -207,6 +207,7 @@ void CGameOverEvent::NextStep()
 // スキップ.
 void CGameOverEvent::Skip()
 {
+	if( m_EventStep == EEventStep::Move_Back_UFO ) return;
 	if (m_IsSkip == true) return;
 	CFade::SetFadeIn();
 
@@ -217,6 +218,7 @@ void CGameOverEvent::Skip()
 	m_EventStep = EEventStep::Skip;
 	NextStep();
 	m_IsSkip = true;
+	m_pUFO->CleanUPPreparation();
 	CFade::SetFadeOut();
 }
 

@@ -249,6 +249,7 @@ void CGameClearEvent::NextStep()
 // スキップ.
 void CGameClearEvent::Skip()
 {
+	if( m_EventStep == EEventStep::Move_UFO ) return;
 	if(m_EventStep == EEventStep::NextScene) return;
 	if(m_IsSkip == true) return;
 

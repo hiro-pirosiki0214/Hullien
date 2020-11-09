@@ -127,6 +127,8 @@ void STG::CEnemy::Move()
 	m_ShotAngle = atan2(
 		m_vPosition.x - m_TargetPositon.x,
 		m_vPosition.z - m_TargetPositon.z );
+	m_ShotAngle -=
+		static_cast<float>(PARAMETER.AnyBulletCountMax-1) * 0.5f * PARAMETER.ShotAngle;	
 }
 
 // ’e‚ðŒ‚‚Â.

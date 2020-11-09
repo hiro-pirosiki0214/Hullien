@@ -254,7 +254,7 @@ void CGameStartEvent::SceneSetting()
 	}
 
 	// スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+	if (GetAsyncKeyState(VK_RETURN) & 0x8001
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
 		m_SkipWaitCount++;
 
@@ -278,6 +278,7 @@ void CGameStartEvent::NextStep()
 void CGameStartEvent::Skip()
 {
 	if (m_EventStep == EEventStep::Disp_Preserve_Girl) return;
+	if (m_EventStep == EEventStep::GetCaught_Girl) return;
 	if (m_EventStep == EEventStep::GameStart) return;
 	if (m_IsSkip == true) return;
 
