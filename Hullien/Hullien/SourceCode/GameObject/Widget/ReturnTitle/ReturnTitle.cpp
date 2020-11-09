@@ -91,7 +91,7 @@ bool CReturnTitle::SpriteSetting()
 		m_pSprites.emplace_back(CSpriteResource::GetSprite(spriteName[sprite]));
 		if( m_pSprites[sprite] == nullptr ) return false;
 	}
-	m_vPosition = m_pSprites[1]->GetRenderPos();
+	m_vPosition = m_pSprites[0]->GetRenderPos();
 	m_vPosition.x -= m_pSprite->GetSpriteSize().x;
 	return true;
 }

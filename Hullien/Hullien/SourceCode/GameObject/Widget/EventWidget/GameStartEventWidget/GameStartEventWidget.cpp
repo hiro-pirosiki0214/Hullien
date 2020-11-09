@@ -120,7 +120,7 @@ bool CGameStartEventWidget::SpriteSetting()
 		if( m_pSprites[sprite] == nullptr ) return false;
 	}
 	m_ButtonPos = m_pSprites[1]->GetRenderPos();
-	m_ButtonPos.x -= m_pSprite->GetSpriteSize().x;
+	m_ButtonPos.x += m_pSprite->GetSpriteSize().x;
 
 	// •`‰æƒtƒ‰ƒO‚Ìİ’è.
 	if (m_IsDisp.size() != 0) return true;
