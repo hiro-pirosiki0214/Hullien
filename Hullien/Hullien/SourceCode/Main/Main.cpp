@@ -125,7 +125,6 @@ void CMain::Update()
 	// ‰æ–Ê‚ÌƒNƒŠƒA.
 	CDirectX11::ClearBackBuffer();
 	CSceneTexRenderer::ClearBuffer();
-//	CCameraManager::InitViewProj();
 
 	CCameraManager::Update();
 	m_pSceneManager->Update();
