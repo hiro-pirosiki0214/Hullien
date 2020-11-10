@@ -1,9 +1,12 @@
+#include "FXAA.hlsl"
+
 //ｸﾞﾛｰﾊﾞﾙ変数.
 //ﾃｸｽﾁｬは、ﾚｼﾞｽﾀ t(n).
 Texture2D g_TextureColor	: register(t0);
 Texture2D g_TextureNormal	: register(t1);
 Texture2D g_TextureDepth	: register(t2);
 Texture2D g_TextureTrans	: register(t3);
+Texture2D g_TextureLast		: register(t4);
 //ｻﾝﾌﾟﾗは、ﾚｼﾞｽﾀ s(n).
 SamplerState g_SamLinear : register(s0);
 
@@ -102,19 +105,26 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	float grayScale = transColor.r * 0.299 + transColor.g * 0.587 + transColor.b * 0.114;
 	grayScale = 1.0f - saturate(grayScale);
 	
-	float outLineColor = 0.0f;
+	float4 outLineColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	// 法線情報と、深度値の情報が一定以上なら輪郭線を表示.
-	if (length(normColor) >= 0.6f || abs(z - depth) > 0.0006f)
+	if (length(normColor) >= 0.62f || abs(depth-z) > 0.00097f)
 	{
-		outLineColor = 0.0f;
+		outLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 		grayScale *= 0.0f;
 	}
 	else
 	{
-		outLineColor = 1.0f;
+		outLineColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
 		grayScale *= 1.0f;
 	}
 	color *= lerp(color, outLineColor, grayScale);
 	
 	return color;
+}
+
+// ピクセルシェーダ.
+float4 PS_LastMain(VS_OUTPUT input) : SV_Target
+{
+	FxaaTex tex = { g_SamLinear, g_TextureLast };
+	return float4( FxaaPixelShader( input.Tex, tex, float2( 1.0f/g_vViewPort.x, 1.0f/g_vViewPort.y ) ), 1.0f );
 }

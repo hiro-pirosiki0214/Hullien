@@ -113,8 +113,6 @@ void CGameClear::ModelRender()
 	// 最終描画.
 	//--------------------------------------------.
 	// G-Bufferを使用して、画面に描画する.
-
-	CDirectX11::SetBackBuffer();
 	CSceneTexRenderer::Render();
 }
 

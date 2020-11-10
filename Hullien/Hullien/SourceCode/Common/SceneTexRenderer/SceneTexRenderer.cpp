@@ -13,8 +13,12 @@ CSceneTexRenderer::CSceneTexRenderer()
 	, m_pTransBufferRTV			( nullptr )
 	, m_pTransBufferSRV			( nullptr )
 	, m_pTransBufferTex			( nullptr )
+	, m_pAntialiasingRTV		( nullptr )
+	, m_pAntialiasingSRV		( nullptr )
+	, m_pAntialiasingTex		( nullptr )
 	, m_pVertexShader			( nullptr )
 	, m_pPixelShader			( nullptr )
+	, m_pLastPixelShader		( nullptr )
 	, m_pVertexLayout			( nullptr )
 	, m_pConstantBuffer			( nullptr )
 	, m_pVertexBuffer			( nullptr )
@@ -44,6 +48,7 @@ HRESULT CSceneTexRenderer::Init()
 	if( FAILED( GetInstance()->InitShadowBufferTex()) )		return E_FAIL;
 	if( FAILED( GetInstance()->InitGBufferTex()))			return E_FAIL;
 	if( FAILED( GetInstance()->InitTransBufferTex()))		return E_FAIL;
+	if( FAILED( GetInstance()->InitAntialiasingTex()))		return E_FAIL;
 	if( FAILED( GetInstance()->CreateShader() ))			return E_FAIL;
 	if( FAILED( GetInstance()->CreateModel() ))				return E_FAIL;
 	if( FAILED( GetInstance()->InitSample() ))				return E_FAIL;
@@ -63,6 +68,10 @@ void CSceneTexRenderer::Release()
 	for( auto& srv : GetInstance()->m_pShadowBufferSRV ) SAFE_RELEASE(srv);
 	for( auto& tex : GetInstance()->m_pShadowBufferTex ) SAFE_RELEASE(tex);
 
+	SAFE_RELEASE( GetInstance()->m_pAntialiasingSRV );
+	SAFE_RELEASE( GetInstance()->m_pAntialiasingTex );
+	SAFE_RELEASE( GetInstance()->m_pAntialiasingRTV );
+
 	SAFE_RELEASE( GetInstance()->m_pTransBufferSRV );
 	SAFE_RELEASE( GetInstance()->m_pTransBufferTex );
 	SAFE_RELEASE( GetInstance()->m_pTransBufferRTV );
@@ -81,6 +90,11 @@ void CSceneTexRenderer::Release()
 // 描画関数.
 void CSceneTexRenderer::Render()
 {
+	// レンダーターゲットの設定.
+	GetInstance()->m_pContext11->OMSetRenderTargets( 1, &GetInstance()->m_pAntialiasingRTV, CDirectX11::GetDepthSV() );
+	// デプスステンシルバッファ.
+	GetInstance()->m_pContext11->ClearDepthStencilView( CDirectX11::GetDepthSV(), D3D11_CLEAR_DEPTH, 1.0f, 0 );
+
 	// 使用するシェーダのセット.
 	GetInstance()->m_pContext11->VSSetShader( GetInstance()->m_pVertexShader, nullptr, 0 );	// 頂点シェーダ.
 	GetInstance()->m_pContext11->PSSetShader( GetInstance()->m_pPixelShader, nullptr, 0 );	// ピクセルシェーダ.
@@ -102,6 +116,11 @@ void CSceneTexRenderer::Render()
 	}
 	GetInstance()->m_pContext11->PSSetShaderResources( 3, 1, &GetInstance()->m_pTransBufferSRV );	// Trans.
 	GetInstance()->m_pContext11->Draw( 4, 0 );
+
+	CDirectX11::SetBackBuffer();
+	GetInstance()->m_pContext11->PSSetShader( GetInstance()->m_pLastPixelShader, nullptr, 0 );	// ピクセルシェーダ.
+	GetInstance()->m_pContext11->PSSetShaderResources( 4, 1, &GetInstance()->m_pAntialiasingSRV );	// Trans.
+	GetInstance()->m_pContext11->Draw( 4, 0 );
 }
 
 // バッファのクリア.
@@ -118,6 +137,9 @@ void CSceneTexRenderer::ClearBuffer()
 	// Transテクスチャのクリア.
 	GetInstance()->m_pContext11->ClearRenderTargetView( 
 		GetInstance()->m_pTransBufferRTV, GetInstance()->CLEAR_BACK_COLOR );
+	// Antialiasingテクスチャのクリア.
+	GetInstance()->m_pContext11->ClearRenderTargetView( 
+		GetInstance()->m_pAntialiasingRTV, GetInstance()->CLEAR_BACK_COLOR );
 }
 
 // Shadowバッファの設定.
@@ -248,6 +270,30 @@ HRESULT CSceneTexRenderer::InitTransBufferTex()
 	return S_OK;
 }
 
+// Antialiasingの作成.
+HRESULT CSceneTexRenderer::InitAntialiasingTex()
+{
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width				= WND_W;							// 幅.
+	texDesc.Height				= WND_H;							// 高さ.
+	texDesc.MipLevels			= 1;								// ミップマップレベル:1.
+	texDesc.ArraySize			= 1;								// 配列数:1.
+	texDesc.Format				= DXGI_FORMAT_R11G11B10_FLOAT;		// 32ビットフォーマット.
+	texDesc.SampleDesc.Count	= 1;								// マルチサンプルの数.
+	texDesc.SampleDesc.Quality	= 0;								// マルチサンプルのクオリティ.
+	texDesc.Usage				= D3D11_USAGE_DEFAULT;				// 使用方法:デフォルト.
+	texDesc.BindFlags			= D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;	// レンダーターゲット、シェーダーリソース.
+	texDesc.CPUAccessFlags		= 0;								// CPUからはアクセスしない.
+	texDesc.MiscFlags			= 0;								// その他の設定なし.
+
+	if( FAILED( CreateBufferTex(
+		texDesc,
+		&m_pAntialiasingRTV,
+		&m_pAntialiasingSRV,
+		&m_pAntialiasingTex ))) return E_FAIL;
+	return S_OK;
+}
+
 // シェーダ作成.
 HRESULT CSceneTexRenderer::CreateShader()
 {
@@ -312,6 +358,35 @@ HRESULT CSceneTexRenderer::CreateShader()
 			pCompilePS->GetBufferSize(),
 			nullptr,
 			&m_pPixelShader ))){
+		ERROR_MESSAGE( "ps hlsl Creating Failure." );
+		return E_FAIL;
+	}
+
+	//----------------------------.
+	// ピクセルシェーダー.
+	//----------------------------.
+	if( FAILED(
+		D3DX10CompileFromFile( 
+			SHADER_NAME,
+			nullptr,
+			nullptr,
+			"PS_LastMain", 
+			"ps_5_0", 
+			uCompileFlag, 
+			0,
+			nullptr,
+			&pCompilePS,
+			&pErrorMsg,
+			nullptr ))){
+		ERROR_MESSAGE( (char*)pErrorMsg->GetBufferPointer()  );
+		return E_FAIL;
+	}
+	if( FAILED(
+		m_pDevice11->CreatePixelShader(
+			pCompilePS->GetBufferPointer(),
+			pCompilePS->GetBufferSize(),
+			nullptr,
+			&m_pLastPixelShader ))){
 		ERROR_MESSAGE( "ps hlsl Creating Failure." );
 		return E_FAIL;
 	}

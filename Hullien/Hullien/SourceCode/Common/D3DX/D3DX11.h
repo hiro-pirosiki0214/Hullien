@@ -32,7 +32,6 @@ public: //----- 関数 ------.
 	static ID3D11DeviceContext*	GetContext() { return GetInstance()->m_pContext11; }
 	// デプスステンシルビューの取得.
 	static ID3D11DepthStencilView* GetDepthSV(){ return GetInstance()->m_pBackBuffer_DSTexDSV; }
-	static DXGI_SAMPLE_DESC GetMSAASampleDesc(){ return GetInstance()->m_MSAASampleDesc;}
 	// BackBufferの設定.
 	static void SetBackBuffer();
 
@@ -58,7 +57,6 @@ private: //----- 変数 ------.
 	ID3D11DeviceContext*	m_pContext11;	// コンテキスト11.
 
 	IDXGISwapChain*			m_pSwapChain;			// スワップチェーン.
-	DXGI_SAMPLE_DESC		m_MSAASampleDesc;
 
 	ID3D11RenderTargetView*	m_pBackBuffer_TexRTV;	// レンダーターゲットビュー.
 	ID3D11DepthStencilView*	m_pBackBuffer_DSTexDSV;	// ステンシルビュー.
