@@ -48,12 +48,12 @@ public:
 	virtual void Render() override;
 
 	// Y²‚Ìİ’è.
-	void SetRotationY( const float& rotY ){ m_vRotation.y = rotY; }
+	inline void SetRotationY( const float& rotY ){ m_vRotation.y = rotY; }
 
 	// ’Í‚ñ‚Å‚¢‚é‚©.
-	bool IsGrab(){ return m_NowArmState == EArmState::End; }
+	inline bool IsGrab(){ return m_NowArmState == EArmState::End; }
 	// •Ğ‚Ã‚¯‚Ä‚¢‚é‚©.
-	bool IsCleanUp(){ return m_NowArmState == EArmState::Start; }
+	inline bool IsCleanUp(){ return m_NowArmState == EArmState::Start; }
 	// ’Í‚ñ‚Å‚¢‚éÀ•W‚Ìæ“¾.
 	D3DXVECTOR3 GetGrabPosition();
 

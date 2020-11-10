@@ -42,7 +42,7 @@ public:
 	virtual void Render() override;
 
 	// 選択状態の取得関数.
-	ESelectState GetSelectState() const { return m_SelectState; }
+	inline ESelectState GetSelectState() const { return m_SelectState; }
 
 private:
 	// スプライト設定関数.

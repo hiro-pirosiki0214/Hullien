@@ -42,21 +42,21 @@ public:
 	// ライフ計算関数.
 	virtual void LifeCalculation( const std::function<void(float&,bool&)>& ) override;
 	// 連れ去っているかどうか.
-	bool IsAbduct() const { return m_NowState == alien::EAlienState::Abduct; }
+	inline bool IsAbduct() const { return m_NowState == alien::EAlienState::Abduct; }
 	// どのアイテムを持っているか取得.
-	EItemList GetAnyItem() const { return m_HasAnyItem; }
+	inline EItemList GetAnyItem() const { return m_HasAnyItem; }
 	// ほかの宇宙人が連れ去っているか設定.
-	void SetOtherAbduct( bool* pisAbduct ){ m_pIsAlienOtherAbduct = pisAbduct; }
+	inline void SetOtherAbduct( bool* pisAbduct ){ m_pIsAlienOtherAbduct = pisAbduct; }
 	// 連れ去るUFOの座標の取得.
-	void SetAbductUFOPosition( D3DXVECTOR3* pos ){ m_pAbductUFOPosition = pos; }
+	inline void SetAbductUFOPosition( D3DXVECTOR3* pos ){ m_pAbductUFOPosition = pos; }
 	// アイテムの設定.
-	void SetItem( const EItemList& item ){ m_HasAnyItem = item; }
+	inline void SetItem( const EItemList& item ){ m_HasAnyItem = item; }
 	// 爆発するか.
-	bool IsExplosion() const { return m_IsExplosion; }
+	inline bool IsExplosion() const { return m_IsExplosion; }
 	// 消去するかどうか.
-	bool IsDelete() const { return m_IsDelete; }
+	inline bool IsDelete() const { return m_IsDelete; }
 	// マザーシップに昇っているか.
-	bool IsRisingMotherShip() const { return m_NowState == alien::EAlienState::RisingMotherShip; }
+	inline bool IsRisingMotherShip() const { return m_NowState == alien::EAlienState::RisingMotherShip; }
 
 protected:
 	// 現在の状態の更新関数.

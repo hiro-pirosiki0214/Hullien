@@ -89,9 +89,9 @@ public:
 	void Drop( const D3DXVECTOR3& vPos );
 
 	// Á‚¦‚½‚©‚Ç‚¤‚©.
-	bool IsDelete(){ return m_NowState == ENowState::Delete; }
+	inline bool IsDelete(){ return m_NowState == ENowState::Delete; }
 	// “–‚½‚Á‚ÄÁ‚¦‚½‚©.
-	bool IsHitDisappear(){ return m_NowState == ENowState::HitDisappear; }
+	inline bool IsHitDisappear(){ return m_NowState == ENowState::HitDisappear; }
 
 protected:
 	// “–‚½‚Á‚½Û‚ÌŒø‰Ê‚ğ—^‚¦‚é.

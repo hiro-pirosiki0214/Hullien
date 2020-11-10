@@ -36,9 +36,9 @@ public:
 	// 女の子の状態設定関数.
 	virtual void SetPosition(const D3DXVECTOR3& vPos)override { m_vTargetPos = vPos; }
 	// 女の子が画面外か.
-	void SetIsGirlOffScreen(const bool& IsOffScreen) { m_IsGirlOffScreen = IsOffScreen; }
+	inline void SetIsGirlOffScreen(const bool& IsOffScreen) { m_IsGirlOffScreen = IsOffScreen; }
 	// 矢印を右に表示するか.
-	void SetIsDispRight(const bool& IsDispRight) { m_IsDispRight = IsDispRight; }
+	inline void SetIsDispRight(const bool& IsDispRight) { m_IsDispRight = IsDispRight; }
 
 private:
 	// スプライト設定関数.

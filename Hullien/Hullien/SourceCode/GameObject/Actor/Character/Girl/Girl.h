@@ -71,9 +71,9 @@ public:
 	// スプライトの描画.
 	virtual void SpriteRender() override;
 	// 危険な状態か.
-	bool IsDanger(){ return m_IsDanger; }
+	inline bool IsDanger(){ return m_IsDanger; }
 	// カメラのラジアン値の設定関数.
-	void SetCameraRadianX(const float& radian) { m_CameraRadianX = radian; }
+	inline void SetCameraRadianX( const float& radian ) { m_CameraRadianX = radian; }
 
 private:
 	// 移動関数.

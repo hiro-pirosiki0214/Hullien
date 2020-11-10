@@ -34,7 +34,7 @@ public:
 	// スプライトの描画.
 	void SpriteRender();
 	// オブジェクト座標リストの取得.
-	std::vector<std::pair<EObjectTag, std::pair<D3DXVECTOR3, float>>>	GetObjPositionList() const { return m_ObjPositionList; }
+	inline std::vector<std::pair<EObjectTag, std::pair<D3DXVECTOR3, float>>>	GetObjPositionList() const { return m_ObjPositionList; }
 	// ゲームオーバーかどうか.
 	bool IsGameOver();
 	// 女の子を連れ去っているか.

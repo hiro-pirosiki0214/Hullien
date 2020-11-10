@@ -19,58 +19,6 @@ CGameObject::~CGameObject()
 }
 
 //-----------------------------.
-// オブジェクトタグ取得関数.
-//-----------------------------.
-EObjectTag CGameObject::GetObjectTag() const
-{
-	return m_ObjectTag;
-}
-
-//-----------------------------.
-// 座標取得関数.
-//-----------------------------.
-D3DXVECTOR3 CGameObject::GetPosition() const
-{
-	return m_vPosition;
-}
-
-//-----------------------------.
-// 座標設定関数.
-//-----------------------------.
-void CGameObject::SetPosition( const D3DXVECTOR3& vPos )
-{
-	m_vPosition = vPos;
-}
-
-// Y軸の回転値の取得.
-float CGameObject::GetRotatinY() const
-{
-	return m_vRotation.y;
-}
-
-//-----------------------------.
-// X軸の回転値の設定.
-//-----------------------------.
-void CGameObject::SetRotationX( const float& rotX )
-{
-	m_vRotation.x = rotX;
-}
-//-----------------------------.
-// Y軸の回転値の設定.
-//-----------------------------.
-void CGameObject::SetRotationY( const float& rotY )
-{
-	m_vRotation.y = rotY;
-}
-//-----------------------------.
-// Z軸の回転値の設定.
-//-----------------------------.
-void CGameObject::SetRotationZ( const float& rotZ )
-{
-	m_vRotation.z = rotZ;
-}
-
-//-----------------------------.
 // 画面の外に出ているか.
 //-----------------------------.
 bool CGameObject::IsDisplayOut( const float& adjSize )

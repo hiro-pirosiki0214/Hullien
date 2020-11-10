@@ -36,10 +36,10 @@ public:
 	virtual void StopAnimation(){};
 
 	// Œ©‚¦‚È‚¢•Ç‚Ìİ’è.
-	void SetBoxWall( SBoxWall* box ){ m_pBoxWall = box; }
+	inline void SetBoxWall( SBoxWall* box ){ m_pBoxWall = box; }
 
 	// “–‚½‚è”»’èæ“¾ŠÖ”.
-	CCollisionManager* GetCollManager(){ return m_pCollManager.get(); }
+	inline CCollisionManager* GetCollManager(){ return m_pCollManager.get(); }
 
 protected:
 	// •Ç‚ÉÕ“Ë‚µ‚½‚©.

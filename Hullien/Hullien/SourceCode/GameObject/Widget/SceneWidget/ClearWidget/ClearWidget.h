@@ -22,8 +22,8 @@ public:
 	//描画関数.
 	virtual void Render() override;
 
-	bool IsSpriteRenderEnd(){ return m_SpriteAlpha <= 0.0f; }
-	void SetIsSTGEnd(){ m_IsSTGEnd = true; }
+	inline bool IsSpriteRenderEnd(){ return m_SpriteAlpha <= 0.0f; }
+	inline void SetIsSTGEnd(){ m_IsSTGEnd = true; }
 
 private:
 	// スプライト設定関数.

@@ -47,9 +47,9 @@ public:
 	// パラメータの設定.
 	void SetParameter( const SMotherShipUFOParam& param );
 	// 描画フラグ設定関数.
-	void SetDisp(const bool& disp) { m_IsDisp = disp; }
+	inline void SetDisp(const bool& disp) { m_IsDisp = disp; }
 	// 宇宙人が帰還したか取得関数.
-	bool IsReturnAlien() const { return m_IsReturnAlien; }
+	inline bool IsReturnAlien() const { return m_IsReturnAlien; }
 
 	// ライトを取り出す.
 	void LightDischarge();

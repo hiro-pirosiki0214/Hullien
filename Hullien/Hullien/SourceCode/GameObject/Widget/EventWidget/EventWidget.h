@@ -24,7 +24,7 @@ public:
 	// 描画関数.
 	virtual void Render() override;
 	// スキップしたか設定関数.
-	void SetSkip(const bool& skip) { m_IsSkip = skip; }
+	inline void SetSkip(const bool& skip) { m_IsSkip = skip; }
 
 private:
 	// スプライト設定関数.

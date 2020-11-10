@@ -50,11 +50,11 @@ public:
 	// 相手座標の設定.
 	virtual void SetTargetPos(CActor& actor) override;
 	// バリアに当たっているか.
-	bool IsBarrierHit() const { return m_IsBarrierHit; }
+	inline bool IsBarrierHit() const { return m_IsBarrierHit; }
 	// 宇宙人の状態設定.
-	void SetAlienState(const EEventAlienState& state) { m_NowState = state; }
+	inline void SetAlienState(const EEventAlienState& state) { m_NowState = state; }
 	// ターゲット位置取得関数.
-	D3DXVECTOR3 GetTargetPosition() const { return m_vTargetPosition; }
+	inline D3DXVECTOR3 GetTargetPosition() const { return m_vTargetPosition; }
 	// ターゲットをつかんでいるか.
 	bool IsGrab() const;
 

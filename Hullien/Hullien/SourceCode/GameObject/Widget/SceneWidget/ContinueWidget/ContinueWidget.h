@@ -47,9 +47,9 @@ public:
 	virtual void Render() override;
 
 	// 選択状態の取得関数.
-	ESelectState GetSelectState() const { return m_SelectState; }
+	inline ESelectState GetSelectState() const { return m_SelectState; }
 	// 描画中か取得関数.
-	bool GetIsDrawing() const { return m_IsDrawing; }
+	inline bool GetIsDrawing() const { return m_IsDrawing; }
 
 private:
 	// スプライト設定関数.

@@ -36,7 +36,7 @@ public:
 	virtual void Render() override;
 
 	// 終了の取得関数.
-	bool IsFinish() const { return m_IsFinish; }	
+	inline bool IsFinish() const { return m_IsFinish; }	
 
 private:
 	// スプライト設定関数.

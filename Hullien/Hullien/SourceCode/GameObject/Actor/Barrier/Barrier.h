@@ -31,7 +31,7 @@ public:
 	// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
 	virtual void SetTargetPos( CActor& pActor ) override;
 	// “®ìó‘Ô‚©.
-	bool IsActive() const { return m_IsActive; }
+	inline bool IsActive() const { return m_IsActive; }
 
 private:
 	// ƒ‚ƒfƒ‹‚Ìæ“¾.

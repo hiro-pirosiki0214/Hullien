@@ -11,13 +11,13 @@ public:
 	void Set();
 
 	// タイムの設定.
-	void SetTime( float time ){ m_Time = time; }
+	inline void SetTime( float time ){ m_Time = time; }
 	// タイムの取得.
-	float GetTime(){ return m_Time; }
+	inline float GetTime(){ return m_Time; }
 	// 更新.
 	bool Update();
 	//  更新中か.
-	bool IsUpdate(){ return m_IsUpdate; }
+	inline bool IsUpdate(){ return m_IsUpdate; }
 
 private:
 	bool	m_IsUpdate;	// 更新中か.

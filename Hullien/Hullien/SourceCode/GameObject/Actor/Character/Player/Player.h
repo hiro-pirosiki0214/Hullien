@@ -114,12 +114,12 @@ public:
 	// 特殊能力を使っているか.
 	bool IsSpecialAbility();
 	// 死亡したか.
-	bool IsDead(){ return m_AnimFrameList[player::EAnimNo_Dead].IsNowFrameOver(); }
+	inline bool IsDead(){ return m_AnimFrameList[player::EAnimNo_Dead].IsNowFrameOver(); }
 	// カメラの方向.
 	float GetCameraRadianX();
 
 	// ベクトルの取得.
-	virtual void SetVector( const D3DXVECTOR3& vec ){ m_HitVector = vec; }
+	virtual void SetVector( const D3DXVECTOR3& vec ) override { m_HitVector = vec; }
 
 private:
 	// 操作関数.

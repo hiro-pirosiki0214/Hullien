@@ -100,7 +100,7 @@ public:
 	// アニメーションをブレンドして設定.
 	void SetAnimationBlend(const int& animNo);
 	// アニメーション速度の設定.
-	void SetAnimSpeed( const double& speed ){ m_AnimSpeed = speed; }
+	inline void SetAnimSpeed( const double& speed ){ m_AnimSpeed = speed; }
 
 protected:
 	// メッシュの表示関数.

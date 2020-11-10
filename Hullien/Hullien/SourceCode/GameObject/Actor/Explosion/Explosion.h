@@ -46,7 +46,7 @@ public:
 	bool IsStop();
 
 	// パラメーターの設定.
-	void SetExplosionParam( const SExplosionParam& param ){ m_Param = param; }
+	inline void SetExplosionParam( const SExplosionParam& param ){ m_Param = param; }
 
 private:
 	// エフェクトの設定.

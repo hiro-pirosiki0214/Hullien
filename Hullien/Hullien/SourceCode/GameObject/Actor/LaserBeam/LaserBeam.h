@@ -41,14 +41,14 @@ public:
 	void SetControlPointList( std::vector<D3DXVECTOR3> pointList );
 
 	// 移動速度の設定.
-	void SetMoveSpped( const float& moveSpeed ){ m_MoveSpeed = moveSpeed; }
+	inline void SetMoveSpped( const float& moveSpeed ){ m_MoveSpeed = moveSpeed; }
 	// 麻痺時間の設定.
-	void SetParalysisTime( const float& time ){ m_ParalysisTime = time; }
+	inline void SetParalysisTime( const float& time ){ m_ParalysisTime = time; }
 
 	// 攻撃中か.
-	bool IsInAttack() const { return m_IsInAttack; }
+	inline bool IsInAttack() const { return m_IsInAttack; }
 	// 攻撃が終了したかどうか.
-	bool IsEndAttack() const { return m_IsEndAttack; }
+	inline bool IsEndAttack() const { return m_IsEndAttack; }
 
 private:
 	// 二次ベジェ曲線.

@@ -42,14 +42,14 @@ public:
 	// 値を減らす.
 	void SubValue( const float& value );
 	// 値の設定.
-	void SetValue( const float& value ){ m_Value = value; }
+	inline void SetValue( const float& value ){ m_Value = value; }
 	// 値の取得.
-	float GetValue() const { return m_Value; }
+	inline float GetValue() const { return m_Value; }
 
 	// 座標設定関数.
 	virtual void SetPosition( const D3DXVECTOR3& vPos ) override;
 	// アイコンの座標の取得.
-	D3DXVECTOR3 GetIconPosition() const { return m_IconPosition; }
+	inline D3DXVECTOR3 GetIconPosition() const { return m_IconPosition; }
 
 private:
 	// アイコンの座標の設定.

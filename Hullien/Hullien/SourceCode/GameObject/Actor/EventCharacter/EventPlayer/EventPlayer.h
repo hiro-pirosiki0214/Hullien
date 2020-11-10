@@ -60,19 +60,19 @@ public:
 	// 相手座標の設定関数.
 	virtual void SetTargetPos(CActor& actor) override;
 	// アニメーション速度の設定.
-	void SetAnimSpeed() { m_AnimSpeed = 0.01f; }
+	inline void SetAnimSpeed() { m_AnimSpeed = 0.01f; }
 
 	// Yボタンが押されたか.
-	bool IsYButtonPressed() { return m_IsYButtonPressed; }
+	inline bool IsYButtonPressed() { return m_IsYButtonPressed; }
 	// 特殊能力.
 	bool IsSpecialAbility();
 
 	// 衝突したか.
-	bool IsAlienHit(){ return m_IsAlienHit; }
+	inline bool IsAlienHit(){ return m_IsAlienHit; }
 	// 衝突.
-	void SetAlienHit(){ m_IsAlienHit = true; }
+	inline void SetAlienHit(){ m_IsAlienHit = true; }
 	// ダメージアニメーションが終了したか.
-	bool IsEndDamageAnim(){ return m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver(); }
+	inline bool IsEndDamageAnim(){ return m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver(); }
 	// ダメージアニメーションの更新.
 	void DamageAnimUpdate();
 

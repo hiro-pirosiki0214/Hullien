@@ -37,7 +37,7 @@ public:
 	// スポーンパラメータの設定.
 	void SetSpawnParameter( const SSpawnUFOParam& param );
 	// 連れ去るUFOの座標設定.
-	void SetAbductUFOPosition( D3DXVECTOR3* pPos ){ m_pAbductUFOPosition = pPos; }
+	inline void SetAbductUFOPosition( D3DXVECTOR3* pPos ){ m_pAbductUFOPosition = pPos; }
 
 	// ライトを取り出す.
 	void LightDischarge();
@@ -49,10 +49,10 @@ public:
 	void CleanUPPreparation();
 
 	// 描画フラグ設定関数.
-	void SetDisp(const bool& disp) { m_IsDisp = disp; }
+	inline void SetDisp(const bool& disp) { m_IsDisp = disp; }
 
 	// スケール値の設定.
-	void SetScale(const D3DXVECTOR3& scale) { m_vScale = scale; }
+	inline void SetScale(const D3DXVECTOR3& scale) { m_vScale = scale; }
 	// 当たり判定(イベントで使用).
 	D3DXVECTOR3 Collision(CActor* pActor);
 

@@ -43,7 +43,7 @@ public:
 	// UIの状態設定関数.
 	void SetWidgetState(const EWidgetState& state);
 	// 描画が終了したか.
-	bool IsDispEnd() { return m_IsDispEnd == true; }
+	inline bool IsDispEnd() { return m_IsDispEnd == true; }
 
 private:
 	// スプライト設定関数.
