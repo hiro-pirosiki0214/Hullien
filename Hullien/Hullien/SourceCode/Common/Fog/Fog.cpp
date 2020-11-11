@@ -8,7 +8,7 @@ namespace
 	static const float FOG_TEX_SCALE		= 0.003f;	// フォグのテクセルスケール値.
 	static const D3DXVECTOR4 FOG_COLOR		= {0.6f,0.6f,0.6f,1.0f};	// フォグの色.
 	static const float FOG_MIN_HEIGHT		= 0.0f;		// フォグの最小高さ.
-	static const float FOG_MAX_HEIGHT		= 13.0f;	// フォグの最大高さ.
+	static const float FOG_MAX_HEIGHT		= 6.0f;	// フォグの最大高さ.
 }
 
 CFog::CFog()

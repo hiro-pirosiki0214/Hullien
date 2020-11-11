@@ -104,6 +104,7 @@ void CBarrier::EffectRender()
 	if( m_pCollManager == nullptr ) return;
 
 	// エフェクトを描画.
+	m_pEffect->SetLocation( m_vPosition );
 	m_pEffect->SetScale( 0.3f );
 	m_pEffect->Render();
 
