@@ -50,6 +50,7 @@ void CGameStartEventWidget::Update()
 	case CGameStartEventWidget::EWidgetState::Push_YButton:
 		if(m_IsDisp[PUSH_YBUTTON] == false) m_IsDisp[PUSH_YBUTTON] = true;
 		if(m_IsDisp[PUSH_YBUTTON+1] == false) m_IsDisp[PUSH_YBUTTON+1] = true;
+		if(m_IsDisp[PUSH_YBUTTON+2] == false) m_IsDisp[PUSH_YBUTTON+2] = true;
 		if (m_Alpha < ALPHA_MAX) m_Alpha += ALPHA_SPEED;
 		else { m_IsDispEnd = true; }
 		break;
@@ -112,6 +113,7 @@ bool CGameStartEventWidget::SpriteSetting()
 	{
 		SPRITE_BUTTON_NAME,
 		SPRITE_PUSH_NAME,
+		SPRITE_EXCLAMATION_NAME,
 		SPRITE_PRESERVE_GIRL_NAME
 	};
 	int SpriteMax = sizeof(spriteName) / sizeof(spriteName[0]);
