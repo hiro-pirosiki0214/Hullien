@@ -33,6 +33,8 @@ public:
 		enPRESS_AND_HOLD	= 1 << 1,	//!< 押し続けている.
 		enSEPARATED			= 1 << 2,	//!< 離した状態.
 	};
+
+	typedef char ButtonState;
 public:
 	/**
 	* @brief コンストラクタ.
@@ -63,7 +65,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE A_Button( const int& connectNum = 0 );
+	static ButtonState A_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool B_Button( const int& connectNum = 0 )
@@ -71,7 +73,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE B_Button( const int& connectNum = 0 );
+	static ButtonState B_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool X_Button( const int& connectNum = 0 )
@@ -79,7 +81,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE X_Button( const int& connectNum = 0 );
+	static ButtonState X_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool Y_Button( const int& connectNum = 0 )
@@ -87,7 +89,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE Y_Button( const int& connectNum = 0 );
+	static ButtonState Y_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool DPadUp( const int& connectNum = 0 )
@@ -95,7 +97,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE DPadUp( const int& connectNum = 0 );
+	static ButtonState DPadUp( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool DPadDown( const int& connectNum = 0 )
@@ -103,7 +105,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE DPadDown( const int& connectNum = 0 );
+	static ButtonState DPadDown( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool DPadLEFT( const int& connectNum = 0 )
@@ -111,7 +113,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE DPadLEFT( const int& connectNum = 0 );
+	static ButtonState DPadLEFT( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool DPadRIGHT( const int& connectNum = 0 )
@@ -119,7 +121,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE DPadRIGHT( const int& connectNum = 0 );
+	static ButtonState DPadRIGHT( const int& connectNum = 0 );
 
 	/**
 	* @fn static SHORT LThumbX_Axis( const int& connectNum = 0 )
@@ -159,7 +161,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE LThumb_Button( const int& connectNum = 0 );
+	static ButtonState LThumb_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool RThumb_Button( const int& connectNum = 0 )
@@ -167,7 +169,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE RThumb_Button( const int& connectNum = 0 );
+	static ButtonState RThumb_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static INT LTrigger( const int& connectNum = 0 )
@@ -191,7 +193,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE L_Button( const int& connectNum = 0 );
+	static ButtonState L_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool R_Button( const int& connectNum = 0 )
@@ -199,7 +201,7 @@ public:
 	* @param connectNum  使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE R_Button( const int& connectNum = 0 );
+	static ButtonState R_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool Start_Button( const int& connectNum = 0 )
@@ -207,7 +209,7 @@ public:
 	* @param connectNum 使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE Start_Button( const int& connectNum = 0 );
+	static ButtonState Start_Button( const int& connectNum = 0 );
 
 	/**
 	* @fn static bool Back_Button( const int& connectNum = 0 )
@@ -215,7 +217,7 @@ public:
 	* @param connectNum 使用したいコントローラーの指定 何も指定しない場合は 0 固定.
 	* @return bool 押されていたら true。押されていなかったら false.
 	*/
-	static enBUTTON_STATE Back_Button( const int& connectNum = 0 );
+	static ButtonState Back_Button( const int& connectNum = 0 );
 
 	//振動設定.
 	static bool SetVibration( WORD LMotorSpd, WORD RMotorSpd, const int& connectNum = 0 );
@@ -252,7 +254,7 @@ private:
 	* @param button_mask 指定したいボタン.
 	* @return enBUTTON_STATE ボタンの入力状態(押した瞬間など)を返す.
 	*/
-	enBUTTON_STATE ButtonInputState( const int& connectNum, const DWORD& button_mask );
+	ButtonState ButtonInputState( const int& connectNum, const DWORD& button_mask );
 
 	/**
 	* @fn static CXInput* GetInstance()
@@ -270,7 +272,7 @@ private:
 	std::vector<XINPUT_VIBRATION>	m_Vibration;	//!< バイブレーションの状態.
 	int		m_ConnectedCount;						//!< 接続したコントローラーの数.
 	bool	m_IsVibration;							//!< バイブレーションを行うか.
-	std::vector<std::unordered_map<INT, enBUTTON_STATE>> m_ButtonStateList;	//!< 入力されたボタンの状態.
+	std::vector<std::unordered_map<INT, ButtonState>> m_ButtonStateList;	//!< 入力されたボタンの状態.
 
 	// コピー・ムーブコンストラクタ, 代入演算子の削除.
 	CXInput( const CXInput & )				= delete;
