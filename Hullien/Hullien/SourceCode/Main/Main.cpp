@@ -42,13 +42,14 @@ CMain::CMain()
 	m_pLoadManager	= std::make_unique<CLoadManager>();
 
 	// カメラの初期化.
-	m_pCamera->SetPosition( D3DXVECTOR3( 0.0f, 10.0f, 10.0f ) );		// 座標.
+	m_pCamera->SetPosition( D3DXVECTOR3( 0.0f, 10.0f, 10.0f ) );	// 座標.
 	m_pCamera->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );	// 視点座標.
 	// カメラのセット.
 	CCameraManager::SetCamera( m_pCamera );
 
-	m_pLight->SetPosition( D3DXVECTOR3( 0.0f, 200.0f, -200.0f ) );
-	m_pLight->SetDirection( D3DXVECTOR3( 1.5f, 1.0f, -1.0f ) );
+	// ライトの設定.
+	m_pLight->SetPosition( D3DXVECTOR3( 70.0f, 80.0f, -50.0f ) );
+	m_pLight->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	m_pLight->SetIntensity( 1.0f );
 	CLightManager::SetLgiht( m_pLight );
 
