@@ -73,9 +73,11 @@ void CTitle::ChangeScene()
 		case CTitleWidget::ESelectState::Start:
 			CSoundManager::PlaySE("Determination");
 			break;
+#ifndef IS_CONFIG_RENDER
 		case CTitleWidget::ESelectState::Config:
 			CSoundManager::PlaySE("Determination");
 			break;
+#endif	// #ifndef IS_CONFIG_RENDER.
 		case CTitleWidget::ESelectState::End:
 			CSoundManager::PlaySE("CancelDetermination");
 			break;
@@ -98,11 +100,13 @@ void CTitle::ChangeScene()
 		while( CSoundManager::StopBGMThread("TitleBGM") == false);
 		m_pSceneManager->NextSceneMove();
 		break;
+#ifndef IS_CONFIG_RENDER
 	case CTitleWidget::ESelectState::Config:
 		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
 		while( CSoundManager::StopBGMThread("TitleBGM") == false);
 		m_pSceneManager->ConfigSceneMove();
 		break;
+#endif	// #ifndef IS_CONFIG_RENDER.
 	case CTitleWidget::ESelectState::End:
 		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
 		while (CSoundManager::StopBGMThread("TitleBGM") == false);

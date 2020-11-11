@@ -70,7 +70,9 @@ bool CTitleWidget::SpriteSetting()
 	{
 		SPRITE_BACKGROUND,		//背景.
 		SPRITE_SELECTSTART,		//開始.
+#ifndef IS_CONFIG_RENDER
 		SPRITE_SELECTCONFIG,	//設定.
+#endif	// #ifndef IS_CONFIG_RENDER.
 		SPRITE_SELECTEXIT,		//終了.
 		SPRITE_TITLE,			//タイトル.
 	};
@@ -119,9 +121,11 @@ void CTitleWidget::CursorSetting()
 	case CTitleWidget::ESelectState::Start:
 		m_vPosition = m_pSprite[START]->GetRenderPos();
 		break;
+#ifndef IS_CONFIG_RENDER
 	case CTitleWidget::ESelectState::Config:
 		m_vPosition = m_pSprite[CONFIG]->GetRenderPos();
 		break;
+#endif	// #ifndef IS_CONFIG_RENDER.
 	case CTitleWidget::ESelectState::End:
 		m_vPosition = m_pSprite[END]->GetRenderPos();
 		break;

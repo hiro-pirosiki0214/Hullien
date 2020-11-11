@@ -4,6 +4,8 @@
 #include "..\SceneWidget.h"
 #include <vector>
 
+#define IS_CONFIG_RENDER
+
 /************************************
 *	タイトルUIクラス.
 **/
@@ -18,15 +20,21 @@ private:
 
 	const int BACKGROUND	= 0;	//背景配列番号.
 	const int START			= 1;	//開始配列番号.
+#ifndef IS_CONFIG_RENDER
 	const int CONFIG		= 2;	//開始配列番号.
 	const int END			= 3;	//終了配列番号.
+#else	// #ifndef IS_CONFIG_RENDER.
+	const int END			= 2;	//終了配列番号.
+#endif	// #ifndef IS_CONFIG_RENDER.
 
 public:
 	//選択状態.
 	enum class enSelectState
 	{
 		Start,		//開始.
+#ifndef IS_CONFIG_RENDER
 		Config,		//設定.
+#endif	// #ifndef IS_CONFIG_RENDER.
 		End,		//終了.
 	} typedef ESelectState;
 
