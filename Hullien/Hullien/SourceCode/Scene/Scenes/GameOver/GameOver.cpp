@@ -24,6 +24,7 @@ bool CGameOver::Load()
 	if (m_pGameOverWidget->Init() == false) return false;
 
 	CSoundManager::ThreadPlayBGM("GameOverBGM");
+	CSoundManager::FadeInBGM("GameOverBGM");
 	return true;
 }
 

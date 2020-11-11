@@ -239,7 +239,7 @@ void CGame::ContinueUpdate()
 	switch (m_ContinueWidget->GetSelectState())
 	{
 	case CContinueWidget::ESelectState::Yes:
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001
 			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
 			CSoundManager::PlaySE("Determination");
@@ -247,7 +247,7 @@ void CGame::ContinueUpdate()
 		}
 		break;
 	case CContinueWidget::ESelectState::No:
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001
 			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
 			CSoundManager::PlaySE("CancelDetermination");
