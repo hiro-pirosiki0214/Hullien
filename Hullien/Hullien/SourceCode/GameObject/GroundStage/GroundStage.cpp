@@ -37,9 +37,9 @@ void CGroundStage::Render()
 	m_pStaticMesh->SetRotation( m_vRotation );
 	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->SetIsShadow( true );
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Front );	// ‘O–Ê‚ð•`‰æ‚µ‚È‚¢.
+	m_pStaticMesh->SetRasterizerState( ERS_STATE::Front );	// ‘O–Ê‚ð•`‰æ‚µ‚È‚¢.
 	m_pStaticMesh->Render();	// ƒ‚ƒfƒ‹‚Ì•`‰æ.
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pStaticMesh->SetRasterizerState( ERS_STATE::None );
 	m_pStaticMesh->SetIsShadow( false );
 
 }

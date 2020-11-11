@@ -136,9 +136,9 @@ void CAlienD::ModelRender()
 	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetColor( { 0.8f, 0.8f, 0.2f, 1.0f } );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::Back );
 	m_pSkinMesh->Render( m_pAC );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::None );
 }
 
 // UŒ‚”ÍˆÍ‚ÌƒXƒvƒ‰ƒCƒg•`‰æ.
@@ -164,9 +164,9 @@ void CAlienD::AttackRangeSpriteRender()
 	m_pAttackRangeSprite->SetScale( pPARAMETER->AttackRangeSpriteScale );	
 	m_pAttackRangeSprite->SetColor( color );
 	m_pAttackRangeSprite->SetBlend( true );
-	m_pAttackRangeSprite->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pAttackRangeSprite->SetRasterizerState( ERS_STATE::Back );
 	m_pAttackRangeSprite->Render();
-	m_pAttackRangeSprite->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pAttackRangeSprite->SetRasterizerState( ERS_STATE::None );
 	m_pAttackRangeSprite->SetBlend( false );
 }
 

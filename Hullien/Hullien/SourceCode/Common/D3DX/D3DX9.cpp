@@ -53,8 +53,7 @@ HRESULT CDirectX9::CreateDevice9()
 	//「Direct3D」オブジェクトの作成.
 	m_pD3d9 = Direct3DCreate9( D3D_SDK_VERSION );
 	if( m_pD3d9 == nullptr ){
-		_ASSERT_EXPR( false, L"Dx9オブジェクト作成失敗" );
-		MessageBox( nullptr, "Dx9オブジェクト作成失敗", "警告", MB_OK );
+		ERROR_MESSAGE("Dx9オブジェクト作成失敗");
 		return E_FAIL;
 	}
 
@@ -105,7 +104,7 @@ HRESULT CDirectX9::CreateDevice9()
 		return S_OK;
 	}
 
-	MessageBox( nullptr, "Direct3Dﾃﾞﾊﾞｲｽ作成失敗", "警告", MB_OK );
+	ERROR_MESSAGE("Direct3デバイス作成失敗");
 
 	SAFE_RELEASE( m_pD3d9 );
 	return E_FAIL;

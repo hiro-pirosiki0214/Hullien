@@ -67,9 +67,9 @@ void CAlienC::Render()
 	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetColor( { 0.2f, 0.2f, 0.8f, 1.0f } );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::Back );
 	m_pSkinMesh->Render( m_pAC );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::None );
 	m_pArm->Render();	// ƒA[ƒ€‚Ì•`‰æ.
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;

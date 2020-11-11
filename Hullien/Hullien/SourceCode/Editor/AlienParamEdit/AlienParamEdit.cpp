@@ -76,9 +76,9 @@ void CAlienParamEdit::ModelRender()
 	m_pSkinMeshs[m_Index]->SetScale( { 1.0f, 1.0f, 1.0f } );
 	m_pSkinMeshs[m_Index]->SetColor( m_AlienNameColorList[m_Index] );
 	m_pSkinMeshs[m_Index]->SetAnimSpeed( 0.01 );
-	m_pSkinMeshs[m_Index]->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pSkinMeshs[m_Index]->SetRasterizerState( ERS_STATE::Back );
 	m_pSkinMeshs[m_Index]->Render();
-	m_pSkinMeshs[m_Index]->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pSkinMeshs[m_Index]->SetRasterizerState( ERS_STATE::None );
 }
 
 // 全ファイルの読み込み.

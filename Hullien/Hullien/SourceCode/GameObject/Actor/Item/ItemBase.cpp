@@ -233,9 +233,9 @@ void CItemBase::DropAndActiveRender()
 	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->SetAlpha( m_ModelAlpha );
 	AlphaBlendSetting();
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pStaticMesh->SetRasterizerState( ERS_STATE::Back );
 	m_pStaticMesh->Render();
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pStaticMesh->SetRasterizerState( ERS_STATE::None );
 	m_pStaticMesh->SetBlend( false );
 
 	// エフェクトの描画.

@@ -62,9 +62,9 @@ void CItemEdit::ModelRender()
 	m_pStaticMeshs[m_ItemNo]->SetPosition( { 0.0f, 2.0f, 0.0f } );
 	m_pStaticMeshs[m_ItemNo]->SetRotation( { 0.0f, m_RotY, 0.0f } );
 	m_pStaticMeshs[m_ItemNo]->SetScale( { 1.0f, 1.0f, 1.0f } );
-	m_pStaticMeshs[m_ItemNo]->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pStaticMeshs[m_ItemNo]->SetRasterizerState( ERS_STATE::Back );
 	m_pStaticMeshs[m_ItemNo]->Render();
-	m_pStaticMeshs[m_ItemNo]->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pStaticMeshs[m_ItemNo]->SetRasterizerState( ERS_STATE::None );
 }
 
 // Šeƒ^ƒO‚Ì•`‰æ.
