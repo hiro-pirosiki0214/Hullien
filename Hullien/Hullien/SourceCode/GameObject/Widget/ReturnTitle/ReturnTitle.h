@@ -11,7 +11,7 @@
 class CReturnTitle : public CWidget
 {
 private:
-	const char* SPRITE_BUTTON_NAME = "buttonY";	//スプライトのファイル名.
+	const char* SPRITE_BUTTON_NAME = "buttonB";	//スプライトのファイル名.
 	const char* SPRITE_TITLE_NAME = "title";	//スプライトのファイル名.
 	const char* SPRITE_PUSH_NAME = "pushMini";	//スプライトのファイル名.
 	const float	 ALPHA_SPEED = 0.01f;				//透過速度.

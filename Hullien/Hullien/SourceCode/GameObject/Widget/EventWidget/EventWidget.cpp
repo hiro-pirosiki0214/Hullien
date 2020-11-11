@@ -42,6 +42,7 @@ void CEventWidget::Render()
 	// ボタンスプライトの描画.
 	m_pSprite->SetPosition( m_vPosition );
 	m_pSprite->SetAlpha( m_Alpha );
+	m_pSprite->SetScale( 0.5f );
 	m_pSprite->SetBlend( true );
 	m_pSprite->SetDeprh( false );
 	m_pSprite->RenderUI();
@@ -79,7 +80,7 @@ bool CEventWidget::SpriteSetting()
 		if( m_pSkipSprites[sprite] == nullptr ) return false;
 	}
 	m_vPosition = m_pSkipSprites[0]->GetRenderPos();
-	m_vPosition.x -= m_pSprite->GetSpriteSize().x;
+	m_vPosition.x -= m_pSprite->GetSpriteSize().x/2.0f;
 	
 	return true; 
 }

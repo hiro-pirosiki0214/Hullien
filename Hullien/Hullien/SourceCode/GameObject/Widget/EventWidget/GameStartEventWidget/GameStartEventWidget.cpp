@@ -83,7 +83,10 @@ void CGameStartEventWidget::Render()
 
 		// “§‰ß’l‚ÌÝ’è.
 		m_pSprites[sprite]->SetAlpha( m_Alpha );
-		if( sprite == 0 ) m_pSprites[sprite]->SetPosition( m_ButtonPos );
+		if( sprite == 0 ){
+			m_pSprites[sprite]->SetPosition( m_ButtonPos );
+			m_pSprites[sprite]->SetScale( 1.0f );
+		}
 		// •`‰æ‚ÌÝ’è.
 		m_pSprites[sprite]->SetBlend( true );
 		m_pSprites[sprite]->SetDeprh( false );

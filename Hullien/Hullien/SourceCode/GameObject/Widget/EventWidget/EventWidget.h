@@ -10,7 +10,7 @@
 **/
 class CEventWidget : public CWidget
 {
-	const char* SPRITE_BUTTON_NAME = "buttonY";	//スプライトのファイル名.
+	const char* SPRITE_BUTTON_NAME = "buttonB";	//スプライトのファイル名.
 	const char* SPRITE_TITLE_NAME = "skip";	//スプライトのファイル名.
 	const char* SPRITE_PUSH_NAME = "hold";	//スプライトのファイル名.
 public:
