@@ -25,6 +25,8 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// 相手座標の設定関数.

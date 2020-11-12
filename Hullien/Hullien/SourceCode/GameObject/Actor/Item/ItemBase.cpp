@@ -82,8 +82,15 @@ void CItemBase::Render()
 	if( IsDisplayOut() == true ) return;
 	// ドロップ　アクティブ時の描画.
 	DropAndActiveRender();
-	// ヒット時の描画.
-	HitRender();
+}
+
+// エフェクトの描画.
+void CItemBase::EffectRender()
+{
+	// 画面の外なら終了.
+	if( IsDisplayOut() == true ) return;
+	DropAndActiveEffectRender();
+	HitEffectRender();
 }
 
 // 当たり判定関数.
@@ -112,7 +119,7 @@ void CItemBase::Drop( const D3DXVECTOR3& vPos )
 	this->Init();
 	m_NowState = ENowState::Drop;
 	this->m_vPosition = vPos;
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( vPos );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( { vPos.x, 0.001f, vPos.z } );
 	CSoundManager::PlaySE("DropItem");
 }
 
@@ -238,18 +245,27 @@ void CItemBase::DropAndActiveRender()
 	m_pStaticMesh->SetRasterizerState( ERS_STATE::None );
 	m_pStaticMesh->SetBlend( false );
 
-	// エフェクトの描画.
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetLocation( {0.0f,0.001f,0.0f} );
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
-
 #if _DEBUG
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
 }
 
+// ドロップ　アクティブ時のエフェクトの描画.
+void CItemBase::DropAndActiveEffectRender()
+{
+	if( m_NowState == ENowState::HitDisappear ) return;
+	if( m_NowState == ENowState::Delete ) return;
+	if( m_NowState == ENowState::None ) return;
+	if( m_NowState == ENowState::Max ) return;
+	if( m_ModelAlpha < 1.0f ) return;
+
+	// エフェクトの描画.
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
+}
+
 // ヒット時の描画.
-void CItemBase::HitRender()
+void CItemBase::HitEffectRender()
 {
 	if( m_NowState != ENowState::HitDisappear ) return;
 

@@ -138,6 +138,7 @@ void CGameActorManager::Render()
 	// エフェクトの描画.
 	m_pPlayer->EffectRender();			// プレイヤーのエフェクト描画.
 	m_pAlienManager->EffectRender();	// 宇宙人のエフェクト描画.
+	m_pItemManager->EffectRender();		// アイテムのエフェクト描画.
 	m_pBarrier->EffectRender();			// バリアエフェクト描画.
 	// 仮　後で移動.
 	m_pAlienManager->SpriteRender();	// スプライトの描画.

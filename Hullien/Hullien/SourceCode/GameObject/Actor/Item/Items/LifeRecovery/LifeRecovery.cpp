@@ -43,6 +43,12 @@ void CLifeRecoveryItem::Render()
 	CItemBase::Render();
 }
 
+// エフェクトの描画.
+void CLifeRecoveryItem::EffectRender()
+{
+	CItemBase::EffectRender();
+}
+
 // 当たり判定関数.
 void CLifeRecoveryItem::Collision( CActor* pActor )
 {

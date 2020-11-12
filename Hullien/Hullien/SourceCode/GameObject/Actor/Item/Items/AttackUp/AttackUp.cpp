@@ -45,6 +45,12 @@ void CAttackUpItem::Render()
 	CItemBase::Render();
 }
 
+// エフェクトの描画.
+void CAttackUpItem::EffectRender()
+{
+	CItemBase::EffectRender();
+}
+
 // 当たり判定関数.
 void CAttackUpItem::Collision( CActor* pActor )
 {

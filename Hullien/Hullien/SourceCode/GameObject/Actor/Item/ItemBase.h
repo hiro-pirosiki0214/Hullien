@@ -83,6 +83,8 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// 出現処理.
@@ -118,8 +120,10 @@ protected:
 private:
 	// ドロップ　アクティブ時の描画.
 	void DropAndActiveRender();
-	// ヒット時の描画.
-	void HitRender();
+	// ドロップ　アクティブ時のエフェクトの描画.
+	void DropAndActiveEffectRender();
+	// ヒット時のエフェクトの描画.
+	void HitEffectRender();
 	// アルファブレンドの設定.
 	void AlphaBlendSetting();
 

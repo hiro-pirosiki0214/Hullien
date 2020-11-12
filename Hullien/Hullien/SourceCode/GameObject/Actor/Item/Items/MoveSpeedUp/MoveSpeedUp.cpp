@@ -45,6 +45,12 @@ void CMoveSpeedUpItem::Render()
 	CItemBase::Render();
 }
 
+// エフェクトの描画.
+void CMoveSpeedUpItem::EffectRender()
+{
+	CItemBase::EffectRender();
+}
+
 // 当たり判定関数.
 void CMoveSpeedUpItem::Collision( CActor* pActor )
 {

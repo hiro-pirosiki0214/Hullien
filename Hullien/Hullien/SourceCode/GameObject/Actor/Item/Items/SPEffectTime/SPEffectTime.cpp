@@ -47,6 +47,12 @@ void CSPEffectTimeItem::Render()
 	CItemBase::Render();
 }
 
+// エフェクトの描画.
+void CSPEffectTimeItem::EffectRender()
+{
+	CItemBase::EffectRender();
+}
+
 // 当たり判定関数.
 void CSPEffectTimeItem::Collision( CActor* pActor )
 {
