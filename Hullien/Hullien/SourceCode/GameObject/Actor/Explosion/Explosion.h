@@ -7,7 +7,7 @@ class CEffectManager;	// エフェクトクラス.
 
 class CExplosion : public CActor
 {
-	const char* EFFECT_NAME = "Explosion";	// エフェクトの名前.
+	const char* EFFECT_NAME = "c_deadEffect";	// エフェクトの名前.
 public:
 	// 爆発パラメーター.
 	struct stExplosionParam

@@ -6,7 +6,7 @@
 class CAttackUpItem : public CItemBase
 {
 	const char* MODEL_NAME	= "item attack";	// モデル名.
-	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "key";	// エフェクト名.
+	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "item_effect_1";	// エフェクト名.
 	const char* HIT_EFFECT_NAME				= "key";	// エフェクト名.
 	const float* pATTACK_UP_POWER;	// 攻撃力(外部からポインタで取得する).
 	const float* pATTACK_UP_TIME;	// 攻撃力(外部からポインタで取得する).

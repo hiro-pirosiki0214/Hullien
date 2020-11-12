@@ -239,7 +239,8 @@ void CItemBase::DropAndActiveRender()
 	m_pStaticMesh->SetBlend( false );
 
 	// エフェクトの描画.
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetLocation( m_vPosition );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetLocation( {0.0f,0.001f,0.0f} );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
 	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
 
 #if _DEBUG

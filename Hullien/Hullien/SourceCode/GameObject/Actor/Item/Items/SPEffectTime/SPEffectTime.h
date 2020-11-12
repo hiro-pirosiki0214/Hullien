@@ -6,7 +6,7 @@
 class CSPEffectTimeItem : public CItemBase
 {
 	const char* MODEL_NAME	= "item ability";			// モデル名.
-	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "key";	// ドロップ アクティブ時のエフェクト名.
+	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "item_effect_1";	// ドロップ アクティブ時のエフェクト名.
 	const char* HIT_EFFECT_NAME				= "key";	// ヒット時のエフェクト名.
 	const float* pSP_RECOVERY_VALUE;	// 特殊能力回復力(外部からポインタで取得する).
 	const float* pSP_RECOVERY_TIME;		// 特殊能力回復時間(外部からポインタで取得する).

@@ -191,6 +191,7 @@ std::shared_ptr<CAlien> CSpawnUFO::AlienFactory()
 // ‰F’ˆl”Ô†‚Ìì¬.
 int CSpawnUFO::GetAlienNo()
 {
+	return static_cast<int>(EAlienList::C);
 	if( (rand()%100) < m_SpawnParameter.ProbabilityD ){
 		// ‰F’ˆlD‚ğŠÜ‚ß‚é.
 		return CreateAlienNo( 

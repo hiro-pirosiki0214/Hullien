@@ -43,7 +43,7 @@ void CExplosion::Render()
 	if( m_IsEffectPlay == false ) return;
 
 	// エフェクトを描画.
-	m_pEffect->SetScale( 2.0f );
+	m_pEffect->SetScale( 0.5f );
 	m_pEffect->Render();
 
 	// 当たり判定が最大当たり判定より大きければ終了.
