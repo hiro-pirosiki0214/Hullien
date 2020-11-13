@@ -4,6 +4,7 @@
 #include "..\..\..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"
 
 STG::CPlayer::CPlayer()
 	: m_Direction		( 0.0f, 0.0f, 0.0f )
@@ -143,13 +144,17 @@ void STG::CPlayer::ShotController()
 	// ‰Ÿ‚µ‚½uŠÔ‚ÉShotCount‰Šú‰»E’e‚ğŒ‚‚Â.
 	if( CXInput::R_Button() == CXInput::enPRESSED_MOMENT ){
 		m_ShotCount = 0;
-		BulletShot( m_vRotation.y, BULLET_MOVE_SPEED );
+		if( BulletShot( m_vRotation.y, BULLET_MOVE_SPEED ) == true ){
+			CSoundManager::PlaySE(SHOT_SE_NAME);
+		}
 	}
 	// ’·‰Ÿ‚µ‚Ìê‡’e‚ğŒ‚‚ÂEShotCount‚Ì‰ÁZ.
 	if( CXInput::R_Button() == CXInput::enPRESS_AND_HOLD || ( GetAsyncKeyState('Z') & 0x8000 )){
 		m_ShotCount++;
 		if( m_ShotCount == SHOT_INTERVAL_FRAME ){
-			BulletShot( m_vRotation.y, BULLET_MOVE_SPEED );
+			if( BulletShot( m_vRotation.y, BULLET_MOVE_SPEED ) == true ){
+				CSoundManager::PlaySE(SHOT_SE_NAME);
+			}
 			m_ShotCount = 0;
 		}
 	}

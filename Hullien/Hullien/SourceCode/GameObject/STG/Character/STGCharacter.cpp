@@ -42,9 +42,10 @@ void STG::CCharacter::BulletRender( const D3DXVECTOR3& color )
 }
 
 // ’e‚ðŒ‚‚Â.
-void STG::CCharacter::BulletShot( const float& rot, const float& moveSpeed )
+bool STG::CCharacter::BulletShot( const float& rot, const float& moveSpeed )
 {
 	for( auto& b : m_pBullets ){
-		if( b->Shoot( m_vPosition, rot, moveSpeed ) == true ) return;
+		if( b->Shoot( m_vPosition, rot, moveSpeed ) == true ) return true;
 	}
+	return false;
 }

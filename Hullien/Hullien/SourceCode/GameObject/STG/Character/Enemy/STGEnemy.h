@@ -14,6 +14,7 @@ namespace STG
 	{
 		inline static const float E_WND_OUT_ADJ_SIZE	= 10.0f;
 		inline static const char* BULLET_MODEL_NAME		= "SpawnPoint";
+		inline static const char* DEAD_SE_NAME			= "STGEnemyDead";
 		inline static const float BULLET_COLOR			= 0.4f;
 		inline static const float INIT_POSITION_Z		= -100.0f;	// 初期座標 : Z.
 		inline static const float MOVE_SUB_VALUE		= 0.002f;	// 移動速度を引く値.
@@ -49,8 +50,8 @@ namespace STG
 		// 当たり判定.
 		virtual void Collision( STG::CActor* pActor ) override;
 		// スポーン時間の取得.
-		float GetSpawnTime() const { return PARAMETER.SpawnTime; }
-
+		inline float GetSpawnTime() const { return PARAMETER.SpawnTime; }
+		inline void SetPositionY( const float& posY ){ m_vPosition.y = posY; }
 	private:
 		// スポーン.
 		void Spawn();

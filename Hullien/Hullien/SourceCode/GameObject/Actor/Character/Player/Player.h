@@ -19,7 +19,7 @@ class CPlayer : public CCharacter
 
 	// 使用攻撃エフェクト名.
 	const char* ATTACK_ONE_EFFECT_NAME		= "slash_effect";
-	const char* ATTACK_TWO_EFFECT_NAME		= "slash_effect";
+	const char* ATTACK_TWO_EFFECT_NAME		= "slash_effect_2";
 	const char* ATTACK_THREE_EFFECT_NAME	= "slash_effect";
 	// 特殊能力エフェクト名.
 	const char* SPECIAL_ABILITY_EFFECT_NAME	= "uvtest";

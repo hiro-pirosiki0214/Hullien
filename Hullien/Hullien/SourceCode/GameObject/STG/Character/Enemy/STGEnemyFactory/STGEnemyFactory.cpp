@@ -26,6 +26,7 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 		return false;
 	}
 
+	float posY = 0.0f;
 	std::string line;	// 1s•ª‚ğ“Ç‚İ‚Ş‚½‚ß‚Ì•¶š.
 	while( std::getline( fileStream, line ) ){
 		std::string buff = "";		// •¶š‚ğˆê“I‚ÉŠi”[‚·‚é.
@@ -56,7 +57,7 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 				enemyParam.MoveSpeed = std::stof(buff);
 				break;
 			case EEnemyParamNo_BulletSpeed:
-				enemyParam.BulletSpeed = std::stof(buff);
+				enemyParam.BulletSpeed = std::stof(buff) * 2.0f;
 				break;
 			case EEnemyParamNo_BulletCountMax:
 				enemyParam.BulletCountMax = std::stoi(buff);
@@ -82,6 +83,8 @@ bool STG::CEnemyFactory::Create( std::vector<std::shared_ptr<STG::CEnemy>>& enem
 			no++;
 		}
 		enemys.emplace_back( std::make_shared<STG::CEnemy>(enemyParam) );
+		enemys.back()->SetPositionY( posY );
+		posY += 0.001f;
 	}
 	return true;
 }

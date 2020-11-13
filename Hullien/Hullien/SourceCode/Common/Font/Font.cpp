@@ -44,10 +44,14 @@ void CFont::RenderUI( const std::string& text )
 	}
 }
 
-void CFont::Render( const std::string& text, const bool& isBillboard  )
+void CFont::Render( const std::string& text, const bool& isBillboard )
 {
 	if( CSceneTexRenderer::GetRenderPass() == CSceneTexRenderer::ERenderPass::Shadow ) return;
-	m_vPos.x += m_vScale.x*2.0f * (static_cast<float>(text.length())*0.5f)-m_vScale.x;
+	if( IsDBCSLeadByte( text[0] ) == TRUE ){
+		m_vPos.x += m_vScale.x * (static_cast<float>(text.length())*0.5f)-m_vScale.x;
+	} else {
+		m_vPos.x += m_vScale.x*2.0f * (static_cast<float>(text.length())*0.5f)-m_vScale.x;
+	}
 	// ï∂éöêîï™ÉãÅ[Év.
 	for( int i = 0; i < static_cast<int>(text.length()); i++ ){
 		std::string f = text.substr( i, 1 );
@@ -113,11 +117,9 @@ void CFont::RenderFont( const char* c, const bool& isBillboard  )
 	m_pContext11->PSSetShaderResources( 0, 1, &pResourceView );
 
 	// ï`âÊ.
-	SetBlend( true );
 	SetRasterizerState( enRS_STATE::Back );
 	m_pContext11->Draw( 4, 0 );
 	SetRasterizerState( enRS_STATE::None );
-	SetBlend( false );
 }
 
 //---------------------------------.

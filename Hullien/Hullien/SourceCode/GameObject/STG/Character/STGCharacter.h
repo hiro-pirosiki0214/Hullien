@@ -28,7 +28,7 @@ namespace STG
 		// ’e‚Ì•`‰æ.
 		virtual void BulletRender( const D3DXVECTOR3& color = { 0.0f, 0.0f, 0.0f } );
 		// ’e‚ðŒ‚‚Â.
-		virtual void BulletShot( const float& rot, const float& moveSpeed );
+		virtual bool BulletShot( const float& rot, const float& moveSpeed );
 
 	protected:
 		std::vector<std::shared_ptr<CBullet>> m_pBullets;

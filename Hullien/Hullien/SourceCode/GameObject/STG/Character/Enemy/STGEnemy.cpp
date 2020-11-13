@@ -6,6 +6,7 @@
 #include "..\..\..\..\Common\D3DX\D3DX11.h"
 #include "..\..\..\..\Common\Font\Font.h"
 #include "..\..\..\..\Utility\XInput\XInput.h"
+#include "..\..\..\..\XAudio2\SoundManager.h"
 
 STG::CEnemy::CEnemy()
 	: CEnemy	( STG::SEnemyParam() )
@@ -84,7 +85,9 @@ void STG::CEnemy::Render()
 	m_pFont->SetPosition( m_vPosition );
 	m_pFont->SetRotation( m_FontRotation );
 	m_pFont->SetScale( m_vScale );
+	m_pFont->SetCoverage( true );
 	m_pFont->Render( PARAMETER.Text );
+	m_pFont->SetCoverage( false );
 
 #ifdef _DEBUG
 	m_pCollManager->DebugRender();
@@ -223,6 +226,7 @@ void STG::CEnemy::LifeCalculation( const std::function<void(float&)>& proc )
 	if( m_LifePoint > 0.0f ) return;
 	// ライフが0以下になれば
 	m_NowState = STG::EEnemyState::Dead;	// 死亡状態へ遷移.
+	CSoundManager::PlaySE(DEAD_SE_NAME);
 }
 
 // ランダムで移動ベクトルを検索.
@@ -242,12 +246,16 @@ void STG::CEnemy::SearchRandomMoveVector()
 // 当たり判定の作成.
 bool STG::CEnemy::CollisionInit()
 {
+	float isLeadByte = 2.0f;
+	if( IsDBCSLeadByte( PARAMETER.Text[0] ) == TRUE ){
+		isLeadByte = 1.0f;
+	}
 	if( FAILED( m_pCollManager->InitCapsule(
 		&m_vPosition,
 		&m_vRotation,
 		&m_vScale.x,
 		{0.0f, 0.0f, 0.0f},
 		PARAMETER.TextSize,
-		PARAMETER.TextSize*2.0f*static_cast<float>(PARAMETER.Text.length()) ))) return false;
+		PARAMETER.TextSize*isLeadByte*static_cast<float>(PARAMETER.Text.length()) ))) return false;
 	return true;
 }

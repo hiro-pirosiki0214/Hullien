@@ -531,6 +531,8 @@ void CPlayer::EffectRender()
 	// 攻撃カウントが一定値より多ければ.
 	if( m_AttackComboCount > player::EAttackNo_None ){
 		// 攻撃エフェクトの座標を設定する.
+		m_pEffects[m_AttackComboCount-1]->SetScale( 1.0f );
+		m_pEffects[m_AttackComboCount-1]->SetRotation( {0.0f, static_cast<float>(D3DX_PI)+m_vRotation.y, 0.0f} );
 		m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
 	}
 	// エフェクトの描画.
@@ -876,6 +878,7 @@ bool CPlayer::IsPushAttack()
 		setAttackData( player::EAnimNo_Attack1, ATTACK1_ADJ_ENABLED_END_FRAME );
 		// 最初の攻撃はアニメーションを設定する.
 		SetAnimation( tmpAttackData.AnimNo );
+		m_pEffects[m_AttackComboCount-1]->Play( m_vPosition );
 		CSoundManager::PlaySE("PlayerAttack");
 		CSoundManager::PlaySE("PlayerVoiceAttack1");
 		bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );

@@ -62,7 +62,6 @@ void CAlienParamEdit::Render()
 		}
 		ImGui::EndTabBar();
 	}
-
 	ImGui::End();
 }
 

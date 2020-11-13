@@ -4,7 +4,7 @@
 #include "..\SceneWidget.h"
 #include <vector>
 
-#define IS_CONFIG_RENDER
+//#define IS_CONFIG_RENDER
 
 /************************************
 *	タイトルUIクラス.

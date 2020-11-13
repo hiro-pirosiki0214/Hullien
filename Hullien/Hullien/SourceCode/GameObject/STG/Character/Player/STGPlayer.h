@@ -9,6 +9,7 @@ namespace STG
 	{
 		const char* MODEL_NAME			= "ufo_mini";
 		const char* BULLET_MODEL_NAME	= "item cure";
+		const char* SHOT_SE_NAME		= "STGshot";
 		const float LIFE_POINT_MAX		= 5.0f;						// ライフの最大数.
 		const float MOVE_SPEED			= 0.4f;						// 移動速度.
 		const float BULLET_MOVE_SPEED	= 0.8f;						// 弾の速度.
