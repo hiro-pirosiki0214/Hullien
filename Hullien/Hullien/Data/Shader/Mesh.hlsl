@@ -201,7 +201,7 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 	PS_OUTPUT output = (PS_OUTPUT) 0;
 	output.Color = color;
 	output.Normal = float4(input.Normal, 1.0f);
-	output.ZDepth = zValue;
+	output.ZDepth = input.Pos.z / input.Pos.w;
 	return output;
 }
 
@@ -308,6 +308,6 @@ PS_OUTPUT PS_NoTex(VS_OUTPUT input) : SV_Target
 	PS_OUTPUT output = (PS_OUTPUT) 0;
 	output.Color = color;
 	output.Normal = float4(input.Normal, 1.0f);
-	output.ZDepth = zValue;
+	output.ZDepth = input.Pos.z / input.Pos.w;
 	return output;
 }

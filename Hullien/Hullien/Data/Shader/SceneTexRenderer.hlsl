@@ -2,11 +2,11 @@
 
 //ｸﾞﾛｰﾊﾞﾙ変数.
 //ﾃｸｽﾁｬは、ﾚｼﾞｽﾀ t(n).
-Texture2D g_TextureColor	: register(t0);
-Texture2D g_TextureNormal	: register(t1);
-Texture2D g_TextureDepth	: register(t2);
-Texture2D g_TextureTrans	: register(t3);
-Texture2D g_TextureLast		: register(t4);
+Texture2D g_TextureColor	: register(t0);	// 色情報.
+Texture2D g_TextureNormal	: register(t1);	// 法線情報.
+Texture2D g_TextureDepth	: register(t2);	// 深度情報.
+Texture2D g_TextureTrans	: register(t3);	// アルファ情報.
+Texture2D g_TextureLast		: register(t4);	// 輪郭線などを描画したテクスチャ.
 //ｻﾝﾌﾟﾗは、ﾚｼﾞｽﾀ s(n).
 SamplerState g_SamLinear : register(s0);
 
@@ -20,9 +20,10 @@ cbuffer cBuffer : register(b0)
 //構造体.
 struct VS_OUTPUT
 {
-	float4 Pos		: SV_Position;
-	float4 Color	: COLOR;
-	float2 Tex		: TEXCOORD;
+	float4 Pos			: SV_Position;
+	float4 Color		: COLOR;
+	float2 Tex			: TEXCOORD0;
+	float4 OutLineColor : TEXCOORD1;
 };
 
 VS_OUTPUT VS_Main(
@@ -37,6 +38,8 @@ VS_OUTPUT VS_Main(
 	output.Pos.y = 1.0f - (output.Pos.y / g_vViewPort.y) * 2.0f;
 
 	output.Tex = Tex;
+//	output.OutLineColor = float4(output.Pos.x + 0.7f, 0.0f, output.Pos.y + 0.7f, 1.0f);
+	output.OutLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	
 	return output;
 }
@@ -50,7 +53,7 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	float2 pos = input.Tex * 2.0f - 1.0f;
 	float p = length(pos);
 	pos = (1 + f * p * p) / (1 + 2 * f) * pos;
-	float4 color = g_TextureColor.Sample(g_samLinear, pos*0.5+0.5);
+	float4 color = g_TextureColor.Sample(g_SamLinear, pos*0.5+0.5);
 	*/
 	
 	// 描画されたモデルなどの色情報を取得.
@@ -63,63 +66,63 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 	// テクスチャのサイズを取得.
 	g_TextureNormal.GetDimensions(0, imageSizeW, imageSizeh, levels);
 	
-	const float s = 0.2f;	// サンプリングする強さ.
+	const float s = 0.25f;	// サンプリングする強さ.
 	const float dx = 1.0f / imageSizeW;
 	const float dy = 1.0f / imageSizeh;
+	const float px = s * dx, py = s * dx;
 	
 	//----------------------------------------------------------------.
 	// 法線の情報を取得.
 	float3 normColor = float3(0.0f, 0.0f, 0.0f);
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(-s * dx, -s * dy)).xyz;			// 左上.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( 0 * dx, -s * dy)).xyz;			// 上.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( s * dx, -s * dy)).xyz;			// 右上.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(-s * dx,  0 * dy)).xyz;			// 左.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( 0 * dx,  0 * dy)).xyz * -8.0;	// 自分.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( s * dx,  0 * dy)).xyz;			// 右.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(-s * dx,  s * dy)).xyz;			// 左下.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( 0 * dx,  s * dy)).xyz;			// 下.
-	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( s * dx,  s * dy)).xyz;			// 右下.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(	-px,	-py)).xyz; // 左上.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( 0 * px,	-py)).xyz; // 上.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(	 px,	-py)).xyz; // 右上.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(	-px, 0 * py)).xyz; // 左.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( 0 * px, 0 * py)).xyz * -8.0; // 自分.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(	 px, 0 * py)).xyz; // 右.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(	-px,	 py)).xyz; // 左下.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2( 0 * px,	 py)).xyz; // 下.
+	normColor += g_TextureNormal.Sample(g_SamLinear, input.Tex + float2(	 px,	 py)).xyz; // 右下.
 	
 	//----------------------------------------------------------------.
 	// 深度値の情報を取得.
-	float4 zColor = g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(0 * dx, 0 * dy)); // 自分.
-	float z = zColor.r + (zColor.g + (zColor.b + zColor.a / 256.0f) / 256.0f) / 256.0f;
+	float z = g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(0 * dx, 0 * dy)).x; // 自分.
+	float depthColor11		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(	 px,	 py)).x; // 左上.
+	float depthColor10		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(	 px, 0 * py)).x; // 上.
+	float depthColor1_1		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(	 px,	-py)).x; // 右上.
+	float depthColor01		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( 0 * px,	 py)).x; // 左.
+	float depthColor0_1		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( 0 * px,	-py)).x; // 右.
+	float depthColor_11		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(	-px,	 py)).x; // 左下.
+	float depthColor_10		= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(	-px, 0 * py)).x; // 下.
+	float depthColor_1_1	= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(	-px,	-py)).x; // 右下.
 	
-	float4 depthColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	depthColor	 = g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(-s * dx, -s * dy)); // 左上.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( 0 * dx, -s * dy)); // 上.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( s * dx, -s * dy)); // 右上.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(-s * dx,  0 * dy)); // 左.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( s * dx,  0 * dy)); // 右.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2(-s * dx,  s * dy)); // 左下.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( 0 * dx,  s * dy)); // 下.
-	depthColor	+= g_TextureDepth.Sample(g_SamLinear, input.Tex + float2( s * dx,  s * dy)); // 右下.
-	float depth = 0.0f;
-	depth = depthColor.r + (depthColor.g + (depthColor.b + depthColor.a / 256.0f) / 256.0f) / 256.0f;
-	depth /= 8.0f;	// 深度値の平均を計算.
+	// Horizontal.
+	float h = (depthColor11	 *  1.0f + depthColor10	  *  2.0f)
+			+ (depthColor1_1 *  1.0f + depthColor_11  * -1.0f)
+			+ (depthColor_10 * -2.0f + depthColor_1_1 * -1.0f);
+	// vertical.
+	float v = (depthColor11	 *  1.0f + depthColor01	  *  2.0f)
+			+ (depthColor_11 *  1.0f + depthColor1_1  * -1.0f)
+			+ (depthColor0_1 * -2.0f + depthColor_1_1 * -1.0f);
+	float depth = 1.0f - clamp(abs(h + v), 0.0f, 1.0f);
 	
 	//----------------------------------------------------------------.
 	// エフェクト(パーティクル)を描画したテクスチャの情報を取得.
 	float4 transColor = g_TextureTrans.Sample(g_SamLinear, input.Tex);
 	// グレースケール化.
-	float grayScale = transColor.r * 0.299 + transColor.g * 0.587 + transColor.b * 0.114;
+	float4 grayScale = transColor.r * 0.299 + transColor.g * 0.587 + transColor.b * 0.114;
 	grayScale = 1.0f - saturate(grayScale);
 	
-	float4 outLineColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	// 法線情報と、深度値の情報が一定以上なら輪郭線を表示.
-	if (length(normColor) >= 0.62f || abs(depth-z) > 0.00097f)
+	if (length(normColor) >= 0.72f || abs(depth) < 0.8f)
 	{
-		outLineColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
-		grayScale *= 0.0f;
+		grayScale *= 1.0f;
 	}
 	else
 	{
-		outLineColor = float4(1.0f, 1.0f, 1.0f, 1.0f);
-		grayScale *= 1.0f;
+		grayScale *= 0.0f;
 	}
-	color *= lerp(color, outLineColor, grayScale);
-	
-	return color;
+	return lerp( color, input.OutLineColor, grayScale);
 }
 
 // ピクセルシェーダ.

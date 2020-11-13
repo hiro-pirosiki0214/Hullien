@@ -237,7 +237,7 @@ HRESULT CSceneTexRenderer::InitGBufferTex()
 			&m_pGBufferTex[i] ))) return E_FAIL;
 	}
 	// 深度用のフォーマットに変更.
-	texDesc.Format				= DXGI_FORMAT_B8G8R8A8_UNORM;// 32ﾋﾞｯﾄﾌｫｰﾏｯﾄ.
+	texDesc.Format				= DXGI_FORMAT_R32_FLOAT;// 32ﾋﾞｯﾄﾌｫｰﾏｯﾄ.
 	if( FAILED( CreateBufferTex(
 		texDesc,
 		&m_pGBufferRTV[EGBufferNo::enGBufferNo_Z_DEPTH],
