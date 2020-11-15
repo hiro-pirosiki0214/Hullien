@@ -164,6 +164,7 @@ void STG::CPlayer::ShotController()
 void STG::CPlayer::LifeCalculation( const std::function<void(float&)>& proc )
 {
 	proc( m_LifePoint );
+	CSoundManager::PlaySE(HIT_SE_NAME);
 
 	if( m_LifePoint > 0.0f ) return;
 	m_IsDead = true;
