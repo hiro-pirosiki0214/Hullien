@@ -5,7 +5,7 @@
 
 class CEditAlien : public CAlien
 {
-	const float MOVE_DISTANCE = 10.0f;
+	inline static const float MOVE_DISTANCE = 50.0f;	// ˆÚ“®‹——£.
 public:
 	CEditAlien();
 	virtual ~CEditAlien();

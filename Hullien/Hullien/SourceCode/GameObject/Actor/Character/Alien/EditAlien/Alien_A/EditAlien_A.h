@@ -18,6 +18,22 @@ public:
 	virtual void Render() override;
 	// “–‚½‚è”»’èŠÖ”.
 	virtual void Collision( CActor* pActor ) override;
+
+private:
+	// ƒXƒ|[ƒ“.
+	virtual void Spawning() override;
+	// ˆÚ“®.
+	virtual void Move() override;
+	// ‰û‚¤.
+	virtual void Abduct() override;
+	// ‹¯‚İ.
+	virtual void Fright() override;
+	// €–S.
+	virtual void Death() override;
+	// “¦‚°‚é.
+	virtual void Escape() override;
+	// “–‚½‚è”»’è‚Ìİ’è.
+	bool ColliderSetting();
 };
 
 #endif	// #ifndef EDIT_ALIEN_A_H.

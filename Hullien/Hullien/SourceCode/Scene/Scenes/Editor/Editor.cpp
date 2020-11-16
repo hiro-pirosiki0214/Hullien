@@ -87,6 +87,7 @@ void CEditor::Update()
 		m_pSpawnEdit->Update();
 		break;
 	case EEditScenes::AlienParam:
+		m_pAlienParamEdit->Update();
 		break;
 	case EEditScenes::Explosion:
 		m_pExplosionEdit->Update();

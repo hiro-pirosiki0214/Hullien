@@ -43,12 +43,14 @@ bool CAlienParamEdit::Init()
 	if( FileAllReading()		== false ) return false;
 	if( GetModel()				== false ) return false;
 	if( m_pEditAlien->Init()	== false ) return false;
+	m_pEditAlien->SetParamter( m_AlienParamList[0] );
 	return true;
 }
 
 // 更新関数.
 void CAlienParamEdit::Update()
 {
+	m_pEditAlien->Update();
 }
 
 // 描画関数.
@@ -75,14 +77,16 @@ void CAlienParamEdit::ModelRender()
 {
 	if( m_pSkinMeshs.at(m_Index) == nullptr ) return;
 
-	m_pSkinMeshs[m_Index]->SetPosition( { 0.0f, 0.0f, 0.0f } );
-	m_pSkinMeshs[m_Index]->SetRotation( { 0.0f, 0.0f, 0.0f } );
-	m_pSkinMeshs[m_Index]->SetScale( { 1.0f, 1.0f, 1.0f } );
-	m_pSkinMeshs[m_Index]->SetColor( m_AlienNameColorList[m_Index] );
-	m_pSkinMeshs[m_Index]->SetAnimSpeed( 0.01 );
-	m_pSkinMeshs[m_Index]->SetRasterizerState( ERS_STATE::Back );
-	m_pSkinMeshs[m_Index]->Render();
-	m_pSkinMeshs[m_Index]->SetRasterizerState( ERS_STATE::None );
+//	m_pSkinMeshs[m_Index]->SetPosition( { 0.0f, 0.0f, 0.0f } );
+//	m_pSkinMeshs[m_Index]->SetRotation( { 0.0f, 0.0f, 0.0f } );
+//	m_pSkinMeshs[m_Index]->SetScale( { 1.0f, 1.0f, 1.0f } );
+//	m_pSkinMeshs[m_Index]->SetColor( m_AlienNameColorList[m_Index] );
+//	m_pSkinMeshs[m_Index]->SetAnimSpeed( 0.01 );
+//	m_pSkinMeshs[m_Index]->SetRasterizerState( ERS_STATE::Back );
+//	m_pSkinMeshs[m_Index]->Render();
+//	m_pSkinMeshs[m_Index]->SetRasterizerState( ERS_STATE::None );
+
+	m_pEditAlien->Render();
 }
 
 // 全ファイルの読み込み.

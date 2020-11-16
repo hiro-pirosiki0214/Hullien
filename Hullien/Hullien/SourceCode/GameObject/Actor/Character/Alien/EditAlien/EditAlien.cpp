@@ -4,7 +4,10 @@
 
 CEditAlien::CEditAlien()
 	: m_Paramter	()
-{}
+{
+	m_NowState	= alien::EAlienState::Move;
+	m_NowMoveState = alien::EMoveState::Wait;
+}
 
 CEditAlien::~CEditAlien()
 {}
@@ -99,9 +102,9 @@ void CEditAlien::Spawning()
 // ˆÚ“®.
 void CEditAlien::Move()
 {
-	TargetRotation();					// ‰ñ“].
-	CAlien::VectorMove( m_MoveSpeed );	// ˆÚ“®.
-	CAlien::WaitMove();					// ‘Ò‹@.
+//	TargetRotation();					// ‰ñ“].
+//	CAlien::VectorMove( m_MoveSpeed );	// ˆÚ“®.
+	this->WaitMove();					// ‘Ò‹@.
 }
 
 // ‰û‚¤.
