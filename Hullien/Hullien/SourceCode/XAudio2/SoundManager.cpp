@@ -106,12 +106,20 @@ bool CSoundManager::LoadVolume()
 {
 	if( CFileManager::BinaryReading( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_stSound ) == false ) return false;
 
+	if( GetInstance()->m_stSound.MasterVolume < 0.0f ) GetInstance()->m_stSound.MasterVolume = 0.0f;
+	if( GetInstance()->m_stSound.BGMVolume < 0.0f ) GetInstance()->m_stSound.BGMVolume = 0.0f;
+	if( GetInstance()->m_stSound.SEVolume < 0.0f ) GetInstance()->m_stSound.SEVolume = 0.0f;
+
 	return true;
 }
 
 // ‰¹—Ê‚ð•Û‘¶‚·‚é.
 bool CSoundManager::SaveVolume()
 {
+	if( GetInstance()->m_stSound.MasterVolume < 0.0f ) GetInstance()->m_stSound.MasterVolume = 0.0f;
+	if( GetInstance()->m_stSound.BGMVolume < 0.0f ) GetInstance()->m_stSound.BGMVolume = 0.0f;
+	if( GetInstance()->m_stSound.SEVolume < 0.0f ) GetInstance()->m_stSound.SEVolume = 0.0f;
+
 	if( CFileManager::BinaryWriting( GetInstance()->SETING_FAILE_PATH, GetInstance()->m_stSound ) == false ) return false;
 	return true;
 }
