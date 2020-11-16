@@ -170,6 +170,7 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 		ImGui::InputFloat( u8"レーザーの移動速度", &s.LaserMoveSpeed );
 		ImGui::InputFloat( u8"麻痺の時間", &s.ParalysisTime );
 		ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
+		ImGui::InputFloat( u8"再度検索する距離", &s.ResearchLenght );
 		ImGui::InputFloat( u8"攻撃時の範囲表示の調整用", &s.AttackRangeSpritePosY );
 		ImGui::InputFloat( u8"攻撃時の範囲表示の画像サイズ", &s.AttackRangeSpriteScale );
 		ImGui::InputFloat( u8"攻撃時の範囲表示のアルファが足される値", &s.AttackRangeAddValue );
