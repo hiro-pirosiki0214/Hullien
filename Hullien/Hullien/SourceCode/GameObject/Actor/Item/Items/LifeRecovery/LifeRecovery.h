@@ -6,7 +6,7 @@
 class CLifeRecoveryItem : public CItemBase
 {
 	const char* MODEL_NAME	= "item cure";	// モデル名.
-	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "item_effect_1";	// エフェクト名.
+	const char* DROP_AND_AVTIVE_EFFECT_NAME	= "item_effect_cure";	// エフェクト名.
 	const char* HIT_EFFECT_NAME				= "key";	// エフェクト名.
 	const float* pLIFE_RECOVERY_VALUE;	// 回復力(外部からポインタで取得する).
 public:

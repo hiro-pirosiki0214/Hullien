@@ -16,6 +16,7 @@ CMoveSpeedUpItem::CMoveSpeedUpItem(
 	, pMOVE_VALUE	( pMoveValue )
 	, pMOVE_UP_TIME	( pMoveTime )
 {
+	m_ObjectTag = EObjectTag::MoveSpeedUpItem;
 }
 
 CMoveSpeedUpItem::~CMoveSpeedUpItem()

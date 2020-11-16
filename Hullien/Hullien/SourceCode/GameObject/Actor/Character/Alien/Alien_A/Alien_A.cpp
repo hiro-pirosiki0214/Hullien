@@ -52,6 +52,7 @@ void CAlienA::Update()
 		m_pArm->SetPosition( {m_vPosition.x, m_vPosition.y+5.0f, m_vPosition.z} );		// À•W‚ğİ’è.
 	m_pArm->SetRotationY( m_vRotation.y );	// ‰ñ“]î•ñ‚ğİ’è.
 	m_pArm->Update();						// XV.
+	m_HasAnyItem = EItemList::MoveSpeedUp;
 }
 
 // •`‰æŠÖ”.

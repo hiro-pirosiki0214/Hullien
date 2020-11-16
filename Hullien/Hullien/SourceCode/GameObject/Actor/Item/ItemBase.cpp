@@ -260,7 +260,20 @@ void CItemBase::DropAndActiveEffectRender()
 	if( m_ModelAlpha < 1.0f ) return;
 
 	// エフェクトの描画.
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
+	switch( m_ObjectTag )
+	{
+	case EObjectTag::LifeRecoveryItem:
+		break;
+	case EObjectTag::SPEffectTimeItem:
+		break;
+	case EObjectTag::AttackUpItem:
+		break;
+	case EObjectTag::MoveSpeedUpItem:
+		m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
+		break;
+	default:
+		break;
+	}
 	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
 }
 

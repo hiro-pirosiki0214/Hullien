@@ -13,6 +13,7 @@ CLifeRecoveryItem::CLifeRecoveryItem(
 	: CItemBase				( pParam )
 	, pLIFE_RECOVERY_VALUE	( pLifeRecoveryValue)
 {
+	m_ObjectTag = EObjectTag::LifeRecoveryItem;
 }
 
 CLifeRecoveryItem::~CLifeRecoveryItem()

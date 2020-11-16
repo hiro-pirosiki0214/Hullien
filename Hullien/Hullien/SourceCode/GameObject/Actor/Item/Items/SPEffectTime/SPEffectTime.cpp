@@ -16,6 +16,7 @@ CSPEffectTimeItem::CSPEffectTimeItem(
 	, pSP_RECOVERY_VALUE	( pSPRecoveryValue )
 	, pSP_RECOVERY_TIME		( pSPRecoveryTime )
 {
+	m_ObjectTag = EObjectTag::SPEffectTimeItem;
 }
 
 CSPEffectTimeItem::~CSPEffectTimeItem()

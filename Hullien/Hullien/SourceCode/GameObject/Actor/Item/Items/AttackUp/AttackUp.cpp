@@ -16,6 +16,7 @@ CAttackUpItem::CAttackUpItem(
 	, pATTACK_UP_POWER	( pAttackUpPower )
 	, pATTACK_UP_TIME	( pAttackUpTime )
 {
+	m_ObjectTag = EObjectTag::AttackUpItem;
 }
 
 CAttackUpItem::~CAttackUpItem()
