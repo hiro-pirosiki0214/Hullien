@@ -67,6 +67,8 @@ public:
 	// äÆëSÇ…ï–Ç√ÇØÇÈ.
 	void SetCleanUp();
 
+	inline void SetCleanUpScale( const D3DXVECTOR3& scale ){ m_vScale = scale; }
+
 private:
 	// èoåª.
 	void Appearance();

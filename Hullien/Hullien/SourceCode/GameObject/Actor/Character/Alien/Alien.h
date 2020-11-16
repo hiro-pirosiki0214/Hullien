@@ -127,6 +127,7 @@ protected:
 	int						m_WaitCount;				// 待機カウント.
 	bool*					m_pIsAlienOtherAbduct;		// 他の宇宙人が連れ去っているかどうか.
 	bool					m_IsBarrierHit;				// バリアに当たっているか.
+	bool					m_IsRisingMotherShip;		// マザーシップに上っているか.
 	bool					m_IsExplosion;				// 爆発するか.
 	bool					m_IsDelete;					// 消去するかどうか.
 

@@ -31,6 +31,8 @@ CAlien::CAlien( const SAlienParam* pParam )
 	, m_KnockBackCount			( 0 )
 	, m_WaitCount				( 0 )
 	, m_pIsAlienOtherAbduct		( nullptr )
+	, m_IsBarrierHit			( false )
+	, m_IsRisingMotherShip		( false )
 	, m_IsExplosion				( false )
 	, m_IsDelete				( false )
 {
@@ -348,6 +350,7 @@ void CAlien::RisingMotherShip()
 	m_vScale.x -= pPARAMETER->MotherShipUpScaleSubValue;
 	m_vScale.y -= pPARAMETER->MotherShipUpScaleSubValue;
 	m_vScale.z -= pPARAMETER->MotherShipUpScaleSubValue;
+	m_IsRisingMotherShip = true;
 	if( m_vScale.x > 0.0f ) return;
 	m_IsDelete = true;	// 死亡フラグを立てる.
 }
@@ -368,8 +371,15 @@ void CAlien::GirlCollision( CActor* pActor )
 
 	if( m_NowState == alien::EAlienState::Abduct ){
 		if( m_AnimFrameList[alien::EAnimNo_Arm].IsNowFrameOver() == true ) m_AnimSpeed = 0.0;
-		// 連れ去っている状態なのでアームの座標を設定する.
-		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.0f, m_pArm->GetGrabPosition().z} );
+		if( m_IsRisingMotherShip == true ){
+			pActor->SetScale( m_vScale );
+			m_pArm->SetCleanUpScale( m_vScale );
+			m_pArm->SetPosition( { m_vPosition.x, m_vPosition.y+(5.0f*(fabsf(m_vScale.x))), m_vPosition.z } );
+			pActor->SetPosition( { m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-(5.0f*(fabsf(m_vScale.x))), m_pArm->GetGrabPosition().z } );
+		} else {
+			// 連れ去っている状態なのでアームの座標を設定する.
+			pActor->SetPosition( { m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.0f, m_pArm->GetGrabPosition().z } );
+		}
 		pActor->SetRotationY( m_vRotation.y );
 		return;
 	} else {

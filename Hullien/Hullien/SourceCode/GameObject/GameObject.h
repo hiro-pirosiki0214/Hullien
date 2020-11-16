@@ -37,6 +37,10 @@ public:
 	inline void SetRotationY( const float& rotY ){ m_vRotation.y = rotY; }
 	// Z軸の回転値の設定.
 	inline void SetRotationZ( const float& rotZ ){ m_vRotation.z = rotZ; }
+	// サイズの設定.
+	inline void SetScale( const float& size ){ m_vScale = { size, size, size }; }
+	// サイズの設定.
+	inline void SetScale( const D3DXVECTOR3& vScale ){ m_vScale = vScale; }
 
 	// 画面の外に出ているか.
 	bool IsDisplayOut( const float& adjSize = WND_OUT_ADJ_SIZE );
