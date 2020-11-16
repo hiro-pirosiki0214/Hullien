@@ -3,6 +3,7 @@
 
 #include "..\EditBase.h"
 #include "..\..\GameObject\Actor\Character\Alien\AlienParam.h"
+#include "..\..\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h"
 
 #include <vector>
 
@@ -45,6 +46,7 @@ private:
 	std::vector<std::string>						m_AlienPathList;
 	std::vector<std::string>						m_AlienNameList;
 	std::vector<D3DXVECTOR4>						m_AlienNameColorList;
+	std::unique_ptr<CEditAlien>						m_pEditAlien;
 	int m_Index;
 
 };

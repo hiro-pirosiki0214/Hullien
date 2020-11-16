@@ -7,6 +7,8 @@
 #include "..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\Resource\MeshResource\MeshResource.h"
 
+#include "..\..\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h"
+
 #include <filesystem>
 
 namespace fs = std::filesystem;
@@ -17,9 +19,11 @@ CAlienParamEdit::CAlienParamEdit()
 	, m_AlienPathList		()
 	, m_AlienNameList		()
 	, m_AlienNameColorList	( 4 )
+	, m_pEditAlien			( nullptr )
 	, m_Index				( 0 )
 
 {
+	m_pEditAlien = std::make_unique<CEditAlienA>();
 	m_AlienNameColorList =
 	{
 		D3DXVECTOR4( 0.2f, 0.8f, 0.2f, 1.0f ),
@@ -36,8 +40,9 @@ CAlienParamEdit::~CAlienParamEdit()
 // ‰Šú‰»ŠÖ”.
 bool CAlienParamEdit::Init()
 {
-	if( FileAllReading() == false ) return false;
-	if( GetModel() == false ) return false;
+	if( FileAllReading()		== false ) return false;
+	if( GetModel()				== false ) return false;
+	if( m_pEditAlien->Init()	== false ) return false;
 	return true;
 }
 

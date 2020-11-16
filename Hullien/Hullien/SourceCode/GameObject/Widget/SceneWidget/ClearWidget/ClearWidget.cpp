@@ -24,7 +24,7 @@ bool CClearWidget::Init()
 {
 	//クリア文字の読み込み.
 	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite( "clearsize" );
+	m_pSprite = CSpriteResource::GetSprite( "gameClear" );
 	if ( m_pSprite == nullptr ) return false;
 
 	//タイトルに戻るボタンの読み込み.

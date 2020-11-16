@@ -167,6 +167,8 @@
     <ClCompile Include="SourceCode\GameObject\UFOLight\UFOLight.cpp" />
     <ClCompile Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -343,6 +345,8 @@
     <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

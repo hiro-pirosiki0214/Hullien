@@ -12,10 +12,12 @@ class CEffectManager;
 
 class CAlien : public CCharacter
 {
+protected:
 	inline static const float TOLERANCE_RADIAN			= static_cast<float>(D3DXToRadian(10.0));	// 回転の許容範囲.
 	inline static const float BARRIER_HIT_MOVE_SPEED	= -5.0f;									// バリアと衝突時の移動速度.
 	inline static const float SCALE_MAX					= 1.0f;										// モデルの最大値.
 	inline static const float DEATH_SCALE_PI			= 6.0f*static_cast<float>(D3DX_PI);			// 死亡時のスケールの範囲.
+
 protected:
 	inline static const char* HIT_EEFECT_NAME		= "hiteffekt";		// ヒットエフェクト.
 	inline static const char* SPAWN_EFFECT_NAME		= "uvtest";			// スポーンエフェクト.

@@ -11,7 +11,7 @@ class CContinueWidget : public CSceneWidget
 {
 public:
 	const char* SPRITE_BACK				= "CBackGround";	//背景
-	const char* SPRITE_CONTINUE			= "continuesize";	//コンテニュー.
+	const char* SPRITE_CONTINUE			= "continue";	//コンテニュー.
 	const char* SPRITE_YES				= "yes";		//イエス
 	const char* SPRITE_NO				= "no";			//ノー.
 	const int BACKGROUND				= 0;				//背景配列番号.

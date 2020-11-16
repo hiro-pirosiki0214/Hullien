@@ -195,6 +195,8 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Character.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp" />
@@ -300,6 +302,8 @@
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
     <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />
