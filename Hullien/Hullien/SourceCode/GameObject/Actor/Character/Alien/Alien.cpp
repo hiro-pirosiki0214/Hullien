@@ -375,7 +375,13 @@ void CAlien::GirlCollision( CActor* pActor )
 			pActor->SetScale( m_vScale );
 			m_pArm->SetCleanUpScale( m_vScale );
 			m_pArm->SetPosition( { m_vPosition.x, m_vPosition.y+(5.0f*(fabsf(m_vScale.x))), m_vPosition.z } );
-			pActor->SetPosition( { m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-(5.0f*(fabsf(m_vScale.x))), m_pArm->GetGrabPosition().z } );
+			const D3DXVECTOR3 pos =
+			{
+				m_pArm->GetGrabPosition().x+(m_MoveVector.x*(5.0f*(1.0f-m_vScale.x))),
+				m_pArm->GetGrabPosition().y-(5.0f*(fabsf(m_vScale.x))),
+				m_pArm->GetGrabPosition().z+(m_MoveVector.z*(5.0f*(1.0f-m_vScale.x))),
+			};
+			pActor->SetPosition( pos );
 		} else {
 			// 連れ去っている状態なのでアームの座標を設定する.
 			pActor->SetPosition( { m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.0f, m_pArm->GetGrabPosition().z } );
