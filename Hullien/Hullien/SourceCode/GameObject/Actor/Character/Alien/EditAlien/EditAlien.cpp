@@ -19,6 +19,7 @@ bool CEditAlien::Spawn( const D3DXVECTOR3& spawnPos )
 	m_LifePoint	= m_Paramter.LifeMax;			// 体力の設定.
 	m_NowState	= alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
 	m_AnimSpeed	= 0.0;							// アニメーション速度を止める.
+	m_vScale	= { 0.0f, 0.0f, 0.0f };
 	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
@@ -31,6 +32,11 @@ void CEditAlien::PlayAttack()
 // 怯みの再生.
 void CEditAlien::PlayFright()
 {
+	m_NowState = alien::EAlienState::Fright;	// 怯み状態へ遷移.
+	SetAnimation( alien::EAnimNo_Damage, m_pAC );
+	m_AnimSpeed = DEFAULT_ANIM_SPEED;
+	m_KnockBackVector = -m_MoveVector;
+	m_pEffects[0]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
 }
 
 // 死亡の再生.
@@ -116,11 +122,10 @@ void CEditAlien::Abduct()
 void CEditAlien::KnockBack()
 {
 	m_KnockBackCount++;	// 無敵カウントを加算.
-	if( m_KnockBackCount <= m_Paramter.KnockBackTime ){
-		m_vRotation.y = atan2( m_KnockBackVector.x, m_KnockBackVector.z ) + static_cast<float>(D3DX_PI);
-		m_vPosition.x -= m_KnockBackVector.x;
-		m_vPosition.z -= m_KnockBackVector.z;
-	}
+	if( m_KnockBackCount > m_Paramter.KnockBackTime ) return;
+	m_vRotation.y = atan2( m_KnockBackVector.x, m_KnockBackVector.z ) + static_cast<float>(D3DX_PI);
+	m_vPosition.x -= m_KnockBackVector.x;
+	m_vPosition.z -= m_KnockBackVector.z;
 }
 
 // 怯み.
@@ -148,9 +153,14 @@ void CEditAlien::Death()
 
 	// 大きさが一定値以上なら.
 	if( m_vScale.x > 0.0f ) return;
-	m_vScale = { 1.0f, 1.0f, 1.0f };
-	CSoundManager::PlaySE("AlienDead");
+	// パラメータの初期化.
+	m_DeathCount = 0.0f;
+	m_DeathScale = SCALE_MAX;
+	m_AnimSpeed = DEFAULT_ANIM_SPEED;
+	m_vScale = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
 
+	CSoundManager::PlaySE("AlienDead");
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
 }
@@ -167,7 +177,7 @@ void CEditAlien::Escape()
 	CAlien::VectorMove( m_MoveSpeed );	// 移動.
 
 	if( *m_pIsAlienOtherAbduct == true ) return;
-	// 女の子を連れ去っていなければ.
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
 }
@@ -179,7 +189,9 @@ void CEditAlien::RisingMotherShip()
 	m_vScale.y -= m_Paramter.MotherShipUpScaleSubValue;
 	m_vScale.z -= m_Paramter.MotherShipUpScaleSubValue;
 	if( m_vScale.x > 0.0f ) return;
-
+	m_vScale = { SCALE_MAX, SCALE_MAX, SCALE_MAX };
+	m_vPosition = { 0.0f, 0.0f, 0.0f };
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
 }

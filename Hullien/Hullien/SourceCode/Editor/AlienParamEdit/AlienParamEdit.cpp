@@ -50,6 +50,7 @@ bool CAlienParamEdit::Init()
 // XVŠÖ”.
 void CAlienParamEdit::Update()
 {
+	m_pEditAlien->SetParamter( m_AlienParamList[0] );
 	m_pEditAlien->Update();
 }
 

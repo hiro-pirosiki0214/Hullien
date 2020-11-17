@@ -29,6 +29,9 @@ void CEditAlienA::Update()
 	// アニメーションフレームの更新.
 	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
 	CurrentStateUpdate();				// 現在の状態の更新.
+	if( GetAsyncKeyState('J') & 0x0001 ){
+		Spawn( {0.0f, 10.0f, 0.0f} );
+	}
 }
 
 // 描画関数.

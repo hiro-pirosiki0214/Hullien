@@ -85,7 +85,7 @@ void CAlien::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	proc( m_LifePoint, isAttack );
 	m_NowState = alien::EAlienState::Fright;	// 怯み状態へ遷移.
 	SetAnimation( alien::EAnimNo_Damage, m_pAC );
-	m_AnimSpeed = 0.01;
+	m_AnimSpeed = DEFAULT_ANIM_SPEED;
 	m_pEffects[0]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
 	if( m_pArm != nullptr ){
 		// アームを片付けていなければ片付ける.
