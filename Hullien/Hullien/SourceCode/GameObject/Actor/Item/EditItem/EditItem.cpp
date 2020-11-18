@@ -66,6 +66,7 @@ void CEditItem::EffectRender()
 	if( m_ModelAlpha < 1.0f ) return;
 
 	// エフェクトの描画.
+	m_pEffects[m_NowItemNo]->SetScale( 1.5f );
 	m_pEffects[m_NowItemNo]->Render();
 }
 
@@ -85,7 +86,8 @@ void CEditItem::SetTargetPos( CActor& pActor )
 void CEditItem::Drop( const D3DXVECTOR3& vPos )
 {
 	if( m_NowState == ENowState::Drop ) return;
-	this->Init();
+	m_vScale = { 0.0f, 0.0f, 0.0f };
+	m_Scale				= 0.0f;
 	m_ModelAlpha		= 1.0f;
 	m_AccelerationValue	= 0.0f;
 	m_BoundCount		= 0;

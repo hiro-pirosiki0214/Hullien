@@ -265,6 +265,7 @@ void CItemBase::DropAndActiveEffectRender()
 	if( m_ModelAlpha < 1.0f ) return;
 
 	// エフェクトの描画.
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 1.5f );
 	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
 }
 

@@ -129,5 +129,27 @@ float4 PS_Main(VS_OUTPUT input) : SV_Target
 float4 PS_LastMain(VS_OUTPUT input) : SV_Target
 {
 	FxaaTex tex = { g_SamLinear, g_TextureLast };
-	return float4( FxaaPixelShader( input.Tex, tex, float2( 1.0f/g_vViewPort.x, 1.0f/g_vViewPort.y ) ), 1.0f );
+	float4 color = float4( FxaaPixelShader( input.Tex, tex, float2( 1.0f/g_vViewPort.x, 1.0f/g_vViewPort.y ) ), 1.0f );
+	
+	//float imageSizeW, imageSizeh, levels;
+	//// テクスチャのサイズを取得.
+	//g_TextureNormal.GetDimensions(0, imageSizeW, imageSizeh, levels);
+	//const float s = 5.0f;	// サンプリングする強さ.
+	//const float dx = 1.0f / imageSizeW;
+	//const float dy = 1.0f / imageSizeh;
+	//const float px = s * dx, py = s * dx;
+	
+	//float4 normColor = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(	  -px,	-py)).xyz * 0.2f; // 左上.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(0 * px,	-py)).xyz * 0.2f; // 上.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(	   px,	-py)).xyz * 0.2f; // 右上.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(	  -px,0 * py)).xyz * 0.2f; // 左.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(0 * px,0 * py)).xyz * 0.5f; // 自分.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(	   px,0 * py)).xyz * 0.2f; // 右.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(	  -px,	 py)).xyz * 0.2f; // 左下.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(0 * px,	 py)).xyz * 0.2f; // 下.
+	//normColor.xyz += g_TextureColor.Sample(g_SamLinear, input.Tex + float2(	   px,	 py)).xyz * 0.2f; // 右下.
+	//color.xyz += normColor.xyz*0.2f;
+	
+	return color;
 }
