@@ -50,7 +50,7 @@ CMain::CMain()
 	// ライトの設定.
 	m_pLight->SetPosition( D3DXVECTOR3( 70.0f, 80.0f, -50.0f ) );
 	m_pLight->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
-	m_pLight->SetIntensity( 1.0f );
+	m_pLight->SetIntensity( 1.2f );
 	CLightManager::SetLgiht( m_pLight );
 
 	// サウンドデータの設定.
