@@ -269,7 +269,7 @@ void CItemBase::DropAndActiveEffectRender()
 	case EObjectTag::AttackUpItem:
 		break;
 	case EObjectTag::MoveSpeedUpItem:
-		m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
+//		m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
 		break;
 	default:
 		break;

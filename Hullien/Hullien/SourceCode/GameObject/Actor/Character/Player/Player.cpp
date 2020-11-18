@@ -531,12 +531,14 @@ void CPlayer::EffectRender()
 	// 攻撃カウントが一定値より多ければ.
 	if( m_AttackComboCount > player::EAttackNo_None ){
 		// 攻撃エフェクトの座標を設定する.
-		m_pEffects[m_AttackComboCount-1]->SetScale( 1.0f );
-		m_pEffects[m_AttackComboCount-1]->SetRotation( {0.0f, static_cast<float>(D3DX_PI)+m_vRotation.y, 0.0f} );
 		m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
 	}
 	// エフェクトの描画.
-	for( auto& e : m_pEffects ) e->Render();
+	for( auto& e : m_pEffects ){
+		e->SetLocation( m_vPosition );
+		e->SetRotation( {0.0f, static_cast<float>(D3DX_PI)+m_vRotation.y, 0.0f} );
+		e->Render();
+	}
 }
 
 // 攻撃の当たり判定.
