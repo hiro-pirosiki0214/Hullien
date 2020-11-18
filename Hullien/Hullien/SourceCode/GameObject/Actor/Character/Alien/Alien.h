@@ -55,6 +55,8 @@ public:
 	inline void SetItem( const EItemList& item ){ m_HasAnyItem = item; }
 	// 爆発するか.
 	inline bool IsExplosion() const { return m_IsExplosion; }
+	// 死亡かどうか.
+	inline bool IsDead() const { return m_NowState == alien::EAlienState::Death; }
 	// 消去するかどうか.
 	inline bool IsDelete() const { return m_IsDelete; }
 	// マザーシップに昇っているか.

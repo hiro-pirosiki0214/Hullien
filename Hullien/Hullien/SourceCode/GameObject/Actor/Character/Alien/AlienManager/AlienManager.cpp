@@ -157,8 +157,9 @@ void CAlienManager::ExplosionConfirming( CAlien* ailen )
 // 落とすアイテムの設定.
 void CAlienManager::SetDropItemList( CAlien* ailen )
 {
-	if( ailen->GetAnyItem() == EItemList::None ) return;
-	if( ailen->GetAnyItem() == EItemList::Max ) return;
+	if( ailen->IsDead()		== false )				return;
+	if( ailen->GetAnyItem()	== EItemList::None )	return;
+	if( ailen->GetAnyItem()	== EItemList::Max )		return;
 
 	// 落とすアイテムの設定.
 	D3DXVECTOR3 dropPos = ailen->GetPosition();
