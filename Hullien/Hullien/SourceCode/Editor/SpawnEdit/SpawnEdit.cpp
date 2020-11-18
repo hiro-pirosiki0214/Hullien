@@ -79,6 +79,11 @@ void CSpawnEdit::ModelRender()
 	}
 }
 
+// エフェクトの描画.
+void CSpawnEdit::EffectRender()
+{
+}
+
 // ファイルの読み込み.
 bool CSpawnEdit::FileReading()
 {

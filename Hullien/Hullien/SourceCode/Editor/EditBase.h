@@ -22,6 +22,8 @@ public:
 	virtual void Render() = 0;
 	// モデルの描画.
 	virtual void ModelRender() = 0;
+	// エフェクトの描画.
+	virtual void EffectRender() = 0;
 };
 
 #endif	// #ifndef EDIT_BASE_H.

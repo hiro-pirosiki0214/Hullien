@@ -117,6 +117,11 @@ void CItemBase::Collision( CActor* pActor )
 void CItemBase::Drop( const D3DXVECTOR3& vPos )
 {
 	this->Init();
+	m_ModelAlpha		= 1.0f;
+	m_AccelerationValue	= 0.0f;
+	m_BoundCount		= 0;
+	m_ActiveCount		= 0;
+	m_HitEffectCount	= 0.0f;
 	m_NowState = ENowState::Drop;
 	this->m_vPosition = vPos;
 	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( { vPos.x, 0.001f, vPos.z } );
@@ -136,7 +141,7 @@ void CItemBase::Drop()
 	m_AccelerationValue += m_Gravity;		// 重力の加算.
 	m_vPosition.y -= m_AccelerationValue;	// 座標を加算値で引く.
 
-	// 高さが0.0fより低くなった場合.
+	// 高さが1.0fより低くなった場合.
 	if( m_vPosition.y <= 1.0f ){
 		m_AccelerationValue = -m_AccelerationValue;	// 加算値を反転する.
 		m_Gravity += m_Gravity;	// 重力を加算する.
@@ -260,20 +265,6 @@ void CItemBase::DropAndActiveEffectRender()
 	if( m_ModelAlpha < 1.0f ) return;
 
 	// エフェクトの描画.
-	switch( m_ObjectTag )
-	{
-	case EObjectTag::LifeRecoveryItem:
-		break;
-	case EObjectTag::SPEffectTimeItem:
-		break;
-	case EObjectTag::AttackUpItem:
-		break;
-	case EObjectTag::MoveSpeedUpItem:
-//		m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 0.5f );
-		break;
-	default:
-		break;
-	}
 	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
 }
 

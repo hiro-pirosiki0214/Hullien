@@ -42,10 +42,6 @@ void CExplosion::Render()
 	// エフェクトの再生終わっていれば終了,
 	if( m_IsEffectPlay == false ) return;
 
-	// エフェクトを描画.
-	m_pEffect->SetScale( 1.0f );
-	m_pEffect->Render();
-
 	// 当たり判定が最大当たり判定より大きければ終了.
 	if( m_CollSphereRadius >= m_Param.SphereMaxRadius )return;
 	if( m_pCollManager == nullptr ) return;
@@ -64,6 +60,16 @@ void CExplosion::Render()
 		&m_vScale.x,
 		m_Param.SphereAdjPos,
 		m_CollSphereRadius );
+}
+
+// エフェクトの描画.
+void CExplosion::EffectRender()
+{
+	// エフェクトの再生終わっていれば終了,
+	if( m_IsEffectPlay == false ) return;
+	// エフェクトを描画.
+	m_pEffect->SetScale( 1.0f );
+	m_pEffect->Render();
 }
 
 // 当たり判定関数.

@@ -37,7 +37,8 @@ void CExplosionEdit::Render()
 	ImGui::PushItemWidth(200.0f);
 
 	if( ImGui::Button( u8"再生" ) == true ){
-		if( m_pExplosion->IsStop() == true ){
+		m_pExplosion->IsStop();
+		if( m_pExplosion->IsPlay() == false ){
 			m_pExplosion->Init();
 			m_pExplosion->SetPosition( D3DXVECTOR3( 0.0f, 5.0f, 0.0f ) );
 		}
@@ -70,6 +71,12 @@ void CExplosionEdit::Render()
 void CExplosionEdit::ModelRender()
 {
 	m_pExplosion->Render();
+}
+
+// エフェクトの描画.
+void CExplosionEdit::EffectRender()
+{
+	m_pExplosion->EffectRender();
 }
 
 // ファイルの読み込み.

@@ -36,12 +36,16 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// 相手座標の設定関数.
 	virtual void SetTargetPos( CActor& pActor ) override;
 	virtual void SetPosition( const D3DXVECTOR3& vPos ) override;
 	
+	// 再生しているかどうか.
+	inline bool IsPlay() { return m_IsEffectPlay; }
 	// 止まっているかどうか.
 	bool IsStop();
 

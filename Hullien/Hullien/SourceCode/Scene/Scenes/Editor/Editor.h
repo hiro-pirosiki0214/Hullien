@@ -3,6 +3,8 @@
 
 #include "..\..\SceneBase\SceneBase.h"
 
+#include <vector>
+
 class CControllerEdit;
 class CSpawnEdit;
 class CAlienParamEdit;
@@ -15,23 +17,27 @@ class CInvisibleWallEdit;
 class CEditCamera;
 class CSkyDome;
 class CGroundStage;
+class CEditBase;
 
 class CEditor : public CSceneBase
 {
 	enum enEditScenes
 	{
-		None,
+		EEditScenes_None,
 
-		PlayerEdit,
-		GirlEdit,
-		SpawnEdit,
-		AlienParam,
-		Explosion,
-		ItemEdit,
-		MotherShipUFOEdit,
-		InvisibleWallEdit,
+		EEditScenes_PlayerEdit,
+		EEditScenes_GirlEdit,
+		EEditScenes_SpawnEdit,
+		EEditScenes_AlienParam,
+		EEditScenes_Explosion,
+		EEditScenes_ItemEdit,
+		EEditScenes_MotherShipUFOEdit,
+		EEditScenes_InvisibleWallEdit,
 
-		Max,
+		EEditScenes_Begin = EEditScenes_None,
+		EEditScenes_End = EEditScenes_InvisibleWallEdit,
+
+		EEditScenes_Max,
 
 	} typedef EEditScenes;
 public:
@@ -50,21 +56,14 @@ private:
 	void ModelRender();
 	// UIの表示.
 	void ImGuiRender();
+	// エディットリストの作成.
+	bool CreateEditList();
 
 private:
-	std::unique_ptr<CControllerEdit>	m_pControllerEdit;
-	std::unique_ptr<CSpawnEdit>			m_pSpawnEdit;
-	std::unique_ptr<CAlienParamEdit>	m_pAlienParamEdit;
-	std::unique_ptr<CExplosionEdit>		m_pExplosionEdit;
-	std::unique_ptr<CItemEdit>			m_pItemEdit;
-	std::unique_ptr<CPlayerEdit>		m_pPlayerEdit;
-	std::unique_ptr<CGirlEdit>			m_pGirlEdit;
-	std::unique_ptr<CMotherShipUFOEdit>	m_pMotherShipUFOEdit;
-	std::unique_ptr<CInvisibleWallEdit>	m_pInvisibleWallEdit;
 	std::shared_ptr<CEditCamera>		m_pEditCamera;
-
 	std::unique_ptr<CSkyDome>			m_pSkyDome;
 	std::unique_ptr<CGroundStage>		m_pGroundStage;
+	std::vector<std::unique_ptr<CEditBase>>	m_pEdit;
 
 	int m_NowEditScene;
 };

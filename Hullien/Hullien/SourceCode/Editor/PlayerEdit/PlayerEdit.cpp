@@ -80,3 +80,9 @@ void CPlayerEdit::ModelRender()
 {
 	m_pPlayer->Render();
 }
+
+// エフェクトの描画.
+void CPlayerEdit::EffectRender()
+{
+	m_pPlayer->EffectRender();
+}

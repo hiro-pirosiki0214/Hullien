@@ -98,7 +98,10 @@ void CAlienManager::EffectRender()
 {
 	for( auto& a : m_AilenList ) a->EffectRender();
 	// 爆発の描画.
-	for( auto& e : m_ExplosionList ) e.Render();
+	for( auto& e : m_ExplosionList ){
+		e.Render();
+		e.EffectRender();
+	}
 }
 
 // スプライト描画関数.

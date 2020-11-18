@@ -3,14 +3,15 @@
 #include "..\..\GameObject\Actor\Item\ItemList.h"
 #include "..\..\Common\Mesh\Dx9StaticMesh\Dx9StaticMesh.h"
 #include "..\..\Resource\MeshResource\MeshResource.h"
+#include "..\..\GameObject\Actor\Item\EditItem\EditItem.h"
 
 CItemEdit::CItemEdit()
-	: m_pStaticMeshs	()
+	: m_pItem			( nullptr )
 	, m_Prameter		()
 	, m_EachItemEffect	()
-	, m_RotY			( 0.0f )
 	, m_ItemNo			( 0 )
 {
+	m_pItem = std::make_unique<CEditItem>();
 }
 
 CItemEdit::~CItemEdit()
@@ -20,16 +21,17 @@ CItemEdit::~CItemEdit()
 // 初期化関数.
 bool CItemEdit::Init()
 {
-	if( FileReading() == false ) return false;
-	if( GetModel() == false ) return false;
+	if( FileReading()	== false ) return false;
+	if( m_pItem->Init()	== false ) return false;
 	return true;
 }
 
 // 更新関数.
 void CItemEdit::Update()
 {
-	m_RotY += 0.01f;
-	if( D3DXToDegree(m_RotY) >= 360.0 ) m_RotY = 0.0f;
+	m_pItem->SetItemNo( m_ItemNo );
+	m_pItem->SetParamter( m_Prameter );
+	m_pItem->Update();
 }
 
 // 描画関数.
@@ -59,12 +61,13 @@ void CItemEdit::Render()
 // モデルの描画.
 void CItemEdit::ModelRender()
 {
-	m_pStaticMeshs[m_ItemNo]->SetPosition( { 0.0f, 2.0f, 0.0f } );
-	m_pStaticMeshs[m_ItemNo]->SetRotation( { 0.0f, m_RotY, 0.0f } );
-	m_pStaticMeshs[m_ItemNo]->SetScale( { 1.0f, 1.0f, 1.0f } );
-	m_pStaticMeshs[m_ItemNo]->SetRasterizerState( ERS_STATE::Back );
-	m_pStaticMeshs[m_ItemNo]->Render();
-	m_pStaticMeshs[m_ItemNo]->SetRasterizerState( ERS_STATE::None );
+	m_pItem->Render();
+}
+
+// エフェクトの描画.
+void CItemEdit::EffectRender()
+{
+	m_pItem->EffectRender();
 }
 
 // 各タグの描画.
@@ -102,6 +105,9 @@ void CItemEdit::TagRender( const int& index )
 		s_success.IsSucceeded = CFileManager::BinaryWriting( EACH_ITEM_EFFECT_FILE_PATH, m_EachItemEffect );
 	ImGui::SameLine();
 	s_success.Render();
+	ImGui::NewLine();
+	if( ImGui::Button(u8"再生") )
+		m_pItem->Drop( { 0.0f, 5.0f, 0.0f } );
 }
 
 // パラメータの描画.
@@ -129,6 +135,9 @@ void CItemEdit::ParamRender()
 		s_success.IsSucceeded = CFileManager::BinaryWriting( ITEM_PARAM_FILE_PATH, m_Prameter );
 	ImGui::SameLine();
 	s_success.Render();
+	ImGui::NewLine();
+	if( ImGui::Button(u8"再生") )
+		m_pItem->Drop( { 0.0f, 5.0f, 0.0f } );
 }
 
 // ファイルの読み込み.
@@ -136,27 +145,5 @@ bool CItemEdit::FileReading()
 {
 	if( CFileManager::BinaryReading( EACH_ITEM_EFFECT_FILE_PATH, m_EachItemEffect ) == false ) return false;
 	if( CFileManager::BinaryReading( ITEM_PARAM_FILE_PATH, m_Prameter ) == false ) return false;
-	return true;
-}
-
-// モデルの取得.
-bool CItemEdit::GetModel()
-{
-	//読み込むモデル名設定.
-	const char* modelNames[] =
-	{
-		CURE_MODEL_NAME,
-		ABILITY_MODEL_NAME,
-		ATTACK_MODEL_NAME,
-		SPEED_MODEL_NAME,
-	};
-	const int modelMax = sizeof(modelNames) / sizeof(modelNames[0]);
-
-	// 各情報の設定.
-	for( int no = 0; no < modelMax; no++ )
-	{
-		m_pStaticMeshs.emplace_back();
-		if( CMeshResorce::GetStatic( m_pStaticMeshs[no], modelNames[no] ) == false ) return false;
-	}
 	return true;
 }

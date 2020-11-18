@@ -67,3 +67,8 @@ void CMotherShipUFOEdit::ModelRender()
 {
 	m_pMotherShipUFO->Render();
 }
+
+// エフェクトの描画.
+void CMotherShipUFOEdit::EffectRender()
+{
+}

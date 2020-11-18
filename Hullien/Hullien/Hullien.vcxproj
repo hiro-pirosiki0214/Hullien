@@ -210,6 +210,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventGirl\EventGirl.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Explosion\Explosion.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemBase.cpp" />
@@ -310,6 +311,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />

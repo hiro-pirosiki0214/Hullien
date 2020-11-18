@@ -172,6 +172,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -353,6 +354,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

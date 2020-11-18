@@ -71,3 +71,9 @@ void CGirlEdit::ModelRender()
 {
 	m_pGirl->Render();
 }
+
+// エフェクトの描画.
+void CGirlEdit::EffectRender()
+{
+	m_pGirl->EffectRender();
+}

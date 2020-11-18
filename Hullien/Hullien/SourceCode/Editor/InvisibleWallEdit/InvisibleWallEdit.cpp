@@ -60,3 +60,8 @@ void CInvisibleWallEdit::ModelRender()
 {
 	m_pInvisibleWall->Render();
 }
+
+// エフェクトの描画.
+void CInvisibleWallEdit::EffectRender()
+{
+}
