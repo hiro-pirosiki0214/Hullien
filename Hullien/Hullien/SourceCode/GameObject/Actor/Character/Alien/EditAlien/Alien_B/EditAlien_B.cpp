@@ -1,18 +1,21 @@
-#include "EditAlien_A.h"
+#include "EditAlien_B.h"
 #include "..\..\..\..\..\Arm\Arm.h"
 #include "..\..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
+#include "..\..\..\..\..\..\XAudio2\SoundManager.h"
 
-CEditAlienA::CEditAlienA()
+CEditAlienB::CEditAlienB()
+	: m_RotAccValue	( 0.0f )
+	, m_IsAttackSE	( false )
 {
 	m_vScale = { 1.0f, 1.0f, 1.0f };
 }
 
-CEditAlienA::~CEditAlienA()
+CEditAlienB::~CEditAlienB()
 {}
 
 // 初期化関数.
-bool CEditAlienA::Init()
+bool CEditAlienB::Init()
 {
 	if( GetModel( MODEL_NAME )		== false ) return false;
 	if( GetAnimationController()	== false ) return false;
@@ -24,7 +27,7 @@ bool CEditAlienA::Init()
 }
 
 // 更新関数.
-void CEditAlienA::Update()
+void CEditAlienB::Update()
 {
 	// アニメーションフレームの更新.
 	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
@@ -32,7 +35,7 @@ void CEditAlienA::Update()
 }
 
 // 描画関数.
-void CEditAlienA::Render()
+void CEditAlienB::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
@@ -54,47 +57,81 @@ void CEditAlienA::Render()
 }
 
 // 当たり判定関数.
-void CEditAlienA::Collision( CActor* pActor )
+void CEditAlienB::Collision( CActor* pActor )
 {}
 
+// 攻撃の再生.
+void CEditAlienB::PlayAttack()
+{
+	m_RotAccValue	= m_Paramter.AttackRotInitPower;
+	m_NowState = alien::EAlienState::Move;
+	m_NowMoveState = alien::EMoveState::Attack;
+}
+
 // スポーン.
-void CEditAlienA::Spawning()
+void CEditAlienB::Spawning()
 {
 	CEditAlien::Spawning();
 }
 
 // 移動.
-void CEditAlienA::Move()
+void CEditAlienB::Move()
 {
 	CEditAlien::Move();
+	Attack();
 }
 
 // 拐う.
-void CEditAlienA::Abduct()
+void CEditAlienB::Abduct()
 {
 	CEditAlien::Abduct();
 }
 
 // 怯み.
-void CEditAlienA::Fright()
+void CEditAlienB::Fright()
 {
 	CEditAlien::Fright();
 }
 
 // 死亡.
-void CEditAlienA::Death()
+void CEditAlienB::Death()
 {
 	CEditAlien::Death();
 }
 
 // 逃げる.
-void CEditAlienA::Escape()
+void CEditAlienB::Escape()
 {
 	CEditAlien::Escape();
 }
 
+// 攻撃関数.
+void CEditAlienB::Attack()
+{
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;
+
+	// 回転.
+	m_vRotation.y += (m_Paramter.AttackRotPower - fabsf(m_RotAccValue));
+	m_RotAccValue -= m_Paramter.AttackRotAddValue;	// 回転加速度を加算.
+
+	// 加速度が移動範囲なら移動.
+	if( -m_Paramter.AttackMoveRange <= m_RotAccValue && m_RotAccValue <= m_Paramter.AttackMoveRange ){
+		m_vPosition.x -= m_MoveVector.x * m_Paramter.AttackMoveSpeed;
+		m_vPosition.z -= m_MoveVector.z * m_Paramter.AttackMoveSpeed;
+	}
+	if (m_IsAttackSE == false)
+	{
+		CSoundManager::NoMultipleSEPlay("AlienAttack");
+		m_IsAttackSE = true;
+	}
+
+	if( m_RotAccValue > -m_Paramter.AttackRotPower ) return;
+	m_NowMoveState = alien::EMoveState::Wait;
+	m_IsAttackSE = false;
+}
+
 // 当たり判定の設定.
-bool CEditAlienA::ColliderSetting()
+bool CEditAlienB::ColliderSetting()
 {
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){

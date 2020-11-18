@@ -169,6 +169,9 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -347,6 +350,9 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

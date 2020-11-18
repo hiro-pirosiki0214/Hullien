@@ -1,18 +1,18 @@
-#include "EditAlien_A.h"
+#include "EditAlien_C.h"
 #include "..\..\..\..\..\Arm\Arm.h"
 #include "..\..\..\..\..\..\Common\Mesh\Dx9SkinMesh\Dx9SkinMesh.h"
 #include "..\..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 
-CEditAlienA::CEditAlienA()
+CEditAlienC::CEditAlienC()
 {
 	m_vScale = { 1.0f, 1.0f, 1.0f };
 }
 
-CEditAlienA::~CEditAlienA()
+CEditAlienC::~CEditAlienC()
 {}
 
 // 初期化関数.
-bool CEditAlienA::Init()
+bool CEditAlienC::Init()
 {
 	if( GetModel( MODEL_NAME )		== false ) return false;
 	if( GetAnimationController()	== false ) return false;
@@ -24,7 +24,7 @@ bool CEditAlienA::Init()
 }
 
 // 更新関数.
-void CEditAlienA::Update()
+void CEditAlienC::Update()
 {
 	// アニメーションフレームの更新.
 	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
@@ -32,7 +32,7 @@ void CEditAlienA::Update()
 }
 
 // 描画関数.
-void CEditAlienA::Render()
+void CEditAlienC::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
@@ -54,47 +54,47 @@ void CEditAlienA::Render()
 }
 
 // 当たり判定関数.
-void CEditAlienA::Collision( CActor* pActor )
+void CEditAlienC::Collision( CActor* pActor )
 {}
 
 // スポーン.
-void CEditAlienA::Spawning()
+void CEditAlienC::Spawning()
 {
 	CEditAlien::Spawning();
 }
 
 // 移動.
-void CEditAlienA::Move()
+void CEditAlienC::Move()
 {
 	CEditAlien::Move();
 }
 
 // 拐う.
-void CEditAlienA::Abduct()
+void CEditAlienC::Abduct()
 {
 	CEditAlien::Abduct();
 }
 
 // 怯み.
-void CEditAlienA::Fright()
+void CEditAlienC::Fright()
 {
 	CEditAlien::Fright();
 }
 
 // 死亡.
-void CEditAlienA::Death()
+void CEditAlienC::Death()
 {
 	CEditAlien::Death();
 }
 
 // 逃げる.
-void CEditAlienA::Escape()
+void CEditAlienC::Escape()
 {
 	CEditAlien::Escape();
 }
 
 // 当たり判定の設定.
-bool CEditAlienA::ColliderSetting()
+bool CEditAlienC::ColliderSetting()
 {
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){

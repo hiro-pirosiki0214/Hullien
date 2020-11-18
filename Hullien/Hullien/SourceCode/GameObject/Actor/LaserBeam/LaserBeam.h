@@ -32,6 +32,7 @@ public:
 
 	// ‘ŠèÀ•W‚Ìİ’èŠÖ”.
 	virtual void SetTargetPos( CActor& actor ) override;
+	void SetTargetPos( const D3DXVECTOR3& pos );
 
 	// ƒr[ƒ€‚ğ‘Å‚Â.
 	void Shot( const D3DXVECTOR3& pos );

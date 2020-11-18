@@ -58,9 +58,9 @@ void CAlienD::Update()
 // 描画関数.
 void CAlienD::Render()
 {
+	m_pLaserBeam->Render();	// レーザーの描画.
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-	m_pLaserBeam->Render();	// レーザーの描画.
 	ModelRender();			// モデルの描画.
 
 #if _DEBUG

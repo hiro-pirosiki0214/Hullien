@@ -27,6 +27,7 @@ public:
 		{
 			if( IsSucceeded == false ) return;
 			ImGui::Text( u8"¬Œ÷" );
+			ImGui::SameLine();
 			FrameCount++;
 			if( FrameCount != RenderTime ) return;
 			FrameCount = 0;

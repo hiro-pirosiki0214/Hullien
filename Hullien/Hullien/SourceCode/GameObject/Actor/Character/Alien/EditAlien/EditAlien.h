@@ -14,15 +14,15 @@ public:
 	virtual bool Spawn( const D3DXVECTOR3& spawnPos ) override;
 
 	// 攻撃の再生.
-	void PlayAttack();
+	virtual void PlayAttack();
 	// 怯みの再生.
 	void PlayFright();
 	// 死亡の再生.
 	void PlayDeath();
 	// マザーシップに上る動作の再生.
 	void PlayRisingMotherShip( const D3DXVECTOR3& vPos );
-
-	inline void SetParamter( const SAlienParam& param ){ m_Paramter = param; }
+	// パラメーターの設定.
+	virtual void SetParamter( const SAlienParam& param ){ m_Paramter = param; }
 
 protected:
 	// 待機関数.

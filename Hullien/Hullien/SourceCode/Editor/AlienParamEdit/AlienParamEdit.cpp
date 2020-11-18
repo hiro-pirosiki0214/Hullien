@@ -8,6 +8,9 @@
 #include "..\..\Resource\MeshResource\MeshResource.h"
 
 #include "..\..\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h"
+#include "..\..\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.h"
+#include "..\..\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h"
+#include "..\..\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h"
 
 #include <filesystem>
 
@@ -23,7 +26,7 @@ CAlienParamEdit::CAlienParamEdit()
 	, m_Index				( 0 )
 
 {
-	m_pEditAlien = std::make_unique<CEditAlienA>();
+	m_pEditAlien = std::make_unique<CEditAlienD>();
 	m_AlienNameColorList =
 	{
 		D3DXVECTOR4( 0.2f, 0.8f, 0.2f, 1.0f ),
@@ -43,14 +46,14 @@ bool CAlienParamEdit::Init()
 	if( FileAllReading()		== false ) return false;
 	if( GetModel()				== false ) return false;
 	if( m_pEditAlien->Init()	== false ) return false;
-	m_pEditAlien->SetParamter( m_AlienParamList[0] );
+	m_pEditAlien->SetParamter( m_AlienParamList[5] );
 	return true;
 }
 
 // 更新関数.
 void CAlienParamEdit::Update()
 {
-	m_pEditAlien->SetParamter( m_AlienParamList[0] );
+	m_pEditAlien->SetParamter( m_AlienParamList[5] );
 	m_pEditAlien->Update();
 }
 
@@ -198,8 +201,13 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	if( ImGui::Button(u8"保存") ) 
 		s_success.IsSucceeded = FileWriting( m_AlienPathList[index].c_str(), s );
 	ImGui::SameLine();
-	s_success.Render();
+	s_success.Render(); ImGui::NewLine();
 
+	if( ImGui::Button(u8"スポーンプレビュー") ) m_pEditAlien->Spawn( { 0.0f, 10.0f, 0.0f } );
+	if( ImGui::Button(u8"アタックプレビュー") ) m_pEditAlien->PlayAttack();
+	if( ImGui::Button(u8"怯みプレビュー") ) m_pEditAlien->PlayFright();
+	if( ImGui::Button(u8"死亡プレビュー") ) m_pEditAlien->PlayDeath();
+	if( ImGui::Button(u8"上昇プレビュー") ) m_pEditAlien->PlayRisingMotherShip( { 0.0f, 20.0f, 0.0f } );
 
 	ImGui::PopItemWidth();
 }

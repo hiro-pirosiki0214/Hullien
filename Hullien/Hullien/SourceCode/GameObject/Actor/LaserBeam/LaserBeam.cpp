@@ -89,6 +89,7 @@ void CLaserBeam::Render()
 	if( m_IsEndAttack == true ) return;
 
 #if _DEBUG
+	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
 }
@@ -121,6 +122,11 @@ void CLaserBeam::SetTargetPos( CActor& actor )
 	if( actor.GetObjectTag() != EObjectTag::Player ) return;
 	if( m_IsInAttack == true ) return;
 	m_TargetPosition = actor.GetPosition();	// プレイヤーの座標を取得.
+}
+void CLaserBeam::SetTargetPos( const D3DXVECTOR3& pos )
+{
+	if( m_IsInAttack == true ) return;
+	m_TargetPosition = pos;
 }
 
 // 攻撃開始.

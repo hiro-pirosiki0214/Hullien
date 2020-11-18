@@ -24,7 +24,7 @@ class CPlayer : public CCharacter
 	// 特殊能力エフェクト名.
 	const char* SPECIAL_ABILITY_EFFECT_NAME	= "uvtest";
 	// 回避エフェクト名.
-	const char* AVOIDANCE_EFFECT_NAME		= "uvtest";
+	const char* AVOIDANCE_EFFECT_NAME		= "sandSmoke";
 	// 麻痺エフェクト名.
 	const char* PARALYSIS_EFFECT_NAME		= "uvtest";
 
