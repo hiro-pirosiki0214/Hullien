@@ -314,7 +314,7 @@ void CPlayer::AvoidController()
 	if( CXInput::A_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('R') & 0x8000 )){
 		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );	// 回避フラグを立てる.
 		m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
-		m_pEffects[player::EEffectNo_Avoidance]->Play( m_vPosition );
+		m_pEffects[player::EEffectNo_Avoidance]->Play( { m_vPosition.x, m_vPosition.y+10.0f, m_vPosition.z } );
 		// 回避アニメーションの設定.
 		SetAnimationBlend( player::EAnimNo_Avoid );
 
