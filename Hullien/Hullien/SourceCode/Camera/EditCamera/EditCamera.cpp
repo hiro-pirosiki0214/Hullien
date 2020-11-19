@@ -9,8 +9,8 @@ namespace
 	const float MOUSE_MOVE_SPEED				= 0.02f;	// マウスの移動速度.
 	const float RADIAN_THRESHOLD_X_MAX			= 360.0f;	// ラジアンXの最大しきい値.
 	const float RADIAN_THRESHOLD_X_MIN			= 0.0f;		// ラジアンXの最小しきい値.
-	const float RADIAN_THRESHOLD_Y_MAX			= 170.0f;	// ラジアンYの最大しきい値.
-	const float RADIAN_THRESHOLD_Y_MIN			= -170.0f;	// ラジアンYの最小しきい値.
+	const float RADIAN_THRESHOLD_Y_MAX			= 90.0f;	// ラジアンYの最大しきい値.
+	const float RADIAN_THRESHOLD_Y_MIN			= -90.0f;	// ラジアンYの最小しきい値.
 	const D3DXVECTOR3	INIT_POSITION			= { 0.0f, 10.0f, -30.0f };	// 初期座標.
 }
 
