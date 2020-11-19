@@ -41,23 +41,23 @@ void CEditCamera::Updata()
 	D3DXVec3TransformCoord( &vecAxisZ, &vecAxisZ, &mRot );
 
 	// 前進.
-	if( GetAsyncKeyState('W') & 0x8000 ||
-		CXInput::LThumbY_Axis() > IDLE_THUMB_MAX ) m_vPosition += vecAxisZ;
+	if( GetAsyncKeyState('W') & 0x8000 || CXInput::LThumbY_Axis() > IDLE_THUMB_MAX )
+		m_vPosition += vecAxisZ;
 	// 後退.
-	if( GetAsyncKeyState('S') & 0x8000 ||
-		CXInput::LThumbY_Axis() < IDLE_THUMB_MIN ) m_vPosition -= vecAxisZ;
+	if( GetAsyncKeyState('S') & 0x8000 || CXInput::LThumbY_Axis() < IDLE_THUMB_MIN )
+		m_vPosition -= vecAxisZ;
 	// 右に移動.
-	if( GetAsyncKeyState('D') & 0x8000 ||
-		CXInput::LThumbX_Axis() > IDLE_THUMB_MAX ) m_vPosition += vecAxisX;
+	if( GetAsyncKeyState('D') & 0x8000 || CXInput::LThumbX_Axis() > IDLE_THUMB_MAX )
+		m_vPosition += vecAxisX;
 	// 左に移動.
-	if( GetAsyncKeyState('A') & 0x8000 ||
-		CXInput::LThumbX_Axis() < IDLE_THUMB_MIN ) m_vPosition -= vecAxisX;
+	if( GetAsyncKeyState('A') & 0x8000 || CXInput::LThumbX_Axis() < IDLE_THUMB_MIN )
+		m_vPosition -= vecAxisX;
 	// 上昇.
-	if( GetAsyncKeyState('Q') & 0x8000 ||
-		CXInput::RTrigger() > IDLE_TIGGER_MAX ) m_vPosition.y += CAMERA_MOVE_SPEED;
+	if( GetAsyncKeyState('Q') & 0x8000 || CXInput::RTrigger() > IDLE_TIGGER_MAX ) 
+		m_vPosition.y += CAMERA_MOVE_SPEED;
 	// 下降.
-	if( GetAsyncKeyState('E') & 0x8000 ||
-		CXInput::LTrigger() > IDLE_TIGGER_MAX ) m_vPosition.y -= CAMERA_MOVE_SPEED;
+	if( GetAsyncKeyState('E') & 0x8000 || CXInput::LTrigger() > IDLE_TIGGER_MAX )
+		m_vPosition.y -= CAMERA_MOVE_SPEED;
 
 	MouseUpdate();
 
@@ -81,7 +81,7 @@ void CEditCamera::MouseUpdate()
 		if( CXInput::RThumbY_Axis() < IDLE_THUMB_MIN ) ySub = -static_cast<float>(CXInput::RThumbY_Axis());
 		if( CXInput::RThumbX_Axis() > IDLE_THUMB_MAX ) xSub = static_cast<float>(CXInput::RThumbX_Axis());
 		if( CXInput::RThumbX_Axis() < IDLE_THUMB_MIN ) xSub = static_cast<float>(CXInput::RThumbX_Axis());
-		moveSpeed *= 0.5f;
+		moveSpeed *= 0.5f;	// 移動速度を半分にする.
 	} else {
 		// マウスの現在の座標と過去の座標を引いた値を算出.
 		float xSub = m_pMouse->GetPosisionX() - m_pMouse->GetOldPosisionX();
@@ -93,6 +93,7 @@ void CEditCamera::MouseUpdate()
 	if( xSub > 0.0f ) m_Radian.x += moveSpeed;
 	if( ySub > 0.0f ) m_Radian.y -= moveSpeed;
 	if( ySub < 0.0f ) m_Radian.y += moveSpeed;
+	// 規定値を超えないよう調整.
 	if( m_Radian.x > static_cast<float>(D3DXToRadian(RADIAN_THRESHOLD_X_MAX)) )
 		m_Radian.x = static_cast<float>(D3DXToRadian(RADIAN_THRESHOLD_X_MIN));
 	if( m_Radian.x < static_cast<float>(D3DXToRadian(RADIAN_THRESHOLD_X_MIN)) ) 
