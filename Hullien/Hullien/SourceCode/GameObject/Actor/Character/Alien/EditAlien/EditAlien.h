@@ -46,7 +46,8 @@ protected:
 	virtual void RisingMotherShip() override;
 
 protected:
-	SAlienParam m_Paramter;	// パラメータのポインタ.
+	SAlienParam m_Paramter;
+	bool		m_IsPlaying;
 };
 
 #endif	// #ifndef EDIT_ALIEN_H.

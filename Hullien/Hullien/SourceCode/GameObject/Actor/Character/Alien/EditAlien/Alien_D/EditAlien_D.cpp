@@ -71,11 +71,13 @@ void CEditAlienD::Collision( CActor* pActor )
 // 攻撃の再生.
 void CEditAlienD::PlayAttack()
 {
+	if( m_IsPlaying == true ) return;
 	m_IsAttackStart	= false;	// 攻撃が始まるフラグを下す.
 	m_AttackCount	= 0.0f;		// 攻撃カウントを初期化,
 	m_NowMoveState	= alien::EMoveState::Attack;	// 攻撃状態へ遷移.
 	m_pLaserBeam->SetTargetPos( { 3.0f, 0.0f, 3.0f } );	// プレイヤーの座標を取得.
 	SetAnimation( alien::EAnimNo_Attack, m_pAC );
+	m_IsPlaying = true;
 }
 
 // パラメーターの設定.
@@ -161,6 +163,7 @@ void CEditAlienD::Attack()
 	if( m_AnimFrameList[m_NowAnimNo].IsNowFrameOver() == false ) return;
 	m_NowMoveState = alien::EMoveState::Wait;	// 待機状態へ遷移.
 	SetAnimation( alien::EAnimNo_Move, m_pAC );
+	m_IsPlaying = false;
 }
 
 // 当たり判定の設定.

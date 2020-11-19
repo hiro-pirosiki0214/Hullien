@@ -63,9 +63,11 @@ void CEditAlienB::Collision( CActor* pActor )
 // UŒ‚‚ÌÄ¶.
 void CEditAlienB::PlayAttack()
 {
+	if( m_IsPlaying == true ) return;
 	m_RotAccValue	= m_Paramter.AttackRotInitPower;
 	m_NowState = alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Attack;
+	m_IsPlaying = true;
 }
 
 // ƒXƒ|[ƒ“.
@@ -128,6 +130,7 @@ void CEditAlienB::Attack()
 	if( m_RotAccValue > -m_Paramter.AttackRotPower ) return;
 	m_NowMoveState = alien::EMoveState::Wait;
 	m_IsAttackSE = false;
+	m_IsPlaying = false;
 }
 
 // “–‚½‚è”»’è‚Ìİ’è.

@@ -4,6 +4,7 @@
 
 CEditAlien::CEditAlien()
 	: m_Paramter	()
+	, m_IsPlaying	( false )
 {
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
@@ -15,12 +16,14 @@ CEditAlien::~CEditAlien()
 // スポーン.
 bool CEditAlien::Spawn( const D3DXVECTOR3& spawnPos )
 {
+	if( m_IsPlaying == true ) return false;
 	m_vPosition	= spawnPos;						// スポーン座標の設定.
 	m_LifePoint	= m_Paramter.LifeMax;			// 体力の設定.
 	m_NowState	= alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
 	m_AnimSpeed	= 0.0;							// アニメーション速度を止める.
 	m_vScale	= { 0.0f, 0.0f, 0.0f };
 	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
+	m_IsPlaying = true;
 	return true;
 }
 
@@ -32,26 +35,32 @@ void CEditAlien::PlayAttack()
 // 怯みの再生.
 void CEditAlien::PlayFright()
 {
+	if( m_IsPlaying == true ) return;
 	m_NowState = alien::EAlienState::Fright;	// 怯み状態へ遷移.
 	SetAnimation( alien::EAnimNo_Damage, m_pAC );
 	m_AnimSpeed = DEFAULT_ANIM_SPEED;
 	m_KnockBackVector = -m_MoveVector;
 	m_pEffects[0]->Play( { m_vPosition.x, m_vPosition.y+4.0f, m_vPosition.z });
+	m_IsPlaying = true;
 }
 
 // 死亡の再生.
 void CEditAlien::PlayDeath()
 {
+	if( m_IsPlaying == true ) return;
 	m_NowState = alien::EAlienState::Death;
 	m_pEffects[alien::EEffectNo_Dead]->Play( m_vPosition );
 	SetAnimation( alien::EAnimNo_Dead, m_pAC );
+	m_IsPlaying = true;
 }
 
 // マザーシップに上る動作の再生.
 void CEditAlien::PlayRisingMotherShip( const D3DXVECTOR3& vPos )
 {
+	if( m_IsPlaying == true ) return;
 	m_NowState = alien::EAlienState::RisingMotherShip;
 	m_vPosition	= vPos;
+	m_IsPlaying = true;
 }
 
 // 待機関数.
@@ -103,6 +112,7 @@ void CEditAlien::Spawning()
 	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
+	m_IsPlaying = false;
 }
 
 // 移動.
@@ -137,6 +147,7 @@ void CEditAlien::Fright()
 	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
+	m_IsPlaying = false;
 }
 
 // 死亡.
@@ -163,6 +174,7 @@ void CEditAlien::Death()
 	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
+	m_IsPlaying = false;
 }
 
 // 逃げる.
@@ -180,6 +192,7 @@ void CEditAlien::Escape()
 	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
+	m_IsPlaying = false;
 }
 
 // マザーシップに昇っている.
@@ -194,4 +207,5 @@ void CEditAlien::RisingMotherShip()
 	SetAnimation( alien::EAnimNo_Move, m_pAC );
 	m_NowState	= alien::EAlienState::Move;
 	m_NowMoveState = alien::EMoveState::Wait;
+	m_IsPlaying = false;
 }

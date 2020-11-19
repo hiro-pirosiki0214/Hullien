@@ -24,7 +24,9 @@ bool CPlayerEdit::Init()
 // 更新関数.
 void CPlayerEdit::Update()
 {
-	m_pPlayer->Update();
+	if( m_IsSetCamera == true ){
+		m_pPlayer->Update();
+	}
 	if( CXInput::Back_Button() == CXInput::enSEPARATED ){
 		m_IsSetCamera = false;
 		// ゲームパッドの使用を許可する.
