@@ -24,6 +24,12 @@ public:
 	virtual void ModelRender() = 0;
 	// エフェクトの描画.
 	virtual void EffectRender() = 0;
+
+	// カメラをセットしているかどうか.
+	inline bool IsSetCamera(){ return m_IsSetCamera; }
+
+protected:
+	bool m_IsSetCamera;
 };
 
 #endif	// #ifndef EDIT_BASE_H.

@@ -53,8 +53,10 @@ void CEditor::Update()
 
 	m_pEdit[m_NowEditScene-1]->Update();
 
-	m_pEditCamera->Updata();
-	CCameraManager::SetCamera( m_pEditCamera );
+	if( m_pEdit[m_NowEditScene-1]->IsSetCamera() == false ){
+		m_pEditCamera->Updata();
+		CCameraManager::SetCamera( m_pEditCamera );
+	}
 	if(( GetAsyncKeyState(VK_F6) & 0x8000 ) && ( GetAsyncKeyState(VK_SHIFT) & 0x8000 )){
 		m_pSceneManager->NextSceneMove();
 	}
