@@ -120,20 +120,20 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	ImGui::PushItemWidth(200.0f);
 
 	//  各パラメータの設定.
-	ImGui::InputFloat( u8"移動速度", &s.MoveSpeed );
-	ImGui::InputFloat( u8"体力", &s.LifeMax );
-	ImGui::InputFloat( u8"攻撃力", &s.AttackPower );
-	ImGui::InputInt( u8"無敵時間", &s.InvincibleTime );
+	CImGuiManager::DragFloat( u8"移動速度", &s.MoveSpeed );
+	CImGuiManager::DragFloat( u8"体力", &s.LifeMax );
+	CImGuiManager::DragFloat( u8"攻撃力", &s.AttackPower );
+	CImGuiManager::DragInt( u8"無敵時間", &s.InvincibleTime );
 
-	ImGui::InputFloat( u8"移動回転速度", &s.RotationalSpeed );
-	ImGui::InputFloat( u8"スポーン時のスケールの加算値", &s.SpawnScaleAddValue );
-	ImGui::InputFloat( u8"スポーン時の降下速度", &s.SpawnDownSpeed );
-	ImGui::InputFloat( u8"マザーシップに上昇する時のスケールの減算値", &s.MotherShipUpScaleSubValue );
-	ImGui::InputInt( u8"待機時間", &s.WaitTime );
-	ImGui::InputInt( u8"ノックバックの時間", &s.KnockBackTime );
+	CImGuiManager::DragFloat( u8"移動回転速度", &s.RotationalSpeed );
+	CImGuiManager::DragFloat( u8"スポーン時のスケールの加算値", &s.SpawnScaleAddValue );
+	CImGuiManager::DragFloat( u8"スポーン時の降下速度", &s.SpawnDownSpeed );
+	CImGuiManager::DragFloat( u8"マザーシップに上昇する時のスケール減算値", &s.MotherShipUpScaleSubValue );
+	CImGuiManager::DragInt( u8"待機時間", &s.WaitTime );
+	CImGuiManager::DragInt( u8"ノックバックの時間", &s.KnockBackTime );
 
-	ImGui::InputFloat( u8"死亡カウントの加算値", &s.DeadCountAddValue );
-	ImGui::InputFloat( u8"死亡時のスケールの減算値", &s.DeadScaleSubValue );
+	CImGuiManager::DragFloat( u8"死亡カウントの加算値", &s.DeadCountAddValue );
+	CImGuiManager::DragFloat( u8"死亡時のスケールの減算値", &s.DeadScaleSubValue );
 
 	switch( alienType )
 	{
@@ -143,41 +143,41 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 		break;
 	case EAlienList::B:
 	case EAlienList::Bda:
-		ImGui::InputFloat( u8"プレイヤーを狙う範囲", &s.PlayerAimLenght );
-		ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
-		ImGui::InputFloat( u8"攻撃時の初期回転力", &s.AttackRotInitPower );
-		ImGui::InputFloat( u8"攻撃時の回転力", &s.AttackRotPower );
-		ImGui::InputFloat( u8"攻撃時の回転加算値", &s.AttackRotAddValue );
-		ImGui::InputFloat( u8"攻撃移動速度", &s.AttackMoveSpeed );
-		ImGui::InputFloat( u8"攻撃移動範囲", &s.AttackMoveRange );
+		CImGuiManager::DragFloat( u8"プレイヤーを狙う範囲", &s.PlayerAimLenght );
+		CImGuiManager::DragFloat( u8"攻撃する距離", &s.AttackLenght );
+		CImGuiManager::DragFloat( u8"攻撃時の初期回転力", &s.AttackRotInitPower );
+		CImGuiManager::DragFloat( u8"攻撃時の回転力", &s.AttackRotPower );
+		CImGuiManager::DragFloat( u8"攻撃時の回転加算値", &s.AttackRotAddValue );
+		CImGuiManager::DragFloat( u8"攻撃移動速度", &s.AttackMoveSpeed );
+		CImGuiManager::DragFloat( u8"攻撃移動範囲", &s.AttackMoveRange );
 		m_AlienIndex = index / 2;
 		break;
 	case EAlienList::C:
 		m_AlienIndex = index / 2;
 		break;
 	case EAlienList::D:
-		ImGui::InputFloat( u8"レーザーの移動速度", &s.LaserMoveSpeed );
-		ImGui::InputFloat( u8"麻痺の時間", &s.ParalysisTime );
-		ImGui::InputFloat( u8"攻撃する距離", &s.AttackLenght );
-		ImGui::InputFloat( u8"再度検索する距離", &s.ResearchLenght );
-		ImGui::InputFloat( u8"攻撃時の範囲表示の調整用", &s.AttackRangeSpritePosY );
-		ImGui::InputFloat( u8"攻撃時の範囲表示の画像サイズ", &s.AttackRangeSpriteScale );
-		ImGui::InputFloat( u8"攻撃時の範囲表示のアルファが足される値", &s.AttackRangeAddValue );
-		ImGui::InputFloat( u8"攻撃時の範囲表示のアルファが引かれる値", &s.AttackRangeSubValue );
-		ImGui::InputFloat( u8"ベジェ曲線の一つ目操作座標の距離", &s.ControlPointOneLenght );
-		ImGui::InputFloat( u8"ベジェ曲線の一つ目操作座標のy座標の距離", &s.ControlPointOneLenghtY );
-		ImGui::InputFloat( u8"ベジェ曲線の二つ目操作座標の距離", &s.ControlPointTwoLenght );
-		ImGui::InputFloat( u8"ベジェ曲線の二つ目操作座標のy座標の距離", &s.ControlPointTwoLenghtY );
+		CImGuiManager::DragFloat( u8"レーザーの移動速度", &s.LaserMoveSpeed );
+		CImGuiManager::DragFloat( u8"麻痺の時間", &s.ParalysisTime );
+		CImGuiManager::DragFloat( u8"攻撃する距離", &s.AttackLenght );
+		CImGuiManager::DragFloat( u8"再度検索する距離", &s.ResearchLenght );
+		CImGuiManager::DragFloat( u8"攻撃時の範囲表示の調整用", &s.AttackRangeSpritePosY );
+		CImGuiManager::DragFloat( u8"攻撃時の範囲表示の画像サイズ", &s.AttackRangeSpriteScale );
+		CImGuiManager::DragFloat( u8"攻撃時の範囲表示のアルファが足される値", &s.AttackRangeAddValue );
+		CImGuiManager::DragFloat( u8"攻撃時の範囲表示のアルファが引かれる値", &s.AttackRangeSubValue );
+		CImGuiManager::DragFloat( u8"ベジェ曲線の一つ目操作座標の距離", &s.ControlPointOneLenght );
+		CImGuiManager::DragFloat( u8"ベジェ曲線の一つ目操作座標のy座標の距離", &s.ControlPointOneLenghtY );
+		CImGuiManager::DragFloat( u8"ベジェ曲線の二つ目操作座標の距離", &s.ControlPointTwoLenght );
+		CImGuiManager::DragFloat( u8"ベジェ曲線の二つ目操作座標のy座標の距離", &s.ControlPointTwoLenghtY );
 		m_AlienIndex = index / 2+1;
 		break;
 	default:
 		break;
 	}
 
-	ImGui::InputFloat( u8"スフィアの調整座標 X", &s.SphereAdjPos.x );
-	ImGui::InputFloat( u8"スフィアの調整座標 Y", &s.SphereAdjPos.y );
-	ImGui::InputFloat( u8"スフィアの調整座標 Z", &s.SphereAdjPos.z );
-	ImGui::InputFloat( u8"スフィアの調整半径", &s.SphereAdjRadius );
+	CImGuiManager::DragFloat( u8"スフィアの調整座標 X", &s.SphereAdjPos.x );
+	CImGuiManager::DragFloat( u8"スフィアの調整座標 Y", &s.SphereAdjPos.y );
+	CImGuiManager::DragFloat( u8"スフィアの調整座標 Z", &s.SphereAdjPos.z );
+	CImGuiManager::DragFloat( u8"スフィアの調整半径", &s.SphereAdjRadius );
 
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"読込") ) 

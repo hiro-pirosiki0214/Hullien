@@ -35,8 +35,8 @@ void CInvisibleWallEdit::Render()
 	ImGui::Begin( u8"見ない壁の設定" );
 	ImGui::PushItemWidth(200.0f);
 	
-	ImGui::InputFloat( u8"初期座標 : X", &m_BoxWall.Length.x );
-	ImGui::InputFloat( u8"初期座標 : Z", &m_BoxWall.Length.z );
+	CImGuiManager::DragFloat( u8"初期座標 : X", &m_BoxWall.Length.x );
+	CImGuiManager::DragFloat( u8"初期座標 : Z", &m_BoxWall.Length.z );
 
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"読込") ){

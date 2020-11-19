@@ -80,19 +80,19 @@ void CItemEdit::TagRender( const int& index )
 		ParamRender();
 		return;
 	case EItemList::LifeRecovery:
-		ImGui::InputFloat( u8"回復力", &m_EachItemEffect.LifeRecoveryValue );
+		CImGuiManager::DragFloat( u8"回復力", &m_EachItemEffect.LifeRecoveryValue );
 		break;
 	case EItemList::SPEffectTime:
-		ImGui::InputFloat( u8"特殊能力回復力", &m_EachItemEffect.SPRecoveryValue );
-		ImGui::InputFloat( u8"特殊能力回復時間", &m_EachItemEffect.SPRecoveryTime );
+		CImGuiManager::DragFloat( u8"特殊能力回復力", &m_EachItemEffect.SPRecoveryValue );
+		CImGuiManager::DragFloat( u8"特殊能力回復時間", &m_EachItemEffect.SPRecoveryTime );
 		break;
 	case EItemList::AttackUp:
-		ImGui::InputFloat( u8"攻撃力", &m_EachItemEffect.AttackPower );
-		ImGui::InputFloat( u8"攻撃力UP時間", &m_EachItemEffect.AttackUpTime );
+		CImGuiManager::DragFloat( u8"攻撃力", &m_EachItemEffect.AttackPower );
+		CImGuiManager::DragFloat( u8"攻撃力UP時間", &m_EachItemEffect.AttackUpTime );
 		break;
 	case EItemList::MoveSpeedUp:
-		ImGui::InputFloat( u8"移動速度", &m_EachItemEffect.MovePower );
-		ImGui::InputFloat( u8"移動速度UP時間", &m_EachItemEffect.MoveUpTime );
+		CImGuiManager::DragFloat( u8"移動速度", &m_EachItemEffect.MovePower );
+		CImGuiManager::DragFloat( u8"移動速度UP時間", &m_EachItemEffect.MoveUpTime );
 		break;
 	default:
 		break;
@@ -113,19 +113,19 @@ void CItemEdit::TagRender( const int& index )
 // パラメータの描画.
 void CItemEdit::ParamRender()
 {
-	ImGui::InputFloat( u8"初期加速値",					&m_Prameter.InitAccelerationValue );
-	ImGui::InputFloat( u8"初期重力",					&m_Prameter.InitGravity );
-	ImGui::InputInt(   u8"バウンド最大数",				&m_Prameter.BoundCountMax );
-	ImGui::InputFloat( u8"モデルサイズ最大",			&m_Prameter.ModelScaleMax );
-	ImGui::InputFloat( u8"モデルサイズ加算値",			&m_Prameter.ModelScaleAddValue );
-	ImGui::InputFloat( u8"最終的な描画の高さ",			&m_Prameter.FinalRenderHeight );
-	ImGui::InputFloat( u8"最終的な移動速度",			&m_Prameter.FinalMoveSpeed );
-	ImGui::InputFloat( u8"回転速度",					&m_Prameter.RotationSpeed );
-	ImGui::InputFloat( u8"アクティブ時間",				&m_Prameter.ActiveTime );
-	ImGui::InputFloat( u8"消える時間",					&m_Prameter.DisappearTime );
-	ImGui::InputFloat( u8"点滅加算値",					&m_Prameter.FlashingAddValue );
-	ImGui::InputFloat( u8"モデル透過値最大",			&m_Prameter.ModelAlphaMax );
-	ImGui::InputFloat( u8"ヒット時のエフェクト時間",	&m_Prameter.HitEffectTime );
+	CImGuiManager::DragFloat( u8"初期加速値",					&m_Prameter.InitAccelerationValue );
+	CImGuiManager::DragFloat( u8"初期重力",					&m_Prameter.InitGravity );
+	CImGuiManager::DragInt(   u8"バウンド最大数",				&m_Prameter.BoundCountMax );
+	CImGuiManager::DragFloat( u8"モデルサイズ最大",			&m_Prameter.ModelScaleMax );
+	CImGuiManager::DragFloat( u8"モデルサイズ加算値",			&m_Prameter.ModelScaleAddValue );
+	CImGuiManager::DragFloat( u8"最終的な描画の高さ",			&m_Prameter.FinalRenderHeight );
+	CImGuiManager::DragFloat( u8"最終的な移動速度",			&m_Prameter.FinalMoveSpeed );
+	CImGuiManager::DragFloat( u8"回転速度",					&m_Prameter.RotationSpeed );
+	CImGuiManager::DragFloat( u8"アクティブ時間",				&m_Prameter.ActiveTime );
+	CImGuiManager::DragFloat( u8"消える時間",					&m_Prameter.DisappearTime );
+	CImGuiManager::DragFloat( u8"点滅加算値",					&m_Prameter.FlashingAddValue );
+	CImGuiManager::DragFloat( u8"モデル透過値最大",			&m_Prameter.ModelAlphaMax );
+	CImGuiManager::DragFloat( u8"ヒット時のエフェクト時間",	&m_Prameter.HitEffectTime );
 
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"読込") ) 

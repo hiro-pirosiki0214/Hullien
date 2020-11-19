@@ -123,8 +123,6 @@ void CEditor::ImGuiRender()
 	// コントローラーエディットの描画.
 	//	m_pControllerEdit->Render();
 
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.5f, 0.2f, 0.2f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.7f, 0.4f, 0.4f, 0.7f));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(WND_W, 70));
 	ImGui::Begin("Edit");
@@ -148,9 +146,6 @@ void CEditor::ImGuiRender()
 	ImGui::End();
 
 	m_pEdit[m_NowEditScene-1]->Render();
-
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
 
 	// ImGui最終描画.
 	CImGuiManager::Render();

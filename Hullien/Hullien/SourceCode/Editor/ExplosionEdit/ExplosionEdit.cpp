@@ -38,22 +38,19 @@ void CExplosionEdit::Render()
 
 	if( ImGui::Button( u8"再生" ) == true ){
 		m_pExplosion->IsStop();
+		m_pExplosion->SetExplosionParam( m_ExplosionParam );
 		if( m_pExplosion->IsPlay() == false ){
 			m_pExplosion->Init();
 			m_pExplosion->SetPosition( D3DXVECTOR3( 0.0f, 5.0f, 0.0f ) );
 		}
 	}
 
-	ImGui::InputFloat( u8"爆発力", &m_ExplosionParam.AttackPower );
-	if( ImGui::InputFloat( u8"爆発速度", &m_ExplosionParam.ExplosionSpeed ) ){
-		m_pExplosion->SetExplosionParam( m_ExplosionParam );
-	}
-	if( ImGui::InputFloat( u8"スフィアの最大半径", &m_ExplosionParam.SphereMaxRadius ) ){
-		m_pExplosion->SetExplosionParam( m_ExplosionParam );
-	}
-	ImGui::InputFloat( u8"スフィアの調整用座標 : X", &m_ExplosionParam.SphereAdjPos.x );
-	ImGui::InputFloat( u8"スフィアの調整用座標 : Y", &m_ExplosionParam.SphereAdjPos.y );
-	ImGui::InputFloat( u8"スフィアの調整用座標 : Z", &m_ExplosionParam.SphereAdjPos.z );
+	CImGuiManager::DragFloat( u8"爆発力", &m_ExplosionParam.AttackPower );
+	CImGuiManager::DragFloat( u8"爆発速度", &m_ExplosionParam.ExplosionSpeed );
+	CImGuiManager::DragFloat( u8"スフィアの最大半径", &m_ExplosionParam.SphereMaxRadius );
+	CImGuiManager::DragFloat( u8"スフィアの調整用座標 : X", &m_ExplosionParam.SphereAdjPos.x );
+	CImGuiManager::DragFloat( u8"スフィアの調整用座標 : Y", &m_ExplosionParam.SphereAdjPos.y );
+	CImGuiManager::DragFloat( u8"スフィアの調整用座標 : Z", &m_ExplosionParam.SphereAdjPos.z );
 
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"読込") ) s_success.IsSucceeded = FileReading();

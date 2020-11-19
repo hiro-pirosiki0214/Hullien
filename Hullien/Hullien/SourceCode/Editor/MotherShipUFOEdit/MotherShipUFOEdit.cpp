@@ -36,14 +36,14 @@ void CMotherShipUFOEdit::Render()
 	ImGui::Begin( u8"マザーシップUFO設定" );
 	ImGui::PushItemWidth(200.0f);
 
-	ImGui::InputFloat( u8"初期座標 : X",			&m_MotherShipUFOParam.Position.x );
-	ImGui::InputFloat( u8"初期座標 : Y",			&m_MotherShipUFOParam.Position.y );
-	ImGui::InputFloat( u8"初期座標 : Z",			&m_MotherShipUFOParam.Position.z );
-	ImGui::InputFloat( u8"持ち上げる力",			&m_MotherShipUFOParam.AddPosYPower );
-	ImGui::InputFloat( u8"スフィアの調整用座標 : X",&m_MotherShipUFOParam.SphereAdjPos.x );
-	ImGui::InputFloat( u8"スフィアの調整用座標 : Y",&m_MotherShipUFOParam.SphereAdjPos.y );
-	ImGui::InputFloat( u8"スフィアの調整用座標 : Z",&m_MotherShipUFOParam.SphereAdjPos.z );
-	ImGui::InputFloat( u8"スフィアの半径",			&m_MotherShipUFOParam.CollisionRadius );
+	CImGuiManager::DragFloat( u8"初期座標 : X",			&m_MotherShipUFOParam.Position.x );
+	CImGuiManager::DragFloat( u8"初期座標 : Y",			&m_MotherShipUFOParam.Position.y );
+	CImGuiManager::DragFloat( u8"初期座標 : Z",			&m_MotherShipUFOParam.Position.z );
+	CImGuiManager::DragFloat( u8"持ち上げる力",			&m_MotherShipUFOParam.AddPosYPower );
+	CImGuiManager::DragFloat( u8"スフィアの調整用座標 : X",&m_MotherShipUFOParam.SphereAdjPos.x );
+	CImGuiManager::DragFloat( u8"スフィアの調整用座標 : Y",&m_MotherShipUFOParam.SphereAdjPos.y );
+	CImGuiManager::DragFloat( u8"スフィアの調整用座標 : Z",&m_MotherShipUFOParam.SphereAdjPos.z );
+	CImGuiManager::DragFloat( u8"スフィアの半径",			&m_MotherShipUFOParam.CollisionRadius );
 
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"読込") ){

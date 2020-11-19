@@ -37,23 +37,25 @@ void CPlayerEdit::Render()
 	ImGui::PushItemWidth(200.0f);
 
 	// 各パラメータの設定.
-	ImGui::InputFloat( u8"移動速度",		&m_pPlayerParam.MoveSpeed );
-	ImGui::InputFloat( u8"体力",			&m_pPlayerParam.LifeMax );
-	ImGui::InputFloat( u8"攻撃力",			&m_pPlayerParam.AttackPower );
-	ImGui::InputInt( u8"無敵時間",			&m_pPlayerParam.InvincibleTime );
-	ImGui::InputFloat( u8"特殊能力最大値",	&m_pPlayerParam.SpecialAbilityMax );
-	ImGui::InputFloat( u8"特殊能力回復値",	&m_pPlayerParam.SpecialAbilityValue );
-	ImGui::InputInt( u8"攻撃コンボ最大数",	&m_pPlayerParam.AttackComboMax );
-	ImGui::InputInt( u8"攻撃キュー追加最大数",	&m_pPlayerParam.AttackQueueMax );
-	ImGui::InputFloat( u8"回避の移動距離",		&m_pPlayerParam.AvoidMoveDistance );
-	ImGui::InputFloat( u8"回避用の移動速度",	&m_pPlayerParam.AvoidMoveSpeed );
-	ImGui::InputFloat( u8"カメラの移動速度",	&m_pPlayerParam.CameraMoveSpeed );
-	ImGui::InputFloat( u8"カメラの距離",		&m_pPlayerParam.CameraDistance );
-	ImGui::InputFloat( u8"カメラの高さ",		&m_pPlayerParam.CameraHeight );
-	ImGui::InputFloat( u8"スフィアの調整座標 X",	&m_pPlayerParam.SphereAdjPos.x );
-	ImGui::InputFloat( u8"スフィアの調整座標 Y",	&m_pPlayerParam.SphereAdjPos.y );
-	ImGui::InputFloat( u8"スフィアの調整座標 Z",	&m_pPlayerParam.SphereAdjPos.z );
-	ImGui::InputFloat( u8"スフィアの調整半径",		&m_pPlayerParam.SphereAdjRadius );
+	CImGuiManager::DragFloat( u8"移動速度",				&m_pPlayerParam.MoveSpeed );
+	CImGuiManager::DragFloat( u8"体力",					&m_pPlayerParam.LifeMax );
+	CImGuiManager::DragFloat( u8"攻撃力",				&m_pPlayerParam.AttackPower );
+	CImGuiManager::DragInt(   u8"無敵時間",				&m_pPlayerParam.InvincibleTime );
+	CImGuiManager::DragFloat( u8"特殊能力最大値",		&m_pPlayerParam.SpecialAbilityMax );
+	CImGuiManager::DragFloat( u8"特殊能力回復値",		&m_pPlayerParam.SpecialAbilityValue );
+	CImGuiManager::DragInt(   u8"攻撃コンボ最大数",		&m_pPlayerParam.AttackComboMax );
+	CImGuiManager::DragInt(   u8"攻撃キュー追加最大数",	&m_pPlayerParam.AttackQueueMax );
+	CImGuiManager::DragFloat( u8"回避の移動距離",		&m_pPlayerParam.AvoidMoveDistance );
+	CImGuiManager::DragFloat( u8"回避用の移動速度",		&m_pPlayerParam.AvoidMoveSpeed );
+	CImGuiManager::DragFloat( u8"カメラの移動速度",		&m_pPlayerParam.CameraMoveSpeed );
+	CImGuiManager::DragFloat( u8"カメラの距離",			&m_pPlayerParam.CameraDistance );
+	CImGuiManager::DragFloat( u8"カメラの高さ",			&m_pPlayerParam.CameraHeight );
+	CImGuiManager::DragFloat( u8"スフィアの調整座標 X",	&m_pPlayerParam.SphereAdjPos.x );
+	CImGuiManager::DragFloat( u8"スフィアの調整座標 Y",	&m_pPlayerParam.SphereAdjPos.y );
+	CImGuiManager::DragFloat( u8"スフィアの調整座標 Z",	&m_pPlayerParam.SphereAdjPos.z );
+	CImGuiManager::DragFloat( u8"スフィアの調整半径",	&m_pPlayerParam.SphereAdjRadius );
+	
+
 
 	static CImGuiManager::SSuccess s_Success;
 	if( ImGui::Button(u8"読込") == true ){
