@@ -6,6 +6,7 @@
 CEditAlienA::CEditAlienA()
 {
 	m_vScale = { 1.0f, 1.0f, 1.0f };
+	m_ObjectTag = EObjectTag::Alien_A;
 }
 
 CEditAlienA::~CEditAlienA()

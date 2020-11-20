@@ -52,9 +52,6 @@ CMain::CMain()
 	m_pLight->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	m_pLight->SetIntensity( 1.2f );
 	CLightManager::SetLgiht( m_pLight );
-
-	// サウンドデータの設定.
-//	CSoundManager::CreateSoundData();
 }
 
 CMain::~CMain()

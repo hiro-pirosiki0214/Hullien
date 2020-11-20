@@ -133,6 +133,7 @@ private:
 	D3DXVECTOR2		m_UV;				// テクスチャUV座標.
 	int				m_AnimNumber;		// アニメーションナンバー.
 	int				m_FrameCount;		// フレームカウント.
+	int				m_FrameCountSpeed;	// フレームカウント速度.
 	int				m_FrameTime;		// フレームタイム.
 	bool			m_IsAnimation;		// アニメーションするか.
 	enLocalPosition m_enLocalPosition;	// ローカル座標の種類.

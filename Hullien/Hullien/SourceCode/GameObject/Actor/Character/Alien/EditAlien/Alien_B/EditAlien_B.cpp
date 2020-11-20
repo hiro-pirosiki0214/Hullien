@@ -9,6 +9,7 @@ CEditAlienB::CEditAlienB()
 	, m_IsAttackSE	( false )
 {
 	m_vScale = { 1.0f, 1.0f, 1.0f };
+	m_ObjectTag = EObjectTag::Alien_B;
 }
 
 CEditAlienB::~CEditAlienB()

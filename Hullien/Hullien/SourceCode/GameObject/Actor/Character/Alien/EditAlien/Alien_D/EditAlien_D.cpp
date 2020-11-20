@@ -13,6 +13,7 @@ CEditAlienD::CEditAlienD()
 	, m_IsAttackStart		( false )
 {
 	m_vScale = { 1.0f, 1.0f, 1.0f };
+	m_ObjectTag = EObjectTag::Alien_B;
 	m_pLaserBeam = std::make_unique<CLaserBeam>();
 }
 

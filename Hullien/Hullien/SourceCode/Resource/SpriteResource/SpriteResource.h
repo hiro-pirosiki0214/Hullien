@@ -30,12 +30,12 @@ public:
 	// スプライト取得関数.
 	static std::shared_ptr<CSprite> GetSprite( const std::string& spriteName );
 
+	// スプライト情報の読み込み.
+	static CSprite::SPRITE_STATE SpriteStateRead( const std::string& filePath );
 private:
 	// スプライト読み込み.
 	void SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
 
-	// スプライト情報の読み込み.
-	CSprite::SPRITE_STATE SpriteStateRead( const std::string& filePath );
 
 private:
 	sprite_map m_SpriteList;	// スプライトリスト.

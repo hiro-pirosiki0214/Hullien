@@ -1,4 +1,5 @@
 #include "LoadManager.h"
+#include "..\..\Common\Sprite\CSprite.h"
 #include "..\EffectResource\EffectResource.h"
 #include "..\MeshResource\MeshResource.h"
 #include "..\SpriteResource\SpriteResource.h"
@@ -6,7 +7,8 @@
 #include "..\..\XAudio2\SoundManager.h"
 
 CLoadManager::CLoadManager()
-	: m_isLoadEnd		( false )
+	: m_Thread			()
+	, m_isLoadEnd		( false )
 	, m_isThreadJoined	( false )
 {
 }

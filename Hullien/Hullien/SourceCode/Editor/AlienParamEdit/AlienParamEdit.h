@@ -4,13 +4,18 @@
 #include "..\EditBase.h"
 #include "..\..\GameObject\Actor\Character\Alien\AlienParam.h"
 #include "..\..\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h"
+#include "..\..\GameObject\MotherShipUFO\MotherShipUFO.h"
+#include "..\..\GameObject\SpawnUFO\SpawnUFO.h"
 
 #include <vector>
 
 class CAlienParamEdit : public CEditBase
 {
 	const char* FILE_PATH = "Data\\GameParam\\Alien\\AlienParamPathList.txt";
+	const char* MOTHER_SHIP_UFO_PARAM_FILE_PATH = "Data\\GameParam\\Alien\\MotherShipUFOParam\\MotherShipUFOParam.bin";
+	const char* SPAWN_UFO_PARAM_FILE_PATH = "Data\\GameParam\\Alien\\SpaenParam\\SpaenParam.bin";
 
+	const char* SPAWN_UFO_MODEL_NAME = "ufo_mini";
 public:
 	CAlienParamEdit();
 	~CAlienParamEdit();
@@ -43,8 +48,13 @@ private:
 	std::vector<std::string>						m_AlienPathList;
 	std::vector<std::string>						m_AlienNameList;
 	std::vector<std::shared_ptr<CEditAlien>>		m_pEditAliens;
-	int m_AlienIndex;
-	int m_NowParamIndex;
+	std::unique_ptr<CMotherShipUFO>					m_pMotherShipUFO;
+	CMotherShipUFO::SMotherShipUFOParam				m_MotherShipUFOParam;
+	std::unique_ptr<CSpawnUFO>						m_pSpawnUFO;
+	stSpawnUFOParam									m_SpawnUFOParam;
+	int		m_AlienIndex;
+	int		m_NowParamIndex;
+	bool	m_IsRisingMotherShip;
 
 };
 

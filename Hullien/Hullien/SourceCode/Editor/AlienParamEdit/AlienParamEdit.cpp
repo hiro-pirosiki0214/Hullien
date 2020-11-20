@@ -21,10 +21,16 @@ CAlienParamEdit::CAlienParamEdit()
 	, m_AlienPathList		()
 	, m_AlienNameList		()
 	, m_pEditAliens			()
+	, m_pMotherShipUFO		( nullptr )
+	, m_MotherShipUFOParam	()
+	, m_pSpawnUFO			( nullptr )
+	, m_SpawnUFOParam		()
 	, m_AlienIndex			( 0 )
 	, m_NowParamIndex		( 0 )
-
+	, m_IsRisingMotherShip	( false )
 {
+	m_pMotherShipUFO = std::make_unique<CMotherShipUFO>();
+	m_pSpawnUFO = std::make_unique<CSpawnUFO>();
 }
 
 CAlienParamEdit::~CAlienParamEdit()
@@ -34,8 +40,18 @@ CAlienParamEdit::~CAlienParamEdit()
 // 初期化関数.
 bool CAlienParamEdit::Init()
 {
-	if( FileAllReading()		== false ) return false;
-	if( InitAlien()				== false ) return false;
+	if( FileAllReading()			== false ) return false;
+	if( InitAlien()					== false ) return false;
+	if( m_pMotherShipUFO->Init()	== false ) return false;
+	if( m_pSpawnUFO->Init()			== false ) return false;
+	std::vector<stSpawnUFOParam> tempPram;
+	if( CFileManager::BinaryVectorReading( SPAWN_UFO_PARAM_FILE_PATH, tempPram ) == false ) return false;
+	m_SpawnUFOParam = tempPram[0];
+	m_pSpawnUFO->SetSpawnParameter( m_SpawnUFOParam );
+	m_pSpawnUFO->DischargePreparation()
+		;
+	m_pMotherShipUFO->DischargePreparation();
+
 	return true;
 }
 
@@ -44,6 +60,14 @@ void CAlienParamEdit::Update()
 {
 	m_pEditAliens[m_AlienIndex]->SetParamter(m_AlienParamList[m_NowParamIndex]);
 	m_pEditAliens[m_AlienIndex]->Update();
+
+	// マザーシップに上る処理.
+	m_pMotherShipUFO->Update();
+	if( m_IsRisingMotherShip == true ){
+		m_pEditAliens[m_AlienIndex]->SetOtherAbduct( &m_IsRisingMotherShip );
+		m_pMotherShipUFO->Collision( m_pEditAliens[m_AlienIndex].get() );
+		m_IsRisingMotherShip = m_pEditAliens[m_AlienIndex]->IsPlaying();
+	}
 }
 
 // 描画関数.
@@ -69,6 +93,8 @@ void CAlienParamEdit::Render()
 void CAlienParamEdit::ModelRender()
 {
 	m_pEditAliens[m_AlienIndex]->Render();
+	m_pSpawnUFO->Render();
+	m_pMotherShipUFO->Render();
 }
 
 // エフェクトの描画.
@@ -188,11 +214,35 @@ void CAlienParamEdit::SpawnParamRender( const int& index )
 	ImGui::SameLine();
 	s_success.Render(); ImGui::NewLine();
 
-	if( ImGui::Button(u8"スポーンプレビュー") ) m_pEditAliens[m_AlienIndex]->Spawn( { 0.0f, 10.0f, 0.0f } );
+	if( ImGui::Button(u8"スポーンプレビュー") ){
+		m_pEditAliens[m_AlienIndex]->Spawn(
+			{
+				m_SpawnUFOParam.Position.x,
+				m_SpawnUFOParam.SpawnPointHight,
+				m_SpawnUFOParam.Position.z
+			} );
+	}
 	if( ImGui::Button(u8"アタックプレビュー") ) m_pEditAliens[m_AlienIndex]->PlayAttack();
 	if( ImGui::Button(u8"怯みプレビュー") ) m_pEditAliens[m_AlienIndex]->PlayFright();
 	if( ImGui::Button(u8"死亡プレビュー") ) m_pEditAliens[m_AlienIndex]->PlayDeath();
-	if( ImGui::Button(u8"上昇プレビュー") ) m_pEditAliens[m_AlienIndex]->PlayRisingMotherShip( { 0.0f, 20.0f, 0.0f } );
+	if( ImGui::Button(u8"上昇プレビュー") ){
+		m_IsRisingMotherShip = true;
+		m_pEditAliens[m_AlienIndex]->PlayRisingMotherShip( 
+			{
+				m_pMotherShipUFO->GetPosition().x, 
+				m_pEditAliens[m_AlienIndex]->GetPosition().y, 
+				m_pMotherShipUFO->GetPosition().z
+			} );
+	}
+	if( ImGui::Button(u8"UFOのパラメータ更新") ){
+		if( CFileManager::BinaryReading( MOTHER_SHIP_UFO_PARAM_FILE_PATH, m_MotherShipUFOParam ) == false ) return;
+		m_pMotherShipUFO->SetParameter( m_MotherShipUFOParam );
+		std::vector<stSpawnUFOParam> tempPram;
+		if( CFileManager::BinaryVectorReading( SPAWN_UFO_PARAM_FILE_PATH, tempPram ) == false ) return;
+		m_SpawnUFOParam = tempPram[0];
+		m_pSpawnUFO->SetSpawnParameter( m_SpawnUFOParam );
+		m_pSpawnUFO->DischargePreparation();
+	}
 
 	ImGui::PopItemWidth();
 }

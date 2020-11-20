@@ -23,6 +23,8 @@ public:
 	void PlayRisingMotherShip( const D3DXVECTOR3& vPos );
 	// パラメーターの設定.
 	virtual void SetParamter( const SAlienParam& param ){ m_Paramter = param; }
+	// プレイ中か.
+	inline bool IsPlaying(){ return m_IsPlaying; }
 
 protected:
 	// 待機関数.

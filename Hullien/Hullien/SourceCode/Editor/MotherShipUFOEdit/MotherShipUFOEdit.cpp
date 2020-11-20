@@ -17,12 +17,14 @@ bool CMotherShipUFOEdit::Init()
 {
 	if( m_pMotherShipUFO->Init() == false ) return false;
 	if( CFileManager::BinaryReading( MOTHER_SHIP_UFO_PARAM_FILE_PATH, m_MotherShipUFOParam ) == false ) return false;
+	m_pMotherShipUFO->DischargePreparation();
 	return true;
 }
 
 // XVŠÖ”.
 void CMotherShipUFOEdit::Update()
 {
+	m_pMotherShipUFO->SetParameter( m_MotherShipUFOParam );
 	m_pMotherShipUFO->Update();
 }
 
@@ -48,12 +50,10 @@ void CMotherShipUFOEdit::Render()
 	static CImGuiManager::SSuccess s_success = {};
 	if( ImGui::Button(u8"“Çž") ){
 		s_success.IsSucceeded = CFileManager::BinaryReading( MOTHER_SHIP_UFO_PARAM_FILE_PATH, m_MotherShipUFOParam );
-		m_pMotherShipUFO->SetParameter( m_MotherShipUFOParam );
 	}
 	ImGui::SameLine();
 	if( ImGui::Button(u8"•Û‘¶") ){
 		s_success.IsSucceeded = CFileManager::BinaryWriting( MOTHER_SHIP_UFO_PARAM_FILE_PATH, m_MotherShipUFOParam );
-		m_pMotherShipUFO->SetParameter( m_MotherShipUFOParam );
 	}
 	ImGui::SameLine();
 	s_success.Render();
