@@ -90,7 +90,7 @@ bool CLoadManager::GetSprite(
 	const int size = sizeof(names)/sizeof(names[0]);
 
 	for( int i = 0; i < size; i++ ){
-		CSprite::SPRITE_STATE ss = CSpriteResource::SpriteStateRead( names[i] );
+		SSpriteState ss = CSpriteResource::SpriteStateRead( names[i] );
 		m_Sprites.emplace_back(
 			std::make_shared<CSprite>( pDevice11, pContext11, names[i], ss ) );
 	}

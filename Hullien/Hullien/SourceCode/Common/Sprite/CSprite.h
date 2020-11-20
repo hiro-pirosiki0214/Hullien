@@ -4,67 +4,69 @@
 #include "..\Common.h"
 #include "..\Shader\SpriteShader\SpriteShader.h"
 
-class CSprite : public CCommon
+// 幅高さ構造体(float型).
+struct WHDIZE_FLOAT
 {
-	// 幅高さ構造体(float型).
-	struct WHDIZE_FLOAT
-	{
-		float w;	// 幅.
-		float h;	// 高さ.
-	};
-	enum  class enLocalPosition
+	float w;	// 幅.
+	float h;	// 高さ.
+};
+
+enum class enLocalPosition : unsigned char
+{
+	None,
+
+	LeftUp = 0,	// 左上.
+	Left,		// 左.
+	LeftDown,	// 左下.
+	Down,		// 下.
+	RightDown,	// 右下.
+	Right,		// 右.
+	RightUp,	// 右上.
+	Up,			// 上.
+	Center,		// 中央.
+
+	Max,
+} typedef ELocalPosition;
+
+// スプライト構造体.
+struct stSpriteState
+{
+	int				LocalPosNum;// ローカル座標の
+	WHDIZE_FLOAT	Disp;		// 表示幅,高さ.
+	WHDIZE_FLOAT	Base;		// 元画像の幅,高さ.
+	WHDIZE_FLOAT	Stride;		// 1コマ当たりの幅,高さ.
+	D3DXVECTOR3		vPos;		// 座標.
+	int				AnimNum;	// アニメーション数.
+
+	enum enSPRITE_STATE : unsigned char
 	{
 		None,
 
-		LeftUp = 0,	// 左上.
-		Left,		// 左.
-		LeftDown,	// 左下.
-		Down,		// 下.
-		RightDown,	// 右下.
-		Right,		// 右.
-		RightUp,	// 右上.
-		Up,			// 上.
-		Center,		// 中央.
+		enLocalPosNum = 0,
+		enDisp_w,
+		enDisp_h,
+		enBase_w,
+		enBase_h,
+		enStride_w,
+		enStride_h,
+		envPos_x,
+		envPos_y,
+		envPos_z,
+		enAnimNum,
 
-		Max,
-	};
+		MAX = enAnimNum,
+	} typedef ESPRITE_STATE;
+} typedef SSpriteState;
+
+class CSprite : public CCommon
+{
 public:
-	// スプライト構造体.
-	struct SPRITE_STATE
-	{
-		int				LocalPosNum;// ローカル座標の
-		WHDIZE_FLOAT	Disp;		// 表示幅,高さ.
-		WHDIZE_FLOAT	Base;		// 元画像の幅,高さ.
-		WHDIZE_FLOAT	Stride;		// 1コマ当たりの幅,高さ.
-		D3DXVECTOR3		vPos;		// 座標.
-		int				AnimNum;	// アニメーション数.
-
-		enum enSPRITE_STATE
-		{
-			None,
-
-			enLocalPosNum = 0,
-			enDisp_w,
-			enDisp_h,
-			enBase_w,
-			enBase_h,
-			enStride_w,
-			enStride_h,
-			envPos_x,
-			envPos_y,
-			envPos_z,
-			enAnimNum,
-
-			MAX = enAnimNum,
-		};
-	};
-
 	CSprite();
 	CSprite(
 		ID3D11Device* pDevice11,
 		ID3D11DeviceContext* pContext11,
 		const char* fileName,
-		const SPRITE_STATE& pSs);
+		const SSpriteState& pSs);
 
 	virtual ~CSprite();
 
@@ -73,7 +75,7 @@ public:
 		ID3D11Device* pDevice11,
 		ID3D11DeviceContext* pContext11,
 		const char* fileName,
-		const SPRITE_STATE& pSs);
+		const SSpriteState& pSs);
 
 	// 解放.
 	void Release();
@@ -127,7 +129,7 @@ private:
 	ID3D11SamplerState*		m_pSampleLinear;		// サンプラ:テクスチャに各種フィルタをかける.
 	ID3D11ShaderResourceView*	m_pTexture;			// テクスチャ.
 
-	SPRITE_STATE	m_SState;			// スプライト情報.
+	SSpriteState	m_SState;			// スプライト情報.
 	POINT			m_PatternNo;		// パターン番号.
 	POINT			m_PatternMax;		// パターン最大数.
 	D3DXVECTOR2		m_UV;				// テクスチャUV座標.

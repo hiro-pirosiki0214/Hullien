@@ -65,7 +65,7 @@ void CSpriteResource::SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* 
 			exe != ".bmp" && exe != ".BMP" &&
 			exe != ".jpg" && exe != ".JPG" ) return;
 
-		CSprite::SPRITE_STATE ss = SpriteStateRead( filePath );
+		SSpriteState ss = SpriteStateRead( filePath );
 		m_SpriteList[fileName] =
 			std::make_shared<CSprite>( pDevice11, pContext11, filePath.c_str(), ss );
 	};
@@ -84,9 +84,9 @@ void CSpriteResource::SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* 
 //-------------------------------.
 // スプライト情報の読み込み.
 //-------------------------------.
-CSprite::SPRITE_STATE CSpriteResource::SpriteStateRead( const std::string& path )
+SSpriteState CSpriteResource::SpriteStateRead( const std::string& path )
 {
-	CSprite::SPRITE_STATE ss;
+	SSpriteState ss;
 
 	std::string filePath = path;
 	// 拡張子の"."の位置を取得.
