@@ -76,16 +76,18 @@ void CEditCamera::MouseUpdate()
 	float xSub = 0.0f;
 	float ySub = 0.0f;
 	float moveSpeed = MOUSE_MOVE_SPEED;
+	if( CXInput::RThumbY_Axis() > IDLE_THUMB_MAX ) ySub = -static_cast<float>(CXInput::RThumbY_Axis());
+	if( CXInput::RThumbY_Axis() < IDLE_THUMB_MIN ) ySub = -static_cast<float>(CXInput::RThumbY_Axis());
+	if( CXInput::RThumbX_Axis() > IDLE_THUMB_MAX ) xSub = static_cast<float>(CXInput::RThumbX_Axis());
+	if( CXInput::RThumbX_Axis() < IDLE_THUMB_MIN ) xSub = static_cast<float>(CXInput::RThumbX_Axis());
 	if(!( GetAsyncKeyState(VK_LBUTTON) & 0x8000 )){
-		if( CXInput::RThumbY_Axis() > IDLE_THUMB_MAX ) ySub = -static_cast<float>(CXInput::RThumbY_Axis());
-		if( CXInput::RThumbY_Axis() < IDLE_THUMB_MIN ) ySub = -static_cast<float>(CXInput::RThumbY_Axis());
-		if( CXInput::RThumbX_Axis() > IDLE_THUMB_MAX ) xSub = static_cast<float>(CXInput::RThumbX_Axis());
-		if( CXInput::RThumbX_Axis() < IDLE_THUMB_MIN ) xSub = static_cast<float>(CXInput::RThumbX_Axis());
 		moveSpeed *= 0.5f;	// 移動速度を半分にする.
 	} else {
 		// マウスの現在の座標と過去の座標を引いた値を算出.
-		float xSub = m_pMouse->GetPosisionX() - m_pMouse->GetOldPosisionX();
-		float ySub = m_pMouse->GetPosisionY() - m_pMouse->GetOldPosisionY();
+		if( ySub == 0.0f )
+			ySub = m_pMouse->GetPosisionY() - m_pMouse->GetOldPosisionY();
+		if( xSub == 0.0f )
+			xSub = m_pMouse->GetPosisionX() - m_pMouse->GetOldPosisionX();
 	}
 
 
