@@ -33,9 +33,10 @@ class CEditor : public CSceneBase
 		EEditScenes_ItemEdit,
 		EEditScenes_MotherShipUFOEdit,
 		EEditScenes_InvisibleWallEdit,
+		EEditScenes_EditEnd,
 
 		EEditScenes_Begin = EEditScenes_None,
-		EEditScenes_End = EEditScenes_InvisibleWallEdit,
+		EEditScenes_End = EEditScenes_EditEnd,
 
 		EEditScenes_Max,
 
@@ -64,7 +65,7 @@ private:
 	std::unique_ptr<CSkyDome>			m_pSkyDome;
 	std::unique_ptr<CGroundStage>		m_pGroundStage;
 	std::vector<std::unique_ptr<CEditBase>>	m_pEdit;
-
+	bool m_IsEditEnd;
 	int m_NowEditScene;
 };
 

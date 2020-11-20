@@ -21,6 +21,7 @@ class CCommand
 		EKey_LB,	// LB.
 	} typedef EKey;
 	
+	// コマンドのリスト.
  	const std::vector<EKey> COMMAND_LIST = 
 	{
 		EKey_Up,
@@ -29,7 +30,13 @@ class CCommand
 		EKey_Down,
 		EKey_Left,
 		EKey_Right,
+		EKey_Left,
+		EKey_Right,
+		EKey_RB,
+		EKey_LB,
 	};
+
+	const int COMMAND_RESET_FRAME = 30;	// コマンドのリセットフレーム.
 
 public:
 	CCommand();

@@ -22,9 +22,11 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
 
 	, m_pEditCamera			( nullptr )
+	, m_pSkyDome			( nullptr )
 	, m_pGroundStage		( nullptr )
-	, m_NowEditScene		( EEditScenes_PlayerEdit )
 	, m_pEdit				()
+	, m_IsEditEnd			( false )
+	, m_NowEditScene		( EEditScenes_PlayerEdit )
 {
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
@@ -57,7 +59,7 @@ void CEditor::Update()
 		m_pEditCamera->Updata();
 		CCameraManager::SetCamera( m_pEditCamera );
 	}
-	if(( GetAsyncKeyState(VK_F6) & 0x8000 ) && ( GetAsyncKeyState(VK_SHIFT) & 0x8000 )){
+	if( m_IsEditEnd == true ){
 		m_pSceneManager->NextSceneMove();
 	}
 }
@@ -144,6 +146,10 @@ void CEditor::ImGuiRender()
 	ImGui::RadioButton("MotherShipUFOEdit", &m_NowEditScene, EEditScenes_MotherShipUFOEdit);
 	ImGui::SameLine();
 	ImGui::RadioButton("InvisibleWallEdit", &m_NowEditScene, EEditScenes_InvisibleWallEdit);
+	ImGui::SameLine();
+	if( ImGui::RadioButton(u8"エディタの終了", &m_NowEditScene, EEditScenes_InvisibleWallEdit) ){
+		m_IsEditEnd = true;
+	}
 
 	ImGui::End();
 

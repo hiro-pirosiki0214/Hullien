@@ -71,8 +71,6 @@ void CEditCamera::Updata()
 void CEditCamera::MouseUpdate()
 {
 	m_pMouse->UpdateMouse( m_hWnd );	// マウスの更新.
-	// マウスが画面外なら終了.
-	if( m_pMouse->IsScreenMiddle() == false ) return;
 	float xSub = 0.0f;
 	float ySub = 0.0f;
 	float moveSpeed = MOUSE_MOVE_SPEED;
@@ -83,6 +81,8 @@ void CEditCamera::MouseUpdate()
 	if(!( GetAsyncKeyState(VK_LBUTTON) & 0x8000 )){
 		moveSpeed *= 0.5f;	// 移動速度を半分にする.
 	} else {
+		// マウスが画面外なら終了.
+		if( m_pMouse->IsScreenMiddle() == false ) return;
 		// マウスの現在の座標と過去の座標を引いた値を算出.
 		if( ySub == 0.0f )
 			ySub = m_pMouse->GetPosisionY() - m_pMouse->GetOldPosisionY();

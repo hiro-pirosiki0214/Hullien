@@ -14,6 +14,11 @@ void CCommand::Update()
 	m_isSuccessCommand = false;
 	InputKey();	// キーの入力.
 	Check();	// 確認.
+	m_TimeCount++;
+	if( m_TimeCount >= COMMAND_RESET_FRAME ){
+		m_TimeCount = 0;
+		for( int i = 0; i < static_cast<int>(m_KeyQueue.size()); i++ ) m_KeyQueue.pop();
+	}
 }
 
 // キー(buttonの入力).
