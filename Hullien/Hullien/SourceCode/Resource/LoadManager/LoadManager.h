@@ -3,6 +3,7 @@
 
 #include "..\..\Global.h"
 #include <thread>
+#include <mutex>
 
 #include <memory>
 #include <vector>
@@ -42,7 +43,8 @@ private:
 private:
 	std::thread m_Thread;		// スレッド.
 	std::vector<std::shared_ptr<CSprite>>	m_Sprites;
-
+	std::mutex	m_Mutex;
+	
 	bool m_isLoadEnd;			// ロードが終了したか.
 	bool m_isThreadJoined;		// スレッドが解放されたか.
 };

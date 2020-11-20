@@ -9,6 +9,7 @@
 CLoadManager::CLoadManager()
 	: m_Thread			()
 	, m_Sprites			()
+	, m_Mutex			()
 	, m_isLoadEnd		( false )
 	, m_isThreadJoined	( false )
 {
@@ -30,19 +31,18 @@ void CLoadManager::LoadResource(
 	GetSprite( pDevice11, pContext11 );
 	CFontResource::Load( pDevice11, pContext11 );
 	CSoundManager::CreateSoundData();
-	std::mutex mtx;
 	auto load = [&]( 
 		HWND hWnd, 
 		ID3D11Device* pDevice11, 
 		ID3D11DeviceContext* pContext11, 
 		LPDIRECT3DDEVICE9 pDevice9 )
 	{
-		mtx.lock();
+		m_Mutex.lock();
 		CSpriteResource::Load( pDevice11, pContext11 );
 		CMeshResorce::Load( hWnd, pDevice11, pContext11, pDevice9 );
 		CEffectResource::Load( pDevice11, pContext11 );
 		m_isLoadEnd = true;
-		mtx.unlock();
+		m_Mutex.unlock();
 	};
 	m_Thread = std::thread( load, hWnd, pDevice11, pContext11, pDevice9 );
 }
