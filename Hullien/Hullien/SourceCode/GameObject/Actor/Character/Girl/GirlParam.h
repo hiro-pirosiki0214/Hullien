@@ -25,7 +25,7 @@ struct stGirlParam : public CCharacter::SParameter
 
 namespace girl
 {
-	enum enAnimNo
+	enum enAnimNo : char
 	{
 		EAnimNo_None = -1,
 

@@ -355,6 +355,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\MeshStruct.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

@@ -39,7 +39,7 @@ struct stPlayerParam : public CCharacter::SParameter
 namespace player
 {
 // アニメーション番号.
-enum enAnimNo
+enum enAnimNo : char
 {
 	EAnimNo_None = -1,
 
@@ -61,7 +61,7 @@ enum enAnimNo
 } typedef EAnimNo;
 
 // 攻撃番号,
-enum enAttackNo
+enum enAttackNo : unsigned char
 {
 	EAttackNo_None,
 
@@ -73,7 +73,7 @@ enum enAttackNo
 } typedef EAttackNo;
 
 // 効果時間計測番号.
-enum enEffectTimerNo
+enum enEffectTimerNo : unsigned char
 {
 	EEffectTimerNo_None,
 
@@ -86,7 +86,7 @@ enum enEffectTimerNo
 } typedef EEffectTimerNo;
 
 // 使用エフェクト番号.
-enum enEffectNo
+enum enEffectNo : unsigned char
 {
 	EEffectNo_AttackOne,		// 攻撃1.
 	EEffectNo_AttackTwo,		// 攻撃2.
@@ -99,7 +99,7 @@ enum enEffectNo
 } typedef EEffectNo;
 
 // 特殊能力のカメラ状態.
-enum enSPCameraState
+enum enSPCameraState : unsigned char
 {
 	ESPCameraState_None,
 

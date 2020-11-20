@@ -91,7 +91,7 @@ struct stAlienParam : public CCharacter::SParameter
 namespace alien
 {
 	// 宇宙人状態.
-	enum class enAlienState
+	enum class enAlienState : unsigned char
 	{
 		None,
 
@@ -109,7 +109,7 @@ namespace alien
 	} typedef EAlienState;
 
 	// 移動状態.
-	enum class enMoveState
+	enum class enMoveState : unsigned char
 	{
 		None,
 
@@ -122,7 +122,7 @@ namespace alien
 	} typedef EMoveState;
 
 	// アニメーション番号.
-	enum enAnimNo
+	enum enAnimNo : char
 	{
 		EAnimNo_None = -1,
 
@@ -140,7 +140,7 @@ namespace alien
 	} typedef EAnimNo;
 
 	// エフェクト番号.
-	enum enEffectNo
+	enum enEffectNo : char
 	{
 		EEffectNo_None = -1,
 

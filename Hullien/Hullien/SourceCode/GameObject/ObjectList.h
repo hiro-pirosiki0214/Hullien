@@ -1,7 +1,7 @@
 #ifndef OBJECT_LIST_H
 #define OBJECT_LIST_H
 
-enum class enObjectTagList
+enum class enObjectTagList : unsigned char
 {
 	None,
 

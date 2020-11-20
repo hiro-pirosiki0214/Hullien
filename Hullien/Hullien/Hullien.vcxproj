@@ -304,6 +304,7 @@
     <ClInclude Include="Library\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Library\ImGui\imstb_textedit.h" />
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\MeshStruct.h" />
     <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h" />
