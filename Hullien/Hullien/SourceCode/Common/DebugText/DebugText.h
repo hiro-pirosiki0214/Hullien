@@ -19,7 +19,7 @@ private:
 
 public:
 	CDebugText();	// コンストラクタ
-	~CDebugText();	// デストラクタ.
+	virtual ~CDebugText();	// デストラクタ.
 
 	// インスタンスの取得.
 	static CDebugText* GetInstance();

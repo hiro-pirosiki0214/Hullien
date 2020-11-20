@@ -66,7 +66,7 @@ public:
 		const char* fileName,
 		const SPRITE_STATE& pSs);
 
-	~CSprite();
+	virtual ~CSprite();
 
 	// ‰Šú‰».
 	HRESULT Init(

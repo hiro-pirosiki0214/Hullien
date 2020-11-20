@@ -20,7 +20,7 @@ public:
 	}
 
 	CDX9StaticMesh();	// コンストラクタ.
-	~CDX9StaticMesh();	// デストラクタ.
+	virtual ~CDX9StaticMesh();	// デストラクタ.
 
 						// 初期化.
 	HRESULT Init(

@@ -120,8 +120,6 @@ HRESULT CMain::Load()
 //====================================.
 void CMain::Update()
 {
-	// 画面のクリア.
-	CDirectX11::ClearBackBuffer();
 	CSceneTexRenderer::ClearBuffer();
 
 	CCameraManager::Update();
@@ -131,7 +129,6 @@ void CMain::Update()
 	CDebugText::SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	CDebugText::Render( "FPS:", (int)m_pFrameRate->GetFrameTime() );
 #endif
-	CDirectX11::SwapChainPresent();
 }
 
 //====================================.
@@ -151,9 +148,14 @@ void CMain::Loop()
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );
 		} else {
+			// 画面のクリア.
+			CDirectX11::ClearBackBuffer();
 			if( m_pLoadManager->ThreadRelease() == true ){
 				Update();
+			} else {
+				m_pLoadManager->Render();
 			}
+			CDirectX11::SwapChainPresent();
 			// フレームレートの待機処理.
 			m_pFrameRate->Wait();
 		}

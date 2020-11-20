@@ -96,7 +96,7 @@ public:
 		Init( hWnd, pDevice11, pContext11, pDevice9, fileName );
 	}
 	CDX9SkinMesh();
-	~CDX9SkinMesh();
+	virtual ~CDX9SkinMesh();
 
 	HRESULT Init(
 		HWND hWnd, 
