@@ -6,10 +6,12 @@
 #include "..\..\GameObject\Widget\Fade\Fade.h"
 #include "..\..\XAudio2\SoundManager.h"
 #include "..\..\Camera\CameraManager\CameraManager.h"
+#include "..\..\Utility\Command\Command.h"
 
 CSceneManager::CSceneManager()
 	: m_hWnd		( nullptr )
 	, m_pScene		( nullptr )
+	, m_pCommand	( nullptr )
 	, m_NowScene	( EScene::Start )
 	, m_NextScene	( EScene::Start )
 	, m_IsLoadEnd	( false )
@@ -18,6 +20,7 @@ CSceneManager::CSceneManager()
 	, m_IsRetry		( false )
 {
 	NextSceneMove();
+	m_pCommand = std::make_unique<CCommand>();
 }
 
 CSceneManager::~CSceneManager()
@@ -146,7 +149,9 @@ void CSceneManager::RetryGame()
 //=================================.
 void CSceneManager::ChangeEditScene()
 {
-	if(( GetAsyncKeyState(VK_F5) & 0x8000 ) && ( GetAsyncKeyState(VK_SHIFT) & 0x8000 )){
+	m_pCommand->Update();
+
+	if( m_pCommand->IsSuccess() ){
 		m_pScene	= std::make_shared<CEditor>( this );
 		m_IsLoadEnd	= false;
 		m_NextScene	= m_NowScene;

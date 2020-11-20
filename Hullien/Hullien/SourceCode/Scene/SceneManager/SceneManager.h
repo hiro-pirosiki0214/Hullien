@@ -4,6 +4,8 @@
 #include "..\SceneBase\SceneBase.h"
 #include "..\..\GameObject\Widget\Fade\Fade.h"
 
+class CCommand;
+
 // シーンの種類.
 enum class enSceneNo
 {
@@ -60,6 +62,7 @@ private:
 private:
 	HWND m_hWnd;
 	std::shared_ptr<CSceneBase> m_pScene;
+	std::unique_ptr<CCommand>	m_pCommand;
 	EScene	m_NowScene;		// 現在のシーン.
 	EScene	m_NextScene;	// 次のシーン.
 	bool	m_IsLoadEnd;	// ロードが終了したか.

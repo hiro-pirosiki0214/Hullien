@@ -272,6 +272,7 @@
     <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp" />
+    <ClCompile Include="SourceCode\Utility\Command\Command.cpp" />
     <ClCompile Include="SourceCode\Utility\FileManager\FileManager.cpp" />
     <ClCompile Include="SourceCode\Utility\FrameRate\FrameRate.cpp" />
     <ClCompile Include="SourceCode\Main\Main.cpp" />
@@ -450,6 +451,7 @@
     <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h" />
     <ClInclude Include="SourceCode\Utility\BitFlagManager\BitFlagManager.h" />
+    <ClInclude Include="SourceCode\Utility\Command\Command.h" />
     <ClInclude Include="SourceCode\Utility\FileManager\FileManager.h" />
     <ClInclude Include="SourceCode\Utility\FrameRate\FrameRate.h" />
     <ClInclude Include="SourceCode\Global.h" />
