@@ -2,6 +2,7 @@
 #define CLEARWIDGET_H
 
 #include "..\SceneWidget.h"
+#include <vector>
 
 class CReturnTitle;
 
@@ -11,6 +12,9 @@ class CReturnTitle;
 class CClearWidget : public CSceneWidget
 {
 	const float SPRITE_DIDSPPEAR_TIME = 30.0f;
+	const char* SPRITE_BUTTON_NAME = "buttonB";	//スプライトのファイル名.
+	const char* SPRITE_TITLE_NAME = "skip";	//スプライトのファイル名.
+	const char* SPRITE_PUSH_NAME = "hold";	//スプライトのファイル名.
 public:
 	CClearWidget();
 	virtual ~CClearWidget();
@@ -30,7 +34,7 @@ private:
 	virtual bool SpriteSetting() override;
 
 private:
-	std::unique_ptr<CReturnTitle> m_pReturTitle;	//タイトルに戻るボタンクラス.
+	std::vector<std::shared_ptr<CSprite>> m_pSkipSprites;	// スプライトクラス.
 	bool	m_IsSTGEnd;
 	float	m_SpriteDisappearCount;
 	float	m_SpriteAlpha;

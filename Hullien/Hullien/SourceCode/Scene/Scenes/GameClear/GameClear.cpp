@@ -14,6 +14,7 @@ CGameClear::CGameClear( CSceneManager* pSceneManager )
 	, m_pClearWidget		( nullptr )
 	, m_pSTGManager			( nullptr )
 	, m_IsChangeScene		( false )
+	, m_SkipWaitCount		( 0 )
 {
 	m_pClearWidget	= std::make_unique<CClearWidget>();
 	m_pSTGManager	= std::make_unique<CSTGManager>();
@@ -52,14 +53,20 @@ void CGameClear::Update()
 #else
 	m_pClearWidget->Update();
 
+	// ゲームクリアのスプライト表示が終了したら.
 	if( m_pClearWidget->IsSpriteRenderEnd() == true ){
+		// STGの更新.
 		m_pSTGManager->Update();
 	}
 
+	// STGが終了したら.
 	if( m_pSTGManager->IsSTGEnd() == true ){
 		m_pClearWidget->SetIsSTGEnd();
-		ChangeScene();
+		OnChangeScene();
+	} else {
+		SkipUpdate();
 	}
+	ChangeScene();
 
 #ifdef _DEBUG
 	if( GetAsyncKeyState(VK_F4) & 0x0001 ){
@@ -117,19 +124,23 @@ void CGameClear::ModelRender()
 }
 
 //============================.
+// シーンを切り替える.
+//============================.
+void CGameClear::OnChangeScene()
+{
+	if(m_IsChangeScene == true) return;
+	CFade::SetFadeIn();
+	CSoundManager::PlaySE("Determination");
+	CSoundManager::FadeOutBGM("ClearBGM");
+	m_IsChangeScene = true;
+}
+
+//============================.
 // シーン切り替え関数.
 //============================.
 void CGameClear::ChangeScene()
 {
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
-	{
-		if(m_IsChangeScene == true) return;
-		CFade::SetFadeIn();
-		CSoundManager::PlaySE("Determination");
-		CSoundManager::FadeOutBGM("ClearBGM");
-		m_IsChangeScene = true;
-	}
+	if(m_IsChangeScene == false) return;
 
 	// フェードイン状態かつフェード中なら処理しない.
 	if(CFade::GetFadeState() != CFade::EFadeState::In) return;
@@ -137,4 +148,22 @@ void CGameClear::ChangeScene()
 	if(CSoundManager::GetBGMVolume("ClearBGM") > 0.0f) return;
 	while(CSoundManager::StopBGMThread("ClearBGM")== false);
 	m_pSceneManager->NextSceneMove();
+}
+
+//============================.
+// スキップの更新関数.
+//============================.
+void CGameClear::SkipUpdate()
+{
+	// スキップ.
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
+		m_SkipWaitCount++;
+
+	}
+	else {
+		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
+	}
+	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
+	OnChangeScene();
 }

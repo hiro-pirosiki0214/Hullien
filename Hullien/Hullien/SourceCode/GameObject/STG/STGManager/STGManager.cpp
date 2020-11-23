@@ -31,7 +31,6 @@ bool CSTGManager::Init()
 	if( m_pSkyDome->Init()		== false ) return false;
 	if( m_pPlayer->Init()		== false ) return false;
 	if( m_pEnemyManager->Init()	== false ) return false;
-	m_STGEndFrame = m_pEnemyManager->GetSTGEndTime() + STG_END_FRAME;
 
 	m_pCamera->SetPosition( CAMERA_POSITION );
 	m_pCamera->SetLookPosition( CAMERA_LOOK_POSITION );
@@ -84,5 +83,5 @@ void CSTGManager::Render()
 // シューティングが終了したか.
 bool CSTGManager::IsSTGEnd()
 {
-	return m_STGNowFrame >= m_STGEndFrame;
+	return m_pEnemyManager->IsEndEnmeyDead();
 }

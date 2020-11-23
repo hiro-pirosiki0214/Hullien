@@ -11,6 +11,7 @@ class CSTGManager;	// シューティング管理クラス.
 */
 class CGameClear : public CSceneBase
 {
+	const int   SKIP_WAIT_COUNT = 100;
 public:
 	CGameClear( CSceneManager* pSceneManager );
 	virtual ~CGameClear();
@@ -25,13 +26,18 @@ public:
 private:
 	// モデルの描画.
 	void ModelRender();
+	// シーンを切り替える.
+	void OnChangeScene();
 	// シーン切り替え関数.
 	void ChangeScene();
+	// スキップの更新関数.
+	void SkipUpdate();
 
 private:
 	std::unique_ptr<CClearWidget>	m_pClearWidget;	// クリアUIクラス.
 	std::unique_ptr<CSTGManager>	m_pSTGManager;	// シューティング管理クラス.
 	bool m_IsChangeScene;							//シーン切り替え可能か.
+	int	m_SkipWaitCount;
 };
 
 #endif	// #ifndef GAME_CLEAR_H.

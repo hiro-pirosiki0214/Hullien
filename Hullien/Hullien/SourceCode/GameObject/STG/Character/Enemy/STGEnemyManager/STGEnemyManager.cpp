@@ -35,3 +35,9 @@ void STG::CEnemyManager::Render()
 {
 	for( auto& e : m_Enemys ) e->Render();
 }
+
+// ÅŒã‚Ì“G‚ªŽ€–S‚µ‚½‚©.
+bool STG::CEnemyManager::IsEndEnmeyDead() const 
+{ 
+	return m_Enemys.back()->IsDead();
+}

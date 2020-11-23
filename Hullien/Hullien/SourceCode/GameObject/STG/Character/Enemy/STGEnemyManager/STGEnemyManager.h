@@ -27,8 +27,8 @@ namespace STG
 		// •`‰æŠÖ”.
 		void Render();
 
-		// ÅŒã‚Ì“G‚ÌoŒ»ŠÔ
-		float GetSTGEndTime() const { return m_EndEnemySpawnTime; }
+		// ÅŒã‚Ì“G‚ª€–S‚µ‚½‚©.
+		bool IsEndEnmeyDead() const;
 
 	private:
 		std::unique_ptr<STG::CEnemyFactory>			m_pEnemyFactory;	// “Gì¬ƒNƒ‰ƒX.

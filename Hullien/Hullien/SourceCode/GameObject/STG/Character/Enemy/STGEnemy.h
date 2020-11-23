@@ -52,6 +52,10 @@ namespace STG
 		// スポーン時間の取得.
 		inline float GetSpawnTime() const { return PARAMETER.SpawnTime; }
 		inline void SetPositionY( const float& posY ){ m_vPosition.y = posY; }
+
+		// 死亡したか.
+		inline bool IsDead() const { return m_NowState == STG::EEnemyState::Dead; }
+
 	private:
 		// スポーン.
 		void Spawn();
