@@ -33,6 +33,7 @@ bool CTitle::Load()
 
 	CSoundManager::ThreadPlayBGM("TitleBGM");
 	CSoundManager::FadeInBGM("TitleBGM");
+	m_pSceneManager->SetNowBGMName("TitleBGM");
 	return true;
 }
 
@@ -89,6 +90,7 @@ void CTitle::ChangeScene()
 		m_IsDecision = true;
 	}
 
+	if (m_IsChangeScene == false) return;
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if(CFade::GetIsFade() == true) return;

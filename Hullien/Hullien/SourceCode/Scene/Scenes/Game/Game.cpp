@@ -74,6 +74,7 @@ void CGame::Update()
 	switch (m_NowEventScene)
 	{
 	case EEventSceneState::Game:
+		m_pSceneManager->OnEditSceneChangeActive();
 		GameUpdate();
 		break;
 	case EEventSceneState::Continue:
@@ -82,6 +83,7 @@ void CGame::Update()
 	case EEventSceneState::GameStart:
 	case EEventSceneState::GameOver_Girl:
 	case EEventSceneState::Clear:
+		m_pSceneManager->OffEditSceneChangeActive();
 		m_pEventManager->Update();
 		break;
 	default:
@@ -197,6 +199,7 @@ void CGame::GameUpdate()
 		if( m_IsPlayGameBGM == false ){
 			if( CSoundManager::GetMoveUpThread("GameBGM") == false ){
 				CSoundManager::ThreadPlayBGM( "GameBGM" );
+				m_pSceneManager->SetNowBGMName("GameBGM");
 
 				CSoundManager::SetBGMVolume( "DangerBGM", 0.0f );
 				CSoundManager::ThreadPlayBGM("DangerBGM");
@@ -215,6 +218,7 @@ void CGame::GameUpdate()
 			CSoundManager::StopBGM("GameBGM");
 			if( CSoundManager::GetMoveUpThread("DangerBGM") == false ){
 				CSoundManager::ThreadPlayBGM("DangerBGM");
+				m_pSceneManager->SetNowBGMName("DangerBGM");
 			} else {
 				CSoundManager::AgainPlayBGM("DangerBGM");
 			}
@@ -313,6 +317,7 @@ void CGame::NextSceneMove()
 		break;
 	case ENextSceneState::Clear:
 		m_pEventManager->NextEventMove();
+		m_pSceneManager->OnEditSceneChangeActive();
 		m_pSceneManager->NextSceneMove();
 		break;
 	case ENextSceneState::GameOver:
@@ -321,6 +326,7 @@ void CGame::NextSceneMove()
 		if (CFade::GetIsFade() == true) return;
 		m_pSceneManager->OnGameOver();
 		m_pEventManager->NextEventMove();
+		m_pSceneManager->OnEditSceneChangeActive();
 		m_pSceneManager->NextSceneMove();
 		break;
 	default:

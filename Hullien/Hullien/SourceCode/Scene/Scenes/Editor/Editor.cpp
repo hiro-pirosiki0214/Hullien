@@ -17,6 +17,7 @@
 #include "..\..\..\Camera\EditCamera\EditCamera.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\Fog\Fog.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
@@ -27,10 +28,12 @@ CEditor::CEditor( CSceneManager* pSceneManager )
 	, m_pEdit				()
 	, m_IsEditEnd			( false )
 	, m_NowEditScene		( EEditScenes_PlayerEdit )
+	, m_IsChangeScene		( false )
 {
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_unique<CGroundStage>();
+	CFade::SetFadeOut();
 }
 
 CEditor::~CEditor()
@@ -43,14 +46,20 @@ bool CEditor::Load()
 	if( CreateEditList()			== false ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
-
+	m_pEditCamera->Updata();
+	CCameraManager::SetCamera( m_pEditCamera );
 	m_pEditCamera->SetHWND( m_pSceneManager->GethWnd() );
+	CSoundManager::ThreadPlayBGM("ClearBGM");
+	CSoundManager::FadeInBGM("ClearBGM");
+	m_pSceneManager->SetNowBGMName("ClearBGM");
 	return true;
 }
 
 // 更新関数.
 void CEditor::Update()
 {
+	if (CFade::GetFadeState() == CFade::EFadeState::Out
+		&& CFade::GetIsFade() == true) return;
 	CFog::Update();
 
 	m_pEdit[m_NowEditScene-1]->Update();
@@ -60,7 +69,7 @@ void CEditor::Update()
 		CCameraManager::SetCamera( m_pEditCamera );
 	}
 	if( m_IsEditEnd == true ){
-		m_pSceneManager->NextSceneMove();
+		ChangeScene();
 	}
 }
 
@@ -196,4 +205,23 @@ bool CEditor::CreateEditList()
 		if( m_pEdit.back()->Init() == false ) return false;
 	}
 	return true;
+}
+
+// シーン切り替え関数.
+void CEditor::ChangeScene()
+{
+	if( m_IsChangeScene == false ){
+		CFade::SetFadeIn();
+		m_IsChangeScene = true;
+
+		CSoundManager::PlaySE("CancelDetermination");
+		CSoundManager::FadeOutBGM("ClearBGM");
+	}
+	// フェードイン状態かつフェード中なら処理しない.
+	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
+	if(CFade::GetIsFade() == true) return;
+
+	if (CSoundManager::GetBGMVolume("ClearBGM") > 0.0f) return;
+	while( CSoundManager::StopBGMThread("ClearBGM") == false);
+	m_pSceneManager->NextSceneMove();
 }

@@ -59,6 +59,8 @@ private:
 	void ImGuiRender();
 	// エディットリストの作成.
 	bool CreateEditList();
+	// シーン切り替え関数.
+	void ChangeScene();
 
 private:
 	std::shared_ptr<CEditCamera>		m_pEditCamera;
@@ -67,6 +69,7 @@ private:
 	std::vector<std::unique_ptr<CEditBase>>	m_pEdit;
 	bool m_IsEditEnd;
 	int m_NowEditScene;
+	bool m_IsChangeScene;
 };
 
 #endif	// #ifndef EDITOR_H.

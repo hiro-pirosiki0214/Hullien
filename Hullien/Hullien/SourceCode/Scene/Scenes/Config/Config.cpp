@@ -22,6 +22,7 @@ bool CConfig::Load()
 	if( m_pConfigWidget->Init() == false ) return false;
 	CSoundManager::ThreadPlayBGM("TitleBGM");
 	CSoundManager::FadeInBGM("TitleBGM");
+	m_pSceneManager->SetNowBGMName("TitleBGM");
 	return true;
 }
 
@@ -52,6 +53,7 @@ void CConfig::ChangeScene()
 		CSoundManager::PlaySE("CancelDetermination");
 		CSoundManager::FadeOutBGM("TitleBGM");
 	}
+	if( m_IsChangeScene == false ) return;
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if(CFade::GetIsFade() == true) return;

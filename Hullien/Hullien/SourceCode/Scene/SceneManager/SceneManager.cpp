@@ -9,15 +9,18 @@
 #include "..\..\Utility\Command\Command.h"
 
 CSceneManager::CSceneManager()
-	: m_hWnd		( nullptr )
-	, m_pScene		( nullptr )
-	, m_pCommand	( nullptr )
-	, m_NowScene	( EScene::Start )
-	, m_NextScene	( EScene::Start )
-	, m_IsLoadEnd	( false )
-	, m_IsGameOver	( false )
-	, m_IsGameEnd	( false )
-	, m_IsRetry		( false )
+	: m_hWnd					( nullptr )
+	, m_pScene					( nullptr )
+	, m_pCommand				( nullptr )
+	, m_NowBGMName				()
+	, m_NowScene				( EScene::Start )
+	, m_NextScene				( EScene::Start )
+	, m_IsLoadEnd				( false )
+	, m_IsGameOver				( false )
+	, m_IsGameEnd				( false )
+	, m_IsRetry					( false )
+	, m_IsChangeEditScene		( false )
+	, m_IsEditSceneChangeActive	( true )
 {
 	NextSceneMove();
 	m_pCommand = std::make_unique<CCommand>();
@@ -68,6 +71,7 @@ void CSceneManager::Update()
 void CSceneManager::NextSceneMove()
 {
 	m_IsLoadEnd = false;
+	m_IsChangeEditScene = false;
 	switch( m_NextScene )
 	{
 	case EScene::Title:
@@ -149,11 +153,26 @@ void CSceneManager::RetryGame()
 //=================================.
 void CSceneManager::ChangeEditScene()
 {
-	m_pCommand->Update();
+	if( m_IsEditSceneChangeActive == false ) return;
+	if( m_IsChangeEditScene == false ){
+		m_pCommand->Update();
+	}
 
-	if( m_pCommand->IsSuccess() ){
+	if( m_pCommand->IsSuccess() && m_IsChangeEditScene == false ){
+		CFade::SetFadeIn();
+		CSoundManager::PlaySE( "Determination" );
+		CSoundManager::FadeOutBGM( m_NowBGMName );
+		m_IsChangeEditScene = true;
+	}
+	if( m_IsChangeEditScene == true ){
+		// フェードイン状態かつフェード中なら処理しない.
+		if(CFade::GetFadeState() != CFade::EFadeState::In) return;
+		if(CFade::GetIsFade() == true) return;
+		if(CSoundManager::GetBGMVolume( m_NowBGMName ) > 0.0f) return;
+		while(CSoundManager::StopBGMThread( m_NowBGMName )== false);
 		m_pScene	= std::make_shared<CEditor>( this );
 		m_IsLoadEnd	= false;
+		m_IsChangeEditScene = false;
 		m_NextScene	= m_NowScene;
 	}
 }
