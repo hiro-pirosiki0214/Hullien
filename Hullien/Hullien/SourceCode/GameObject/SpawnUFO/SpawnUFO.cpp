@@ -6,6 +6,7 @@
 #include "..\Actor\Character\Alien\Alien_B\Alien_B.h"
 #include "..\Actor\Character\Alien\Alien_C\Alien_C.h"
 #include "..\Actor\Character\Alien\Alien_D\Alien_D.h"
+#include "..\Widget\SceneWidget\GameWidget\UltemateSign\UltemateSign.h"
 
 #include "..\..\Collider\CollsionManager\CollsionManager.h"
 
@@ -13,6 +14,7 @@ CSpawnUFO::CSpawnUFO()
 	: m_pStaticMesh				( nullptr )
 	, m_pCollManager			( nullptr )
 	, m_pUFOLight				( nullptr )
+	, m_pUltemateSing			( nullptr )
 	, m_AilenList				()
 	, m_SpawnParameter			()
 	, m_SpawnPoint				{ 0.0f, 0.0f, 0.0f }
@@ -29,6 +31,7 @@ CSpawnUFO::CSpawnUFO()
 	std::random_device rd;
 	m_RandomSeed = std::mt19937( rd() );
 	m_pUFOLight = std::make_shared<CUFOLight>( 1.65f, 1.4f );
+	m_pUltemateSing = std::make_unique<CUltemateSing>();
 }
 
 CSpawnUFO::~CSpawnUFO()
@@ -41,6 +44,7 @@ bool CSpawnUFO::Init()
 	if( GetModel() == false ) return false;
 	if( CollisionSetting() == false ) return false;
 	if( m_pUFOLight->Init() == false ) return false;
+	if( m_pUltemateSing->Init() == false ) return false;
 	return true;
 }
 
@@ -64,6 +68,7 @@ void CSpawnUFO::Update()
 {
 	m_SpawnCount++;
 	m_pUFOLight->Update();
+	m_pUltemateSing->Update();
 }
 
 // 描画関数.
@@ -84,6 +89,12 @@ void CSpawnUFO::Render()
 	m_pUFOLight->Render();
 }
 
+// スプライトの描画.
+void CSpawnUFO::SpriteRender()
+{
+	m_pUltemateSing->Render();
+}
+
 // 宇宙人をスポーンさせる.
 void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 {
@@ -96,13 +107,14 @@ void CSpawnUFO::SpawnAlien( std::vector<std::shared_ptr<CAlien>>& alienList )
 	if( m_pAbductUFOPosition == nullptr ) return;
 
 	alienList.emplace_back( m_AilenList[m_AlienSpawnCount] );	// 宇宙人の追加.
-
 	// リストにあったパラメータとスポーン座標を設定し、スポーンさせる.
 	alienList.back()->Spawn( m_SpawnPoint );
 	// 連れ去るUFOの座標を設定.
 	alienList.back()->SetAbductUFOPosition( m_pAbductUFOPosition );
 	// アイテムの設定.
 	alienList.back()->SetItem( ProbabilityGetItem( static_cast<EAlienList>(m_AlienIndex) == EAlienList::D ) );
+	// 追加した宇宙人がDなら警告を出す.
+	if( alienList.back()->GetObjectTag() == EObjectTag::Alien_D ) m_pUltemateSing->SetAppUltemate( true );
 	m_SpawnCount = 0;
 	m_AlienSpawnCount++;
 }

@@ -64,8 +64,9 @@ void CUltemateSing::IsAppUltemate(CGameActorManager* pActor)
 		m_ObjCount = l.size();
 		return;
 	}
+	const int size = m_ObjCount;
 	// すでに処理したオブジェクト分は無視する.
-	for (auto a = l.begin() + m_ObjCount; a < l.end(); a++)
+	for (auto a = l.begin(); a < l.end() - size; a++)
 	{
 		m_ObjCount++;
 		// アルティメットでなければ処理しない.

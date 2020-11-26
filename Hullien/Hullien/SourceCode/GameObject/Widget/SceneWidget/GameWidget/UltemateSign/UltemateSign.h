@@ -31,6 +31,8 @@ public:
 
 	// アルティメットが出現しているか.
 	void IsAppUltemate(CGameActorManager* pActor);
+	// アルティメットの警告を出現されるか.
+	inline void SetAppUltemate( const bool& isAppUltemate ){ m_IsAppUltemate = isAppUltemate; }
 
 private:
 	// スプライト設定関数.

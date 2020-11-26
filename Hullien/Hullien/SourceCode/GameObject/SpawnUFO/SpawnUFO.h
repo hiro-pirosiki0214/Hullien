@@ -13,6 +13,7 @@
 class CActor;
 class CUFOLight;
 class CCollisionManager;	// 当たり判定クラス.
+class CUltemateSing;
 
 class CSpawnUFO : public CGameObject
 {
@@ -29,6 +30,8 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// スプライトの描画.
+	void SpriteRender();
 
 	// 宇宙人をスポーンさせる.
 	void SpawnAlien( std::vector<std::shared_ptr<CAlien>>& );
@@ -74,6 +77,7 @@ private:
 private:
 	std::shared_ptr<CDX9StaticMesh>		m_pStaticMesh;			// メッシュ.
 	std::shared_ptr<CUFOLight>			m_pUFOLight;			// UFOライト.
+	std::unique_ptr<CUltemateSing>		m_pUltemateSing;		// 宇宙人Dの警告UI.
 	std::vector<std::shared_ptr<CAlien>>m_AilenList;			// 宇宙人リスト.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;			// 当たり判定クラス.
 	SSpawnUFOParam						m_SpawnParameter;		// スポーンパラメータ.
