@@ -73,10 +73,11 @@ public:
 
 private:
 	// メッシュ読み込み.
-	HRESULT LoadXMesh(const char* fileName);
-
+	HRESULT LoadXMesh( const char* fileName );
 	// シェーダ作成.
 	HRESULT InitShader();
+	//コンスタントバッファ作成関数.
+	HRESULT CreateCBuffer( ID3D11Buffer** pConstantBuffer, UINT size );
 
 	// レンダリング関数(クラス内でのみ使用する).
 	void RenderMesh(

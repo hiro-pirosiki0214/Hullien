@@ -56,9 +56,12 @@ HRESULT CDX9StaticMesh::Init(
 {
 	m_hWnd = hWnd;
 	m_pDevice9 = pDevice9;
-	if( FAILED( InitPram( pDevice11, pContext11 )) ) return E_FAIL;
-	if( FAILED( LoadXMesh( fileName )) ) return E_FAIL; 
-	if( FAILED( InitShader()) ) return E_FAIL;
+	if( FAILED( InitPram( pDevice11, pContext11 )) )	return E_FAIL;
+	if( FAILED( LoadXMesh( fileName )) )				return E_FAIL; 
+	if( FAILED( InitShader()) )							return E_FAIL;
+	if( FAILED( CreateCBuffer( &m_pCBufferPerMesh,		sizeof(CBUFFER_PER_MESH) ) ))		return E_FAIL;
+	if( FAILED( CreateCBuffer( &m_pCBufferPerMaterial,	sizeof(CBUFFER_PER_MATERIAL) ) ))	return E_FAIL;
+	if( FAILED( CreateCBuffer( &m_pCBufferPerFrame,		sizeof(CBUFFER_PER_FRAME) ) ))		return E_FAIL;
 
 	return S_OK;
 }
@@ -250,53 +253,55 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 	BYTE* pVertices = nullptr;
 	VERTEX* pVertex = nullptr;
 	if( SUCCEEDED( pVB->Lock(0, 0, (VOID**)&pVertices, 0 ))){
-		pVertex = (VERTEX*)pVertices;
-		//Dx9の頂点ﾊﾞｯﾌｧからの情報で、Dx11頂点ﾊﾞｯﾌｧを作成.
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		//頂点を格納するのに必要なﾊﾞｲﾄ数.
-		bd.ByteWidth = m_pMesh->GetNumBytesPerVertex()*m_pMesh->GetNumVertices();
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
+		pVertex				= (VERTEX*)pVertices;
+		// Dx9の頂点バッファからの情報で、Dx11頂点バッファを作成.
+		bd.Usage			= D3D11_USAGE_DEFAULT;
+		// 頂点を格納するのに必要なバイト数.
+		bd.ByteWidth		= m_pMesh->GetNumBytesPerVertex()*m_pMesh->GetNumVertices();
+		bd.BindFlags		= D3D11_BIND_VERTEX_BUFFER;
+		bd.CPUAccessFlags	= 0;
+		bd.MiscFlags		= 0;
 		InitData.pSysMem = pVertex;
-		if (FAILED(m_pDevice11->CreateBuffer(
-			&bd, &InitData, &m_pVertexBuffer))){
+		if( FAILED( m_pDevice11->CreateBuffer(
+			&bd,
+			&InitData,
+			&m_pVertexBuffer ))){
 			_ASSERT_EXPR(false, L"頂点ﾊﾞｯﾌｧ作成失敗");
 			return E_FAIL;
 		}
 		pVB->Unlock();
 	}
-	SAFE_RELEASE(pVB);	//頂点ﾊﾞｯﾌｧ解放.
+	SAFE_RELEASE( pVB );	// 頂点バッファ解放.
 
 
-
-
-						//ﾃｸｽﾁｬ用のｻﾝﾌﾟﾗ構造体.
+	// テクスチャ用のサンプラ構造体.
 	D3D11_SAMPLER_DESC samDesc;
 	ZeroMemory(&samDesc, sizeof(samDesc));
-	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;//ﾘﾆｱﾌｨﾙﾀ(線形補間).
-													 //POINT:高速だが粗い.
-	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;//ﾗｯﾋﾟﾝｸﾞﾓｰﾄﾞ(WRAP:繰り返し).
-	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	//MIRROR: 反転繰り返し.
-	//CLAMP : 端の模様を引き伸ばす.
-	//BORDER: 別途境界色を決める.
-	//ｻﾝﾌﾟﾗ作成.
-	if (FAILED(m_pDevice11->CreateSamplerState(
-		&samDesc, &m_pSampleLinear)))//(out)ｻﾝﾌﾟﾗ.
-	{
+	samDesc.Filter		= D3D11_FILTER_MIN_MAG_MIP_LINEAR;	// リニアフィルタ(線形補間).
+															// POINT:高速だが粗い.
+	// ラッピングモード.
+	samDesc.AddressU	= D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressV	= D3D11_TEXTURE_ADDRESS_WRAP;
+	samDesc.AddressW	= D3D11_TEXTURE_ADDRESS_WRAP;
+	// WRAP		: 繰り返し.
+	// MIRROR	: 反転繰り返し.
+	// CLAMP	: 端の模様を引き伸ばす.
+	// BORDE	: 別途境界色を決める.
+	// サンプラ作成.
+	if( FAILED( m_pDevice11->CreateSamplerState(
+		&samDesc,
+		&m_pSampleLinear ))){	// (out)サンプラ.
 		_ASSERT_EXPR(false, L"ｻﾝﾌﾟﾗ作成失敗");
 		return E_FAIL;
 	}
 
-	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	if (FAILED(
-		m_pDevice11->CreateSamplerState(&samDesc, &m_pToonSampleLinear)))
-	{
+	if( FAILED( m_pDevice11->CreateSamplerState(
+		&samDesc,
+		&m_pToonSampleLinear))){
+		_ASSERT_EXPR(false, L"ｻﾝﾌﾟﾗ作成失敗");
 		return E_FAIL;
 	}
 
@@ -322,42 +327,32 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 	}
 
 	return S_OK;
-
-
-	return S_OK;
 }
 
 //解放関数.
 void CDX9StaticMesh::Release()
 {
-	//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ解放.	←バグるので調査必要.
-	if (m_ppIndexBuffer != nullptr) {
-		for (int No = m_NumMaterials-1; No >= 0; No--) {
-			if (m_ppIndexBuffer[No] != nullptr) {
-				SAFE_RELEASE(m_ppIndexBuffer[No]);
-			}
+	//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ解放.
+	if( m_ppIndexBuffer != nullptr ){
+		for( int No = m_NumMaterials-1; No >= 0; No-- ){
+			SAFE_RELEASE( m_ppIndexBuffer[No] );
 		}
 		delete[] m_ppIndexBuffer;
 		m_ppIndexBuffer = nullptr;
 	}
-	//ﾏﾃﾘｱﾙ解放.
-	if (m_pMaterials != nullptr) {
-		delete[] m_pMaterials;
-		m_pMaterials = nullptr;
-	}
-	//ﾒｯｼｭﾃﾞｰﾀの解放.
-	SAFE_RELEASE(m_pMesh);
-	SAFE_RELEASE(m_pShadowMapSampler);
-	SAFE_RELEASE(m_pToonSampleLinear);
-	SAFE_RELEASE(m_pFogTexture);
-	SAFE_RELEASE(m_pToonTexture);
-	SAFE_RELEASE(m_pSampleLinear);
-	SAFE_RELEASE(m_pVertexBuffer);
-	SAFE_RELEASE(m_pCBufferPerMaterial);
-	SAFE_RELEASE(m_pCBufferPerMesh);
-	SAFE_RELEASE(m_pPixelShader);
-	SAFE_RELEASE(m_pVertexLayout);
-	SAFE_RELEASE(m_pVertexShader);
+	SAFE_DELETE_ARRAY(m_pMaterials);
+	SAFE_RELEASE( m_pMesh );
+	SAFE_RELEASE( m_pShadowMapSampler );
+	SAFE_RELEASE( m_pToonSampleLinear );
+	SAFE_RELEASE( m_pFogTexture );
+	SAFE_RELEASE( m_pToonTexture );
+	SAFE_RELEASE( m_pSampleLinear );
+	SAFE_RELEASE( m_pVertexBuffer );
+	SAFE_RELEASE( m_pCBufferPerMaterial );
+	SAFE_RELEASE( m_pCBufferPerMesh );
+	SAFE_RELEASE( m_pPixelShader );
+	SAFE_RELEASE( m_pVertexLayout );
+	SAFE_RELEASE( m_pVertexShader );
 
 	m_pDevice9 = nullptr;
 	m_pContext11 = nullptr;
@@ -377,206 +372,186 @@ HRESULT CDX9StaticMesh::InitShader()
 #ifdef _DEBUG
 	uCompileFlag =
 		D3D10_SHADER_DEBUG | D3D10_SHADER_SKIP_OPTIMIZATION;
-#endif//#ifdef _DEBUG
+#endif	// #ifdef _DEBUG.
 
-	//HLSLからﾊﾞｰﾃｯｸｽｼｪｰﾀﾞのﾌﾞﾛﾌﾞを作成.
-	if (m_EnableTexture == true){
-		if (FAILED(
-			D3DX11CompileFromFile(
-				SHADER_NAME, nullptr, nullptr, "VS_Main", "vs_5_0",
-				uCompileFlag, 0, nullptr, &pCompiledShader, &pErrors, nullptr)))
-		{
+	// 頂点シェーダーのブロブ作成.
+	if( m_EnableTexture == true ){
+		if( FAILED( D3DX11CompileFromFile(
+			SHADER_NAME,
+			nullptr,
+			nullptr,
+			"VS_Main",
+			"vs_5_0",
+			uCompileFlag,
+			0,
+			nullptr,
+			&pCompiledShader,
+			&pErrors,
+			nullptr ))){
+			_ASSERT_EXPR(false, L"hlsl読み込み失敗");
+			return E_FAIL;
+		}
+	} else {
+		if( FAILED( D3DX11CompileFromFile(
+			SHADER_NAME,
+			nullptr,
+			nullptr,
+			"VS_NoTex",
+			"vs_5_0",
+			uCompileFlag,
+			0,
+			nullptr,
+			&pCompiledShader,
+			&pErrors, nullptr ))){
 			_ASSERT_EXPR(false, L"hlsl読み込み失敗");
 			return E_FAIL;
 		}
 	}
-	else {
-		if (FAILED(
-			D3DX11CompileFromFile(
-				SHADER_NAME, nullptr, nullptr, "VS_NoTex", "vs_5_0",
-				uCompileFlag, 0, nullptr, &pCompiledShader, &pErrors, nullptr)))
-		{
-			_ASSERT_EXPR(false, L"hlsl読み込み失敗");
-			return E_FAIL;
-		}
-	}
-	SAFE_RELEASE(pErrors);
-
-	//上記で作成したﾌﾞﾛﾌﾞから「ﾊﾞｰﾃｯｸｽｼｪｰﾀﾞ」を作成.
-	if (FAILED(
+	
+	// 上記で作成したブロブから「頂点シェーダー」を作成.
+	if( FAILED(
 		m_pDevice11->CreateVertexShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			nullptr,
-			&m_pVertexShader)))	//(out)ﾊﾞｰﾃｯｸｽｼｪｰﾀﾞ.
-	{
+			&m_pVertexShader))){	// (out)頂点シェーダー.
 		_ASSERT_EXPR(false, L"ﾊﾞｰﾃｯｸｽｼｪｰﾀﾞ作成失敗");
 		return E_FAIL;
 	}
 
-	//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄを定義.
+	// 頂点インプットレイアウトを定義.
 	D3D11_INPUT_ELEMENT_DESC layout[3];
-	//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄの配列要素数を算出.
+	// 頂点インプットの配列要素数を算出.
 	UINT numElements = 0;
-	if (m_EnableTexture == true)
-	{
+	if( m_EnableTexture == true ){
 		D3D11_INPUT_ELEMENT_DESC tmp[] =
 		{
 			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0, 0,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,   0,24,D3D11_INPUT_PER_VERTEX_DATA,0}
+			{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
+			{"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,   0,24,D3D11_INPUT_PER_VERTEX_DATA,0}
 		};
-		numElements = sizeof(tmp) / sizeof(tmp[0]);	//要素数算出.
-		memcpy_s( layout, sizeof(layout),
-			tmp, sizeof(D3D11_INPUT_ELEMENT_DESC)*numElements);
-	}
-	else
-	{
+		numElements = sizeof(tmp) / sizeof(tmp[0]);	// 要素数算出.
+		memcpy_s( layout, sizeof(layout), tmp, sizeof(D3D11_INPUT_ELEMENT_DESC)*numElements );
+	} else {
 		D3D11_INPUT_ELEMENT_DESC tmp[] =
 		{
 			{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0, 0,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0}
+			{"NORMAL",  0,DXGI_FORMAT_R32G32B32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0}
 		};
 		numElements = sizeof(tmp) / sizeof(tmp[0]);	//要素数算出.
-		memcpy_s(layout, sizeof(layout),
-			tmp, sizeof(D3D11_INPUT_ELEMENT_DESC)*numElements);
+		memcpy_s( layout, sizeof(layout), tmp, sizeof(D3D11_INPUT_ELEMENT_DESC)*numElements );
 	}
 
-	//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄを作成.
-	if (FAILED(
-		m_pDevice11->CreateInputLayout(
+	// 頂点インプットレイアウトを作成.
+	if( FAILED( m_pDevice11->CreateInputLayout(
 			layout,
 			numElements,
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
-			&m_pVertexLayout)))	//(out)頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄ.
-	{
+			&m_pVertexLayout ))){	//(out)頂点インプットレイアウト.
 		_ASSERT_EXPR(false, L"頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄ作成失敗");
 		return E_FAIL;
 	}
-	SAFE_RELEASE(pCompiledShader);
+	SAFE_RELEASE( pCompiledShader );
 
-	//HLSLからﾋﾟｸｾﾙｼｪｰﾀﾞのﾌﾞﾛﾌﾞを作成.
-	if (m_EnableTexture == true){
-		if (FAILED(
-			D3DX11CompileFromFile(
-				SHADER_NAME, nullptr, nullptr, "PS_Main", "ps_5_0",
-				uCompileFlag, 0, nullptr, &pCompiledShader, &pErrors, nullptr)))
-		{
+	// HLSLからピクセルシェーダーのブロブを作成.
+	if( m_EnableTexture == true ){
+		if( FAILED( D3DX11CompileFromFile(
+			SHADER_NAME,
+			nullptr,
+			nullptr,
+			"PS_Main",
+			"ps_5_0",
+			uCompileFlag,
+			0,
+			nullptr,
+			&pCompiledShader,
+			&pErrors,
+			nullptr ))){
 			_ASSERT_EXPR(false, L"hlsl読み込み失敗");
 			return E_FAIL;
 		}
-	}
-	else {
-		if (FAILED(
-			D3DX11CompileFromFile(
-				SHADER_NAME, nullptr, nullptr, "PS_NoTex", "ps_5_0",
-				uCompileFlag, 0, nullptr, &pCompiledShader, &pErrors, nullptr)))
-		{
+	} else {
+		if( FAILED( D3DX11CompileFromFile(
+			SHADER_NAME,
+			nullptr,
+			nullptr,
+			"PS_NoTex",
+			"ps_5_0",
+			uCompileFlag,
+			0,
+			nullptr,
+			&pCompiledShader,
+			&pErrors,
+			nullptr ))){
 			_ASSERT_EXPR(false, L"hlsl読み込み失敗");
 			return E_FAIL;
 		}
 	}
 	SAFE_RELEASE(pErrors);
 
-	//上記で作成したﾌﾞﾛﾌﾞから「ﾋﾟｸｾﾙｼｪｰﾀﾞ」を作成.
-	if (FAILED(
-		m_pDevice11->CreatePixelShader(
+	// 上記で作成したブロブから「ピクセルシェーダー」を作成.
+	if( FAILED( m_pDevice11->CreatePixelShader(
 			pCompiledShader->GetBufferPointer(),
 			pCompiledShader->GetBufferSize(),
 			nullptr,
-			&m_pPixelShader)))	//(out)ﾋﾟｸｾﾙｼｪｰﾀﾞ.
-	{
+			&m_pPixelShader ))){	// (out)ピクセルシェーダー.
 		_ASSERT_EXPR(false, L"ﾋﾟｸｾﾙｼｪｰﾀﾞ作成失敗");
 		return E_FAIL;
 	}
 	SAFE_RELEASE(pCompiledShader);
 
-	//ｺﾝｽﾀﾝﾄ(定数)ﾊﾞｯﾌｧ作成.
-	//ｼｪｰﾀﾞに特定の数値を送るﾊﾞｯﾌｧ.
-	//ここでは変換行列渡し用.
-	//ｼｪｰﾀﾞに World, View, Projection 行列を渡す.
-	D3D11_BUFFER_DESC cb;
-	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧを指定.
-	cb.ByteWidth = sizeof(CBUFFER_PER_MESH);	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧのｻｲｽﾞ.
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//書き込みでｱｸｾｽ.
-	cb.MiscFlags = 0;	//その他のﾌﾗｸﾞ(未使用).
-	cb.StructureByteStride = 0;	//構造体のｻｲｽﾞ(未使用).
-	cb.Usage = D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
-
-									//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
-	if (FAILED(
-		m_pDevice11->CreateBuffer(&cb,nullptr,&m_pCBufferPerMesh)))
-	{
-		_ASSERT_EXPR(false, L"ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ作成失敗");
-		return E_FAIL;
-	}
-
-	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ ﾏﾃﾘｱﾙ用.
-	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧを指定.
-	cb.ByteWidth = sizeof(CBUFFER_PER_MATERIAL);//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧのｻｲｽﾞ.
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//書き込みでｱｸｾｽ.
-	cb.MiscFlags = 0;	//その他のﾌﾗｸﾞ(未使用).
-	cb.StructureByteStride = 0;	//構造体のｻｲｽﾞ(未使用).
-	cb.Usage = D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
-
-									//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
-	if (FAILED(
-		m_pDevice11->CreateBuffer(&cb,nullptr,&m_pCBufferPerMaterial)))
-	{
-		_ASSERT_EXPR(false, L"ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ作成失敗");
-		return E_FAIL;
-	}
-
-	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ ﾌﾚｰﾑ用.
-	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧを指定.
-	cb.ByteWidth = sizeof(CBUFFER_PER_FRAME);//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧのｻｲｽﾞ.
-	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;	//書き込みでｱｸｾｽ.
-	cb.MiscFlags = 0;	//その他のﾌﾗｸﾞ(未使用).
-	cb.StructureByteStride = 0;	//構造体のｻｲｽﾞ(未使用).
-	cb.Usage = D3D11_USAGE_DYNAMIC;	//使用方法:直接書き込み.
-
-									//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧの作成.
-	if (FAILED(
-		m_pDevice11->CreateBuffer(&cb, nullptr, &m_pCBufferPerFrame)))
-	{
-		_ASSERT_EXPR(false, L"ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ作成失敗");
-		return E_FAIL;
-	}
-
 	return S_OK;
 }
 
+//コンスタントバッファ作成関数.
+HRESULT CDX9StaticMesh::CreateCBuffer( ID3D11Buffer** pConstantBuffer, UINT size )
+{
+	D3D11_BUFFER_DESC cb;
 
-//ﾚﾝﾀﾞﾘﾝｸﾞ用.
-//※DirectX内のﾚﾝﾀﾞﾘﾝｸﾞ関数.
-//  最終的に画面に出力するのはMainｸﾗｽのﾚﾝﾀﾞﾘﾝｸﾞ関数がやる.
+	cb.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cb.ByteWidth = size;
+	cb.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	cb.MiscFlags = 0;
+	cb.StructureByteStride = 0;
+	cb.Usage = D3D11_USAGE_DYNAMIC;
+	if( FAILED( m_pDevice11->CreateBuffer(
+		&cb, 
+		nullptr,
+		pConstantBuffer ))){
+		return E_FAIL;
+	}
+	return S_OK;
+}
+
+// レンダリング用.
 void CDX9StaticMesh::Render( const bool& isTrans )
 {
-	//ﾜｰﾙﾄﾞ行列、ｽｹｰﾙ行列、回転行列、平行移動行列.
+	// ワールド行列、スケール行列、回転行列、平行移動行列.
 	D3DXMATRIX mWorld, mScale, mRot, mTran;
 	D3DXMATRIX mYaw, mPitch, mRoll;
 
-	//拡大縮小行列作成.
+	// 拡大縮小行列作成.
 	D3DXMatrixScaling(
-		&mScale,	//(out)計算結果.
-		m_vScale.x, m_vScale.y, m_vScale.z);	//x,y,zそれぞれの拡縮値.
-												//Y軸回転行列作成.
-	D3DXMatrixRotationY( &mYaw, m_vRot.y);
-	//X軸回転行列作成.
-	D3DXMatrixRotationX( &mPitch, m_vRot.x);
-	//Z軸回転行列作成.
-	D3DXMatrixRotationZ( &mRoll, m_vRot.z);
-	//平行移動行列作成.
-	D3DXMatrixTranslation(
-		&mTran,	//(out)計算結果.
-		m_vPos.x, m_vPos.y, m_vPos.z);	//x,y,z座標.
+		&mScale,
+		m_vScale.x, m_vScale.y, m_vScale.z );
 
-										//回転行列を作成.
+	// Y軸回転行列作成.
+	D3DXMatrixRotationY( &mYaw, m_vRot.y );
+	// X軸回転行列作成.
+	D3DXMatrixRotationX( &mPitch, m_vRot.x );
+	// Z軸回転行列作成.
+	D3DXMatrixRotationZ( &mRoll, m_vRot.z );
+	// 回転行列を作成.
 	mRot = mYaw * mPitch * mRoll;
 
-	//ﾜｰﾙﾄﾞ行列作成.
-	//拡縮×回転×移動 ※順番がとても大切！！.
+	// 平行移動行列作成.
+	D3DXMatrixTranslation(
+		&mTran,
+		m_vPos.x, m_vPos.y, m_vPos.z );
+
+	// ワールド行列作成.
+	// 拡縮×回転×移動 ※順番がとても大切！！.
 	mWorld = mScale * mRot * mTran;
 
 	// 影を描画したら終了.
@@ -585,196 +560,182 @@ void CDX9StaticMesh::Render( const bool& isTrans )
 		if( TranslucentRender( mWorld ) == true ) return;
 	}
 
-	//使用するｼｪｰﾀﾞのｾｯﾄ.
-	m_pContext11->VSSetShader(m_pVertexShader, nullptr, 0);//頂点ｼｪｰﾀﾞ.
-	m_pContext11->PSSetShader(m_pPixelShader, nullptr, 0);//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
+	// 使用するシェーダーのセット.
+	m_pContext11->VSSetShader( m_pVertexShader, nullptr, 0 );	// 頂点シェーダー.
+	m_pContext11->PSSetShader( m_pPixelShader, nullptr, 0 );	// ピクセルシェーダー.
+	// サンプラのセット.
+	m_pContext11->PSSetSamplers( 1, 1, &m_pToonSampleLinear );
+	m_pContext11->PSSetSamplers( 2, 1, &m_pShadowMapSampler );
+
+	// コンスタントバッファ.
+	CBUFFER_PER_FRAME cb;
 
 	// カスケードの数だけループ.
 	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
+		const float f = isTrans == false ? 1.0f : 0.0f;
+		// ライトの行列を渡す.
+		cb.mLightWVP[i] = (mWorld * CLightManager::GetShadowVP()[i]) * f;
+		D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
+		// 影テクスチャを渡す.
 		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
-	m_pContext11->PSSetSamplers( 1, 1, &m_pToonSampleLinear );
-	m_pContext11->PSSetSamplers( 2, 1, &m_pShadowMapSampler );
-	//ｼｪｰﾀﾞのｺﾝｽﾀﾝﾄﾊﾞｯﾌｧに各種ﾃﾞｰﾀを渡す.
+	// シェーダのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
-	//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え開始時にMap.
-	if (SUCCEEDED(m_pContext11->Map(
+	// バッファ内のデータの書き換え開始時にMap.
+	if( SUCCEEDED( m_pContext11->Map(
 		m_pCBufferPerFrame, 0,
 		D3D11_MAP_WRITE_DISCARD,
-		0, &pData)))
-	{
-		CBUFFER_PER_FRAME cb;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ.
+		0,
+		&pData))){
 
+		// 色のセット.
 		cb.vColor = m_vColor;
 
-		//ｶﾒﾗ位置.
-		D3DXVECTOR3 camPos = CCameraManager::GetPosition();
-		cb.vCamPos = D3DXVECTOR4( camPos.x, camPos.y, camPos.z, 0.0f );
+		// カメラ位置.
+		cb.vCamPos = { CCameraManager::GetPosition(), 0.0f };
 
-		//----- ﾗｲﾄ情報 -----.
-		//ライト位置.
-		D3DXVECTOR3 lightPos = CLightManager::GetPosition();
-		cb.vCamPos = { lightPos.x, lightPos.y, lightPos.z, 0.0f };
-		//ﾗｲﾄ方向.
-		D3DXVECTOR3 lightDir = CLightManager::GetDirection();
-		cb.vLightDir = { lightDir.x, lightDir.y, lightDir.z, 0.0f };
-		//ﾗｲﾄ回転行列.
+		// ライト位置.
+		cb.vCamPos = { CLightManager::GetPosition(), 0.0f };
+		// ライト方向.
+		cb.vLightDir = { CLightManager::GetDirection(), 0.0f };
+		D3DXVec4Normalize(&cb.vLightDir, &cb.vLightDir);
+		// ライト回転行列.
 		cb.mLightRot = CLightManager::GetRorarionMatrix();
 
-		// ライトの行列を渡す.
-		for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
-			float f = isTrans == false ? 1.0f : 0.0f;
-			cb.mLightWVP[i] = (mWorld * CLightManager::GetShadowVP()[i]) * f;
-			D3DXMatrixTranspose( &cb.mLightWVP[i], &cb.mLightWVP[i] );
-		}
 		// カスケードの間隔幅を渡す.
 		cb.SpritPos.x = CLightManager::GetSpritPos()[0];
 		cb.SpritPos.y = CLightManager::GetSpritPos()[1];
 		cb.SpritPos.z = CLightManager::GetSpritPos()[2];
 		cb.SpritPos.w = CLightManager::GetSpritPos()[3];
 
-		//ﾗｲﾄ強度(明るさ).
+		// ライト強度(明るさ).
 		cb.fIntensity.x = CLightManager::GetIntensity();
-		//ﾗｲﾄ方向の正規化(ﾉｰﾏﾗｲｽﾞ).
-		// ※ﾓﾃﾞﾙからﾗｲﾄへ向かう方向. ﾃﾞｨﾚｸｼｮﾅﾙﾗｲﾄで重要な要素.
-		D3DXVec4Normalize(&cb.vLightDir, &cb.vLightDir);
 
+		// 自分自身に影を落とすか.
 		cb.IsShadow.x = m_IsShadow;
 
 		// フォグのテクスチャ座標.
 		cb.Fog = CFog::GetFog();
 
 		memcpy_s(
-			pData.pData,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧ.
-			pData.RowPitch,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧｻｲｽﾞ.
-			(void*)(&cb),	//ｺﾋﾟｰ元のﾊﾞｯﾌｧ.
-			sizeof(cb));	//ｺﾋﾟｰ元のﾊﾞｯﾌｧｻｲｽﾞ.
+			pData.pData,	// コピー先のバファ.
+			pData.RowPitch,	// コピー先のバファサイズ.
+			(void*)(&cb),	// コピー元のバファ.
+			sizeof(cb));	// コピー元のバファサイズ.
 
-							//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え終了時にUnmap.
-		m_pContext11->Unmap(m_pCBufferPerFrame, 0);
+		// バッファ内のデータの書き換え終了時にUnmap.
+		m_pContext11->Unmap( m_pCBufferPerFrame, 0 );
 	}
 
-	//このｺﾝｽﾀﾝﾄﾊﾞｯﾌｧをどのｼｪｰﾀﾞで使用するか？.
-	m_pContext11->VSSetConstantBuffers(
-		2, 1, &m_pCBufferPerFrame);	//頂点ｼｪｰﾀﾞ.
-	m_pContext11->PSSetConstantBuffers(
-		2, 1, &m_pCBufferPerFrame);	//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
+	// コンスタントバッファのセット.
+	m_pContext11->VSSetConstantBuffers( 2, 1, &m_pCBufferPerFrame );
+	m_pContext11->PSSetConstantBuffers( 2, 1, &m_pCBufferPerFrame );
 
-									// トゥーンマップテクスチャを渡す.
+	// トゥーンマップテクスチャを渡す.
 	m_pContext11->PSSetShaderResources( 5, 1, &m_pToonTexture );
 	// フォグテクスチャを渡す.
 	m_pContext11->PSSetShaderResources( 6, 1, &m_pFogTexture );
-	//ﾒｯｼｭのﾚﾝﾀﾞﾘﾝｸﾞ.
-	D3DXMATRIX mView = CCameraManager::GetViewMatrix();
-	D3DXMATRIX mProj = CCameraManager::GetProjMatrix();
-	RenderMesh( mWorld, mView, mProj, isTrans );
+	// メッシュのレンダリング.
+	RenderMesh( mWorld, CCameraManager::GetViewMatrix(), CCameraManager::GetProjMatrix(), isTrans );
 }
 
-//ﾚﾝﾀﾞﾘﾝｸﾞ関数(ｸﾗｽ内でのみ使用する).
+// レンダリング関数(ｸﾗｽ内でのみ使用する).
 void CDX9StaticMesh::RenderMesh(
 	D3DXMATRIX& mWorld, 
 	const D3DXMATRIX& mView, 
 	const D3DXMATRIX& mProj,
 	const bool& isTrans )
 {
-	//ｼｪｰﾀﾞのｺﾝｽﾀﾝﾄﾊﾞｯﾌｧに各種ﾃﾞｰﾀを渡す.
+	// シェーダーのコンスタントバッファに各種データを渡す.
 	D3D11_MAPPED_SUBRESOURCE pData;
-	//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え開始時にMap.
-	if (SUCCEEDED(m_pContext11->Map(
-		m_pCBufferPerMesh, 0,
+	// バッファ内のデータの書き換え開始時にMap.
+	if( SUCCEEDED( m_pContext11->Map(
+		m_pCBufferPerMesh,
+		0,
 		D3D11_MAP_WRITE_DISCARD,
-		0, &pData)))
-	{
-		CBUFFER_PER_MESH cb;	//ｺﾝｽﾀﾝﾄﾊﾞｯﾌｧ.
+		0,
+		&pData ))){
+		CBUFFER_PER_MESH cb;	// コンスタントバッファ.
 
-		//ﾜｰﾙﾄﾞ行列を渡す.
-		float f = isTrans == false ? 1.0f : 0.0f;
+		// ワールド行列を渡す.
+		const float f = isTrans == false ? 1.0f : 0.0f;
 		cb.mW = mWorld * f;
-		D3DXMatrixTranspose(&cb.mW, &cb.mW);
+		D3DXMatrixTranspose( &cb.mW, &cb.mW );
 
-		//ﾜｰﾙﾄﾞ,ﾋﾞｭｰ,ﾌﾟﾛｼﾞｪｸｼｮﾝ行列を渡す.
+		// ワールド, ビュー, プロジェクション行列を渡す.
 		D3DXMATRIX mWVP = mWorld * mView * mProj;
-		D3DXMatrixTranspose(&mWVP, &mWVP);//行列を転置する.
-										  //※行列の計算方法がDirectXとGPUで異なるため転置が必要.
+		D3DXMatrixTranspose( &mWVP, &mWVP );	// 行列を転置する.
+		// ※行列の計算方法がDirectXとGPUで異なるため転置が必要.
 		cb.mWVP = mWVP;
 
 		memcpy_s(
-			pData.pData,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧ.
-			pData.RowPitch,	//ｺﾋﾟｰ先のﾊﾞｯﾌｧｻｲｽﾞ.
-			(void*)(&cb),	//ｺﾋﾟｰ元のﾊﾞｯﾌｧ.
-			sizeof(cb));	//ｺﾋﾟｰ元のﾊﾞｯﾌｧｻｲｽﾞ.
+			pData.pData,	// コピー先のバッファ.
+			pData.RowPitch,	// コピー先のバッファサイズ.
+			(void*)(&cb),	// コピー元のバッファ.
+			sizeof(cb));	// コピー元のバッファサイズ.
 
-							//ﾊﾞｯﾌｧ内のﾃﾞｰﾀの書き換え終了時にUnmap.
+		// バッファ内のデータの書き換え終了時にUnmap.
 		m_pContext11->Unmap(m_pCBufferPerMesh, 0);
 	}
 
-	//このｺﾝｽﾀﾝﾄﾊﾞｯﾌｧをどのｼｪｰﾀﾞで使用するか？.
-	m_pContext11->VSSetConstantBuffers(
-		0, 1, &m_pCBufferPerMesh);	//頂点ｼｪｰﾀﾞ.
-	m_pContext11->PSSetConstantBuffers(
-		0, 1, &m_pCBufferPerMesh);	//ﾋﾟｸｾﾙｼｪｰﾀﾞ.
+	// コンスタントバッファの設定.
+	m_pContext11->VSSetConstantBuffers( 0, 1, &m_pCBufferPerMesh );
+	m_pContext11->PSSetConstantBuffers( 0, 1, &m_pCBufferPerMesh );
 
-									//頂点ｲﾝﾌﾟｯﾄﾚｲｱｳﾄをｾｯﾄ.
-	m_pContext11->IASetInputLayout(m_pVertexLayout);
+	// 頂点インプットレイアウトをセット.
+	m_pContext11->IASetInputLayout( m_pVertexLayout );
 
-	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
-	m_pContext11->IASetPrimitiveTopology(
-		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// プリミティブ・トポロジーをセット.
+	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-	//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+	// 頂点バッファをセット.
 	UINT stride = m_pMesh->GetNumBytesPerVertex();
 	UINT offset = 0;
 	m_pContext11->IASetVertexBuffers(
 		0, 1, &m_pVertexBuffer, &stride, &offset);
 
-	//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
-	for (DWORD No = 0; No < m_NumAttr; No++)
-	{
-		//使用されていないﾏﾃﾘｱﾙ対策.
-		if (m_pMaterials[m_AttrID[No]].dwNumFace == 0) {
-			continue;
-		}
-		//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧをｾｯﾄ.
-		m_pContext11->IASetIndexBuffer(
-			m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0);
-		//ﾏﾃﾘｱﾙの各要素をｼｪｰﾀﾞに渡す.
+	// 属性の数だけ、それぞれの属性のインデックスバッファを描画.
+	for( DWORD No = 0; No < m_NumAttr; No++ ){
+		// 使用されていないマテリアル対策.
+		if( m_pMaterials[m_AttrID[No]].dwNumFace == 0 ) continue;
+
+		// インデックスバッファをセット.
+		m_pContext11->IASetIndexBuffer( m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0 );
+		// マテリアルの各要素をシェーダーに渡す.
 		D3D11_MAPPED_SUBRESOURCE pDataMat;
-		if (SUCCEEDED(
-			m_pContext11->Map(m_pCBufferPerMaterial,
-				0, D3D11_MAP_WRITE_DISCARD, 0, &pDataMat)))
-		{
+		if( SUCCEEDED( m_pContext11->Map(
+			m_pCBufferPerMaterial,
+			0,
+			D3D11_MAP_WRITE_DISCARD,
+			0,
+			&pDataMat ))){
 			CBUFFER_PER_MATERIAL cb;
-			//ｱﾝﾋﾞｴﾝﾄ,ﾃﾞｨﾌｭｰｽﾞ,ｽﾍﾟｷｭﾗをｼｪｰﾀﾞに渡す.
-			cb.vAmbient = m_pMaterials[m_AttrID[No]].Ambient;
-			cb.vDiffuse = m_pMaterials[m_AttrID[No]].Diffuse;
-			cb.vSpecular = m_pMaterials[m_AttrID[No]].Specular;
+			// アンビエント, ディヒューズ, スペキュラをシェーダーに渡す.
+			cb.vAmbient		= m_pMaterials[m_AttrID[No]].Ambient;
+			cb.vDiffuse		= m_pMaterials[m_AttrID[No]].Diffuse;
+			cb.vSpecular	= m_pMaterials[m_AttrID[No]].Specular;
 
-			memcpy_s(pDataMat.pData, pDataMat.RowPitch,
-				(void*)&cb, sizeof(cb));
-
-			m_pContext11->Unmap(m_pCBufferPerMaterial, 0);
+			memcpy_s( pDataMat.pData, pDataMat.RowPitch, (void*)&cb, sizeof(cb) );
+			m_pContext11->Unmap( m_pCBufferPerMaterial, 0 );
 		}
 
-		//このｺﾝｽﾀﾝﾄﾊﾞｯﾌｧをどのｼｪｰﾀﾞで使うか？.
+		// コンスタントバッファのセット.
 		m_pContext11->VSSetConstantBuffers(1, 1, &m_pCBufferPerMaterial);
 		m_pContext11->PSSetConstantBuffers(1, 1, &m_pCBufferPerMaterial);
 
-		//ﾃｸｽﾁｬをｼｪｰﾀﾞに渡す.
-		if (m_pMaterials[m_AttrID[No]].pTexture != nullptr) {
-			//ﾃｸｽﾁｬがあるとき.
-			m_pContext11->PSSetSamplers(0, 1, &m_pSampleLinear);
-			m_pContext11->PSSetShaderResources(
-				0, 1, &m_pMaterials[m_AttrID[No]].pTexture);
-		}
-		else {
-			//ﾃｸｽﾁｬがないとき.
+		// テクスチャをシェーダーに渡す.
+		if( m_pMaterials[m_AttrID[No]].pTexture != nullptr ){
+			// テクスチャがあるとき.
+			m_pContext11->PSSetSamplers( 0, 1, &m_pSampleLinear );
+			m_pContext11->PSSetShaderResources( 0, 1, &m_pMaterials[m_AttrID[No]].pTexture );
+		} else {
+			// テクスチャがないとき.
 			ID3D11ShaderResourceView* pNothing[1] = { 0 };
-			m_pContext11->PSSetShaderResources(0, 1, pNothing);
+			m_pContext11->PSSetShaderResources( 0, 1, pNothing );
 		}
 
-		//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
-		m_pContext11->DrawIndexed(
-			m_pMaterials[m_AttrID[No]].dwNumFace * 3, 0, 0);
+		// ポリゴンをレンダイｒング.
+		m_pContext11->DrawIndexed( m_pMaterials[m_AttrID[No]].dwNumFace*3, 0, 0);
 	}
 }
 
@@ -782,26 +743,24 @@ void CDX9StaticMesh::RenderMesh(
 bool CDX9StaticMesh::ShadowRender( const D3DXMATRIX& mWorld )
 {
 	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Shadow ) return false;
+
+	// カスケード分ループ.
 	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 		CSceneTexRenderer::SetShadowBuffer( i );
 		CShadowMap::SetConstantBufferData( mWorld*CLightManager::GetShadowVP()[i] );
-		//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+		// 頂点バッファをセット.
 		UINT stride = m_pMesh->GetNumBytesPerVertex();
 		UINT offset = 0;
 		m_pContext11->IASetVertexBuffers(
 			0, 1, &m_pVertexBuffer, &stride, &offset);
-		//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
-		m_pContext11->IASetPrimitiveTopology(
-			D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
-		for (DWORD No = 0; No < m_NumAttr; No++)
-		{
-			//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧをｾｯﾄ.
-			m_pContext11->IASetIndexBuffer(
-				m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0);
-			//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
-			m_pContext11->DrawIndexed(
-				m_pMaterials[m_AttrID[No]].dwNumFace * 3, 0, 0);
+		// プリミティブ・トポロジーをセット.
+		m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+		// 属性の数だけ、それぞれの属性のインデックスバッファを描画.
+		for( DWORD No = 0; No < m_NumAttr; No++ ){
+			// インデックスバッファをセット.
+			m_pContext11->IASetIndexBuffer( m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0 );
+			// ポリゴンをレンダリング.
+			m_pContext11->DrawIndexed( m_pMaterials[m_AttrID[No]].dwNumFace*3, 0, 0 );
 		}
 	}
 
@@ -812,24 +771,20 @@ bool CDX9StaticMesh::ShadowRender( const D3DXMATRIX& mWorld )
 bool CDX9StaticMesh::TranslucentRender( const D3DXMATRIX& mWorld )
 {
 	if( CSceneTexRenderer::GetRenderPass() != CSceneTexRenderer::ERenderPass::Trans ) return false;
+
 	CTranslucentShader::SetConstantBufferData( mWorld*CCameraManager::GetViewMatrix()*CCameraManager::GetProjMatrix() );
-	//頂点ﾊﾞｯﾌｧをｾｯﾄ.
+	// 頂点バッファをセット.
 	UINT stride = m_pMesh->GetNumBytesPerVertex();
 	UINT offset = 0;
-	m_pContext11->IASetVertexBuffers(
-		0, 1, &m_pVertexBuffer, &stride, &offset);
-	//ﾌﾟﾘﾐﾃｨﾌﾞ・ﾄﾎﾟﾛｼﾞｰをｾｯﾄ.
-	m_pContext11->IASetPrimitiveTopology(
-		D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//属性の数だけ、それぞれの属性のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを描画.
-	for (DWORD No = 0; No < m_NumAttr; No++)
-	{
-		//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧをｾｯﾄ.
-		m_pContext11->IASetIndexBuffer(
-			m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0);
-		//ﾌﾟﾘﾐﾃｨﾌﾞ(ﾎﾟﾘｺﾞﾝ)をﾚﾝﾀﾞﾘﾝｸﾞ.
-		m_pContext11->DrawIndexed(
-			m_pMaterials[m_AttrID[No]].dwNumFace * 3, 0, 0);
+	m_pContext11->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &stride, &offset );
+	// プリミティブ・トポロジーをセット.
+	m_pContext11->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+	// 属性の数だけ、それぞれの属性のインデックスバッファを描画.
+	for( DWORD No = 0; No < m_NumAttr; No++ ){
+		// インデックスバッファをセット.
+		m_pContext11->IASetIndexBuffer( m_ppIndexBuffer[No], DXGI_FORMAT_R32_UINT, 0 );
+		// ポリゴンをレンダリング.
+		m_pContext11->DrawIndexed( m_pMaterials[m_AttrID[No]].dwNumFace*3, 0, 0 );
 	}
 	return true;
 }
