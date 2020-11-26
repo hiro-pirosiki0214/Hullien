@@ -9,43 +9,40 @@
 #include "..\..\Fog\Fog.h"
 #include <crtdbg.h>	//_ASSERTﾏｸﾛで必要.
 
-//ｼｪｰﾀﾞﾌｧｲﾙ名(ﾃﾞｨﾚｸﾄﾘも含む).
+// シェーダー名.
 const char SHADER_NAME[] = "Data\\Shader\\Mesh.hlsl";
 
-//ｺﾝｽﾄﾗｸﾀ.
 CDX9StaticMesh::CDX9StaticMesh()
-	: m_hWnd(nullptr)
-	, m_pDevice9(nullptr)
-
-	, m_pVertexShader(nullptr)
-	, m_pVertexLayout(nullptr)
-	, m_pPixelShader(nullptr)
-	, m_pCBufferPerMesh(nullptr)
-	, m_pCBufferPerMaterial(nullptr)
-	, m_pCBufferPerFrame(nullptr)
-	, m_pVertexBuffer(nullptr)
-	, m_ppIndexBuffer(nullptr)
-	, m_pSampleLinear(nullptr)
-	, m_pToonSampleLinear(nullptr)
-	, m_pShadowMapSampler(nullptr)
-
-	, m_pMesh(nullptr)
-	, m_NumMaterials(0)
-	, m_pMaterials(nullptr)
-	, m_pToonTexture(nullptr)
-	, m_pFogTexture(nullptr)
-	, m_NumAttr(0)
-	, m_AttrID()
-	, m_EnableTexture(false)
-	, m_pMeshForRay(nullptr)
-	, m_IsShadow(false)
+	: m_hWnd				( nullptr )
+	, m_pDevice9			( nullptr )
+	, m_pVertexShader		( nullptr )
+	, m_pVertexLayout		( nullptr )
+	, m_pPixelShader		( nullptr )
+	, m_pCBufferPerMesh		( nullptr )
+	, m_pCBufferPerMaterial	( nullptr )
+	, m_pCBufferPerFrame	( nullptr )
+	, m_pVertexBuffer		( nullptr )
+	, m_ppIndexBuffer		( nullptr )
+	, m_pSampleLinear		( nullptr )
+	, m_pToonSampleLinear	( nullptr )
+	, m_pShadowMapSampler	( nullptr )
+							  
+	, m_pMesh				( nullptr )
+	, m_pMeshForRay			( nullptr )
+	, m_NumMaterials		( 0 )
+	, m_pToonTexture		( nullptr )
+	, m_pFogTexture			( nullptr )
+	, m_pMaterials			( nullptr )
+	, m_NumAttr				( 0 )
+	, m_AttrID				()
+	, m_EnableTexture		( false )
+	, m_IsShadow			( false )
 {
 }
 
-//ﾃﾞｽﾄﾗｸﾀ.
 CDX9StaticMesh::~CDX9StaticMesh()
 {
-	//解放処理.
+	// 解放処理.
 	Release();
 }
 
@@ -59,204 +56,200 @@ HRESULT CDX9StaticMesh::Init(
 {
 	m_hWnd = hWnd;
 	m_pDevice9 = pDevice9;
-	if( FAILED(InitPram( pDevice11, pContext11 ))) return E_FAIL;
-	if( FAILED(LoadXMesh(fileName))) return E_FAIL; 
-	if( FAILED(InitShader())) return E_FAIL;
+	if( FAILED( InitPram( pDevice11, pContext11 )) ) return E_FAIL;
+	if( FAILED( LoadXMesh( fileName )) ) return E_FAIL; 
+	if( FAILED( InitShader()) ) return E_FAIL;
 
 	return S_OK;
 }
 
-//ﾒｯｼｭ読み込み.
+// メッシュ読み込み.
 HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 {
-	//ﾏﾃﾘｱﾙﾊﾞｯﾌｧ.
+	// マテリアルバッファ.
 	LPD3DXBUFFER pD3DXMtrlBuffer = nullptr;
 
-	//Xﾌｧｲﾙのﾛｰﾄﾞ.
-	if (FAILED(D3DXLoadMeshFromXA(
-		fileName,	//ﾌｧｲﾙ名.
-		D3DXMESH_SYSTEMMEM	//ｼｽﾃﾑﾒﾓﾘに読み込み.
-		| D3DXMESH_32BIT,	//32bit.
-		m_pDevice9, nullptr,
-		&pD3DXMtrlBuffer,	//(out)ﾏﾃﾘｱﾙ情報.
+	// Xファイルの読み込み.
+	if( FAILED( D3DXLoadMeshFromX(
+		fileName,			// ファイル名.
+		D3DXMESH_SYSTEMMEM	// システムメモリに読み込み.
+		| D3DXMESH_32BIT,	// 32bit.
+		m_pDevice9,
 		nullptr,
-		&m_NumMaterials,	//(out)ﾏﾃﾘｱﾙ数.
-		&m_pMesh)))			//(out)ﾒｯｼｭｵﾌﾞｼﾞｪｸﾄ.
-	{
+		&pD3DXMtrlBuffer,	// (out)マテリアル情報.
+		nullptr,
+		&m_NumMaterials,	// (out)マテリアル数.
+		&m_pMesh ))){		// (out)メッシュオブジェクト.
 		_ASSERT_EXPR(false, L"Xﾌｧｲﾙ読込失敗");
 		return E_FAIL;
 	}
 
 	//Xﾌｧｲﾙのﾛｰﾄﾞ(ﾚｲとの判定用に別設定で読み込む).
-	if (FAILED(D3DXLoadMeshFromXA(
-		fileName,	//ﾌｧｲﾙ名.
-		D3DXMESH_SYSTEMMEM,	//ｼｽﾃﾑﾒﾓﾘに読み込み.
-		m_pDevice9, nullptr,
-		&pD3DXMtrlBuffer,	//(out)ﾏﾃﾘｱﾙ情報.
+	if( FAILED( D3DXLoadMeshFromX(
+		fileName,			// ファイル名.
+		D3DXMESH_SYSTEMMEM,	// システムメモリに読み込み.
+		m_pDevice9,
 		nullptr,
-		&m_NumMaterials,	//(out)ﾏﾃﾘｱﾙ数.
-		&m_pMeshForRay)))	//(out)ﾒｯｼｭｵﾌﾞｼﾞｪｸﾄ.
-	{
+		&pD3DXMtrlBuffer,	// (out)マテリアル情報.
+		nullptr,
+		&m_NumMaterials,	// (out)マテリアル数.
+		&m_pMeshForRay ))){	// (out)メッシュオブジェクト.
 		_ASSERT_EXPR(false, L"Xﾌｧｲﾙ読込失敗");
 		return E_FAIL;
 	}
 
-
-	D3D11_BUFFER_DESC		bd;	//Dx11ﾊﾞｯﾌｧ構造体.
-	D3D11_SUBRESOURCE_DATA	InitData;//初期化ﾃﾞｰﾀ.
-									 //読み込んだ情報から必要な情報を抜き出す.
+	D3D11_BUFFER_DESC		bd;			// Dx11バッファ構造体.
+	D3D11_SUBRESOURCE_DATA	InitData;	// 初期化データ.
+	// 読み込んだ情報から必要な情報を抜き出す.
 	D3DXMATERIAL* d3dxMaterials
 		= static_cast<D3DXMATERIAL*>(pD3DXMtrlBuffer->GetBufferPointer());
-	//ﾏﾃﾘｱﾙ数分の領域を確保.
+	// マテリアル数分の領域を確保.
 	m_pMaterials = new MY_MATERIAL[m_NumMaterials]();
 	m_ppIndexBuffer = new ID3D11Buffer*[m_NumMaterials]();
-	//ﾏﾃﾘｱﾙ数分繰り返し.
-	for (DWORD No = 0; No < m_NumMaterials; No++) 
-	{
-		//ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧの初期化.
+	// マテリアル数分繰り返し.
+	for( DWORD No = 0; No < m_NumMaterials; No++ ){
+		// インデックスバッファの初期化.
 		m_ppIndexBuffer[No] = nullptr;
 
-		//ﾏﾃﾘｱﾙ情報のｺﾋﾟｰ.
-		//ｱﾝﾋﾞｴﾝﾄ.
+		// マテリアル情報のコピー.
+		// アンビエント.
 		m_pMaterials[No].Ambient.x = d3dxMaterials[No].MatD3D.Ambient.r;
 		m_pMaterials[No].Ambient.y = d3dxMaterials[No].MatD3D.Ambient.g;
 		m_pMaterials[No].Ambient.z = d3dxMaterials[No].MatD3D.Ambient.b;
 		m_pMaterials[No].Ambient.w = d3dxMaterials[No].MatD3D.Ambient.a;
-		//ﾃﾞｨﾌｭｰｽﾞ.
+		// ディフューズ.
 		m_pMaterials[No].Diffuse.x = d3dxMaterials[No].MatD3D.Diffuse.r;
 		m_pMaterials[No].Diffuse.y = d3dxMaterials[No].MatD3D.Diffuse.g;
 		m_pMaterials[No].Diffuse.z = d3dxMaterials[No].MatD3D.Diffuse.b;
 		m_pMaterials[No].Diffuse.w = d3dxMaterials[No].MatD3D.Diffuse.a;
-		//ｽﾍﾟｷｭﾗ.
+		// スペキュラ.
 		m_pMaterials[No].Specular.x = d3dxMaterials[No].MatD3D.Specular.r;
 		m_pMaterials[No].Specular.y = d3dxMaterials[No].MatD3D.Specular.g;
 		m_pMaterials[No].Specular.z = d3dxMaterials[No].MatD3D.Specular.b;
 		m_pMaterials[No].Specular.w = d3dxMaterials[No].MatD3D.Specular.a;
 
-		//(その面に)ﾃｸｽﾁｬが貼られているか？.
-		if( d3dxMaterials[No].pTextureFilename != nullptr
-			&& lstrlen(d3dxMaterials[No].pTextureFilename) > 0)
-		{
-			//ﾃｸｽﾁｬありのﾌﾗｸﾞを立てる.
+		// (その面に)テクスチャが貼られているか？.
+		if( d3dxMaterials[No].pTextureFilename != nullptr &&
+			lstrlen(d3dxMaterials[No].pTextureFilename) > 0 ){
+			// テクスチャありのフラグを立てる.
 			m_EnableTexture = true;
 
 			char path[128] = "";
 			int path_count = lstrlen(fileName);
-			for (int k = path_count; k >= 0; k--) {
-				if (fileName[k] == '\\') {
-					for (int j = 0; j <= k; j++) {
+			for( int k = path_count; k >= 0; k-- ){
+				if( fileName[k] == '\\' ){
+					for( int j = 0; j <= k; j++ ){
 						path[j] = fileName[j];
 					}
 					path[k + 1] = '\0';
 					break;
 				}
 			}
-			//ﾊﾟｽとﾃｸｽﾁｬﾌｧｲﾙ名を連結.
-			strcat_s(path, sizeof(path), d3dxMaterials[No].pTextureFilename);
+			// パスとテクスチャ名を連結.
+			strcat_s( path, sizeof(path), d3dxMaterials[No].pTextureFilename );
 
-			//ﾃｸｽﾁｬﾌｧｲﾙ名をｺﾋﾟｰ.
-			strcpy_s(m_pMaterials[No].szTextureName,
-				sizeof(m_pMaterials[No].szTextureName),	path);
+			//　テクスチャ名をコピー.
+			strcpy_s( m_pMaterials[No].szTextureName, sizeof(m_pMaterials[No].szTextureName), path );
 
-			// ﾃｸｽﾁｬ作成.
-			if (FAILED(D3DX11CreateShaderResourceViewFromFileA(
-				m_pDevice11, m_pMaterials[No].szTextureName,//ﾃｸｽﾁｬﾌｧｲﾙ名.
-				nullptr, nullptr,
-				&m_pMaterials[No].pTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
-				nullptr)))
-			{
+			// テクスチャ作成.
+			if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+				m_pDevice11,
+				m_pMaterials[No].szTextureName,	// テクスチャファイル名.
+				nullptr,
+				nullptr,
+				&m_pMaterials[No].pTexture,		// (out)テクスチャオブジェクト.
+				nullptr ))){
 				_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
 				return E_FAIL;
 			}
 		}
 	}
-	// ﾃｸｽﾁｬ作成.
-	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
-		m_pDevice11, "Data\\Mesh\\toon.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
-		nullptr, nullptr,
-		&m_pToonTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
-		nullptr)))
-	{
+	// トゥーンテクスチャ作成.
+	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
+		m_pDevice11,
+		"Data\\Mesh\\toon.png",	// テクスチャファイル名.
+		nullptr,
+		nullptr,
+		&m_pToonTexture,		// (out)テクスチャオブジェクト.
+		nullptr ))){
 		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
 		return E_FAIL;
 	}
-	// ﾃｸｽﾁｬ作成.
+	// フォグテクスチャ作成.
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
-		m_pDevice11, "Data\\Mesh\\Fog.png",//ﾃｸｽﾁｬﾌｧｲﾙ名.
-		nullptr, nullptr,
-		&m_pFogTexture,//(out)ﾃｸｽﾁｬｵﾌﾞｼﾞｪｸﾄ.
-		nullptr)))
-	{
+		m_pDevice11, 
+		"Data\\Mesh\\Fog.png",	// テクスチャファイル名.
+		nullptr,
+		nullptr,
+		&m_pFogTexture,			// (out)テクスチャオブジェクト.
+		nullptr ))){
 		_ASSERT_EXPR(false, L"ﾃｸｽﾁｬ作成失敗");
 		return E_FAIL;
 	}
 	//------------------------------------------------
-	//	ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ作成.
+	//	インデックスバッファ作成.
 	//------------------------------------------------
-	//ﾒｯｼｭの属性情報を得る.
-	//属性情報でｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧから細かいﾏﾃﾘｱﾙごとのｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを分離できる.
+	// メッシュの属性情報を得る.
+	//	属性情報でインデックスバッファから細かいマテリアルごとのインデックスバッファを分離できる.
 	D3DXATTRIBUTERANGE* pAttrTable = nullptr;
 
-	//ﾒｯｼｭの面および頂点の順番変更を制御し、ﾊﾟﾌｫｰﾏﾝｽを最適化する.
-	//D3DXMESHOPT_COMPACT : 面の順番を変更し、使用されていない頂点と面を削除する.
-	//D3DXMESHOPT_ATTRSORT : ﾊﾟﾌｫｰﾏﾝｽを上げる為、面の順番を変更して最適化を行う.
-	m_pMesh->OptimizeInplace(D3DXMESHOPT_COMPACT | D3DXMESHOPT_ATTRSORT,
-		nullptr, nullptr, nullptr, nullptr);
-	//属性ﾃｰﾌﾞﾙの取得.
-	m_pMesh->GetAttributeTable(nullptr, &m_NumAttr);
+	// メッシュの面および頂点の順番変更を制御し、パフォーマンスを最適化する.
+	//	D3DXMESHOPT_COMPACT : 面の順番を変更し、使用されていない頂点と面を削除する.
+	//	D3DXMESHOPT_ATTRSORT : パフォーマンスを上げる為、面の順番を変更して最適化を行う.
+	m_pMesh->OptimizeInplace( D3DXMESHOPT_COMPACT | D3DXMESHOPT_ATTRSORT,
+		nullptr, nullptr, nullptr, nullptr );
+	// 属性テーブルの取得.
+	m_pMesh->GetAttributeTable( nullptr, &m_NumAttr );
 	pAttrTable = new D3DXATTRIBUTERANGE[m_NumAttr];
-	if (FAILED(m_pMesh->GetAttributeTable(pAttrTable, &m_NumAttr)))
-	{
+	if( FAILED( m_pMesh->GetAttributeTable( pAttrTable, &m_NumAttr )) ){
 		_ASSERT_EXPR(false, L"属性ﾃｰﾌﾞﾙ取得失敗");
 		return E_FAIL;
 	}
 
-	//同じくLockしないと取り出せない.
+	// 同じくLockしないと取り出せない.
 	int* pIndex = nullptr;
-	m_pMesh->LockIndexBuffer(
-		D3DLOCK_READONLY, (void**)&pIndex);
-	//属性ごとのｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを作成.
-	for (DWORD No = 0; No < m_NumAttr; No++)
-	{
+	m_pMesh->LockIndexBuffer( D3DLOCK_READONLY, (void**)&pIndex );
+	// 属性ごとのインデックスバッファを作成.
+	for( DWORD No = 0; No < m_NumAttr; No++ ){
 		m_AttrID[No] = pAttrTable[No].AttribId;
-		//Dx9のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧからの情報で、Dx11のｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧを作成.
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.ByteWidth
-			= sizeof(int)*pAttrTable[No].FaceCount * 3;//面数×3で頂点数.
-		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		bd.CPUAccessFlags = 0;
-		bd.MiscFlags = 0;
-		//大きいｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ内のｵﾌｾｯﾄ(×3する).
+		// Dx9のインデックスバッファからの情報で、
+		//	Dx11のインデックスバッファを作成.
+		bd.Usage			= D3D11_USAGE_DEFAULT;
+		bd.ByteWidth		= sizeof(int)*pAttrTable[No].FaceCount*3;//面数×3で頂点数.
+		bd.BindFlags		= D3D11_BIND_INDEX_BUFFER;
+		bd.CPUAccessFlags	= 0;
+		bd.MiscFlags		= 0;
+		// 大きいインデックスバッファ内のオフセット(×3する).
 		InitData.pSysMem = &pIndex[pAttrTable[No].FaceStart*3];
 
-		if (FAILED(m_pDevice11->CreateBuffer(
-			&bd, &InitData, &m_ppIndexBuffer[No])))
-		{
+		// インデックスバッファの作成.
+		if( FAILED( m_pDevice11->CreateBuffer(
+			&bd, 
+			&InitData,
+			&m_ppIndexBuffer[No] ))){
 			_ASSERT_EXPR(false, L"ｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧ作成失敗");
 			return E_FAIL;
 		}
-		//面の数をｺﾋﾟｰ.
+		// 面の数をコピー.
 		m_pMaterials[m_AttrID[No]].dwNumFace = pAttrTable[No].FaceCount;
 	}
-	//属性ﾃｰﾌﾞﾙの削除.
-	delete[] pAttrTable;
-	//使用済みのｲﾝﾃﾞｯｸｽﾊﾞｯﾌｧの解放.
+	// 属性テーブルの削除.
+	SAFE_DELETE( pAttrTable );
+	// 使用済みのインデックスバッファの解放.
 	m_pMesh->UnlockIndexBuffer();
-	//不要になったﾏﾃﾘｱﾙﾊﾞｯﾌｧを解放.
-	SAFE_RELEASE(pD3DXMtrlBuffer);
+	// 不要になったマテリアルバッファを解放.
+	SAFE_RELEASE( pD3DXMtrlBuffer );
 
 	//------------------------------------------------
-	//	頂点ﾊﾞｯﾌｧの作成.
+	//	頂点バッファの作成.
 	//------------------------------------------------
-	//Dx9の場合、mapではなくLockで頂点ﾊﾞｯﾌｧからﾃﾞｰﾀを取り出す.
+	// Dx9の場合、mapではなくLockで頂点バッファからデータを取り出す.
 	LPDIRECT3DVERTEXBUFFER9 pVB = nullptr;
-	m_pMesh->GetVertexBuffer(&pVB);
+	m_pMesh->GetVertexBuffer( &pVB );
 	DWORD dwStride = m_pMesh->GetNumBytesPerVertex();
 	BYTE* pVertices = nullptr;
 	VERTEX* pVertex = nullptr;
-	if (SUCCEEDED(
-		pVB->Lock(0, 0, (VOID**)&pVertices, 0)))
-	{
+	if( SUCCEEDED( pVB->Lock(0, 0, (VOID**)&pVertices, 0 ))){
 		pVertex = (VERTEX*)pVertices;
 		//Dx9の頂点ﾊﾞｯﾌｧからの情報で、Dx11頂点ﾊﾞｯﾌｧを作成.
 		bd.Usage = D3D11_USAGE_DEFAULT;
@@ -267,8 +260,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		bd.MiscFlags = 0;
 		InitData.pSysMem = pVertex;
 		if (FAILED(m_pDevice11->CreateBuffer(
-			&bd, &InitData, &m_pVertexBuffer)))
-		{
+			&bd, &InitData, &m_pVertexBuffer))){
 			_ASSERT_EXPR(false, L"頂点ﾊﾞｯﾌｧ作成失敗");
 			return E_FAIL;
 		}

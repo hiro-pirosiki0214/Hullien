@@ -26,34 +26,34 @@ bool CFade::Init()
 //	更新関数.
 void CFade::Update()
 {
-	if (GetInstance()->m_pSprite == nullptr) return;
-	if (GetInstance()->m_FadeState == EFadeState::Finish) return;
+	if (m_pSprite == nullptr) return;
+	if (m_FadeState == EFadeState::Finish) return;
 
 	//フェードイン状態の時.
-	if (GetInstance()->m_FadeState == EFadeState::In)
+	if (m_FadeState == EFadeState::In)
 	{
 		//透過値が最大値より小さければフェード中.
-		if (GetInstance()->m_Alpha < ALPHA_MAX)
+		if (m_Alpha < ALPHA_MAX)
 		{
-			GetInstance()->m_Alpha += m_AlphaSpeed;
+			m_Alpha += m_AlphaSpeed;
 		}
 		else
 		{
-			GetInstance()->m_IsFade = false;
+			m_IsFade = false;
 		}
 	}
 	//フェードアウト状態の時.
-	else if (GetInstance()->m_FadeState == EFadeState::Out)
+	else if (m_FadeState == EFadeState::Out)
 	{
 		//透過値が最小値より大きければフェード中.
-		if (GetInstance()->m_Alpha > 0.0f)
+		if (m_Alpha > 0.0f)
 		{
-			GetInstance()->m_Alpha -= m_AlphaSpeed;
+			m_Alpha -= m_AlphaSpeed;
 		}
 		else
 		{
-			GetInstance()->m_IsFade = false;
-			GetInstance()->m_FadeState = EFadeState::Finish;
+			m_IsFade = false;
+			m_FadeState = EFadeState::Finish;
 		}
 	}
 }
@@ -97,9 +97,9 @@ void CFade::SetFadeOut()
 // スプライト設定関数.
 bool CFade::SpriteSetting()
 {
-	if (GetInstance()->m_pSprite != nullptr) return true;
-	GetInstance()->m_pSprite = CSpriteResource::GetSprite("CBackGround");
-	if (GetInstance()->m_pSprite == false) return false;
+	if (m_pSprite != nullptr) return true;
+	m_pSprite = CSpriteResource::GetSprite("CBackGround");
+	if (m_pSprite == false) return false;
 
 	return true;
 }
