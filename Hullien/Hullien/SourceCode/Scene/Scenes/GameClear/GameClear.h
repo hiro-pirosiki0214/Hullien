@@ -27,7 +27,7 @@ private:
 	// モデルの描画.
 	void ModelRender();
 	// シーンを切り替える.
-	void OnChangeScene();
+	void OnChangeScene( const bool& isPlaySE );
 	// シーン切り替え関数.
 	void ChangeScene();
 	// スキップの更新関数.

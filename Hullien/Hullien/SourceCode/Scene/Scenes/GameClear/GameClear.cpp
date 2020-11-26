@@ -63,7 +63,7 @@ void CGameClear::Update()
 	// STGÇ™èIóπÇµÇΩÇÁ.
 	if( m_pSTGManager->IsSTGEnd() == true ){
 		m_pClearWidget->SetIsSTGEnd();
-		OnChangeScene();
+		OnChangeScene( false );
 	} else {
 		SkipUpdate();
 	}
@@ -127,12 +127,12 @@ void CGameClear::ModelRender()
 //============================.
 // ÉVÅ[ÉìÇêÿÇËë÷Ç¶ÇÈ.
 //============================.
-void CGameClear::OnChangeScene()
+void CGameClear::OnChangeScene( const bool& isPlaySE )
 {
 	if(m_IsChangeScene == true) return;
 	CFade::SetFadeIn();
 	CSoundManager::PlaySE("Determination");
-	CSoundManager::FadeOutBGM("ClearBGM");
+	if( isPlaySE == true )CSoundManager::FadeOutBGM("ClearBGM");
 	m_IsChangeScene = true;
 }
 
@@ -166,5 +166,5 @@ void CGameClear::SkipUpdate()
 		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
 	}
 	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
-	OnChangeScene();
+	OnChangeScene( true );
 }
