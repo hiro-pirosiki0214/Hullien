@@ -295,6 +295,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		return E_FAIL;
 	}
 
+	// トゥーンテクスチャ用.
 	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -305,6 +306,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		return E_FAIL;
 	}
 
+	// シャドウマップ用.
 	samDesc.Filter		= D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 	samDesc.AddressU	= D3D11_TEXTURE_ADDRESS_BORDER;
 	samDesc.AddressV	= D3D11_TEXTURE_ADDRESS_BORDER;
