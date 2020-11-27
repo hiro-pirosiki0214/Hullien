@@ -103,16 +103,6 @@ struct SKIN_PARTS_MESH
 	{}
 	~SKIN_PARTS_MESH()
 	{
-		SAFE_DELETE_ARRAY( pMaterial );
-		SAFE_DELETE( pVertexBuffer );
-		//²ÝÃÞ¯¸½ÊÞ¯Ì§‰ð•ú.
-		if( ppIndexBuffer != nullptr ){
-			for( int No = dwNumMaterial-1; No >= 0; No-- ){
-				SAFE_RELEASE( ppIndexBuffer[No] );
-			}
-			delete[] ppIndexBuffer;
-			ppIndexBuffer = nullptr;
-		}
 	}
 };
 

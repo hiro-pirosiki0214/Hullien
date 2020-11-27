@@ -7,17 +7,19 @@
 #include "..\..\XAudio2\SoundManager.h"
 
 CLoadManager::CLoadManager()
-	: m_Thread			()
-	, m_Sprites			()
-	, m_Mutex			()
-	, m_isLoadEnd		( false )
-	, m_isThreadJoined	( false )
-	, m_isLoadFailed	( false )
+	: m_Thread				()
+	, m_Sprites				()
+	, m_Mutex				()
+	, m_isLoadEnd			( false )
+	, m_isThreadJoined		( false )
+	, m_isLoadFailed		( false )
+	, m_isLoadSpriteFailed	( false )
 {
 }
 
 CLoadManager::~CLoadManager()
 {
+	if( m_isLoadSpriteFailed == true ) return;
 	if( m_isLoadFailed == true ) m_Thread.join();
 }
 
@@ -30,7 +32,12 @@ void CLoadManager::LoadResource(
 	ID3D11DeviceContext* pContext11, 
 	LPDIRECT3DDEVICE9 pDevice9 )
 {
-	GetSprite( pDevice11, pContext11 );
+	if( FAILED( GetSprite( pDevice11, pContext11 ) )){
+		m_isLoadSpriteFailed = true;
+		m_isLoadFailed = true;
+		return;
+	}
+
 	CFontResource::Load( pDevice11, pContext11 );
 	CSoundManager::CreateSoundData();
 	auto load = [&]( 
@@ -40,13 +47,17 @@ void CLoadManager::LoadResource(
 		LPDIRECT3DDEVICE9 pDevice9 )
 	{
 		m_Mutex.lock();
-		CSpriteResource::Load( pDevice11, pContext11 );
+		if( FAILED( CSpriteResource::Load( pDevice11, pContext11 ) )){
+			m_Mutex.unlock();
+			m_isLoadFailed = true;
+			return;
+		}
 		if( FAILED( CMeshResorce::Load( hWnd, pDevice11, pContext11, pDevice9 ) )){
 			m_Mutex.unlock();
 			m_isLoadFailed = true;
 			return;
 		}
-		CEffectResource::Load( pDevice11, pContext11 );
+//		CEffectResource::Load( pDevice11, pContext11 );
 		m_isLoadEnd = true;
 		m_Mutex.unlock();
 	};
@@ -83,7 +94,7 @@ bool CLoadManager::ThreadRelease()
 //------------------------.
 // スプライトの取得.
 //------------------------.
-bool CLoadManager::GetSprite(
+HRESULT CLoadManager::GetSprite(
 	ID3D11Device* pDevice11, 
 	ID3D11DeviceContext* pContext11 )
 {
@@ -97,9 +108,9 @@ bool CLoadManager::GetSprite(
 
 	for( int i = 0; i < size; i++ ){
 		SSpriteState ss = CSpriteResource::SpriteStateRead( names[i] );
-		m_Sprites.emplace_back(
-			std::make_shared<CSprite>( pDevice11, pContext11, names[i], ss ) );
+		m_Sprites.emplace_back( std::make_shared<CSprite>() );
+		if( FAILED( m_Sprites.back()->Init( pDevice11, pContext11, names[i], ss ) )) return E_FAIL;
 	}
 
-	return true;
+	return S_OK;
 }

@@ -38,18 +38,19 @@ public:
 
 private:
 	// スプライトの取得.
-	bool GetSprite( 
+	HRESULT GetSprite( 
 		ID3D11Device* pDevice11, 
 		ID3D11DeviceContext* pContext11 );
 
 private:
 	std::thread m_Thread;		// スレッド.
-	std::vector<std::shared_ptr<CSprite>>	m_Sprites;
 	std::mutex	m_Mutex;
+	std::vector<std::shared_ptr<CSprite>>	m_Sprites;
 	
 	bool m_isLoadEnd;			// ロードが終了したか.
 	bool m_isThreadJoined;		// スレッドが解放されたか.
 	bool m_isLoadFailed;		// ロード失敗.
+	bool m_isLoadSpriteFailed;	// ロードスプライトの読み込み失敗.
 };
 
 #endif	// #ifndef LOAD_MANAGER_H.

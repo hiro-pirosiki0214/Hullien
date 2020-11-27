@@ -19,6 +19,7 @@
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\Common\Fog\Fog.h"
+#include "..\..\..\Resource\EffectResource\EffectResource.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -46,6 +47,8 @@ CGame::~CGame()
 //============================.
 bool CGame::Load()
 {
+	CEffectResource::Release();
+	CEffectResource::Load( CDirectX11::GetDevice(), CDirectX11::GetContext() );
 	if( m_GameObjManager->Init() == false )	return false;
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;

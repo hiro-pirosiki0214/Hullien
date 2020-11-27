@@ -25,9 +25,10 @@ CSpriteResource* CSpriteResource::GetInstance()
 //-------------------------------.
 // スプライトの読み込み(ラッパー).
 //-------------------------------.
-void CSpriteResource::Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
+HRESULT CSpriteResource::Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
 {
-	GetInstance()->SpriteLoad( pDevice11, pContext11 );
+	if( FAILED( GetInstance()->SpriteLoad( pDevice11, pContext11 ) )) return E_FAIL;
+	return S_OK;
 }
 
 //-------------------------------.
@@ -50,13 +51,14 @@ std::shared_ptr<CSprite> CSpriteResource::GetSprite( const std::string& spriteNa
 //-------------------------------.
 // スプライト読み込み.
 //-------------------------------.
-void CSpriteResource::SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
+HRESULT CSpriteResource::SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
 {
 	auto eachLoad = [&]( const fs::directory_entry& entry )
 	{
 		const std::string exe		= entry.path().extension().string();	// 拡張子.
 		const std::string filePath	= entry.path().string();				// ファイルパス.
 		const std::string fileName	= entry.path().stem().string();			// ファイル名.
+		const std::string errorMsg	= fileName+" : スプライト読み込み失敗";	// あらかじめエラーメッセージを設定する.
 
 		// "_"が入ったものは無視される.
 		if( filePath.find("_") != std::string::npos ) return;
@@ -65,20 +67,32 @@ void CSpriteResource::SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* 
 			exe != ".bmp" && exe != ".BMP" &&
 			exe != ".jpg" && exe != ".JPG" ) return;
 
-		SSpriteState ss = SpriteStateRead( filePath );
-		m_SpriteList[fileName] =
-			std::make_shared<CSprite>( pDevice11, pContext11, filePath.c_str(), ss );
+		// スプライト情報の取得.
+		SSpriteState ss;
+		if( FAILED( SpriteStateRead( filePath, &ss ))) throw errorMsg;
+
+		// スプライトの作成.
+		m_SpriteList[fileName] = std::make_shared<CSprite>();
+		if( FAILED( m_SpriteList[fileName]->Init( pDevice11, pContext11, filePath.c_str(), ss ) ))
+			throw errorMsg;
 	};
 
 	try {
 		fs::recursive_directory_iterator dir_itr(FILE_PATH), end_itr;
 		std::for_each( dir_itr, end_itr, eachLoad );
-	} catch ( const fs::filesystem_error& ){
-
+	} catch ( const fs::filesystem_error& e ){
+		// エラーメッセージを表示.
+		ERROR_MESSAGE( e.path1().string().c_str() );
+		return E_FAIL;
+	} catch( const std::string& e ){
+		// エラーメッセージを表示.
+		ERROR_MESSAGE( e );
+		return E_FAIL;
 	}
 
 	// 読込が終わったので true にする.
 	m_HasFinishedLoading = true;
+	return S_OK;
 }
 
 //-------------------------------.
@@ -101,17 +115,48 @@ SSpriteState CSpriteResource::SpriteStateRead( const std::string& path )
 		return ss;
 	}
 
-	ss.LocalPosNum	= std::stoi(pramList[ss.enLocalPosNum]);
-	ss.Disp.w		= std::stof(pramList[ss.enDisp_w]);
-	ss.Disp.h		= std::stof(pramList[ss.enDisp_h]);
-	ss.Base.w		= std::stof(pramList[ss.enBase_w]);
-	ss.Base.h		= std::stof(pramList[ss.enBase_h]);
-	ss.Stride.w		= std::stof(pramList[ss.enStride_w]);
-	ss.Stride.h		= std::stof(pramList[ss.enStride_h]);
-	ss.vPos.x		= std::stof(pramList[ss.envPos_x]);
-	ss.vPos.y		= std::stof(pramList[ss.envPos_y]);
-	ss.vPos.z		= std::stof(pramList[ss.envPos_z]);
-	ss.AnimNum		= std::stoi(pramList[ss.enAnimNum]);
+	ss.LocalPosNum	= std::stoi(pramList[SSpriteState::enLocalPosNum]);
+	ss.Disp.w		= std::stof(pramList[SSpriteState::enDisp_w]);
+	ss.Disp.h		= std::stof(pramList[SSpriteState::enDisp_h]);
+	ss.Base.w		= std::stof(pramList[SSpriteState::enBase_w]);
+	ss.Base.h		= std::stof(pramList[SSpriteState::enBase_h]);
+	ss.Stride.w		= std::stof(pramList[SSpriteState::enStride_w]);
+	ss.Stride.h		= std::stof(pramList[SSpriteState::enStride_h]);
+	ss.vPos.x		= std::stof(pramList[SSpriteState::envPos_x]);
+	ss.vPos.y		= std::stof(pramList[SSpriteState::envPos_y]);
+	ss.vPos.z		= std::stof(pramList[SSpriteState::envPos_z]);
+	ss.AnimNum		= std::stoi(pramList[SSpriteState::enAnimNum]);
 
 	return ss;
+}
+
+// スプライト情報の読み込み.
+HRESULT CSpriteResource::SpriteStateRead( const std::string& path, SSpriteState* ss )
+{
+	std::string filePath = path;
+	// 拡張子の"."の位置を取得.
+	size_t i = filePath.find(".");
+	// 拡張子取り除いて".txt"に変更.
+	filePath.erase( i, filePath.size() ) += ".txt";
+
+	std::vector<std::string> pramList = CFileManager::TextLoading( filePath );
+
+	if( pramList.empty() == true ){
+		ERROR_MESSAGE( "The list of " + filePath + " was empty" );
+		return E_FAIL;
+	}
+
+	ss->LocalPosNum	= std::stoi(pramList[SSpriteState::enLocalPosNum]);
+	ss->Disp.w		= std::stof(pramList[SSpriteState::enDisp_w]);
+	ss->Disp.h		= std::stof(pramList[SSpriteState::enDisp_h]);
+	ss->Base.w		= std::stof(pramList[SSpriteState::enBase_w]);
+	ss->Base.h		= std::stof(pramList[SSpriteState::enBase_h]);
+	ss->Stride.w	= std::stof(pramList[SSpriteState::enStride_w]);
+	ss->Stride.h	= std::stof(pramList[SSpriteState::enStride_h]);
+	ss->vPos.x		= std::stof(pramList[SSpriteState::envPos_x]);
+	ss->vPos.y		= std::stof(pramList[SSpriteState::envPos_y]);
+	ss->vPos.z		= std::stof(pramList[SSpriteState::envPos_z]);
+	ss->AnimNum		= std::stoi(pramList[SSpriteState::enAnimNum]);
+
+	return S_OK;
 }

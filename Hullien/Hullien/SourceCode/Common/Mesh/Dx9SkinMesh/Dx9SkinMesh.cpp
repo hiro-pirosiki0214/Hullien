@@ -78,7 +78,6 @@ CDX9SkinMesh::~CDX9SkinMesh()
 
 	m_pReleaseMaterial = nullptr;
 
-	SAFE_RELEASE(m_pD3dxMesh);
 	SAFE_RELEASE(m_pMeshForRay);
 
 	//Dx9 デバイス関係.
@@ -424,6 +423,9 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 
 	//アプリメッシュ(・・・ここにメッシュデータをコピーする).
 	SKIN_PARTS_MESH* pAppMesh = new SKIN_PARTS_MESH();
+	//パーツメッシュに設定.
+	pFrame->pPartsMesh = pAppMesh;
+	m_pReleaseMaterial = pAppMesh;
 	pAppMesh->bTex = false;
 
 	//事前に頂点数、ポリゴン数等を調べる.
@@ -470,8 +472,8 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 	}
 	//マテリアル読み込み.
 	pAppMesh->dwNumMaterial	= m_pD3dxMesh->GetNumMaterials( pContainer );
-	pAppMesh->pMaterial		= new MY_SKINMATERIAL[pAppMesh->dwNumMaterial]();
 
+	pAppMesh->pMaterial		= new MY_SKINMATERIAL[pAppMesh->dwNumMaterial]();
 	//マテリアルの数だけインデックスバッファを作成.
 	pAppMesh->ppIndexBuffer = new ID3D11Buffer*[pAppMesh->dwNumMaterial]();
 	//掛け算ではなく「ID3D11Buffer*」の配列という意味.
@@ -517,7 +519,6 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 					NULL, NULL, &pAppMesh->pMaterial[i].pTexture, NULL )))
 		{
 			MessageBox( NULL, "テクスチャ読み込み失敗", "Error", MB_OK );
-			SAFE_DELETE( pAppMesh );
 			SAFE_DELETE( piFaceBuffer );
 			SAFE_DELETE( pvVB );
 			return E_FAIL;
@@ -591,12 +592,7 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		hRslt = E_FAIL;
 	}
 
-	//パーツメッシュに設定.
-	pFrame->pPartsMesh = pAppMesh;
-	m_pReleaseMaterial = pAppMesh;
-
 	//一時的な入れ物は不要なるので削除.
-	SAFE_DELETE( pAppMesh );
 	SAFE_DELETE( piFaceBuffer );
 	SAFE_DELETE( pvVB );
 
@@ -1160,7 +1156,7 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		if (pFrame->pPartsMesh->ppIndexBuffer)
 		{
 			//インデックスバッファ解放.
-			for (DWORD i = 0; i<pFrame->pPartsMesh->dwNumMaterial; i++){
+			for (int i = pFrame->pPartsMesh->dwNumMaterial-1; i>=0; i--){
 				if (pFrame->pPartsMesh->ppIndexBuffer[i] != nullptr){
 					pFrame->pPartsMesh->ppIndexBuffer[i]->Release();
 					pFrame->pPartsMesh->ppIndexBuffer[i] = nullptr;
@@ -1170,13 +1166,15 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		}
 
 		//頂点バッファ開放.
-		pFrame->pPartsMesh->pVertexBuffer->Release();
-		pFrame->pPartsMesh->pVertexBuffer = nullptr;
-	}
+		if( pFrame->pPartsMesh->pVertexBuffer != nullptr ){
+			pFrame->pPartsMesh->pVertexBuffer->Release();
+			pFrame->pPartsMesh->pVertexBuffer = nullptr;
+		}
 
-	//パーツマテリアル開放.
-	delete[] pFrame->pPartsMesh;
-	pFrame->pPartsMesh = nullptr;
+		//パーツマテリアル開放.
+		delete pFrame->pPartsMesh;
+		pFrame->pPartsMesh = nullptr;
+	}
 
 	//SKIN_PARTS_MESH解放完了.
 

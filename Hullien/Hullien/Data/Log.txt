@@ -1,5 +1,5 @@
-[2020/11/27 10:58] >> App launch
+[2020/11/27 14:16] >> App launch
 
-[10:58:39] >> ﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝﾝ
+[14:16:16] >> Data\Texture\_LoadTexture\LoadBackImage.png : テクスチャ読み込み失敗
 
-[10:58:40] >> App End
+[14:16:18] >> App End

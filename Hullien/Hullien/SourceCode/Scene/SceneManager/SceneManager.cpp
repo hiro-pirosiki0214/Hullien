@@ -145,7 +145,7 @@ void CSceneManager::RetryGame()
 {
 	m_IsLoadEnd = false;
 	m_IsRetry = true;
-	m_pScene = std::make_shared<CGame>(this);
+	m_pScene = std::make_shared<CGame>( this );
 }
 
 //=================================.

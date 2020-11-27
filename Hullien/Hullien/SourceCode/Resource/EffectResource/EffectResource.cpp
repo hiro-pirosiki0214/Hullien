@@ -9,7 +9,7 @@ CEffectResource::CEffectResource()
 
 CEffectResource::~CEffectResource()
 {
-	m_EffectList.clear();
+	Release();
 }
 
 //----------------------------.
@@ -29,6 +29,14 @@ void CEffectResource::Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pConte
 {
 	// エフェクトの読み込み.
 	GetInstance()->EffectLoad( pDevice11, pContext11 );
+}
+
+//----------------------------.
+// 解放.
+//----------------------------.
+void CEffectResource::Release()
+{
+	GetInstance()->m_EffectList.clear();
 }
 
 //----------------------------.
