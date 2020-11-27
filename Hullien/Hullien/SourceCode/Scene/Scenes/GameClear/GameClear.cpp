@@ -131,8 +131,8 @@ void CGameClear::OnChangeScene( const bool& isPlaySE )
 {
 	if(m_IsChangeScene == true) return;
 	CFade::SetFadeIn();
-	CSoundManager::PlaySE("Determination");
-	if( isPlaySE == true )CSoundManager::FadeOutBGM("ClearBGM");
+	if( isPlaySE == true )CSoundManager::PlaySE("Determination");
+	CSoundManager::FadeOutBGM("ClearBGM");
 	m_IsChangeScene = true;
 }
 
