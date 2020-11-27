@@ -25,6 +25,9 @@ class CXInput : public CXInputConfig
 {
 	const int FOUR_LIMITED_CONTROLLER = 4;	//!< 接続コントローラの最大数.
 public:
+	inline static const char* VIBRATION_CONFIG_FILE_PATH = "Data\\Config\\Con_Vib.bin";
+
+public:
 	enum enBUTTON_STATE
 	{
 		enNOT_PUSHING		= 0,		//!< 押していない状態.
@@ -219,8 +222,10 @@ public:
 	*/
 	static ButtonState Back_Button( const int& connectNum = 0 );
 
-	//振動設定.
+	// 振動設定.
 	static bool SetVibration( WORD LMotorSpd, WORD RMotorSpd, const int& connectNum = 0 );
+	// 振動をするかどうか設定.
+	static void SetVibration( const bool& isVib ){ GetInstance()->m_IsVibration = isVib; }
 
 	// ボタンの設定.
 	static void SetButton( enBUTTON_LIST before, enBUTTON_LIST after )

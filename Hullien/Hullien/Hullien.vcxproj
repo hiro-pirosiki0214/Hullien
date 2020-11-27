@@ -244,6 +244,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ControllerConfigWidget\ControllerConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
     <ClInclude Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ControllerConfigWidget\ControllerConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
     <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />

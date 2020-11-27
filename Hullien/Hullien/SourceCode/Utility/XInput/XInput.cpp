@@ -1,4 +1,5 @@
 #include "XInput.h"
+#include "..\FileManager\FileManager.h"
 #include <algorithm>
 
 CXInput::CXInput()
@@ -25,6 +26,7 @@ CXInput::CXInput()
 	for( int i = 0; i < FOUR_LIMITED_CONTROLLER; i++ ){
 		m_ButtonStateList.emplace_back(inputState);
 	}
+	CFileManager::BinaryReading( VIBRATION_CONFIG_FILE_PATH, m_IsVibration );
 }
 
 CXInput::~CXInput()
