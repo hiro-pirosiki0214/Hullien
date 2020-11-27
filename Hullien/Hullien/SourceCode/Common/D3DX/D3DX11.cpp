@@ -1,5 +1,7 @@
 #include "D3DX11.h"
 
+const int FULL_SCREEN_MUL = 1;
+
 CDirectX11::CDirectX11()
 	: m_hWnd					( nullptr )
 	, m_pDevice11				( nullptr )
@@ -276,8 +278,8 @@ HRESULT CDirectX11::InitDevice11()
 	// スワップチェーン構造体.
 	DXGI_SWAP_CHAIN_DESC sd = {0};
 	sd.BufferCount			= 1;								// バックバッファの数.
-	sd.BufferDesc.Width		= WND_W;							// バックバッファの幅.
-	sd.BufferDesc.Height	= WND_H;							// バックバッファの高さ.
+	sd.BufferDesc.Width		= WND_W*FULL_SCREEN_MUL;			// バックバッファの幅.
+	sd.BufferDesc.Height	= WND_H*FULL_SCREEN_MUL;			// バックバッファの高さ.
 	sd.BufferDesc.Format	= DXGI_FORMAT_R8G8B8A8_UNORM;		// フォーマット(32ﾋﾞｯﾄｶﾗｰ).
 	sd.BufferDesc.RefreshRate.Numerator		= 60;				// リフレッシュレート(分母) ※FPS:60.
 	sd.BufferDesc.RefreshRate.Denominator	= 1;				// リフレッシュレート(分子).
@@ -357,8 +359,8 @@ HRESULT CDirectX11::InitDSTex()
 	int wnd_Width = WND_W;
 	int wnd_Height = WND_H;
 	D3D11_TEXTURE2D_DESC descDepth;
-	descDepth.Width					= wnd_Width;				// 幅.
-	descDepth.Height				= wnd_Height;				// 高さ.
+	descDepth.Width					= WND_W*FULL_SCREEN_MUL;	// 幅.
+	descDepth.Height				= WND_H*FULL_SCREEN_MUL;	// 高さ.
 	descDepth.MipLevels				= 1;						// ミップマップレベル:1.
 	descDepth.ArraySize				= 1;						// 配列数:1.
 	descDepth.Format				= DXGI_FORMAT_D32_FLOAT;	// 32ビットフォーマット.
@@ -392,8 +394,8 @@ HRESULT CDirectX11::InitDSTex()
 HRESULT CDirectX11::InitViewports()
 {
 	D3D11_VIEWPORT vp;
-	vp.Width	= (FLOAT)WND_W;	// 幅.
-	vp.Height	= (FLOAT)WND_H;	// 高さ.
+	vp.Width	= (FLOAT)WND_W*FULL_SCREEN_MUL;	// 幅.
+	vp.Height	= (FLOAT)WND_H*FULL_SCREEN_MUL;	// 高さ.
 	vp.MinDepth = 0.0f;			// 最小深度(手前).
 	vp.MaxDepth = 1.0f;			// 最大深度(奥).
 	vp.TopLeftX = 0.0f;			// 左上位置x.

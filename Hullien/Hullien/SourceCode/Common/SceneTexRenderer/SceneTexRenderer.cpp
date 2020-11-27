@@ -1,6 +1,8 @@
 #include "SceneTexRenderer.h"
 #include "..\D3DX\D3DX11.h"
 
+const int FULL_SCREEN_MUL = 1;
+
 CSceneTexRenderer::CSceneTexRenderer()
 	: m_pDevice11				( nullptr )
 	, m_pContext11				( nullptr )
@@ -188,8 +190,8 @@ void CSceneTexRenderer::SetTransBuffer()
 HRESULT CSceneTexRenderer::InitShadowBufferTex()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width				= WND_W;						// 幅.
-	texDesc.Height				= WND_H;						// 高さ.
+	texDesc.Width				= WND_W*FULL_SCREEN_MUL;		// 幅.
+	texDesc.Height				= WND_H*FULL_SCREEN_MUL;		// 高さ.
 	texDesc.MipLevels			= 1;							// ミップマップレベル:1.
 	texDesc.ArraySize			= 1;							// 配列数:1.
 	texDesc.SampleDesc.Count	= 1;							// 32ビットフォーマット.
@@ -217,8 +219,8 @@ HRESULT CSceneTexRenderer::InitShadowBufferTex()
 HRESULT CSceneTexRenderer::InitGBufferTex()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width				= WND_W;							// 幅.
-	texDesc.Height				= WND_H;							// 高さ.
+	texDesc.Width				= WND_W*FULL_SCREEN_MUL;			// 幅.
+	texDesc.Height				= WND_H*FULL_SCREEN_MUL;			// 高さ.
 	texDesc.MipLevels			= 1;								// ミップマップレベル:1.
 	texDesc.ArraySize			= 1;								// 配列数:1.
 	texDesc.Format				= DXGI_FORMAT_R16G16B16A16_FLOAT;	// 32ビットフォーマット.
@@ -250,8 +252,8 @@ HRESULT CSceneTexRenderer::InitGBufferTex()
 HRESULT CSceneTexRenderer::InitTransBufferTex()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width				= WND_W;							// 幅.
-	texDesc.Height				= WND_H;							// 高さ.
+	texDesc.Width				= WND_W*FULL_SCREEN_MUL;			// 幅.
+	texDesc.Height				= WND_H*FULL_SCREEN_MUL;			// 高さ.
 	texDesc.MipLevels			= 1;								// ミップマップレベル:1.
 	texDesc.ArraySize			= 1;								// 配列数:1.
 	texDesc.Format				= DXGI_FORMAT_R11G11B10_FLOAT;		// 32ビットフォーマット.
@@ -274,8 +276,8 @@ HRESULT CSceneTexRenderer::InitTransBufferTex()
 HRESULT CSceneTexRenderer::InitAntialiasingTex()
 {
 	D3D11_TEXTURE2D_DESC texDesc;
-	texDesc.Width				= WND_W;							// 幅.
-	texDesc.Height				= WND_H;							// 高さ.
+	texDesc.Width				= WND_W*FULL_SCREEN_MUL;			// 幅.
+	texDesc.Height				= WND_H*FULL_SCREEN_MUL;			// 高さ.
 	texDesc.MipLevels			= 1;								// ミップマップレベル:1.
 	texDesc.ArraySize			= 1;								// 配列数:1.
 	texDesc.Format				= DXGI_FORMAT_R11G11B10_FLOAT;		// 32ビットフォーマット.
