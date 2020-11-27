@@ -158,6 +158,8 @@ void CMain::Loop()
 			CDirectX11::SwapChainPresent();
 			// フレームレートの待機処理.
 			m_pFrameRate->Wait();
+			if( m_pLoadManager->IsLoadFailed() == true )
+				return;
 		}
 	}
 }

@@ -64,6 +64,6 @@ void ERROR_MESSAGE ( const std::string& error )
 	MultiByteToWideChar( CP_UTF8, 0, &error[0], (int)error.size(), &wstrTo[0], size_needed );
 
 	CLog::Print( error );
-	_ASSERT_EXPR( false, wstrTo.c_str() );
+//	_ASSERT_EXPR( false, wstrTo.c_str() );
 	MessageBox( nullptr, error.c_str(), "Warning", MB_OK );
 }

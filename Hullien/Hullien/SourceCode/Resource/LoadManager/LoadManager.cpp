@@ -12,11 +12,13 @@ CLoadManager::CLoadManager()
 	, m_Mutex			()
 	, m_isLoadEnd		( false )
 	, m_isThreadJoined	( false )
+	, m_isLoadFailed	( false )
 {
 }
 
 CLoadManager::~CLoadManager()
 {
+	if( m_isLoadFailed == true ) m_Thread.join();
 }
 
 //------------------------.
@@ -39,7 +41,11 @@ void CLoadManager::LoadResource(
 	{
 		m_Mutex.lock();
 		CSpriteResource::Load( pDevice11, pContext11 );
-		CMeshResorce::Load( hWnd, pDevice11, pContext11, pDevice9 );
+		if( FAILED( CMeshResorce::Load( hWnd, pDevice11, pContext11, pDevice9 ) )){
+			m_Mutex.unlock();
+			m_isLoadFailed = true;
+			return;
+		}
 		CEffectResource::Load( pDevice11, pContext11 );
 		m_isLoadEnd = true;
 		m_Mutex.unlock();

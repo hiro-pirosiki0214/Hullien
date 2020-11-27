@@ -26,7 +26,6 @@ CDX9StaticMesh::CDX9StaticMesh()
 	, m_pSampleLinear		( nullptr )
 	, m_pToonSampleLinear	( nullptr )
 	, m_pShadowMapSampler	( nullptr )
-							  
 	, m_pMesh				( nullptr )
 	, m_pMeshForRay			( nullptr )
 	, m_NumMaterials		( 0 )
@@ -179,7 +178,7 @@ HRESULT CDX9StaticMesh::LoadXMesh(const char* fileName)
 		return E_FAIL;
 	}
 	// フォグテクスチャ作成.
-	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
+	if( FAILED( D3DX11CreateShaderResourceViewFromFile(
 		m_pDevice11, 
 		"Data\\Mesh\\Fog.png",	// テクスチャファイル名.
 		nullptr,

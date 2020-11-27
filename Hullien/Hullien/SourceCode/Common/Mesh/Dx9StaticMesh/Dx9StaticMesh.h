@@ -3,7 +3,6 @@
 
 #include "..\..\Common.h"
 #include "..\MeshStruct.h"
-#include "..\..\Fog\Fog.h"
 
 // スタティックメッシュクラス.
 class CDX9StaticMesh : public CCommon
@@ -48,10 +47,10 @@ public:
 		Init( hWnd, pDevice11, pContext11, pDevice9, fileName );
 	}
 
-	CDX9StaticMesh();	// コンストラクタ.
+	CDX9StaticMesh();			// コンストラクタ.
 	virtual ~CDX9StaticMesh();	// デストラクタ.
 
-						// 初期化.
+	// 初期化.
 	HRESULT Init(
 		HWND hWnd, 
 		ID3D11Device* pDevice11,
@@ -66,10 +65,10 @@ public:
 	void Render( const bool& isTrans = false );
 
 	// メッシュを取得.
-	LPD3DXMESH GetMesh() const { return m_pMeshForRay; }
+	inline LPD3DXMESH GetMesh() const { return m_pMeshForRay; }
 
 	// 影を描画するか.
-	void SetIsShadow( const bool isShadow ){ m_IsShadow = isShadow; }
+	inline void SetIsShadow( const bool isShadow ){ m_IsShadow = isShadow; }
 
 private:
 	// メッシュ読み込み.

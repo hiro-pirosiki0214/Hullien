@@ -33,6 +33,8 @@ public:
 
 	// 描画.
 	void Render();
+	// ロード失敗.
+	inline bool IsLoadFailed() const { return m_isLoadFailed; }
 
 private:
 	// スプライトの取得.
@@ -47,6 +49,7 @@ private:
 	
 	bool m_isLoadEnd;			// ロードが終了したか.
 	bool m_isThreadJoined;		// スレッドが解放されたか.
+	bool m_isLoadFailed;		// ロード失敗.
 };
 
 #endif	// #ifndef LOAD_MANAGER_H.

@@ -173,7 +173,7 @@ private:
 	void RecursiveSetNewPoseMatrices( BONE* pBone,D3DXMATRIX* pmParent );
 
 	//全てのメッシュを作成する.
-	void BuildAllMesh( D3DXFRAME* pFrame );
+	HRESULT BuildAllMesh( D3DXFRAME* pFrame );
 
 	//メッシュを作成する.
 	HRESULT CreateAppMeshFromD3DXMesh( LPD3DXFRAME pFrame );

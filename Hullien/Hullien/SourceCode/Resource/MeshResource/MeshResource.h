@@ -29,7 +29,7 @@ public:
 	static CMeshResorce* GetInstance();
 
 	// モデルの読み込み(ラッパー).
-	static void Load( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 );
+	static HRESULT Load( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 );
 
 	// スタティックメッシュの読み込み.
 	static std::shared_ptr<CDX9StaticMesh> GetStatic( const std::string& name );
@@ -43,7 +43,7 @@ public:
 
 private:
 	// モデルの読み込み.
-	void ModelLoad( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 );
+	HRESULT ModelLoad( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 );
 
 private:
 	static_mesh_map m_StaticMeshList;	// スタティックメッシュのリスト.
