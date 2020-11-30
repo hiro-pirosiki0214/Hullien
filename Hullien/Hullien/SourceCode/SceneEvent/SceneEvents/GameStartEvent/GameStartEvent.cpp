@@ -567,7 +567,6 @@ void CGameStartEvent::PlayerUp()
 // ÉoÉäÉAî≠ìÆ.
 void CGameStartEvent::InvocatingBarrier()
 {
-
 	// ÉJÉÅÉâÇÃóhÇÍ.
 	m_stCamera.vLookPosition.x = m_stCamera.vLookPosition.x + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_X));
 	m_stCamera.vLookPosition.y = m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS * m_Count) * (m_Count * AMPLITUDE_LOOKPOS_Y));
