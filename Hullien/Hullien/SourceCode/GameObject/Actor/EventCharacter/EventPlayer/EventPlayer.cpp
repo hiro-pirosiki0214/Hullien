@@ -117,6 +117,15 @@ void CEventPlayer::DamageAnimUpdate()
 	SetAnimationBlend( player::EAnimNo_Wait );
 }
 
+// ボーン位置の取得.
+D3DXVECTOR3 CEventPlayer::GetBonePosition(const char * name)
+{
+	D3DXVECTOR3 bonePosition;
+	m_pSkinMesh->GetPosFromBone(name, &bonePosition);
+
+	return bonePosition;
+}
+
 // 特殊能力操作関数.
 void CEventPlayer::SPController()
 {

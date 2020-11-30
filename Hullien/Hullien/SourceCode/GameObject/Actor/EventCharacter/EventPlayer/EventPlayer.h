@@ -75,7 +75,8 @@ public:
 	inline bool IsEndDamageAnim(){ return m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver(); }
 	// ダメージアニメーションの更新.
 	void DamageAnimUpdate();
-
+	// ボーン位置の取得.
+	D3DXVECTOR3 GetBonePosition(const char* name);
 private:
 	// 特殊能力操作関数.
 	void SPController();
