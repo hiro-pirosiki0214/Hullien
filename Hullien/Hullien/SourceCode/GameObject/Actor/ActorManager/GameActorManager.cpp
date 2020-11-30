@@ -11,17 +11,18 @@
 #include "..\..\InvisibleWall\InvisibleWall.h"
 
 CGameActorManager::CGameActorManager()
-	: m_pSkyDome		( nullptr )
-	, m_pGroundStage	( nullptr )
-	, m_pPlayer			( nullptr )
-	, m_pGirl			( nullptr )
-	, m_pMotherShipUFO	( nullptr )
-	, m_pAlienManager	( nullptr )
-	, m_pItemManager	( nullptr )
-	, m_pBarrier		( nullptr )
-	, m_pInvisibleWall	( nullptr )
-	, m_ObjPositionList	()
-	, m_ObjPosListCount	( 0 )
+	: m_pSkyDome			( nullptr )
+	, m_pGroundStage		( nullptr )
+	, m_pPlayer				( nullptr )
+	, m_pGirl				( nullptr )
+	, m_pMotherShipUFO		( nullptr )
+	, m_pAlienManager		( nullptr )
+	, m_pItemManager		( nullptr )
+	, m_pBarrier			( nullptr )
+	, m_pInvisibleWall		( nullptr )
+	, m_ObjPositionList		()
+	, m_ObjPosListCount		( 0 )
+	, m_IsOllAnimationStop	( false )
 {
 	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_shared<CGroundStage>();
@@ -51,7 +52,7 @@ bool CGameActorManager::Init()
 	if( m_pItemManager->Init()		== false ) return false;	// アイテム管理の初期化.
 	// マザーシップの座標取取得.
 	m_pAlienManager->SetMotherShipUFOPos( m_pMotherShipUFO->GetPosition() );
-
+	m_pMotherShipUFO->DischargePreparation();
 	m_pPlayer->SetBoxWall( m_pInvisibleWall->GetBoxWall() );
 	m_pGirl->SetBoxWall( m_pInvisibleWall->GetBoxWall() );
 
@@ -64,12 +65,10 @@ void CGameActorManager::Update()
 	m_ObjPosListCount = 0;		// カウントの初期化.
 	m_ObjPositionList.clear();	// リストの初期化.
 
-	m_pSkyDome->SetPosition( m_pPlayer->GetPosition() );
-
 	// プレイヤーの更新.
 	m_pPlayer->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 	m_pPlayer->Update();						// 更新.
-	SetPositionList( m_pPlayer.get() );	// 座標リストの設定.
+	
 
 	// バリアを使えるか.
 	if( m_pPlayer->IsSpecialAbility() == true ) m_pBarrier->Init();	// バリアの初期化.
@@ -77,7 +76,6 @@ void CGameActorManager::Update()
 	// 女の子の更新.
 	m_pGirl->Update();
 	m_pGirl->SetCameraRadianX(m_pPlayer->GetCameraRadianX());	//カメラのラジアン値取得.
-	SetPositionList( m_pGirl.get() );	// 座標リストの設定.
 	m_pBarrier->SetTargetPos( *m_pGirl.get() );	// 女の子の座標を取得.
 
 	// バリアの更新.
@@ -108,9 +106,6 @@ void CGameActorManager::Update()
 			m_pMotherShipUFO->Collision( pActor );
 		} );
 
-	// マザーシップの座標を設定.
-	SetPositionList( m_pMotherShipUFO.get() );
-
 	// アイテムリストがあればアイテムを落とす.
 	m_pItemManager->Drop( m_pAlienManager->GetDropItemList() );
 	// アイテムの更新.
@@ -121,6 +116,10 @@ void CGameActorManager::Update()
 			SetPositionList( pActor );				// 座標リストの設定.
 			pActor->Collision( m_pPlayer.get() );	// アイテムの当たり判定.
 		} );
+
+	SetPositionList( m_pGirl.get() );			// 女の子座標を設定.
+	SetPositionList( m_pPlayer.get() );			// プレイヤー座標を設定.
+	SetPositionList( m_pMotherShipUFO.get() );	// マザーシップの座標を設定.
 }
 
 // 描画関数.
@@ -133,12 +132,13 @@ void CGameActorManager::Render()
 	m_pAlienManager->Render();	// 宇宙人達の描画.
 	m_pMotherShipUFO->Render();	// マザーシップの描画.
 	m_pItemManager->Render();	// アイテムの描画.
-//	m_pBarrier->Render();		// バリアの描画.
+	m_pBarrier->Render();		// バリアの描画.
 	m_pInvisibleWall->Render();	// 見えない壁の描画.
 
 	// エフェクトの描画.
 	m_pPlayer->EffectRender();			// プレイヤーのエフェクト描画.
 	m_pAlienManager->EffectRender();	// 宇宙人のエフェクト描画.
+	m_pItemManager->EffectRender();		// アイテムのエフェクト描画.
 	m_pBarrier->EffectRender();			// バリアエフェクト描画.
 	// 仮　後で移動.
 	m_pAlienManager->SpriteRender();	// スプライトの描画.
@@ -154,7 +154,9 @@ void CGameActorManager::SpriteRender()
 // ゲームオーバーかどうか.
 bool CGameActorManager::IsGameOver()
 {
-	return m_pPlayer->IsDead();
+	if( m_pPlayer->IsDead() == false ) return false;
+	AnimationStop();	// アニメーションを止める.
+	return true;
 }
 
 // 女の子を連れ去っているか.
@@ -181,5 +183,21 @@ void CGameActorManager::SetPositionList( CGameObject* pObj )
 {
 	if( pObj == nullptr ) return;
 	m_ObjPosListCount++;	// オブジェクト数の加算.
-	m_ObjPositionList.emplace_back( pObj->GetObjectTag(), pObj->GetPosition() );
+	m_ObjPositionList.emplace_back( 
+		pObj->GetObjectTag(),	// タグの取得.
+		std::pair<D3DXVECTOR3, float>(
+			pObj->GetPosition(),	// 座標の取得.
+			pObj->GetRotatinY()));	// Y軸回転値の取得.
+}
+
+// アニメーションを止める.
+void CGameActorManager::AnimationStop()
+{
+	if( m_IsOllAnimationStop == true ) return;
+
+	m_pPlayer->StopAnimation();
+	m_pGirl->StopAnimation();
+	m_pAlienManager->StopAnimation();
+
+	m_IsOllAnimationStop = true;
 }

@@ -7,8 +7,10 @@
 *	アルティメット出現サインクラス.
 **/
 CUltemateSing::CUltemateSing()
-	: m_IsAppUltemate	( false )
+	: m_pWarnigSprite	( nullptr )
+	, m_IsAppUltemate	( false )
 	, m_ObjCount		( 0 )
+	, m_DispTime		( 0.0f )
 {
 }
 
@@ -43,6 +45,13 @@ void CUltemateSing::Render()
 	m_pSprite->RenderUI();
 	m_pSprite->SetDeprh( true );
 	m_pSprite->SetBlend( false );
+	m_pWarnigSprite->SetBlend( true );
+	m_pWarnigSprite->SetDeprh( false );
+	const float color = 1.0f + fabsf(sinf( static_cast<float>(m_DispTime)*0.05f ))*1.5f;
+	m_pWarnigSprite->SetColor( { color, color, color,  m_Alpha } );
+	m_pWarnigSprite->RenderUI();
+	m_pWarnigSprite->SetDeprh( true );
+	m_pWarnigSprite->SetBlend( false );
 }
 
 // アルティメットが出現しているか.
@@ -55,8 +64,9 @@ void CUltemateSing::IsAppUltemate(CGameActorManager* pActor)
 		m_ObjCount = l.size();
 		return;
 	}
+	const int size = m_ObjCount;
 	// すでに処理したオブジェクト分は無視する.
-	for (auto a = l.begin() + m_ObjCount; a < l.end(); a++)
+	for (auto a = l.begin(); a < l.end() - size; a++)
 	{
 		m_ObjCount++;
 		// アルティメットでなければ処理しない.
@@ -70,9 +80,10 @@ void CUltemateSing::IsAppUltemate(CGameActorManager* pActor)
 bool CUltemateSing::SpriteSetting()
 {
 	if (m_pSprite != nullptr) return true;
-	m_pSprite = CSpriteResource::GetSprite( SPRITE_NAME );
+	m_pSprite = CSpriteResource::GetSprite( SPRITE_NAME1 );
+	m_pWarnigSprite = CSpriteResource::GetSprite( SPRITE_NAME2 );
 	if (m_pSprite == nullptr) return false;
-
+	if( m_pWarnigSprite == nullptr ) return false; 
 	return true;
 }
 

@@ -2,19 +2,10 @@
 #define COMMON_H
 
 #include "..\Global.h"
+#include "D3DX/D3DX11.h"
 
 class CCommon
 {
-public:
-	enum class enRS_STATE
-	{
-		None,	// 正背面描画.
-		Back,	// 背面を描画しない.
-		Front,	// 正面を描画しない.
-		Wire,	// ワイヤーフレーム描画.
-
-		Max,
-	};
 public:
 	CCommon();
 	virtual ~CCommon();
@@ -38,32 +29,11 @@ public:
 	// 深度テストを有効:無効に設定する.
 	void SetDeprh( bool flag );
 	// ラスタライザステート設定.
-	void SetRasterizerState( const enRS_STATE& rsState );
+	void SetRasterizerState( const ERS_STATE& rsState );
 
 protected:
 	// デバイスの取得、各情報の初期化.
 	HRESULT InitPram( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
-
-private:
-	// ブレンド作成.
-	HRESULT InitBlend();
-	// 深度テスト作成.
-	HRESULT InitDeprh();
-	// ラスタライザステート作成.
-	HRESULT InitRasterizerState();
-
-private:
-	ID3D11DepthStencilState*	m_pDepthStencilState;		// デプスステンシル有効.
-	ID3D11DepthStencilState*	m_pDepthStencilStateOff;	// デプスステンシル無効.
-
-	ID3D11BlendState*			m_pAlphaBlend;				// アルファブレンド有効.
-	ID3D11BlendState*			m_pNoAlphaBlend;			// アルファブレンド無効.
-	ID3D11BlendState*			m_pAlphaToCoverage;			// アルファカバレージ有効.
-
-	ID3D11RasterizerState*		m_pRsSoldAndNone;	// ソリッドAnd正背面描画.
-	ID3D11RasterizerState*		m_pRsSoldAndBack;	// ソリッドAnd背面を描画しない.
-	ID3D11RasterizerState*		m_pRsSoldAndFront;	// ソリッドand正面を描画しない.
-	ID3D11RasterizerState*		m_pRsWireFrame;		// ワイヤーフレーム描画.
 
 protected:
 	ID3D11Device*			m_pDevice11;	// デバイスオブジェクト.

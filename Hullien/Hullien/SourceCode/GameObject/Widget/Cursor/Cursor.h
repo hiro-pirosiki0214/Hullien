@@ -9,7 +9,8 @@
 class CCursor : public CWidget
 {
 private:
-	const char* SPRITE_NAME = "selectHoversize";	//スプライトのファイル名.
+	const char* SPRITE_NAME = "select1";	//スプライトのファイル名.
+	const char* SPRITE_NAME2 = "select2";	//スプライトのファイル名.
 	const float SCALE_MAX	= 1.0f;						//拡大最大値.
 	const float SCALE_SPEED = 0.05f;						//拡大速度.
 	const float ACC_SPEED   = 0.0011f;					//加速度.
@@ -34,6 +35,8 @@ private:
 	void IncreaseScale();
 
 private:
+	std::shared_ptr<CSprite>	m_pSelectSprite;		//スプライトクラス.
+	D3DXVECTOR3	m_SlectPosition;
 	D3DXVECTOR3	m_vOldPosition;	//移動前の座標.
 	float		m_Acceleration;	//加速値.
 };

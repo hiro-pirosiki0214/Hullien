@@ -123,7 +123,25 @@ HRESULT COggLoad::ResetFile()
 
 	return S_OK;
 }
+HRESULT COggLoad::SeekFile(double & Second)
+{
+	if (!GetReady())
+		return E_FAIL;
+	//ov_clear(&m_OggVF);
 
+	// ファイルの最終再生時間より大きければ、最初に戻る.
+	if (Second >= ov_time_total(&m_OggVF, 0)) {
+		ov_time_seek(&m_OggVF, 0.00000000);
+	}
+	else {
+		ov_time_seek(&m_OggVF, Second);
+	}
+	return S_OK;
+}
+double COggLoad::GetFileFrame()
+{
+	return ov_time_tell(&m_OggVF);
+}
 //-------------------------------------------ｰ
 // ファイル内容をすべてバッファに読み込み.
 //----
@@ -238,6 +256,8 @@ HRESULT COggLoad::ReadChunk(BYTE** buffer, int bufferCount, const int len, int* 
 {
 	if (readSize != NULL)
 		*readSize = 0;
+	if (buffer == NULL || buffer == nullptr) return E_FAIL;
+
 
 	// ファイルから指定されたサイズだけデータを読み取る
 	bool result = GetSegment((char *)buffer[bufferCount], len, readSize, 0);

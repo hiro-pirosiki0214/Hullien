@@ -17,6 +17,13 @@ public:
 		float LifeMax;					//ライフ最大数.
 		float SpecialAbility;			//特殊ゲージ
 		float SpecialAbilityMax;		//特殊ゲージ最大数.
+		stCharacterParam()
+			: Life				( 0.0f )
+			, LifeMax			( 0.0f )
+			, SpecialAbility	( 0.0f )
+			, SpecialAbilityMax	( 0.0f )
+		{}
+
 	}typedef SCharacterParam;
 
 

@@ -16,6 +16,7 @@ CMoveSpeedUpItem::CMoveSpeedUpItem(
 	, pMOVE_VALUE	( pMoveValue )
 	, pMOVE_UP_TIME	( pMoveTime )
 {
+	m_ObjectTag = EObjectTag::MoveSpeedUpItem;
 }
 
 CMoveSpeedUpItem::~CMoveSpeedUpItem()
@@ -28,7 +29,7 @@ bool CMoveSpeedUpItem::Init()
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 	m_ObjectTag = EObjectTag::MoveSpeedUpItem;
 	return true;
 }
@@ -43,6 +44,12 @@ void CMoveSpeedUpItem::Update()
 void CMoveSpeedUpItem::Render()
 {
 	CItemBase::Render();
+}
+
+// エフェクトの描画.
+void CMoveSpeedUpItem::EffectRender()
+{
+	CItemBase::EffectRender();
 }
 
 // 当たり判定関数.

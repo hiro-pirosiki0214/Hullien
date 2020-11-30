@@ -33,7 +33,7 @@ public:
 private:
 	// シェーダー名.
 	const char* SHADER_NAME = "Data\\Shader\\SceneTexRenderer.hlsl";
-	const float CLEAR_BACK_COLOR[4] = { 1.0f, 1.0f, 1.0f, 1.0f };	// バックカラー.
+	const float CLEAR_BACK_COLOR[4] = { 0.6f, 0.6f, 0.6f, 1.0f };	// バックカラー.
 
 public:
 	//======================================
@@ -97,6 +97,8 @@ private:
 	HRESULT InitGBufferTex();
 	// TransBufferの作成.
 	HRESULT InitTransBufferTex();
+	// Antialiasingの作成.
+	HRESULT InitAntialiasingTex();
 	// シェーダ作成.
 	HRESULT CreateShader();
 	// サンプラの作成.
@@ -128,8 +130,13 @@ private:
 	ID3D11ShaderResourceView*	m_pTransBufferSRV;	// 半透明描画用のシェーダーリソースビュー.
 	ID3D11Texture2D*			m_pTransBufferTex;	// 半透明描画用のテクスチャ2D.
 
+	ID3D11RenderTargetView*		m_pAntialiasingRTV;	// アンチエイリアスのレンダーターゲットビュー.
+	ID3D11ShaderResourceView*	m_pAntialiasingSRV;	// アンチエイリアスのシェーダーリソースビュー.
+	ID3D11Texture2D*			m_pAntialiasingTex;	// アンチエイリアスのテクスチャ2D.
+
 	ID3D11VertexShader*		m_pVertexShader;	// 頂点シェーダー.
 	ID3D11PixelShader*		m_pPixelShader;		// ピクセルシェーダー.
+	ID3D11PixelShader*		m_pLastPixelShader;	// ピクセルシェーダー.
 	ID3D11InputLayout*		m_pVertexLayout;	// 頂点レイアウト.
 	ID3D11Buffer*			m_pConstantBuffer;	// コンスタントバッファ.
 	ID3D11Buffer*			m_pVertexBuffer;	// 頂点バッファ.

@@ -16,6 +16,7 @@ CAttackUpItem::CAttackUpItem(
 	, pATTACK_UP_POWER	( pAttackUpPower )
 	, pATTACK_UP_TIME	( pAttackUpTime )
 {
+	m_ObjectTag = EObjectTag::AttackUpItem;
 }
 
 CAttackUpItem::~CAttackUpItem()
@@ -28,7 +29,7 @@ bool CAttackUpItem::Init()
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 	m_ObjectTag = EObjectTag::AttackUpItem;
 	return true;
 }
@@ -43,6 +44,12 @@ void CAttackUpItem::Update()
 void CAttackUpItem::Render()
 {
 	CItemBase::Render();
+}
+
+// エフェクトの描画.
+void CAttackUpItem::EffectRender()
+{
+	CItemBase::EffectRender();
 }
 
 // 当たり判定関数.

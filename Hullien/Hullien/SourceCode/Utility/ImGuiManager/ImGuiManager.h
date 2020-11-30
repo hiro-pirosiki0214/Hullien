@@ -6,6 +6,7 @@
 #include "..\..\..\Library\ImGui\imgui.h"
 #include "..\..\..\Library\ImGui\imgui_impl_dx11.h"
 #include "..\..\..\Library\ImGui\imgui_impl_win32.h"
+#include "..\..\..\Library\ImGui\imgui_internal.h"
 
 class CImGuiManager
 {
@@ -27,6 +28,7 @@ public:
 		{
 			if( IsSucceeded == false ) return;
 			ImGui::Text( u8"成功" );
+			ImGui::SameLine();
 			FrameCount++;
 			if( FrameCount != RenderTime ) return;
 			FrameCount = 0;
@@ -52,6 +54,10 @@ public:
 
 	// 描画.
 	static void Render();
+
+	// ドラッグの表示.
+	static void DragFloat( const char* label, float* v, const float& speed = 0.001f );
+	static void DragInt( const char* label, int* v, const float& speed = 1.0f );
 };
 
 #endif	// #ifndef IMGUI_MANAGER_H.

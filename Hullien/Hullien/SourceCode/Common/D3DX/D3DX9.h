@@ -12,21 +12,31 @@ public:
 	CDirectX9();
 	~CDirectX9();
 
+	// インスタンスの取得.
+	static CDirectX9* GetInstance();
+
 	// DirectX9の構築.
-	HRESULT Create( HWND hWnd );
+	static HRESULT Create( HWND hWnd );
 	// DirectX9の解放.
-	void Release();
+	static HRESULT Release();
 
 	// デバイスの取得関数.
-	static LPDIRECT3DDEVICE9 GetDevice(){ return m_pDevice9; }
+	static LPDIRECT3DDEVICE9 GetDevice(){ return GetInstance()->m_pDevice9; }
 
 private:
 	// デバイス9の構築.
 	HRESULT CreateDevice9();
 
 private:
-	static LPDIRECT3DDEVICE9	m_pDevice9;	// デバイス9.
-	HWND	m_hWnd;	// ウィンドウハンドル.
+	HWND				m_hWnd;		// ウィンドウハンドル.
+	LPDIRECT3DDEVICE9	m_pDevice9;	// デバイス9.
+
+private:
+	// コピー・ムーブコンストラクタ, 代入演算子の削除.
+	CDirectX9( const CDirectX9 & )				= delete;
+	CDirectX9& operator = ( const CDirectX9 & )	= delete;
+	CDirectX9( CDirectX9 && )					= delete;
+	CDirectX9& operator = ( CDirectX9 && )		= delete;
 };
 
 #endif	// #ifndef D3DX9_H.

@@ -12,6 +12,7 @@ namespace STG
 
 	CBullet::CBullet( const char* modelName )
 		: MODEL_NAME					( modelName )
+		, m_Color						( 0.0f, 0.0f, 0.0f, 1.0f )
 		, m_MoveSpeed					( 0.0f )
 		, m_IsBulletToBulletCollJudge	( false )
 	{
@@ -45,6 +46,7 @@ namespace STG
 	void CBullet::Render()
 	{
 		if( m_IsActive == false ) return;
+		m_pStaticMesh->SetColor( m_Color );
 		MeshRender();
 
 #ifdef _DEBUG
@@ -67,6 +69,12 @@ namespace STG
 
 		// ƒJƒvƒZƒ‹‚Ì“–‚½‚è”»’è.
 		if( m_pCollManager->IsCapsuleToCapsule( pActor->GetColl() ) == false ) return;
+
+		// Õ“Ë‘ŠŽè‚Ìƒ‰ƒCƒtŒvŽZŠÖ”.
+		pActor->LifeCalculation( []( float& life )
+		{
+			life -= 1.0f;
+		});
 
 		// ‘ŠŽè‚ª’e‚È‚ç‘ŠŽè‚Ì’e‚Ì“®ì‚ð‚È‚­‚·.
 		if( targetIsBullet == true ) pActor->SetActive( false );
@@ -94,7 +102,7 @@ namespace STG
 		if( FAILED( m_pCollManager->InitCapsule(
 			&m_vPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			{0.0f, 0.0f, 0.0f},
 			1.0f,
 			1.0f ))) return false;

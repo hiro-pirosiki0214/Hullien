@@ -54,8 +54,7 @@ ID3D11ShaderResourceView* CFontResource::GetTexture2D( const std::string key )
 //-------------------------------------.
 void CFontResource::FontLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 )
 {
-	CFontCreate* pFontCreate = new CFontCreate( pDevice11, pContext11 );
-	
+	std::unique_ptr<CFontCreate> pFontCreate = std::make_unique<CFontCreate>( pDevice11, pContext11 );
 	std::vector<std::string> textList = CFileManager::TextLoading(TEXT_LIST_PATH);
 
 	for( const auto& v : textList ){
@@ -74,7 +73,6 @@ void CFontResource::FontLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pCon
 			pFontCreate->CreateFontTexture2D( f.c_str(), &m_FontTexturList[f] );
 		}
 	}
-	delete pFontCreate;
 
 	// ì«çûÇ™èIÇÌÇ¡ÇΩÇÃÇ≈ true Ç…Ç∑ÇÈ.
 	m_HasFinishedLoading = true;

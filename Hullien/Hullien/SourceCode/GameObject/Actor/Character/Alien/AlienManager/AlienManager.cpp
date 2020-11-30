@@ -33,7 +33,7 @@ bool CAlienManager::Init()
 	if( SpawnUFOInit() == false )			return false;
 	if( ReadAlienParamList() == false )		return false;
 	if( ReadExplosionParam() == false )		return false;
-
+	
 	return true;
 }
 
@@ -90,14 +90,18 @@ void CAlienManager::Render()
 	// 宇宙人達の描画.
 	for( auto& a : m_AilenList ) a->Render();
 	// スポーンUFOの描画.
-	for( auto& s : m_SpawnUFOList ) s.Render();
+	for( auto& s : m_SpawnUFOList ) s->Render();
 }
 
 // エフェクト描画関数.
 void CAlienManager::EffectRender()
 {
+	for( auto& a : m_AilenList ) a->EffectRender();
 	// 爆発の描画.
-	for( auto& e : m_ExplosionList ) e.Render();
+	for( auto& e : m_ExplosionList ){
+		e.Render();
+		e.EffectRender();
+	}
 }
 
 // スプライト描画関数.
@@ -105,6 +109,8 @@ void CAlienManager::SpriteRender()
 {
 	// 宇宙人達の描画.
 	for( auto& a : m_AilenList ) a->SpriteRender();
+	// スポーンUFOの描画.
+	for( auto& s : m_SpawnUFOList ) s->SpriteRender();
 }
 
 // 女の子を連れ去っているか.
@@ -113,11 +119,17 @@ bool CAlienManager::IsGirlAbduct()
 	return m_IsRisingMotherShip;
 }
 
+// アニメーションを止める.
+void CAlienManager::StopAnimation()
+{
+	for( auto& a : m_AilenList ) a->StopAnimation();
+}
+
 // スポーン.
 void CAlienManager::Spawn()
 {
 	for( auto& s : m_SpawnUFOList ){
-		s.SpawnAlien( m_AilenList );
+		s->SpawnAlien( m_AilenList );
 	}
 }
 
@@ -147,11 +159,14 @@ void CAlienManager::ExplosionConfirming( CAlien* ailen )
 // 落とすアイテムの設定.
 void CAlienManager::SetDropItemList( CAlien* ailen )
 {
-	if( ailen->GetAnyItem() == EItemList::None ) return;
-	if( ailen->GetAnyItem() == EItemList::Max ) return;
+	if( ailen->IsDead()		== false )				return;
+	if( ailen->GetAnyItem()	== EItemList::None )	return;
+	if( ailen->GetAnyItem()	== EItemList::Max )		return;
 
 	// 落とすアイテムの設定.
-	m_DropItemList[ailen->GetAnyItem()] = ailen->GetPosition();
+	D3DXVECTOR3 dropPos = ailen->GetPosition();
+	dropPos.y += 4.0f;	// 高めに調整.
+	m_DropItemList[ailen->GetAnyItem()] = dropPos;
 }
 
 // スポーンUFOの初期化.
@@ -160,11 +175,12 @@ bool CAlienManager::SpawnUFOInit()
 	std::vector<SSpawnUFOParam> spawnPramList;
 	if( CFileManager::BinaryVectorReading( SPAWN_PARAM_FILE_PATH, spawnPramList ) == false ) return false;
 	for( const auto& s : spawnPramList ){
-		m_SpawnUFOList.emplace_back();
-		m_SpawnUFOList.back().Init();
-		m_SpawnUFOList.back().SetSpawnParameter( s );
-		m_SpawnUFOList.back().SetAbductUFOPosition( &m_MotherShipUFOPos );
+		m_SpawnUFOList.emplace_back( std::make_shared<CSpawnUFO>() );
+		m_SpawnUFOList.back()->Init();
+		m_SpawnUFOList.back()->SetAbductUFOPosition( &m_MotherShipUFOPos );
+		m_SpawnUFOList.back()->SetSpawnParameter( s );
 	}
+	m_AilenList.reserve( spawnPramList[0].MaxAlienCount );
 	return true;
 }
 
@@ -180,13 +196,14 @@ bool CAlienManager::ReadAlienParamList()
 
 	for( const auto& l : readList ){
 		// 各宇宙人のパラメータ読み込み.
-		CAlien::SAlienParam param = {};
+		SAlienParam param = {};
 		CFileManager::BinaryReading( l.c_str(), param );
 		m_AlienParamList.emplace_back( param );
 	}
 	// スポーンUFOに各宇宙人のパラメータ設定.
 	for( auto& s : m_SpawnUFOList ){
-		s.SetAlienParameterList( &m_AlienParamList );
+		s->SetAlienParameterList( &m_AlienParamList );
+		s->LightDischarge();
 	}
 
 	return true;

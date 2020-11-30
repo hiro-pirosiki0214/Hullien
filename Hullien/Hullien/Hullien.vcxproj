@@ -175,6 +175,7 @@
     <ClCompile Include="SourceCode\Common\Shader\Toon\Toon.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\Trajectory\Trajectory.cpp" />
     <ClCompile Include="SourceCode\Common\Shader\TranslucentShader\TranslucentShader.cpp" />
+    <ClCompile Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.cpp" />
     <ClCompile Include="SourceCode\Common\Sprite\CSprite.cpp" />
     <ClCompile Include="SourceCode\Editor\AlienParamEdit\AlienParamEdit.cpp" />
     <ClCompile Include="SourceCode\Editor\ControllerEdit\ControllerEdit.cpp" />
@@ -194,6 +195,11 @@
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_B\Alien_B.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_C\Alien_C.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\Alien_D\Alien_D.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Character.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\ActorManager\GameActorManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Character\Girl\Girl.cpp" />
@@ -204,6 +210,7 @@
     <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventGirl\EventGirl.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\EventCharacter\EventPlayer\EventPlayer.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Explosion\Explosion.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\EffectTimer\EffectTimer.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\Items\AttackUp\AttackUp.cpp" />
     <ClCompile Include="SourceCode\GameObject\Actor\Item\ItemBase.cpp" />
@@ -222,19 +229,26 @@
     <ClCompile Include="SourceCode\GameObject\SpawnUFO\SpawnUFO.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Bullet\STGBullet.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Player\STGPlayer.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\STGCharacter.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\STGActor.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\STGManager\STGManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\UFOLight\UFOLight.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Cursor\Cursor.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Fade\Fade.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ControllerConfigWidget\ControllerConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\GameWidgetManager\GameWidgetManager.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.cpp" />
@@ -245,6 +259,7 @@
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Slider\Slider.cpp" />
     <ClCompile Include="SourceCode\GameObject\Widget\Widget.cpp" />
     <ClCompile Include="SourceCode\Light\LightBase.cpp" />
     <ClCompile Include="SourceCode\Light\LightManager\LightManager.cpp" />
@@ -254,9 +269,11 @@
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.cpp" />
     <ClCompile Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Config\Config.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\Editor\Editor.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameClear\GameClear.cpp" />
     <ClCompile Include="SourceCode\Scene\Scenes\GameOver\GameOver.cpp" />
+    <ClCompile Include="SourceCode\Utility\Command\Command.cpp" />
     <ClCompile Include="SourceCode\Utility\FileManager\FileManager.cpp" />
     <ClCompile Include="SourceCode\Utility\FrameRate\FrameRate.cpp" />
     <ClCompile Include="SourceCode\Main\Main.cpp" />
@@ -289,6 +306,18 @@
     <ClInclude Include="Library\ImGui\imstb_rectpack.h" />
     <ClInclude Include="Library\ImGui\imstb_textedit.h" />
     <ClInclude Include="Library\ImGui\imstb_truetype.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\MeshStruct.h" />
+    <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ControllerConfigWidget\ControllerConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
+    <ClInclude Include="SourceCode\Main\Resource\resource.h" />
     <ClInclude Include="SourceCode\Camera\Camera.h" />
     <ClInclude Include="SourceCode\Camera\CameraManager\CameraManager.h" />
     <ClInclude Include="SourceCode\Camera\EvevtCamera\EvevtCamera.h" />
@@ -379,17 +408,23 @@
     <ClInclude Include="SourceCode\GameObject\SpawnUFO\SpawnUFOParam.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Bullet\STGBullet.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyParam.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Player\STGPlayer.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\STGCharacter.h" />
     <ClInclude Include="SourceCode\GameObject\STG\STGActor.h" />
     <ClInclude Include="SourceCode\GameObject\STG\STGManager\STGManager.h" />
+    <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Cursor\Cursor.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\EventWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\EventWidget\GameStartEventWidget\GameStartEventWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Fade\Fade.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\ReturnTitle\ReturnTitle.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ClearWidget\ClearWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ContinueWidget\ContinueWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameOverWidget\GameOverWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h" />
@@ -402,6 +437,7 @@
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\Warning\Warning.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\SceneWidget.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\TItleWidget\TitleWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Slider\Slider.h" />
     <ClInclude Include="SourceCode\GameObject\Widget\Widget.h" />
     <ClInclude Include="SourceCode\Light\LightBase.h" />
     <ClInclude Include="SourceCode\Light\LightManager\LightManager.h" />
@@ -412,10 +448,12 @@
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameClearEvent\GameClearEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameOverEvent\GameOverEvent.h" />
     <ClInclude Include="SourceCode\SceneEvent\SceneEvents\GameStartEvent\GameStartEvent.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Config\Config.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\Editor\Editor.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameClear\GameClear.h" />
     <ClInclude Include="SourceCode\Scene\Scenes\GameOver\GameOver.h" />
     <ClInclude Include="SourceCode\Utility\BitFlagManager\BitFlagManager.h" />
+    <ClInclude Include="SourceCode\Utility\Command\Command.h" />
     <ClInclude Include="SourceCode\Utility\FileManager\FileManager.h" />
     <ClInclude Include="SourceCode\Utility\FrameRate\FrameRate.h" />
     <ClInclude Include="SourceCode\Global.h" />
@@ -519,6 +557,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="Data\Shader\SkyDome.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometry</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS_Main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS_Main</EntryPointName>
+    </FxCompile>
     <FxCompile Include="Data\Shader\Sprite.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS_Main</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -553,6 +603,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VS_Main</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VS_Main</EntryPointName>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

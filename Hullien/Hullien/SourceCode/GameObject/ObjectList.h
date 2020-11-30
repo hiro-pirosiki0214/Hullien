@@ -1,7 +1,7 @@
 #ifndef OBJECT_LIST_H
 #define OBJECT_LIST_H
 
-enum class enObjectTagList
+enum class enObjectTagList : unsigned char
 {
 	None,
 
@@ -17,6 +17,8 @@ enum class enObjectTagList
 	SPEffectTimeItem,	// 特殊能力回復速度UPアイテム.
 	AttackUpItem,		// 攻撃力UPアイテム.
 	MoveSpeedUpItem,	// 移動速度UPアイテム.
+
+	MotherShipUFO,		// マザーシップUFO.
 
 	LaserBeam,			// レーザービーム.
 	Explosion,			// 爆発.

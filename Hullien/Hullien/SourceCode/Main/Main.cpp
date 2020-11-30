@@ -23,18 +23,18 @@
 #include "..\Common\Font\FontCreate.h"
 #include "..\Common\Font\Font.h"
 
+#include "Resource/resource.h"
+
 LRESULT CALLBACK WndProc( HWND, UINT, WPARAM, LPARAM );
 
 CMain::CMain()
 	: m_hWnd			( nullptr )
-	, m_pDirectX9		( nullptr )
 	, m_pFrameRate		( nullptr )
 	, m_pCamera			( nullptr )
 	, m_pLight			( nullptr )
 	, m_pSceneManager	( nullptr )
 	, m_pLoadManager	( nullptr )
 {
-	m_pDirectX9		= std::make_unique<CDirectX9>();
 	m_pFrameRate	= std::make_unique<CFrameRate>( FPS );
 	m_pCamera		= std::make_shared<CCamera>();
 	m_pLight		= std::make_shared<CLightBase>();
@@ -42,20 +42,16 @@ CMain::CMain()
 	m_pLoadManager	= std::make_unique<CLoadManager>();
 
 	// カメラの初期化.
-	m_pCamera->SetPosition( D3DXVECTOR3( 0.0f, 1.0f, 30.0f ) );		// 座標.
-	m_pCamera->SetLookPosition( D3DXVECTOR3( 0.0f, 2.0f, 0.0f ) );	// 視点座標.
+	m_pCamera->SetPosition( D3DXVECTOR3( 0.0f, 10.0f, 10.0f ) );	// 座標.
+	m_pCamera->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );	// 視点座標.
 	// カメラのセット.
 	CCameraManager::SetCamera( m_pCamera );
 
-	m_pLight->SetPosition( D3DXVECTOR3( 0.0f, 200.0f, -200.0f ) );
-	m_pLight->SetDirection( D3DXVECTOR3( 1.5f, 1.0f, -1.0f ) );
-	m_pLight->SetIntensity( 1.0f );
+	// ライトの設定.
+	m_pLight->SetPosition( D3DXVECTOR3( 70.0f, 80.0f, -50.0f ) );
+	m_pLight->SetLookPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
+	m_pLight->SetIntensity( 1.2f );
 	CLightManager::SetLgiht( m_pLight );
-
-	// サウンドデータの設定.
-	CSoundManager::CreateSoundData();
-	CSoundManager::GetInstance()->m_fMasterVolume = 0.4f;
-	CSoundManager::SetMasterVolume(CSoundManager::GetInstance()->m_fMasterVolume);
 }
 
 CMain::~CMain()
@@ -68,7 +64,7 @@ CMain::~CMain()
 HRESULT CMain::Init()
 {
 	// DirectX9の構築.
-	if( FAILED( m_pDirectX9->Create( m_hWnd ) )) return E_FAIL;
+	if( FAILED( CDirectX9::Create( m_hWnd ) )) return E_FAIL;
 	// DirectX11の構築.
 	if( FAILED( CDirectX11::Create( m_hWnd ) )) return E_FAIL;
 	// シーンテクスチャの初期化.
@@ -98,7 +94,7 @@ void CMain::Release()
 	CSoundManager::Release();
 	CImGuiManager::Release();
 	CDirectX11::Release();
-	m_pDirectX9->Release();
+	CDirectX9::Release();
 }
 
 //====================================.
@@ -109,12 +105,12 @@ HRESULT CMain::Load()
 	CDebugText::Init(
 		CDirectX11::GetDevice(),
 		CDirectX11::GetContext(),
-		38.0f, D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) );
+		0.25f, D3DXVECTOR4( 1.0f, 0.0f, 0.0f, 1.0f ) );
 	// 各リソースの読み込み.
 	m_pLoadManager->LoadResource( m_hWnd,
 		CDirectX11::GetDevice(), 
 		CDirectX11::GetContext(), 
-		m_pDirectX9->GetDevice() );
+		CDirectX9::GetDevice() );
 
 	return S_OK;
 }
@@ -124,10 +120,7 @@ HRESULT CMain::Load()
 //====================================.
 void CMain::Update()
 {
-	// 画面のクリア.
-	CDirectX11::ClearBackBuffer();
 	CSceneTexRenderer::ClearBuffer();
-//	CCameraManager::InitViewProj();
 
 	CCameraManager::Update();
 	m_pSceneManager->Update();
@@ -136,7 +129,6 @@ void CMain::Update()
 	CDebugText::SetPosition( D3DXVECTOR3( 0.0f, 0.0f, 0.0f ) );
 	CDebugText::Render( "FPS:", (int)m_pFrameRate->GetFrameTime() );
 #endif
-	CDirectX11::SwapChainPresent();
 }
 
 //====================================.
@@ -156,11 +148,17 @@ void CMain::Loop()
 			TranslateMessage( &msg );
 			DispatchMessage( &msg );
 		} else {
+			// 画面のクリア.
+			CDirectX11::ClearBackBuffer();
 			if( m_pLoadManager->ThreadRelease() == true ){
 				Update();
+			} else {
+				m_pLoadManager->Render();
 			}
+			CDirectX11::SwapChainPresent();
 			// フレームレートの待機処理.
 			m_pFrameRate->Wait();
+			if( m_pLoadManager->IsLoadFailed() == true ) return;
 		}
 	}
 }
@@ -180,11 +178,11 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 	wc.style			= windowStyle;
 	wc.lpfnWndProc		= WndProc;
 	wc.hInstance		= hInstance;
-	wc.hIcon			= LoadIcon( nullptr, IDI_APPLICATION );
+	wc.hIcon			= LoadIcon( hInstance, MAKEINTRESOURCE(IDI_ICON) );
 	wc.hCursor			= LoadCursor( nullptr, IDC_ARROW );
 	wc.hbrBackground	= (HBRUSH)RGB(0, 0, 0);
 	wc.lpszClassName	= APP_NAME.c_str();
-	wc.hIconSm			= LoadIcon( nullptr, IDI_APPLICATION );
+	wc.hIconSm			= LoadIcon( hInstance, IDI_APPLICATION );
 
 	// ウィンドウクラスをWindowsに登録.
 	if( !RegisterClassEx( &wc ) ){
@@ -231,19 +229,22 @@ HRESULT CMain::InitWindow( HINSTANCE hInstance )
 	// ウィンドウを半透明化するよう.
 	/*
 	m_hWnd = CreateWindowEx(
-	WS_EX_LAYERED | WS_EX_TOPMOST, 
-	APP_NAME.c_str(), 
-	WND_TITLE.c_str(), 
-	WS_POPUP, 
-	pos_x, pos_y, 
-	rect.right - rect.left, 
-	rect.bottom - rect.top,NULL, NULL, 
-	hInstance,
-	NULL);
+		WS_EX_LAYERED | WS_EX_TOPMOST, 
+		APP_NAME.c_str(), 
+		WND_TITLE.c_str(), 
+		WS_POPUP, 
+		pos_x, pos_y, 
+		rect.right - rect.left, 
+		rect.bottom - rect.top,
+		NULL,
+		NULL, 
+		hInstance,
+		NULL);
 	if( SetLayeredWindowAttributes(m_hWnd, 0, 255, LWA_COLORKEY | LWA_ALPHA) == false ){
 		return E_FAIL;
 	}
 	*/
+	
 
 	// ウィンドウの表示.
 	ShowWindow( m_hWnd, SW_SHOW );

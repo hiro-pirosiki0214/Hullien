@@ -3,13 +3,17 @@
 
 #include "..\Widget.h"
 
+#include <vector>
+
 /*************************************
 *	タイトルに戻るボタンクラス.
 **/
 class CReturnTitle : public CWidget
 {
 private:
-	const char* SPRITE_NAME = "ReturnTitle";	//スプライトのファイル名.
+	const char* SPRITE_BUTTON_NAME = "buttonB";	//スプライトのファイル名.
+	const char* SPRITE_TITLE_NAME = "title";	//スプライトのファイル名.
+	const char* SPRITE_PUSH_NAME = "pushMini";	//スプライトのファイル名.
 	const float	 ALPHA_SPEED = 0.01f;				//透過速度.
 
 public:
@@ -28,6 +32,6 @@ private:
 	// スプライト設定関数.
 	virtual bool SpriteSetting() override;
 
-	
+	std::vector<std::shared_ptr<CSprite>>	m_pSprites;
 };
 #endif	//#ifndef RETURNTITLE_H.

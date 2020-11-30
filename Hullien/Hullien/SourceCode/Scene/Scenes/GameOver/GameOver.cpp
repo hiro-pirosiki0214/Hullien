@@ -22,9 +22,10 @@ bool CGameOver::Load()
 {
 	CFade::SetFadeOut();
 	if (m_pGameOverWidget->Init() == false) return false;
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
-	CSoundManager::SetBGMVolume("GameOverBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
+	CSoundManager::ThreadPlayBGM("GameOverBGM");
+	CSoundManager::FadeInBGM("GameOverBGM");
+	m_pSceneManager->SetNowBGMName("GameOverBGM");
 	return true;
 }
 
@@ -33,8 +34,6 @@ bool CGameOver::Load()
 //============================.
 void CGameOver::Update()
 {
-	CSoundManager::ThreadPlayBGM("GameOverBGM");
-
 	if (CFade::GetFadeState() == CFade::EFadeState::Out
 		&& CFade::GetIsFade() == true) return;
 	m_pGameOverWidget->Update();
@@ -50,7 +49,7 @@ void CGameOver::Update()
 		CSoundManager::FadeOutBGM("GameOverBGM");
 		m_IsChangeScene = true;
 	}
-
+	if( m_IsChangeScene == false ) return;
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if (CFade::GetIsFade() == true) return;
 	while(CSoundManager::StopBGMThread("GameOverBGM") == false);

@@ -27,7 +27,7 @@ public:
 	// ボックスの設定.
 	void SetBoxWall( const SBoxWall& boxWall );
 	// ボックスの取得.
-	SBoxWall* GetBoxWall() { return &m_BoxWall; }
+	inline SBoxWall* GetBoxWall() { return &m_BoxWall; }
 
 private:
 	// パラメータの初期化.

@@ -37,17 +37,17 @@ void CGirlEdit::Render()
 	ImGui::PushItemWidth(200.0f);
 
 	// 各パラメータの設定.
-	ImGui::InputFloat( u8"移動速度",		&m_GirlParam.MoveSpeed );
-	ImGui::InputFloat( u8"回転速度",		&m_GirlParam.RotatlonalSpeed );
-	ImGui::InputFloat( u8"初期座標 : X",	&m_GirlParam.InitPosition.x );
-	ImGui::InputFloat( u8"初期座標 : Y",	&m_GirlParam.InitPosition.y );
-	ImGui::InputFloat( u8"初期座標 : Z",	&m_GirlParam.InitPosition.z );
-	ImGui::InputFloat( u8"初期座標の許容の長さ",	&m_GirlParam.InitPosLenght );
-	ImGui::InputFloat( u8"索敵範囲の半径",			&m_GirlParam.SearchCollRadius );
-	ImGui::InputFloat( u8"スフィア調整用座標 : X",	&m_GirlParam.SphereAdjPos.x );
-	ImGui::InputFloat( u8"スフィア調整用座標 : Y",	&m_GirlParam.SphereAdjPos.y );
-	ImGui::InputFloat( u8"スフィア調整用座標 : Z",	&m_GirlParam.SphereAdjPos.z );
-	ImGui::InputFloat( u8"スフィア調整用半径",		&m_GirlParam.SphereAdjRadius );
+	CImGuiManager::DragFloat( u8"移動速度",		&m_GirlParam.MoveSpeed );
+	CImGuiManager::DragFloat( u8"回転速度",		&m_GirlParam.RotatlonalSpeed );
+	CImGuiManager::DragFloat( u8"初期座標 : X",	&m_GirlParam.InitPosition.x );
+	CImGuiManager::DragFloat( u8"初期座標 : Y",	&m_GirlParam.InitPosition.y );
+	CImGuiManager::DragFloat( u8"初期座標 : Z",	&m_GirlParam.InitPosition.z );
+	CImGuiManager::DragFloat( u8"初期座標の許容の長さ",	&m_GirlParam.InitPosLenght );
+	CImGuiManager::DragFloat( u8"索敵範囲の半径",			&m_GirlParam.SearchCollRadius );
+	CImGuiManager::DragFloat( u8"スフィア調整用座標 : X",	&m_GirlParam.SphereAdjPos.x );
+	CImGuiManager::DragFloat( u8"スフィア調整用座標 : Y",	&m_GirlParam.SphereAdjPos.y );
+	CImGuiManager::DragFloat( u8"スフィア調整用座標 : Z",	&m_GirlParam.SphereAdjPos.z );
+	CImGuiManager::DragFloat( u8"スフィア調整用半径",		&m_GirlParam.SphereAdjRadius );
 
 	static CImGuiManager::SSuccess s_Success;
 	if( ImGui::Button(u8"読込") == true ){
@@ -70,4 +70,10 @@ void CGirlEdit::Render()
 void CGirlEdit::ModelRender() 
 {
 	m_pGirl->Render();
+}
+
+// エフェクトの描画.
+void CGirlEdit::EffectRender()
+{
+	m_pGirl->EffectRender();
 }

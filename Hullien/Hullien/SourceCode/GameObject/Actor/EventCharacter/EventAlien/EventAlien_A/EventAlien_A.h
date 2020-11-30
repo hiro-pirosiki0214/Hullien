@@ -8,8 +8,7 @@
 **/
 class CEventAlienA : public CEventAlien
 {
-	const char* MODEL_NAME = "GhostB_s";
-	const char* MODEL_TEMP_NAME = "a";	// 仮モデル名.
+	const char* MODEL_NAME = "a_s";
 
 public:
 	CEventAlienA();
@@ -26,7 +25,10 @@ public:
 	// スポーン.
 	virtual bool Spawn(const D3DXVECTOR3& spawnPos) override;
 	// 宇宙人の状態取得関数.
-	CEventCharacter::SCharacterParam GetParameter() const { return m_Parameter; }
+	inline CEventCharacter::SCharacterParam GetParameter() const { return m_Parameter; }
+
+	// アームを完全にとりだす.
+	void SetArmAppearance();
 
 private:
 	// スポーン.
@@ -36,6 +38,9 @@ private:
 
 	// 当たり判定の設定.
 	bool ColliderSetting();
+
+	// アニメーションフレームの設定.
+	bool SetAnimFrameList();
 
 };
 

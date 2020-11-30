@@ -4,6 +4,7 @@
 STG::CCharacter::CCharacter()
 	: m_pBullets	()
 	, m_ShotCount	( 0 )
+	, m_LifePoint	( 0.0f )
 {
 }
 
@@ -32,15 +33,19 @@ void STG::CCharacter::BulletUpdate()
 }
 
 // ’e‚Ì•`‰æ.
-void STG::CCharacter::BulletRender()
+void STG::CCharacter::BulletRender( const D3DXVECTOR3& color )
 {
-	for( auto& b : m_pBullets ) b->Render();
+	for( auto& b : m_pBullets ){
+		b->SetColor( color );
+		b->Render();
+	}
 }
 
 // ’e‚ðŒ‚‚Â.
-void STG::CCharacter::BulletShot( const float& rot, const float& moveSpeed )
+bool STG::CCharacter::BulletShot( const float& rot, const float& moveSpeed )
 {
 	for( auto& b : m_pBullets ){
-		if( b->Shoot( m_vPosition, rot, moveSpeed ) == true ) return;
+		if( b->Shoot( m_vPosition, rot, moveSpeed ) == true ) return true;
 	}
+	return false;
 }

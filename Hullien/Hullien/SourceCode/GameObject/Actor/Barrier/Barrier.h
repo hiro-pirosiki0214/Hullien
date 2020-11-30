@@ -8,7 +8,7 @@ class CEventActor;
 class CBarrier : public CActor
 {
 	const char* MODEL_NAME = "Barrier";
-	const char* EFFECT_NAME = "barrier";	// エフェクトの名前.
+	const char* EFFECT_NAME = "barrier_effect";	// エフェクトの名前.
 
 	const float COLLISION_SPHERE_RDIUS_MAX = 20.0f;
 	const float COLLISION_SPHERE_RDIUS_ADD_VALUE = 1.0f;
@@ -31,7 +31,7 @@ public:
 	// 相手座標の設定関数.
 	virtual void SetTargetPos( CActor& pActor ) override;
 	// 動作状態か.
-	bool IsActive() const { return m_IsActive; }
+	inline bool IsActive() const { return m_IsActive; }
 
 private:
 	// モデルの取得.

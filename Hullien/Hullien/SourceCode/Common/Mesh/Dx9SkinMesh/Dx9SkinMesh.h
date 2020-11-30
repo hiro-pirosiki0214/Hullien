@@ -7,6 +7,7 @@
 
 #include "Parser/CDX9SkinMeshParser.h"
 #include "..\..\Common.h"
+#include "..\MeshStruct.h"
 #include "..\..\Fog\Fog.h"
 
 //==================================================================================================
@@ -17,36 +18,6 @@
 class CDX9SkinMesh : public CCommon
 {
 public:
-	//メッシュ単位.
-	struct CBUFFER_PER_MESH
-	{
-		D3DXMATRIX	mW;			//ワールド行列.
-		D3DXMATRIX	mWVP;		//ワールドから射影までの変換行列.
-	};
-
-	//マテリアル単位.
-	struct CBUFFER_PER_MATERIAL
-	{
-		D3DXVECTOR4 vAmbient;	//アンビエント光.
-		D3DXVECTOR4 vDiffuse;	//ディフューズ色.
-		D3DXVECTOR4 vSpecular;	//鏡面反射.
-	};
-
-	//シェーダーに渡す値.
-	struct CBUFFER_PER_FRAME
-	{
-		D3DXVECTOR4	vCamPos;	//ｶﾒﾗ位置(視点位置).
-		D3DXVECTOR4	vLightPos;	//ﾗｲﾄ位置.
-		D3DXVECTOR4	vLightDir;	//ﾗｲﾄ方向.
-		D3DXMATRIX	mLightRot;	//ﾗｲﾄ回転行列.
-		D3DXVECTOR4	fIntensity;	//ﾗｲﾄ強度(明るさ). ※xのみ使用する.
-		D3DXVECTOR4 vColor;		//色.
-		D3DXMATRIX	mLightWVP[4];
-		D3DXVECTOR4	SpritPos;
-		D3DXVECTOR4 IsShadow;
-		SFog		Fog;
-	};
-
 	//ボーン単位.
 	struct CBUFFER_PER_BONES
 	{
@@ -96,7 +67,7 @@ public:
 		Init( hWnd, pDevice11, pContext11, pDevice9, fileName );
 	}
 	CDX9SkinMesh();
-	~CDX9SkinMesh();
+	virtual ~CDX9SkinMesh();
 
 	HRESULT Init(
 		HWND hWnd, 
@@ -154,6 +125,7 @@ private:
 
 	//Dx11.
 	ID3D11SamplerState*		m_pSampleLinear;
+	ID3D11SamplerState*		m_pToonSampleLinear;
 	ID3D11SamplerState*		m_pShadowMapSampler;	// シャドウマップ用サンプラー.
 	ID3D11VertexShader*		m_pVertexShader;
 	ID3D11PixelShader*		m_pPixelShader;
@@ -201,7 +173,7 @@ private:
 	void RecursiveSetNewPoseMatrices( BONE* pBone,D3DXMATRIX* pmParent );
 
 	//全てのメッシュを作成する.
-	void BuildAllMesh( D3DXFRAME* pFrame );
+	HRESULT BuildAllMesh( D3DXFRAME* pFrame );
 
 	//メッシュを作成する.
 	HRESULT CreateAppMeshFromD3DXMesh( LPD3DXFRAME pFrame );

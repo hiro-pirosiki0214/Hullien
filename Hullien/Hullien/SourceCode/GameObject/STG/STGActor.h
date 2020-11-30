@@ -3,6 +3,7 @@
 
 #include "..\GameObject.h"
 #include <vector>
+#include <functional>
 
 class CCollisionManager;	// 当たり判定クラス.
 
@@ -19,6 +20,8 @@ namespace STG
 		virtual void MeshRender();
 		// 当たり判定.
 		virtual void Collision( STG::CActor* pActor ) = 0;
+		// ライフ計算関数.
+		virtual void LifeCalculation( const std::function<void(float&)>& ){}
 
 		// 当たり判定の取得.
 		CCollisionManager* GetColl(){ return m_pCollManager.get(); }

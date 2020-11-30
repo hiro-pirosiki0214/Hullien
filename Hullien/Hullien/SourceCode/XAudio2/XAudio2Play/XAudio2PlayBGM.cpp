@@ -4,16 +4,15 @@
 #include <vector>
 #include <process.h>
 #include <thread>
+#include <chrono>
 
 #include "..\SoundManager.h"
 //-----------------------------
 // 定数宣言.
 namespace {
-//	const float FADE_OUT_VOLUME = 0.0001f;	// フェードで1度に下げる音量.
-//	const float FADE_IN_VOLUME = 0.0004f;	// フェードで1度にあげる音量.
-	const float FADE_OUT_VOLUME = 0.001f;	// フェードで1度に下げる音量.
-	const float FADE_IN_VOLUME = 0.004f;	// フェードで1度にあげる音量.
 	const float MAX_PITCH = 5.0f;		// 最大ピッチ(最高5.0f).
+	const float INIT_FADE_VALUE = -100.0f;	// フェードする値を1回だけ計算するための初期化値.
+	const int DIVISION_FADE_VALUE = 3000;// フェードする値を計算するための割り算の値.
 }
 
 CXAudio2PlayBGM::CXAudio2PlayBGM()
@@ -21,6 +20,8 @@ CXAudio2PlayBGM::CXAudio2PlayBGM()
 	, m_pOggData		( nullptr )
 	, m_fMaxPitch		( MAX_PITCH )
 	, m_fPitch			( 1.0f )
+	, m_fFadeInValue	( -100.0f )
+	, m_fFadeOutValue	( -100.0f )
 	, m_bFadeInStart	( false )
 	, m_bFadeOutStart	( false )
 	, m_bFirstPlay		( true )
@@ -38,23 +39,21 @@ CXAudio2PlayBGM::~CXAudio2PlayBGM()
 {
 }
 
-
-
-HRESULT CXAudio2PlayBGM::OggSubmit(std::shared_ptr<COggLoad> pOggData, const char * filename)
+HRESULT CXAudio2PlayBGM::OggSubmit()
 {
 	HRESULT ret;
 
 	// オーディオバッファーを用意
 	m_Buff_len = 2;
 	m_Buff = new BYTE*[m_Buff_len];
-	m_Len = pOggData->GetFormat()->nAvgBytesPerSec;
+	m_Len = m_pOggData->GetFormat()->nAvgBytesPerSec;
 
 	for (int i = 0; i < m_Buff_len; i++) {
 		m_Buff[i] = new BYTE[m_Len];
 	}
 
 	// 最初のバッファーへデータを読み込む
-	ret = pOggData->ReadChunk(m_Buff, m_Buff_cnt, m_Len, &m_Size);
+	ret = m_pOggData->ReadChunk(m_Buff, m_Buff_cnt, m_Len, &m_Size);
 	if (FAILED(ret))
 	{
 		_ASSERT_EXPR("error SubmitSourceBuffer ret=%d\n", ret);
@@ -90,22 +89,22 @@ const bool CXAudio2PlayBGM::IsPlaying()
 }
 
 // 再生.
-bool CXAudio2PlayBGM::Play(std::shared_ptr<COggLoad> pWavData, const char* filename, bool& isEnd)
+bool CXAudio2PlayBGM::Play(bool& isEnd)
 {
 	m_mtx.lock();
 	HRESULT ret;
 	if (m_pSourceVoice == nullptr) return false;
 	SetPitch(m_fPitch);
-	if (CSoundManager::GetInstance()->m_fMaxBGMVolume != GetVolume()) {
+	if (CSoundManager::GetInstance()->m_stSound.BGMVolume != GetVolume()) {
 	}
 	else {
-		SetBGMVolume(CSoundManager::GetInstance()->m_fMaxBGMVolume);
+		SetBGMVolume(CSoundManager::GetInstance()->m_stSound.BGMVolume);
 	}
 	// SoundSourceを再生.
 	m_pSourceVoice->Start();
 	// Submitは初回再生時のみ実行する.
 	if (m_bFirstPlay == true) {
-		OggSubmit(pWavData, filename);
+		OggSubmit();
 		m_bFirstPlay = false;
 	}
 
@@ -113,7 +112,7 @@ bool CXAudio2PlayBGM::Play(std::shared_ptr<COggLoad> pWavData, const char* filen
 	do {
 		if (isEnd == true) break;
 		if (m_bCanChangeVolume == true) {
-			SetBGMVolume(CSoundManager::GetInstance()->m_fMaxBGMVolume);
+			SetBGMVolume(CSoundManager::GetInstance()->m_stSound.BGMVolume);
 		}
 		// ファイルからデータを読み取り
 		m_pOggData->ReadChunk(m_Buff, m_Buff_cnt, m_Len, &m_Size);
@@ -145,15 +144,20 @@ bool CXAudio2PlayBGM::Play(std::shared_ptr<COggLoad> pWavData, const char* filen
 		if (m_Buff_len <= ++m_Buff_cnt) m_Buff_cnt = 0;
 
 		if (m_bCanChangeVolume == true) {
-			SetBGMVolume(CSoundManager::GetInstance()->m_fMaxBGMVolume);
+			SetBGMVolume(CSoundManager::GetInstance()->m_stSound.BGMVolume);
 		}
 
 		// フェードインフラグが立っていれば、フェードイン関数を呼ぶスレッドを立てる.
 		if (m_bFadeInStart == true) {
 			auto BGM = [&]()	// ラムダ関数.
 			{
-				FadeInBGM(FADE_IN_VOLUME, isEnd); // フェードイン関数.
+				// 1度だけフェードする値を計算.
+				if (m_fFadeInValue <= INIT_FADE_VALUE) {
+					m_fFadeInValue = CSoundManager::GetInstance()->m_stSound.BGMVolume * CSoundManager::GetInstance()->m_stSound.MasterVolume / DIVISION_FADE_VALUE;
+				}
+				FadeInBGM(m_fFadeInValue, isEnd); // フェードイン関数.
 				m_bFadeInStart = false;					// ここに来たらフェードインが終わってるのでフラグを下す.
+				m_fFadeInValue = INIT_FADE_VALUE;
 			};
 			std::thread Th = std::thread(BGM);
 			Th.detach();
@@ -162,8 +166,13 @@ bool CXAudio2PlayBGM::Play(std::shared_ptr<COggLoad> pWavData, const char* filen
 		if (m_bFadeOutStart == true) {
 			auto BGM = [&]()
 			{
-				FadeOutBGM(-FADE_OUT_VOLUME, isEnd);
+				// 1度だけフェードする値を計算.
+				if (m_fFadeOutValue <= INIT_FADE_VALUE) {
+					m_fFadeOutValue = GetVolume() / DIVISION_FADE_VALUE;
+				}
+				FadeOutBGM(-m_fFadeOutValue, isEnd);
 				m_bFadeOutStart = false;
+				m_fFadeOutValue = INIT_FADE_VALUE;
 			};
 			std::thread Th = std::thread(BGM);
 			Th.detach();
@@ -184,6 +193,17 @@ bool CXAudio2PlayBGM::Play(std::shared_ptr<COggLoad> pWavData, const char* filen
 
 	return true;
 }
+
+// BGMサウンド再生を再開.
+bool CXAudio2PlayBGM::PlayStart()
+{
+	if (m_pSourceVoice == nullptr) return true;
+	if (IsPlaying() == false)  return true;
+
+	m_pSourceVoice->Start();
+	return true;
+}
+
 // サウンド完全停止.
 bool CXAudio2PlayBGM::Stop()
 {
@@ -251,7 +271,7 @@ bool  CXAudio2PlayBGM::SetBGMVolume(float value)
 		value = CSoundManager::GetBGMVolume();
 	}
 
-	m_pSourceVoice->SetVolume(value * CSoundManager::GetInstance()->m_fMasterVolume, 0);
+	m_pSourceVoice->SetVolume(value * CSoundManager::GetInstance()->m_stSound.MasterVolume, 0);
 	return true;
 }
 
@@ -309,16 +329,71 @@ bool CXAudio2PlayBGM::FadeOutBGM(float value, bool& isEmergencyCall)
 
 bool CXAudio2PlayBGM::FadeInBGM(float value, bool& isEmergencyCall)
 {
-	while (GetVolume() < CSoundManager::GetInstance()->m_fMaxBGMVolume * CSoundManager::GetInstance()->m_fMasterVolume)
+	while (GetVolume() < CSoundManager::GetInstance()->m_stSound.BGMVolume * CSoundManager::GetInstance()->m_stSound.MasterVolume)
 	{
 		if (isEmergencyCall == true) return true;
 		if (m_bFadeInStart == false) return true;// 最大ボリュームに行く前に、フェードインスタートフラグが下されたのでリターン.
 		AdjustVolume(value);
 		Sleep(1);
 	}
-	SetBGMVolume(CSoundManager::GetInstance()->m_fMaxBGMVolume);
+	SetBGMVolume(CSoundManager::GetInstance()->m_stSound.BGMVolume);
 
 	return true;
+}
+
+// 再生位置を変更する.
+void CXAudio2PlayBGM::BGMPointSeek(int& Hour, int& Minutes, double& Second)
+{
+	int GetHour = Hour;
+	int GetMin = Minutes;
+	double GetSec = Second;
+
+	m_Buff_cnt = 0;
+
+	// 秒数が60秒を超えていた場合、分に変換.
+	if (GetSec >= 60.0)
+	{
+		int Second = static_cast<int>(GetSec);
+		int Division = Second / 60;
+		int	Remainder = Second % 60;
+		GetMin += Division;
+		GetSec = static_cast<double>(Remainder);
+	}
+	// 分が60分を超えていた場合、時間に変換.
+	if (GetMin >= 60)
+	{
+		int Division = GetMin / 60;
+		int	Remainder = GetMin % 60;
+		GetHour += Division;
+		GetMin = Remainder;
+	}
+
+	// 分を秒に変換.
+	double HourCalc = static_cast<double>(GetHour * 3600);
+	// 分を秒に変換.
+	double MinCalc = static_cast<double>(GetMin * 60);
+	// 時間分秒を足し合わせる.
+	double CalcSeekFrame = HourCalc + MinCalc + GetSec;
+	
+	//m_pOggData->ResetFile();
+	// 指定位置までデータをシーク.
+	m_pOggData->SeekFile(CalcSeekFrame);
+	// バッファー生成
+	m_Buffer.AudioBytes = m_Size;
+	m_Buffer.pAudioData = m_Buff[m_Buff_cnt];
+	// ソースボイスを停止.
+	m_pSourceVoice->Stop(0);
+	// ソースボイスのバッファを消す.
+	m_pSourceVoice->FlushSourceBuffers();
+	// ソースボイスを再度再生する.
+	m_pSourceVoice->Start();
+
+	//m_Buff_cnt++;
+}
+
+double CXAudio2PlayBGM::GetNowPlayFrame()
+{
+	return m_pOggData->GetFileFrame();
 }
 
 void CXAudio2PlayBGM::DestoroySource()

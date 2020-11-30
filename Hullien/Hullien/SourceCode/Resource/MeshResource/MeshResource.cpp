@@ -29,9 +29,10 @@ CMeshResorce* CMeshResorce::GetInstance()
 //-------------------------------------.
 // モデルの読み込み.
 //-------------------------------------.
-void CMeshResorce::Load( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 )
+HRESULT CMeshResorce::Load( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 )
 {
-	GetInstance()->ModelLoad( hWnd, pDevice11, pContext11, pDevice9 );
+	if( FAILED( GetInstance()->ModelLoad( hWnd, pDevice11, pContext11, pDevice9 ) )) return E_FAIL;
+	return S_OK;
 }
 
 //-------------------------------------.
@@ -99,37 +100,43 @@ bool CMeshResorce::GetSkin( std::shared_ptr<CDX9SkinMesh>& model, const std::str
 //-------------------------------------.
 // モデルの読み込み.
 //-------------------------------------.
-void CMeshResorce::ModelLoad( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 )
+HRESULT CMeshResorce::ModelLoad( HWND hWnd, ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11, LPDIRECT3DDEVICE9 pDevice9 )
 {
 	auto eachLoad = [&]( const fs::directory_entry& entry )
 	{
 		const std::string exe		= entry.path().extension().string();	// 拡張子.
 		const std::string filePath	= entry.path().string();				// ファイルパス.
 		const std::string fileName	= entry.path().stem().string();			// ファイル名.
+		const std::string errorMsg	= fileName+" : X ファイル読み込み失敗";	// あらかじめエラーメッセージを設定する.
 
 		if( exe != ".x" && exe != ".X" ) return;	// 拡張子が "Xファイル" じゃなければ終了.
-
+		
 		// "_s" はスキンメッシュ.
 		if( fileName.find("_s") == std::string::npos ){
 			// "_s" が見つからないので スタティックメッシュ.
-			m_StaticMeshList[fileName] = 
-				std::make_shared<CDX9StaticMesh>( hWnd, pDevice11, pContext11, pDevice9, filePath.c_str() );
+			m_StaticMeshList[fileName] = std::make_shared<CDX9StaticMesh>();
+			if( FAILED( m_StaticMeshList[fileName]->Init( hWnd, pDevice11, pContext11, pDevice9, filePath.c_str() )))
+				throw errorMsg.c_str();
 		} else {
 			// スキンメッシュ.
-			m_SkinMeshList[fileName] = 
-				std::make_shared<CDX9SkinMesh>( hWnd, pDevice11, pContext11, pDevice9, filePath.c_str() );
+			m_SkinMeshList[fileName] = std::make_shared<CDX9SkinMesh>();
+			if( FAILED( m_SkinMeshList[fileName]->Init( hWnd, pDevice11, pContext11, pDevice9, filePath.c_str() )))
+				throw errorMsg.c_str();
 		}
 	};
-
 	try {
 		fs::recursive_directory_iterator dir_itr( FILE_PATH ), end_itr;
 		std::for_each( dir_itr, end_itr, eachLoad );
-
 	} catch( const fs::filesystem_error& e ){
 		// エラーメッセージを表示.
 		ERROR_MESSAGE( e.path1().string().c_str() );
+		return E_FAIL;
+	} catch( const char* e ){
+		// エラーメッセージを表示.
+		ERROR_MESSAGE( e );
+		return E_FAIL;
 	}
-
 	// 読込が終わったので true にする.
 	m_HasFinishedLoading = true;
+	return S_OK;
 }

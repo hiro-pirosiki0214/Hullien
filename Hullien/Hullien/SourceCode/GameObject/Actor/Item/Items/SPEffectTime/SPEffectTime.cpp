@@ -16,6 +16,7 @@ CSPEffectTimeItem::CSPEffectTimeItem(
 	, pSP_RECOVERY_VALUE	( pSPRecoveryValue )
 	, pSP_RECOVERY_TIME		( pSPRecoveryTime )
 {
+	m_ObjectTag = EObjectTag::SPEffectTimeItem;
 }
 
 CSPEffectTimeItem::~CSPEffectTimeItem()
@@ -30,7 +31,7 @@ bool CSPEffectTimeItem::Init()
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 	m_ObjectTag = EObjectTag::SPEffectTimeItem;
 	return true;
 }
@@ -45,6 +46,12 @@ void CSPEffectTimeItem::Update()
 void CSPEffectTimeItem::Render()
 {
 	CItemBase::Render();
+}
+
+// エフェクトの描画.
+void CSPEffectTimeItem::EffectRender()
+{
+	CItemBase::EffectRender();
 }
 
 // 当たり判定関数.

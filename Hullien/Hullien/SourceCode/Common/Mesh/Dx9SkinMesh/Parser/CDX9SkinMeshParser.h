@@ -101,6 +101,9 @@ struct SKIN_PARTS_MESH
 		, pBoneArray(nullptr)
 		, bEnableBones()
 	{}
+	~SKIN_PARTS_MESH()
+	{
+	}
 };
 
 //”h¶ƒtƒŒ[ƒ€\‘¢‘Ì.

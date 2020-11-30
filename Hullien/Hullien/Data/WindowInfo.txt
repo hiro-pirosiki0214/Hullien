@@ -1,4 +1,4 @@
 // ウィンドウ名.
-#WindowTitle,Hullien
+#WindowTitle,Hulien
 // APP名.
-#AppName,Hullien
+#AppName,Hulien

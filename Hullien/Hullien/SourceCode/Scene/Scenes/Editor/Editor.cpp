@@ -17,36 +17,23 @@
 #include "..\..\..\Camera\EditCamera\EditCamera.h"
 #include "..\..\..\Camera\CameraManager\CameraManager.h"
 #include "..\..\..\Common\Fog\Fog.h"
+#include "..\..\..\XAudio2\SoundManager.h"
 
 CEditor::CEditor( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
 
-	, m_pControllerEdit		( nullptr )
-	, m_pSpawnEdit			( nullptr )
-	, m_pAlienParamEdit		( nullptr )
-	, m_pExplosionEdit		( nullptr ) 
-	, m_pItemEdit			( nullptr )
-	, m_pPlayerEdit			( nullptr )
-	, m_pGirlEdit			( nullptr )
-	, m_pMotherShipUFOEdit	( nullptr )
-	, m_pInvisibleWallEdit	( nullptr )
 	, m_pEditCamera			( nullptr )
+	, m_pSkyDome			( nullptr )
 	, m_pGroundStage		( nullptr )
-	, m_NowEditScene		( EEditScenes::None )
+	, m_pEdit				()
+	, m_IsEditEnd			( false )
+	, m_NowEditScene		( EEditScenes_PlayerEdit )
+	, m_IsChangeScene		( false )
 {
-	m_pControllerEdit		= std::make_unique<CControllerEdit>();
-	m_pSpawnEdit			= std::make_unique<CSpawnEdit>();
-	m_pAlienParamEdit		= std::make_unique<CAlienParamEdit>();
-	m_pExplosionEdit		= std::make_unique<CExplosionEdit>();
-	m_pItemEdit				= std::make_unique<CItemEdit>();
-	m_pPlayerEdit			= std::make_unique<CPlayerEdit>();
-	m_pGirlEdit				= std::make_unique<CGirlEdit>();
-	m_pMotherShipUFOEdit	= std::make_unique<CMotherShipUFOEdit>();
-	m_pInvisibleWallEdit	= std::make_unique<CInvisibleWallEdit>();
-
 	m_pEditCamera		= std::make_shared<CEditCamera>();
 	m_pSkyDome			= std::make_unique<CSkyDome>();
 	m_pGroundStage		= std::make_unique<CGroundStage>();
+	CFade::SetFadeOut();
 }
 
 CEditor::~CEditor()
@@ -56,58 +43,33 @@ CEditor::~CEditor()
 // 読込関数.
 bool CEditor::Load()
 {
-	if( m_pSpawnEdit->Init()			== false ) return false;
-	if( m_pAlienParamEdit->Init()		== false ) return false;
-	if( m_pExplosionEdit->Init()		== false ) return false;
-	if( m_pItemEdit->Init()				== false ) return false;
-	if( m_pPlayerEdit->Init()			== false ) return false;
-	if( m_pGirlEdit->Init()				== false ) return false;
-	if( m_pMotherShipUFOEdit->Init()	== false ) return false;
-	if( m_pInvisibleWallEdit->Init()	== false ) return false;
+	if( CreateEditList()			== false ) return false;
 	if( m_pSkyDome->Init()			== false ) return false;
 	if( m_pGroundStage->Init()		== false ) return false;
-
+	m_pEditCamera->Updata();
+	CCameraManager::SetCamera( m_pEditCamera );
 	m_pEditCamera->SetHWND( m_pSceneManager->GethWnd() );
+	CSoundManager::ThreadPlayBGM("ClearBGM");
+	CSoundManager::FadeInBGM("ClearBGM");
+	m_pSceneManager->SetNowBGMName("ClearBGM");
 	return true;
 }
 
 // 更新関数.
 void CEditor::Update()
 {
+	if (CFade::GetFadeState() == CFade::EFadeState::Out
+		&& CFade::GetIsFade() == true) return;
 	CFog::Update();
-	switch( m_NowEditScene )
-	{
-	case EEditScenes::PlayerEdit:
-		m_pPlayerEdit->Update();
-		break;
-	case EEditScenes::GirlEdit:
-		m_pGirlEdit->Update();
-		break;
-	case EEditScenes::SpawnEdit:
-		m_pSpawnEdit->Update();
-		break;
-	case EEditScenes::AlienParam:
-		break;
-	case EEditScenes::Explosion:
-		m_pExplosionEdit->Update();
-		break;
-	case EEditScenes::ItemEdit:
-		break;
-	case EEditScenes::MotherShipUFOEdit:
-		m_pMotherShipUFOEdit->Update();
-		break;
-	case EEditScenes::InvisibleWallEdit:
-		m_pInvisibleWallEdit->Update();
-		break;
-	default:
-		break;
+
+	m_pEdit[m_NowEditScene-1]->Update();
+
+	if( m_pEdit[m_NowEditScene-1]->IsSetCamera() == false ){
+		m_pEditCamera->Updata();
+		CCameraManager::SetCamera( m_pEditCamera );
 	}
-	m_pEditCamera->Updata();
-	CCameraManager::SetCamera( m_pEditCamera );
-	if( ( GetAsyncKeyState('E') & 0x8000 ) &&
-		( GetAsyncKeyState('D') & 0x8000 ) ){
-		if( !(GetAsyncKeyState('W') & 0x8000 ) ) return;
-		m_pSceneManager->NextSceneMove();
+	if( m_IsEditEnd == true ){
+		ChangeScene();
 	}
 }
 
@@ -129,31 +91,9 @@ void CEditor::ModelRender()
 	CSceneTexRenderer::SetRenderPass( CSceneTexRenderer::ERenderPass::Shadow );
 	m_pGroundStage->Render();
 
-	switch( m_NowEditScene )
-	{
-	case EEditScenes::PlayerEdit:
-		m_pPlayerEdit->ModelRender();
-		break;
-	case EEditScenes::GirlEdit:
-		m_pGirlEdit->ModelRender();
-		break;
-	case EEditScenes::SpawnEdit:
-		m_pSpawnEdit->ModelRender();
-		break;
-	case EEditScenes::AlienParam:
-		break;
-	case EEditScenes::Explosion:
-		break;
-	case EEditScenes::ItemEdit:
-		break;
-	case EEditScenes::MotherShipUFOEdit:
-		m_pMotherShipUFOEdit->ModelRender();
-		break;
-	case EEditScenes::InvisibleWallEdit:
-		break;
-	default:
-		break;
-	}
+	m_pEdit[m_NowEditScene-1]->ModelRender();
+	m_pEdit[m_NowEditScene-1]->EffectRender();
+
 	//--------------------------------------------.
 	// 描画パス2.
 	//--------------------------------------------.
@@ -164,34 +104,8 @@ void CEditor::ModelRender()
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
 
-	switch( m_NowEditScene )
-	{
-	case EEditScenes::PlayerEdit:
-		m_pPlayerEdit->ModelRender();
-		break;
-	case EEditScenes::GirlEdit:
-		m_pGirlEdit->ModelRender();
-		break;
-	case EEditScenes::SpawnEdit:
-		m_pSpawnEdit->ModelRender();
-		break;
-	case EEditScenes::AlienParam:
-		break;
-	case EEditScenes::Explosion:
-		m_pExplosionEdit->ModelRender();
-		break;
-	case EEditScenes::ItemEdit:
-		break;
-	case EEditScenes::MotherShipUFOEdit:
-		m_pMotherShipUFOEdit->ModelRender();
-		break;
-	case EEditScenes::InvisibleWallEdit:
-		m_pInvisibleWallEdit->ModelRender();
-		break;
-	default:
-		break;
-	}
-
+	m_pEdit[m_NowEditScene-1]->ModelRender();
+	m_pEdit[m_NowEditScene-1]->EffectRender();
 
 	//--------------------------------------------.
 	// 描画パス3.
@@ -203,40 +117,13 @@ void CEditor::ModelRender()
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
 
-	switch( m_NowEditScene )
-	{
-	case EEditScenes::PlayerEdit:
-		m_pPlayerEdit->ModelRender();
-		break;
-	case EEditScenes::GirlEdit:
-		m_pGirlEdit->ModelRender();
-		break;
-	case EEditScenes::SpawnEdit:
-		m_pSpawnEdit->ModelRender();
-		break;
-	case EEditScenes::AlienParam:
-		break;
-	case EEditScenes::Explosion:
-		m_pExplosionEdit->ModelRender();
-		break;
-	case EEditScenes::ItemEdit:
-		break;
-	case EEditScenes::MotherShipUFOEdit:
-		m_pMotherShipUFOEdit->ModelRender();
-		break;
-	case EEditScenes::InvisibleWallEdit:
-		m_pInvisibleWallEdit->ModelRender();
-		break;
-	default:
-		break;
-	}
-	
+	m_pEdit[m_NowEditScene-1]->ModelRender();
+	m_pEdit[m_NowEditScene-1]->EffectRender();
+
 	//--------------------------------------------.
 	// 最終描画.
 	//--------------------------------------------.
 	// G-Bufferを使用して、画面に描画する.
-
-	CDirectX11::SetBackBuffer();
 	CSceneTexRenderer::Render();
 }
 
@@ -249,63 +136,92 @@ void CEditor::ImGuiRender()
 	// コントローラーエディットの描画.
 	//	m_pControllerEdit->Render();
 
-	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.5f, 0.2f, 0.2f, 1.0f));
-	ImGui::PushStyleColor(ImGuiCol_TitleBg, ImVec4(0.7f, 0.4f, 0.4f, 0.7f));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(WND_W, 70));
 	ImGui::Begin("Edit");
 
-	ImGui::RadioButton("PlayerEdit", &m_NowEditScene, EEditScenes::PlayerEdit); 
+	ImGui::RadioButton("PlayerEdit", &m_NowEditScene, EEditScenes_PlayerEdit); 
 	ImGui::SameLine();
-	ImGui::RadioButton("GirlEdit", &m_NowEditScene, EEditScenes::GirlEdit); 
+	ImGui::RadioButton("GirlEdit", &m_NowEditScene, EEditScenes_GirlEdit); 
 	ImGui::SameLine();
-	ImGui::RadioButton("SpawnEdit", &m_NowEditScene, EEditScenes::SpawnEdit); 
+	ImGui::RadioButton("SpawnEdit", &m_NowEditScene, EEditScenes_SpawnEdit); 
 	ImGui::SameLine();
-	ImGui::RadioButton("AlienParam", &m_NowEditScene, EEditScenes::AlienParam);
+	ImGui::RadioButton("AlienParam", &m_NowEditScene, EEditScenes_AlienParam);
 	ImGui::SameLine();
-	ImGui::RadioButton("Explosion", &m_NowEditScene, EEditScenes::Explosion);
+	ImGui::RadioButton("Explosion", &m_NowEditScene, EEditScenes_Explosion);
 	ImGui::SameLine();
-	ImGui::RadioButton("ItemEdit", &m_NowEditScene, EEditScenes::ItemEdit);
+	ImGui::RadioButton("ItemEdit", &m_NowEditScene, EEditScenes_ItemEdit);
 	ImGui::SameLine();
-	ImGui::RadioButton("MotherShipUFOEdit", &m_NowEditScene, EEditScenes::MotherShipUFOEdit);
+	ImGui::RadioButton("MotherShipUFOEdit", &m_NowEditScene, EEditScenes_MotherShipUFOEdit);
 	ImGui::SameLine();
-	ImGui::RadioButton("InvisibleWallEdit", &m_NowEditScene, EEditScenes::InvisibleWallEdit);
+	ImGui::RadioButton("InvisibleWallEdit", &m_NowEditScene, EEditScenes_InvisibleWallEdit);
+	ImGui::SameLine();
+	if( ImGui::RadioButton(u8"エディタの終了", &m_NowEditScene, EEditScenes_InvisibleWallEdit) ){
+		m_IsEditEnd = true;
+	}
 
 	ImGui::End();
 
-	switch( m_NowEditScene )
-	{
-	case EEditScenes::PlayerEdit:
-		m_pPlayerEdit->Render();
-		break;
-	case EEditScenes::GirlEdit:
-		m_pGirlEdit->Render();
-		break;
-	case EEditScenes::SpawnEdit:
-		m_pSpawnEdit->Render();
-		break;
-	case EEditScenes::AlienParam:
-		m_pAlienParamEdit->Render();
-		break;
-	case EEditScenes::Explosion:
-		m_pExplosionEdit->Render();
-		break;
-	case EEditScenes::ItemEdit:
-		m_pItemEdit->Render();
-		break;
-	case EEditScenes::MotherShipUFOEdit:
-		m_pMotherShipUFOEdit->Render();
-		break;
-	case EEditScenes::InvisibleWallEdit:
-		m_pInvisibleWallEdit->Render();
-		break;
-	default:
-		break;
-	}
-
-	ImGui::PopStyleColor();
-	ImGui::PopStyleColor();
+	m_pEdit[m_NowEditScene-1]->Render();
 
 	// ImGui最終描画.
 	CImGuiManager::Render();
+}
+
+// エディットリストの作成.
+bool CEditor::CreateEditList()
+{
+	m_pEdit.clear();
+	for( int i = EEditScenes_Begin; i < EEditScenes_End; i++ ){
+		switch( i+1 )
+		{
+		case EEditScenes_PlayerEdit:
+			m_pEdit.emplace_back( std::make_unique<CPlayerEdit>() );
+			break;
+		case EEditScenes_GirlEdit:
+			m_pEdit.emplace_back( std::make_unique<CGirlEdit>() );
+			break;
+		case EEditScenes_SpawnEdit:
+			m_pEdit.emplace_back( std::make_unique<CSpawnEdit>() );
+			break;
+		case EEditScenes_AlienParam:
+			m_pEdit.emplace_back( std::make_unique<CAlienParamEdit>() );
+			break;
+		case EEditScenes_Explosion:
+			m_pEdit.emplace_back( std::make_unique<CExplosionEdit>() );
+			break;
+		case EEditScenes_ItemEdit:
+			m_pEdit.emplace_back( std::make_unique<CItemEdit>() );
+			break;
+		case EEditScenes_MotherShipUFOEdit:
+			m_pEdit.emplace_back( std::make_unique<CMotherShipUFOEdit>() );
+			break;
+		case EEditScenes_InvisibleWallEdit:
+			m_pEdit.emplace_back( std::make_unique<CInvisibleWallEdit>() );
+			break;
+		default:
+			break;
+		}
+		if( m_pEdit.back()->Init() == false ) return false;
+	}
+	return true;
+}
+
+// シーン切り替え関数.
+void CEditor::ChangeScene()
+{
+	if( m_IsChangeScene == false ){
+		CFade::SetFadeIn();
+		m_IsChangeScene = true;
+
+		CSoundManager::PlaySE("CancelDetermination");
+		CSoundManager::FadeOutBGM("ClearBGM");
+	}
+	// フェードイン状態かつフェード中なら処理しない.
+	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
+	if(CFade::GetIsFade() == true) return;
+
+	if (CSoundManager::GetBGMVolume("ClearBGM") > 0.0f) return;
+	while( CSoundManager::StopBGMThread("ClearBGM") == false);
+	m_pSceneManager->NextSceneMove();
 }

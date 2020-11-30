@@ -9,7 +9,7 @@
 class CLog
 {
 	typedef tm TIME_DATA;
-	const char* LOG_TEXT_FILE_PATH = "Log.txt";	// ログテキストのファイルパス.
+	const char* LOG_TEXT_FILE_PATH = "Data\\Log.txt";	// ログテキストのファイルパス.
 
 public:
 	CLog();

@@ -34,7 +34,7 @@ void CCamera::InitViewProj()
 		&m_vLookPosition,	// カメラ注視座標.
 		&VIEW_UP_VECTOR );	// カメラベクトル.
 
-#if 1
+#if 0
 	// 視野角の変更.
 	static float p = 4.0f;
 	if( GetAsyncKeyState('V') & 0x8000 ) p -= 0.01f;

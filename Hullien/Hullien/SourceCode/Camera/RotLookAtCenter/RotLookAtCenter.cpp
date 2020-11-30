@@ -1,4 +1,5 @@
 #include "RotLookAtCenter.h"
+#include "..\..\Utility\FileManager\FileManager.h"
 #include "..\..\Utility\MyVector\MyVector.h"
 
 CRotLookAtCenter::CRotLookAtCenter()
@@ -8,7 +9,27 @@ CRotLookAtCenter::CRotLookAtCenter()
 	, m_HorizontalMin	( DEFAULT_HORIZONTAL_MIN )
 	, m_VerticalMax		( DEFAULT_VERTICAL_MAX )
 	, m_VerticalMin		( DEFAULT_VERTICAL_MIN )
+	, m_RightMoveSpeed	( DEFAULT_MOVE_SPEED )
+	, m_LeftMoveSpeed	(-DEFAULT_MOVE_SPEED )
 {
+}
+
+CRotLookAtCenter::CRotLookAtCenter( const bool& isLoad )
+	: CRotLookAtCenter	()
+{
+	if( isLoad == false ) return;
+	SConfigState conState;
+	if( CFileManager::BinaryReading( CONFIG_FILE_PATH, conState ) == false ) return;
+	// カメラを判定するか.
+	if( conState.IsReverse == true ){
+		// 反転.
+		m_RightMoveSpeed	= -conState.MoveSpeed;
+		m_LeftMoveSpeed		=  conState.MoveSpeed;
+	} else {
+		// 通常.
+		m_RightMoveSpeed	=  conState.MoveSpeed;
+		m_LeftMoveSpeed		= -conState.MoveSpeed;
+	}
 }
 
 CRotLookAtCenter::~CRotLookAtCenter()
@@ -46,9 +67,25 @@ void CRotLookAtCenter::DegreeHorizontalMove( const float& movePower )
 	m_vDegree.x += movePower;
 
 	// オーバーフロー対策.
-	CVector::OverflowDegree( m_vDegree.y, 
+	CVector::OverflowDegree( m_vDegree.x, 
 		 m_HorizontalMax, m_HorizontalMin, 
 		-m_HorizontalMax, m_HorizontalMin );
+}
+
+//-------------------------------.
+// 横方向の右回転.
+//-------------------------------.
+void CRotLookAtCenter::DegreeHorizontalRightMove()
+{
+	DegreeHorizontalMove( m_RightMoveSpeed );
+}
+
+//-------------------------------.
+// 横方向の左回転.
+//-------------------------------.
+void CRotLookAtCenter::DegreeHorizontalLeftMove()
+{
+	DegreeHorizontalMove( m_LeftMoveSpeed );
 }
 
 //-------------------------------.
@@ -63,17 +100,6 @@ void CRotLookAtCenter::DegreeVerticalMove( const float& movePower )
 	CVector::OverflowDegree( m_vDegree.y, 
 		m_VerticalMax, m_VerticalMax, 
 		m_VerticalMin, m_VerticalMin );
-}
-
-// カメラ座標取得関数.
-D3DXVECTOR3 CRotLookAtCenter::GetPosition() const
-{
-	D3DXVECTOR3 pos;	// 本来の座標.
-	// カメラ位置を算出.
-	pos.x = m_vLookPosition.x + ( sinf(m_vDegree.x) * m_Length );
-	pos.y = m_vPosition.y;
-	pos.z = m_vLookPosition.z + ( cosf(m_vDegree.x) * m_Length );
-	return pos;
 }
 
 //-------------------------------.

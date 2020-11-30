@@ -77,7 +77,8 @@ private:
 	EEventSceneState					m_NowEventScene;	// 現在のイベントシーン.
 	ENextSceneState						m_NextSceneState;	// 次のシーン状態.
 	float								m_WaitCount;		// 待機カウント.
-
+	bool								m_IsPlayGameBGM;
+	bool								m_IsPlayDangerBGM;
 };
 
 #endif	// #ifndef GAME_H.

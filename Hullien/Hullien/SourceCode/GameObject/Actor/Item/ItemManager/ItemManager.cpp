@@ -91,3 +91,10 @@ void CItemManager::Render()
 	// 各アイテムの描画.
 	for( auto& i : m_ItemList ) i->Render();
 }
+
+// エフェクトの描画.
+void CItemManager::EffectRender()
+{
+	// 各アイテムの描画.
+	for( auto& i : m_ItemList ) i->EffectRender();
+}

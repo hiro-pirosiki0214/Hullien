@@ -20,6 +20,6 @@ void STG::CActor::MeshRender()
 	if( m_pStaticMesh == nullptr ) return;
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRotation( m_vRotation );
-	m_pStaticMesh->SetScale( m_vSclae );
+	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->Render();
 }

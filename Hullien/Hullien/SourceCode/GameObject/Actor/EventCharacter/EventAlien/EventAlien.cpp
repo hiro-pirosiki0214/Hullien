@@ -11,7 +11,10 @@ CEventAlien::CEventAlien()
 	, m_pAbductUFOPosition		( nullptr )
 	, m_NowState				( EEventAlienState::None )
 	, m_vTargetPosition			( D3DXVECTOR3(0.0f, 0.0f, 0.0f) )
+	, m_IsBarrierHit			( false )
+	, m_Speed					( 0.0f )
 {
+	m_AnimFrameList.resize( EAnimNo_Max );
 }
 
 
@@ -68,15 +71,15 @@ void CEventAlien::SetGirlPos(CActor& actor)
 void CEventAlien::Spawning()
 {
 	// モデルのスケール値を足していく.
-	if (m_vSclae.x >= MODEL_SCALE_MAX) return;
-	m_vSclae.x += m_Parameter.ScaleSpeed;
-	m_vSclae.y += m_Parameter.ScaleSpeed;
-	m_vSclae.z += m_Parameter.ScaleSpeed;
-	if (m_vSclae.x > MODEL_SCALE_MAX)
+	if (m_vScale.x >= MODEL_SCALE_MAX) return;
+	m_vScale.x += m_Parameter.ScaleSpeed;
+	m_vScale.y += m_Parameter.ScaleSpeed;
+	m_vScale.z += m_Parameter.ScaleSpeed;
+	if (m_vScale.x > MODEL_SCALE_MAX)
 	{
-		m_vSclae.x = MODEL_SCALE_MAX;
-		m_vSclae.y = MODEL_SCALE_MAX;
-		m_vSclae.z = MODEL_SCALE_MAX;
+		m_vScale.x = MODEL_SCALE_MAX;
+		m_vScale.y = MODEL_SCALE_MAX;
+		m_vScale.z = MODEL_SCALE_MAX;
 		m_NowState = EEventAlienState::Move;
 	}
 
@@ -96,7 +99,7 @@ void CEventAlien::GirlCollision(CActor* pActor)
 	bool isAbduct = false;
 	if (m_NowState == EEventAlienState::Abduct) {
 		isAbduct = true;
-		pActor->SetPosition(m_pArm->GetGrabPosition());
+		pActor->SetPosition( {m_pArm->GetGrabPosition().x, m_pArm->GetGrabPosition().y-5.5f, m_pArm->GetGrabPosition().z} );
 		return;
 	}
 	else {
@@ -108,10 +111,9 @@ void CEventAlien::GirlCollision(CActor* pActor)
 	if (m_pCollManager->IsShereToShere(pActor->GetCollManager()) == false) return;
 
 	if (m_pArm->IsGrab() == false) {
-		m_pArm->SetAppearance();
+		m_pArm->SetAppearancePreparation();
 		return;
 	}
-	pActor->SetPosition(m_pArm->GetGrabPosition());
 
 	if (m_NowState == EEventAlienState::Abduct) return;
 	m_NowState = EEventAlienState::Abduct;

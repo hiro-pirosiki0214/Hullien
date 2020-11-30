@@ -7,9 +7,13 @@
 
 namespace STG
 {
-	class CActor;
-	class CEnemy;	// 敵クラス.
+	class CActor;			// 規定クラス.
+	class CEnemy;			// 敵クラス.
+	class CEnemyFactory;	// 敵作成クラス.
+}
 
+namespace STG
+{
 	class CEnemyManager
 	{
 	public:
@@ -23,8 +27,13 @@ namespace STG
 		// 描画関数.
 		void Render();
 
+		// 最後の敵が死亡したか.
+		bool IsEndEnmeyDead() const;
+
 	private:
-		std::vector<std::shared_ptr<CEnemy>> m_Enemys;	// 敵リスト.
+		std::unique_ptr<STG::CEnemyFactory>			m_pEnemyFactory;	// 敵作成クラス.
+		std::vector<std::shared_ptr<STG::CEnemy>>	m_Enemys;			// 敵リスト.
+		float										m_EndEnemySpawnTime;// 最後の敵の出現時間.
 	};
 };
 

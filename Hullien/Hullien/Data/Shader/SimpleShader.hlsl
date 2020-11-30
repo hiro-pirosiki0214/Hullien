@@ -15,5 +15,6 @@ float4 VS_Main( float4 Pos : POSITION ) : SV_Position
 // ピクセルシェーダー.
 float4 PS_Main( float4 Pos : SV_Position ) : SV_Target
 {
+	clip(g_vColor.a);
 	return g_vColor;
 }

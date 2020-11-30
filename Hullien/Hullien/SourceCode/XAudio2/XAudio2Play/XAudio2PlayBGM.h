@@ -25,7 +25,9 @@ public:
 	const bool IsPlaying();
 
 	// サウンド再生、前に一時停止されていた場合は記憶位置から再開.
-	bool Play(std::shared_ptr< COggLoad> pWavData, const char* filename, bool& isEnd);
+	bool Play(bool& isEnd);
+	// BGMサウンド再生を再開.
+	bool PlayStart();
 
 	// BGMサウンドを完全停止.(位置を保持しない).
 	bool Stop();
@@ -70,10 +72,25 @@ public:
 	void SetFadeInFlag(bool BGMFadeInFlag) { m_bFadeInStart = BGMFadeInFlag; }
 	// フェードインフラグのゲッター.
 	bool GetFadeInFlag() { return m_bFadeInStart; }
+	// 解放処理で取り残されないように.
+	void HundleIsSignal( const bool& isEnd = false )
+	{
+		if( isEnd == false ) return;
+		SetEvent( m_Callback.event );
+	}
+//-----------------------------------------------------
+// 再生位置系.
+
+	// 時間：分 : 秒で再生位置を動かす.
+	// 分は 60を超えたら繰り上げ、秒も60を超えたら分に.
+	void BGMPointSeek(int& Hour, int& Minutes,double& Second);
+	// 現在再生位置(時間)を返す.
+	double GetNowPlayFrame();
+
 protected:
 	//! 音源データをストリームに流し込みます.
 	//  この関数は外部から呼び出せません.
-	HRESULT OggSubmit(std::shared_ptr<COggLoad> pOggData, const char* filename);
+	HRESULT OggSubmit();
 protected:
 	std::mutex				m_mtx;
 	COggLoad*				m_pOggData; // Oggデータロードクラス.
@@ -93,6 +110,8 @@ protected:
 	float m_fPitch;			// ピッチ.
 	bool m_bFadeOutStart;	// フェードアウト開始フラグ.
 	bool m_bFadeInStart;	// フェードイン開始フラグ.
+	float m_fFadeInValue;
+	float m_fFadeOutValue;
 
 	bool					m_bFirstPlay;	// 初回再生かどうか.
 };

@@ -3,9 +3,11 @@
 
 #include "..\GameObject.h"
 
+class CSkyDomeModel;
+
 class CSkyDome : public CGameObject
 {
-	const char* MODEL_NAME = "space";	// モデル名.
+	const char* MODEL_NAME = "Data\\Mesh\\space\\space.x";	// モデル名.
 
 public:
 	CSkyDome();
@@ -19,11 +21,7 @@ public:
 	virtual void Render() override;
 
 private:
-	// モデルの取得.
-	bool GetModel();
-
-private:
-	std::shared_ptr<CDX9StaticMesh>	m_StaticMesh;	// メッシュ.
+	std::unique_ptr<CSkyDomeModel>	m_pDomeModel;	// メッシュ.
 };
 
 #endif	// #ifndef SKY_DOME_H.

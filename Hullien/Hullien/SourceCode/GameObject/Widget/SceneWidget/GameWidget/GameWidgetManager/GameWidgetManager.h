@@ -27,9 +27,10 @@ public:
 	bool IsGameFinish();
 
 private:
-	std::unique_ptr<CLimitTime> m_pLimitTime;
-	std::unique_ptr<CMiniMap>		m_pMiniMap;
-	std::unique_ptr<CUltemateSing> m_pUltemateSing;
+	std::unique_ptr<CLimitTime>	m_pLimitTime;
+	std::unique_ptr<CMiniMap>	m_pMiniMap;
+	// スポーンUFOクラスに持って行った.
+//	std::unique_ptr<CUltemateSing> m_pUltemateSing;
 	
 };
 

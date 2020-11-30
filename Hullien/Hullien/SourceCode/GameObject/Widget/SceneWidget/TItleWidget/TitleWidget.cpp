@@ -40,6 +40,7 @@ void CTitleWidget::Update()
 	// カーソルの設定.
 	if (m_pCursor == nullptr) return;
 	CursorSetting();
+	m_InputWaitTime--;
 }
 
 // 描画関数.
@@ -50,7 +51,9 @@ void CTitleWidget::Render()
 	for (size_t sprite = 0; sprite < m_pSprite.size(); sprite++)
 	{
 		m_pSprite[sprite]->SetDeprh(false);
+		m_pSprite[sprite]->SetBlend( true );
 		m_pSprite[sprite]->RenderUI();
+		m_pSprite[sprite]->SetBlend( false );
 		m_pSprite[sprite]->SetDeprh(true);
 
 		if (sprite != BACKGROUND) continue;
@@ -67,6 +70,9 @@ bool CTitleWidget::SpriteSetting()
 	{
 		SPRITE_BACKGROUND,		//背景.
 		SPRITE_SELECTSTART,		//開始.
+#ifndef IS_CONFIG_RENDER
+		SPRITE_SELECTCONFIG,	//設定.
+#endif	// #ifndef IS_CONFIG_RENDER.
 		SPRITE_SELECTEXIT,		//終了.
 		SPRITE_TITLE,			//タイトル.
 	};
@@ -86,15 +92,28 @@ bool CTitleWidget::SpriteSetting()
 // カーソル設定関数.
 void CTitleWidget::CursorSetting()
 {
-	if (GetAsyncKeyState( VK_UP ) & 0x8000
-		|| CXInput::LThumbY_Axis() > IDLE_THUMB_MAX)
-	{
-		m_SelectState = CTitleWidget::ESelectState::Start;
-	}
-	if (GetAsyncKeyState( VK_DOWN ) & 0x8000
-		|| CXInput::LThumbY_Axis() < IDLE_THUMB_MIN)
-	{
-		m_SelectState = CTitleWidget::ESelectState::End;
+	if( m_InputWaitTime <= 0.0f ){
+		int s = static_cast<int>(m_SelectState);
+		if (GetAsyncKeyState( VK_UP ) & 0x8000 || CXInput::LThumbY_Axis() > IDLE_THUMB_MAX)
+		{
+			s--;
+			m_SelectState = static_cast<CTitleWidget::ESelectState>(s);
+			m_InputWaitTime = INPUT_WAIT_TIME_MAX;
+			if( m_SelectState <= CTitleWidget::ESelectState::Start ){
+				m_SelectState = CTitleWidget::ESelectState::Start;
+				m_InputWaitTime = 0.0f;
+			}
+		}
+		if (GetAsyncKeyState( VK_DOWN ) & 0x8000 || CXInput::LThumbY_Axis() < IDLE_THUMB_MIN)
+		{
+			s++;
+			m_SelectState = static_cast<CTitleWidget::ESelectState>(s);
+			m_InputWaitTime = INPUT_WAIT_TIME_MAX;
+			if( m_SelectState >= CTitleWidget::ESelectState::End ){
+				m_SelectState = CTitleWidget::ESelectState::End;
+				m_InputWaitTime = 0.0f;
+			}
+		}
 	}
 
 	switch (m_SelectState)
@@ -102,6 +121,11 @@ void CTitleWidget::CursorSetting()
 	case CTitleWidget::ESelectState::Start:
 		m_vPosition = m_pSprite[START]->GetRenderPos();
 		break;
+#ifndef IS_CONFIG_RENDER
+	case CTitleWidget::ESelectState::Config:
+		m_vPosition = m_pSprite[CONFIG]->GetRenderPos();
+		break;
+#endif	// #ifndef IS_CONFIG_RENDER.
 	case CTitleWidget::ESelectState::End:
 		m_vPosition = m_pSprite[END]->GetRenderPos();
 		break;

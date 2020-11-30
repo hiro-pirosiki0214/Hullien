@@ -27,6 +27,8 @@ public:
 	void Update( std::function<void(CActor*)> updateProc );
 	// 描画関数.
 	void Render();
+	// エフェクトの描画.
+	void EffectRender();
 
 private:
 	std::vector<std::shared_ptr<CItemBase>> m_ItemList;	// アイテムリスト.

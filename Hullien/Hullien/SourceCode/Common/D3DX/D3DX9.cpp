@@ -1,9 +1,8 @@
 #include "D3DX9.h"
 
-LPDIRECT3DDEVICE9 CDirectX9::m_pDevice9 = nullptr;
-
 CDirectX9::CDirectX9()
-	: m_hWnd	( nullptr )
+	: m_hWnd		( nullptr )
+	, m_pDevice9	( nullptr )
 {
 }
 
@@ -12,13 +11,23 @@ CDirectX9::~CDirectX9()
 }
 
 //-----------------------------------.
+// インスタンスの取得.
+//-----------------------------------.
+CDirectX9* CDirectX9::GetInstance()
+{
+	static std::unique_ptr<CDirectX9> pInstance = 
+		std::make_unique<CDirectX9>();
+	return pInstance.get();
+}
+
+//-----------------------------------.
 // DirectX9の構築.
 //-----------------------------------.
 HRESULT CDirectX9::Create( HWND hWnd )
 {
-	m_hWnd = hWnd;
+	GetInstance()->m_hWnd = hWnd;
 
-	if( FAILED( CreateDevice9() )) return E_FAIL;
+	if( FAILED( GetInstance()->CreateDevice9() )) return E_FAIL;
 
 	return S_OK;
 }
@@ -26,10 +35,12 @@ HRESULT CDirectX9::Create( HWND hWnd )
 //-----------------------------------.
 // DirectX9の解放.
 //-----------------------------------.
-void CDirectX9::Release()
+HRESULT CDirectX9::Release()
 {
-	SAFE_RELEASE( m_pDevice9 );
-	m_hWnd = nullptr;
+	SAFE_RELEASE( GetInstance()->m_pDevice9 );
+	GetInstance()->m_hWnd = nullptr;
+
+	return S_OK;
 }
 
 //-----------------------------------.
@@ -42,8 +53,7 @@ HRESULT CDirectX9::CreateDevice9()
 	//「Direct3D」オブジェクトの作成.
 	m_pD3d9 = Direct3DCreate9( D3D_SDK_VERSION );
 	if( m_pD3d9 == nullptr ){
-		_ASSERT_EXPR( false, L"Dx9オブジェクト作成失敗" );
-		MessageBox( nullptr, "Dx9オブジェクト作成失敗", "警告", MB_OK );
+		ERROR_MESSAGE("Dx9オブジェクト作成失敗");
 		return E_FAIL;
 	}
 
@@ -94,7 +104,7 @@ HRESULT CDirectX9::CreateDevice9()
 		return S_OK;
 	}
 
-	MessageBox( nullptr, "Direct3Dﾃﾞﾊﾞｲｽ作成失敗", "警告", MB_OK );
+	ERROR_MESSAGE("Direct3デバイス作成失敗");
 
 	SAFE_RELEASE( m_pD3d9 );
 	return E_FAIL;
