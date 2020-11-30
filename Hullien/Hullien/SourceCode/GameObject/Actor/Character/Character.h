@@ -34,6 +34,9 @@ public:
 	// スプライトの描画.
 	virtual void SpriteRender(){};
 
+	// アニメーションを止める.
+	virtual void StopAnimation() override { m_AnimSpeed = 0.0; }
+
 protected:
 	// メッシュの表示.
 	void MeshRender();
@@ -59,9 +62,13 @@ protected:
 	// 目的の座標へ回転.
 	bool TargetRotation( const D3DXVECTOR3& targetVec, const float& rotSpeed, const float& ToleranceRadian );
 	// アニメーション設定.
-	void SetAnimation( const int& animNo );
+	void SetAnimation( const int& animNo, LPD3DXANIMATIONCONTROLLER	pAc = nullptr );
 	// アニメーションをブレンドして設定.
 	void SetAnimationBlend( const int& animNo );
+
+	// アニメーションフレームの設定.
+	virtual bool SetAnimFrameList() = 0;
+
 	// 足音.
 	void FootStep(const char* rightfoot, const char* leftfoot);
 	// 足音用当たり判定の設定.

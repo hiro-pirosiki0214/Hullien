@@ -80,7 +80,7 @@ void CGameOverEvent::Update()
 
 	// デバッグ用.
 #if _DEBUG
-	DebugOperation();
+//	DebugOperation();
 #endif
 
 }
@@ -90,12 +90,12 @@ void CGameOverEvent::Render()
 {
 	m_pSkyDome->Render();
 	m_pGroundStage->Render();
-	m_pUFO->Render();
 	m_pGirl->Render();
+	m_pUFO->Render();
 
 	// デバッグ用.
 #if _DEBUG
-	DebugRender();
+//	DebugRender();
 #endif
 
 }
@@ -120,6 +120,7 @@ bool CGameOverEvent::CameraInit()
 bool CGameOverEvent::SpawnUFOInit()
 {
 	if(m_pUFO->Init() == false ) return false;
+	m_pUFO->DischargePreparation();
 	m_vUFOPosition = UFO_INITPOSITION;
 	return true;
 }
@@ -129,6 +130,7 @@ bool CGameOverEvent::GirlInit()
 {
 	if( m_pGirl->Init() == false ) return false;
 	m_stGirl.vPosition = GIRL_INITPOSITION;
+	m_pGirl->SetAnimation( girl::EAnimNo_Wait );
 	return true;
 }
 
@@ -137,7 +139,7 @@ void CGameOverEvent::ActorUpdate()
 {
 	// UFO.
 	m_pUFO->SetPosition( m_vUFOPosition );
-
+	m_pUFO->Update();
 	// 女の子.
 	m_pGirl->SetOptionalState( m_stGirl );
 }
@@ -180,7 +182,7 @@ void CGameOverEvent::SceneSetting()
 	}
 
 	// スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
 		m_SkipWaitCount++;
 
@@ -205,6 +207,7 @@ void CGameOverEvent::NextStep()
 // スキップ.
 void CGameOverEvent::Skip()
 {
+	if( m_EventStep == EEventStep::Move_Back_UFO ) return;
 	if (m_IsSkip == true) return;
 	CFade::SetFadeIn();
 
@@ -215,6 +218,7 @@ void CGameOverEvent::Skip()
 	m_EventStep = EEventStep::Skip;
 	NextStep();
 	m_IsSkip = true;
+	m_pUFO->CleanUPPreparation();
 	CFade::SetFadeOut();
 }
 
@@ -246,6 +250,7 @@ void CGameOverEvent::SuckedGirl()
 	else
 	{
 		m_WaitCount++;
+		m_pUFO->LightCleanUP();
 	}
 
 	if (m_WaitCount < WAITCOUNT_DEFAULT)return;

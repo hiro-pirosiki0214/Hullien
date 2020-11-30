@@ -12,23 +12,27 @@ class CGameActorManager;	//アクタ管理クラス.
 class CMiniMap : public CSceneWidget
 {
 private:
-	typedef std::vector<std::pair<EObjectTag, D3DXVECTOR3>> OBJLIST;
+	typedef std::pair<D3DXVECTOR3, float> pos_rot_pair;	// 座標と回転のペア.
+	typedef std::vector<std::pair<EObjectTag, pos_rot_pair>> OBJLIST;
 
-	const char* SPRITE_MAP_BACK = "minimapsize";		//ミニマップ背景スプライト名.
+	const char* SPRITE_MAP_BACK		= "minimapBase";		//ミニマップ背景スプライト名.
+	const char* SPRITE_MAP_FRONT	= "minimapWaku";		//ミニマップ背景スプライト名.
 	const char* SPRITE_DEFAULT_ICON = "mapiconsize";	//標準アイコンスプライト名.
 	const int	MAP_BACK = 0;							//ミニマップ背景配列番号.
-
+	const float MAP_ICON_POSITION_CORRECTION_VALUE	= 0.55f;
 	// アイコン情報.
 	struct stIconInfo
 	{
 		std::shared_ptr<CSprite> pSprite;	// スプライト.
 		D3DXVECTOR3 Pos;					// 位置.
+		D3DXVECTOR3 Rot;					// 回転.
 		EObjectTag EObjTag;					// タグ.
 		int AnimNumber;						// アニメーション番号.
 
 		stIconInfo()
 			: pSprite	( nullptr )
 			, Pos		(D3DXVECTOR3(0.0f,0.0f,0.0f))
+			, Rot		(D3DXVECTOR3(0.0f,0.0f,0.0f))
 			, EObjTag	(EObjectTag::Max)
 			, AnimNumber (0)
 		{}
@@ -39,9 +43,12 @@ private:
 	{
 		Player = 0,
 		Girl,
-		Alien,
+		Alien_A,
+		Alien_B,
+		Alien_C,
 		Alien_D,
 		Item,
+		MotherShipUFO,
 	}typedef EIconType;
 
 public:

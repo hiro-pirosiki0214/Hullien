@@ -1,16 +1,16 @@
 #ifndef ITEM_EDIT_H
 #define ITEM_EDIT_H
 
-#include "..\..\Utility\ImGuiManager\ImGuiManager.h"
+#include "..\EditBase.h"
 #include "..\..\GameObject\Actor\Item\ItemBase.h"
 #include "..\..\GameObject\Actor\Item\EachItemEffectStruct.h"
 #include <vector>
 #include <string>
 
-class CItemEdit
+class CEditItem;
+
+class CItemEdit : public CEditBase
 {
-	const ImVec2 WINDOW_SIZE		= { 510.0f, WND_H-70.0f };	// ウィンドウサイズ.
-	const ImVec2 RENDER_POSITION	= { 0.0f, 70.0f };	// 描画座標.
 	const char* ITEM_PARAM_FILE_PATH = "Data\\GameParam\\Item\\ItemParam.bin";
 	const char* EACH_ITEM_EFFECT_FILE_PATH = "Data\\GameParam\\Item\\EachItemEffect.bin";
 	const std::vector<std::string> TAG_LIST =
@@ -24,12 +24,18 @@ class CItemEdit
 
 public:
 	CItemEdit();
-	~CItemEdit();
+	virtual ~CItemEdit();
 
 	// 初期化関数.
-	bool Init();
+	virtual bool Init() override;
+	// 更新関数.
+	virtual void Update() override;
 	// 描画関数.
-	void Render();
+	virtual void Render() override;
+	// モデルの描画.
+	virtual void ModelRender() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 
 private:
 	// 各タグの描画.
@@ -41,8 +47,10 @@ private:
 	bool FileReading();
 
 private:
-	CItemBase::SParameter m_Prameter;
-	SEachItemEffect	m_EachItemEffect;
+	std::unique_ptr<CEditItem>	m_pItem;
+	CItemBase::SParameter		m_Prameter;
+	SEachItemEffect				m_EachItemEffect;
+	int		m_ItemNo;
 };
 
 #endif	// #ifndef ITEM_EDIT_H.

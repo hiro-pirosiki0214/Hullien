@@ -8,6 +8,7 @@
 #include "..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\ChatacterWidget.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\LifeGauge\LifeGauge.h"
+#include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h"
 #include "..\..\..\Widget\SceneWidget\GameWidget\CharacterWidget\SpecialAbilityGauge\SpecialAbilityGauge.h"
 #include "..\..\..\..\Common\Effect\EffectManager.h"
 #include "..\..\Item\EffectTimer\EffectTimer.h"
@@ -30,6 +31,7 @@ CPlayer::CPlayer()
 	, m_AttackDataQueue				()
 	, m_AttackPosition				( ATTACK_COLLISION_INVALID_POS )
 	, m_GirlPosition				( 0.0f, 0.0f, 0.0f )
+	, m_AttackVector				( 0.0f, 0.0f, 0.0f )
 	, m_AvoidVector					( 0.0f, 0.0f, 0.0f )
 	, m_HitVector					( 0.0f, 0.0f, 0.0f )
 	, m_TargetVector				( 0.0f, 0.0f, 0.0f )
@@ -37,6 +39,7 @@ CPlayer::CPlayer()
 	, m_LifePoint					( 0.0f )
 	, m_SpecialAbility				( 0.0f )
 	, m_StatusFlag					( player::EStatusFlag_None )
+	, m_AttackRangeLenght			( 0.0f )
 	, m_SpecialAbilityValue			( 0.0f )
 	, m_ItemSpecialAbilityValue		( 0.0f )
 	, m_AttackPower					( 0.0f )
@@ -47,12 +50,12 @@ CPlayer::CPlayer()
 	, m_CameraCount					( CAMERA_COUNT_MAX )
 	, m_CameraLerp					( 0.0f )
 	, m_NowSPCameraStete			( player::ESPCameraState_Start )
-	, m_IsAttackSE					( false )
+	, m_OneStepCmaeraSeting			( false )
 {
 	m_ObjectTag = EObjectTag::Player;	// プレイヤータグを設定.
 	m_NowAnimNo = player::EAnimNo_Wait;	// 現在のアニメーションを待機に設定.
 	m_OldAnimNo = player::EAnimNo_None;	// 過去のアニメーションは無し.
-	m_pCamera	= std::make_shared<CRotLookAtCenter>();
+	m_pCamera	= std::make_shared<CRotLookAtCenter>( true );
 	m_pSPCamera = std::make_shared<CCamera>();
 	m_AnimFrameList.resize( player::EAnimNo_Max );
 	for( auto& e : m_pEffectTimers ) e = std::make_shared<CEffectTimer>();
@@ -83,6 +86,9 @@ bool CPlayer::Init()
 
 	// 待機アニメーションに変更.
 	m_pSkinMesh->ChangeAnimSet_StartPos( player::EAnimNo_Wait, 0.0 );
+
+	// プレイヤーの回転ベクトルを取得.
+	m_AttackVector = { sinf(m_vRotation.y), 0.0f, cosf(m_vRotation.y), };
 
 	return true;
 }
@@ -116,6 +122,10 @@ void CPlayer::Update()
 
 	CameraUpdate();				// カメラの更新.
 
+	// 攻撃範囲のフラグを下す.
+	bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackRange );
+	m_AttackRangeLenght = 0.0f;	// 攻撃範囲の長さを初期化.
+
 	// 体力が1/3になったらSEを鳴らす.
 	if (m_LifePoint <= m_Parameter.LifeMax / 3)
 	{
@@ -134,7 +144,7 @@ void CPlayer::Render()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->Render();
 
@@ -153,7 +163,8 @@ void CPlayer::Collision( CActor* pActor )
 	if( m_pCollManager == nullptr ) return;
 	if( m_pCollManager->GetSphere() == nullptr ) return;
 
-	AttackCollision( pActor );	// 攻撃時の当たり判定.
+	AttackCollision( pActor );		// 攻撃時の当たり判定.
+	AttackRangeDecision( pActor );	// 攻撃範囲の判定.
 }
 
 // 相手座標の設定関数.
@@ -212,10 +223,10 @@ void CPlayer::Controller()
 	m_MoveVector.x = static_cast<float>(CXInput::LThumbX_Axis());
 	m_MoveVector.z = static_cast<float>(CXInput::LThumbY_Axis());
 
-	if( GetAsyncKeyState(VK_UP) & 0x8000 )		m_MoveVector.z = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_DOWN) & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
-	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
-	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState('W') & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState('S') & 0x8000 )	m_MoveVector.z = IDLE_THUMB_MIN;
+	if( GetAsyncKeyState('D') & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MAX;
+	if( GetAsyncKeyState('A') & 0x8000 )	m_MoveVector.x = IDLE_THUMB_MIN;
 }
 
 // カメラ操作.
@@ -226,14 +237,14 @@ void CPlayer::CameraController()
 	// カメラの回転移動.
 	// 横方向.
 	if( CXInput::RThumbX_Axis() >= IDLE_THUMB_MAX ) 
-		m_pCamera->DegreeHorizontalMove(  m_Parameter.CameraMoveSpeed );	// 右方向.
+		m_pCamera->DegreeHorizontalRightMove();	// 右方向.
 	if( CXInput::RThumbX_Axis() <= IDLE_THUMB_MIN ) 
-		m_pCamera->DegreeHorizontalMove( -m_Parameter.CameraMoveSpeed );	// 左方向.
+		m_pCamera->DegreeHorizontalLeftMove();	// 左方向.
 
-	if (GetAsyncKeyState(VK_SHIFT) & 0x8000 && GetAsyncKeyState(VK_RIGHT) & 0x8000) 
-		m_pCamera->DegreeHorizontalMove(m_Parameter.CameraMoveSpeed);
-	if (GetAsyncKeyState(VK_SHIFT)  & 0x8000 && GetAsyncKeyState(VK_LEFT) & 0x8000)	
-		m_pCamera->DegreeHorizontalMove(-m_Parameter.CameraMoveSpeed);
+	if( GetAsyncKeyState(VK_RIGHT) & 0x8000 ) 
+		m_pCamera->DegreeHorizontalRightMove();	// 右方向.
+	if( GetAsyncKeyState(VK_LEFT) & 0x8000 )
+		m_pCamera->DegreeHorizontalLeftMove();	// 左方向.
 }
 
 // 攻撃操作関数.
@@ -244,14 +255,24 @@ void CPlayer::AttackController()
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove )	== true ) return;	// SPカメラの動作中は終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return;	// 死亡中は終了.
 
-	// Xボタンを押した瞬間じゃなければ終了.
-	if( CXInput::X_Button() != CXInput::enPRESSED_MOMENT ) return;
-	// 攻撃カウントが最大以上なら終了.
-	if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
-	m_AttackComboCount++;	// 攻撃カウントを加算.
-	// 攻撃データがキューに追加されたら終了.
-	if( IsPushAttack() == true ) return;
-	m_AttackComboCount--;	// 攻撃カウントを減算.
+	// Xボタンを押した瞬間になれば.
+	if( CXInput::X_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('F') & 0x8000 ) ){
+		// 攻撃カウントが最大以上なら終了.
+		if( m_AttackComboCount >= m_Parameter.AttackComboMax ) return;
+		m_AttackComboCount++;	// 攻撃カウントを加算.
+		// 攻撃データがキューに追加されたら終了.
+		if( IsPushAttack() == true ){
+			// プレイヤーの索敵範囲外なら終了.
+			if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_AttackRange ) == true ){
+				m_vRotation.y = atan2f( m_AttackVector.x, m_AttackVector.z );
+			} else {
+				// プレイヤーの回転ベクトルを取得.
+				m_AttackVector = { sinf(m_vRotation.y), 0.0f, cosf(m_vRotation.y), };
+			}
+			return;
+		}
+		m_AttackComboCount--;	// 攻撃カウントを減算.
+	}
 }
 
 // 特殊能力操作関数.
@@ -264,15 +285,15 @@ void CPlayer::SPController()
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == true ) return;
 
 	if( m_SpecialAbility < m_Parameter.SpecialAbilityMax ) return;
-	// Yボタンが押された瞬間じゃなければ終了.
-	if( CXInput::Y_Button() != CXInput::enPRESSED_MOMENT ) return;
+	// Yボタンが押された瞬間になれば.
+	if( CXInput::Y_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('Y') & 0x8000 )){
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_EndSPCameraMove );
+		m_CameraPosition	= m_pCamera->GetPosition();
+		m_SpecialAbility	= 0.0f;
 
-	CSoundManager::PlaySE("PlayerVoiceSpecial");
-	m_CameraPosition	= m_pCamera->GetPosition();
-	m_SpecialAbility	= 0.0f;
-	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_EndSPCameraMove );
-
-	SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
+		SetAnimationBlend( player::EAnimNo_Wait );	// 待機アニメーションを設定.
+		CSoundManager::PlaySE("PlayerVoiceSpecial");
+	}
 }
 
 // 回避操作関数.
@@ -289,16 +310,17 @@ void CPlayer::AvoidController()
 	// 各値が有効範囲外なら終了.
 	if( m_MoveVector.x < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.x &&
 		m_MoveVector.z < IDLE_THUMB_MAX && IDLE_THUMB_MIN < m_MoveVector.z ) return;
-	// Aボタンが押された瞬間じゃなければ終了.
-	if( CXInput::A_Button() != CXInput::enPRESSED_MOMENT ) return;
-	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );	// 回避フラグを立てる.
-	m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
-	m_pEffects[player::EEffectNo_Avoidance]->Play( m_vPosition );
-	// 回避アニメーションの設定.
-	SetAnimationBlend( player::EAnimNo_Avoid );
+	// Aボタンが押された瞬間になれば.
+	if( CXInput::A_Button() == CXInput::enPRESSED_MOMENT || ( GetAsyncKeyState('R') & 0x8000 )){
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_DuringAvoid );	// 回避フラグを立てる.
+		m_AvoidVector = m_MoveVector;	// 移動ベクトルを設定.
+		m_pEffects[player::EEffectNo_Avoidance]->Play( { m_vPosition.x, m_vPosition.y+10.0f, m_vPosition.z } );
+		// 回避アニメーションの設定.
+		SetAnimationBlend( player::EAnimNo_Avoid );
 
-	CSoundManager::PlaySE("PlayerAvoidMove");
-	CSoundManager::PlaySE("PlayerVoiceAvoidMove");
+		CSoundManager::PlaySE("PlayerAvoidMove");
+		CSoundManager::PlaySE("PlayerVoiceAvoidMove");
+	}
 }
 
 // 移動関数.
@@ -365,12 +387,12 @@ void CPlayer::AttackMove()
 		if( ATTACK1_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack1].NowFrame && 
 			m_AnimFrameList[player::EAnimNo_Attack1].NowFrame <= ATTACK1_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
-			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
-			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
+			m_vPosition.x -= sinf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
+			m_vPosition.z -= cosf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
 
 			// 見えない壁との当たり判定.
-			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
-			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y )*ATTACK1_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf(m_vRotation.y)*ATTACK1_ADJ_DRAGING_SPEED;
 		}
 		break;
 
@@ -378,12 +400,12 @@ void CPlayer::AttackMove()
 		if( ATTACK2_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack2].NowFrame && 
 			m_AnimFrameList[player::EAnimNo_Attack2].NowFrame <= ATTACK2_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
-			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
-			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
+			m_vPosition.x -= sinf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
+			m_vPosition.z -= cosf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
 
 			// 見えない壁との当たり判定.
-			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
-			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y )*ATTACK2_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf(m_vRotation.y)*ATTACK2_ADJ_DRAGING_SPEED;
 		}
 		break;
 
@@ -391,12 +413,12 @@ void CPlayer::AttackMove()
 		if( ATTACK3_ADJ_DRAGING_FRAME_START <= m_AnimFrameList[player::EAnimNo_Attack3].NowFrame && 
 			m_AnimFrameList[player::EAnimNo_Attack3].NowFrame <= ATTACK3_ADJ_DRAGING_FRAME_END ){
 			// アニメーションのずれを調整.
-			m_vPosition.x -= sinf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
-			m_vPosition.z -= cosf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
+			m_vPosition.x -= sinf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
+			m_vPosition.z -= cosf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
 
 			// 見えない壁との当たり判定.
-			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
-			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf( m_vRotation.y )*ATTACK3_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallX() == true ) m_vPosition.x += sinf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
+			if( CActor::IsCrashedWallZ() == true ) m_vPosition.z += cosf(m_vRotation.y)*ATTACK3_ADJ_DRAGING_SPEED;
 		}
 		break;
 
@@ -481,6 +503,12 @@ void CPlayer::CameraUpdate()
 	// 死亡中なら終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead ) == true ) return;
 
+	if( m_OneStepCmaeraSeting == false ){
+		m_pCamera->SetPosition( CCameraManager::GetPosition() );
+		m_OneStepCmaeraSeting = true;
+	}
+
+
 	// プレイヤーを注視して回転.
 	m_pCamera->RotationLookAtObject( { m_vPosition.x, m_Parameter.CameraLookHeight, m_vPosition.z }, m_CameraLerp );
 	m_pCamera->SetLength( m_Parameter.CameraDistance );	// 中心との距離を設定.
@@ -506,7 +534,11 @@ void CPlayer::EffectRender()
 		m_pEffects[m_AttackComboCount-1]->SetLocation( m_vPosition );
 	}
 	// エフェクトの描画.
-	for( auto& e : m_pEffects ) e->Render();
+	for( auto& e : m_pEffects ){
+		e->SetLocation( m_vPosition );
+		e->SetRotation( {0.0f, static_cast<float>(D3DX_PI)+m_vRotation.y, 0.0f} );
+		e->Render();
+	}
 }
 
 // 攻撃の当たり判定.
@@ -544,11 +576,59 @@ void CPlayer::AttackCollision( CActor* pActor )
 		isAttack = true;
 	});
 	
-	if (m_IsAttackSE == false)
-	{
+	// 音声を鳴らしてない状態なら.
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_AttackSE ) == false ){
 		CSoundManager::PlaySE("PlayerAttackHit");
-		m_IsAttackSE = true;
+		bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );
 	}
+}
+
+// 攻撃範囲との判定.
+void CPlayer::AttackRangeDecision( CActor* pActor )
+{
+	// プレイヤーと宇宙人とのベクトルを取得.
+	D3DXVECTOR3 vec =
+	{
+		m_vPosition.x - pActor->GetPosition().x,
+		0.0f,
+		m_vPosition.z - pActor->GetPosition().z,
+	};
+	// ベクトルの長さ算出.
+	const float vec_length = sqrtf((vec.x * vec.x) + (vec.z * vec.z));
+	float rot = m_vRotation.y;
+	// 各値が有効範囲内なら移動ベクトルから回転値を算出.
+	if( m_MoveVector.x >= IDLE_THUMB_MAX || IDLE_THUMB_MIN >= m_MoveVector.x ||
+		m_MoveVector.z >= IDLE_THUMB_MAX || IDLE_THUMB_MIN >= m_MoveVector.z ){
+		rot = atan2f( m_MoveVector.x, m_MoveVector.z ) + m_pCamera->GetRadianX();
+	}
+	// プレイヤーの回転ベクトルを取得.
+	const D3DXVECTOR3 playerVec = { sinf(rot), 0.0f, cosf(rot), };
+
+	// 範囲の長さ.
+	const float range_Lenght = 20.0f;
+	// 宇宙人との距離が一定範囲外なので終了.
+	if( vec_length > range_Lenght ) return;
+
+	// 単位ベクトルに変換.
+	D3DXVec3Normalize( &vec, &vec );
+
+	// 内積を取得.
+	const float dot = vec.x * playerVec.x + vec.z * playerVec.z;
+	// 扇の範囲をcosにする.
+	const float fan_cos = cosf( static_cast<float>(D3DXToRadian(180.0*0.5)));
+
+	// 点が範囲外であれば終了.
+	if( dot < fan_cos ) return;
+
+	// 長さが初期化状態なら長さを入れる.
+	if( m_AttackRangeLenght <= 0.0f ) m_AttackRangeLenght = dot;
+	// 前回の長さが今回の長さより大きければ終了.
+	if( m_AttackRangeLenght < dot ) return;
+
+	m_AttackRangeLenght	= dot;
+	m_AttackVector		= vec;
+	bit::OnBitFlag( &m_StatusFlag, player::EStatusFlag_AttackRange );
+
 }
 
 // 特殊能力時のカメラ動作.
@@ -707,6 +787,7 @@ void CPlayer::ParalysisUpdate()
 {
 	if( m_pEffectTimers[player::EEffectTimerNo_Paralysis]->Update() == false ) return;
 	m_AnimSpeed = DEFAULT_ANIM_SPEED;
+	m_pEffects[player::EEffectNo_Paralysis]->Stop();
 }
 
 // 攻撃アニメーション.
@@ -749,7 +830,7 @@ void CPlayer::AttackAnimation()
 		if( FAILED( m_pAttackCollManager->InitSphere(
 			&m_AttackPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			m_Parameter.SphereAdjPos,
 			attackCollisionRadius ) )) return;
 		// 各値が有効範囲内ならベクトルから回転値を入れる.
@@ -760,6 +841,7 @@ void CPlayer::AttackAnimation()
 		}
 		// 新しくアニメーションをセットする.
 		SetAnimation( m_AttackDataQueue.front().AnimNo );
+		bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );
 	}
 	m_AttackDataQueue.front().Frame += m_AnimSpeed;	// フレームの更新.
 }
@@ -792,14 +874,16 @@ bool CPlayer::IsPushAttack()
 		if( FAILED( m_pAttackCollManager->InitSphere(
 			&m_AttackPosition,
 			&m_vRotation,
-			&m_vSclae.x,
+			&m_vScale.x,
 			m_Parameter.SphereAdjPos,
 			ATTACK1_COLLISION_RADIUS ) )) return false;
 		setAttackData( player::EAnimNo_Attack1, ATTACK1_ADJ_ENABLED_END_FRAME );
 		// 最初の攻撃はアニメーションを設定する.
 		SetAnimation( tmpAttackData.AnimNo );
+		m_pEffects[m_AttackComboCount-1]->Play( m_vPosition );
 		CSoundManager::PlaySE("PlayerAttack");
 		CSoundManager::PlaySE("PlayerVoiceAttack1");
+		bit::OffBitFlag( &m_StatusFlag, player::EStatusFlag_AttackSE );
 		break;
 
 	case player::EAttackNo_Two:	// 攻撃2.
@@ -826,7 +910,8 @@ void CPlayer::LifeCalculation( const std::function<void(float&,bool&)>& proc )
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_EndSPCameraMove ) == true ) return; // SPカメラが動作しているなら終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_KnockBack )		== true ) return; // ノックバック中なら終了.
 	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_Dead )			== true ) return; // 死亡中なら終了.
-
+	if( bit::IsBitFlag( m_StatusFlag, player::EStatusFlag_DuringAvoid )		== true ) return; // 回避中なら終了.
+	
 	bool isAttack = false;
 	const float oldLifePoint = m_LifePoint;
 	proc( m_LifePoint, isAttack );
@@ -907,6 +992,7 @@ void CPlayer::SetParalysisTime( const std::function<void(float&)>& proc )
 	proc( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->SetTime( tmpTime );
 	m_pEffectTimers[player::EEffectTimerNo_Paralysis]->Set();
+	m_pEffects[player::EEffectNo_Paralysis]->Play( m_vPosition );
 	m_AnimSpeed = 0.0;
 	CSoundManager::NoMultipleSEPlay("PlayerVoiceParalysis");
 }
@@ -922,14 +1008,14 @@ bool CPlayer::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius ) )) return false;
 	if( FAILED( m_pCollManager->InitCapsule( 
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		-18.0f,
 		0.0f ) )) return false;
@@ -941,7 +1027,7 @@ bool CPlayer::ColliderSetting()
 	if( FAILED( m_pAttackCollManager->InitSphere(
 		&m_AttackPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		ATTACK1_COLLISION_RADIUS ) )) return false;
 	return true;
@@ -957,6 +1043,7 @@ bool CPlayer::EffectSetting()
 		ATTACK_THREE_EFFECT_NAME,
 		SPECIAL_ABILITY_EFFECT_NAME,
 		AVOIDANCE_EFFECT_NAME,
+		PARALYSIS_EFFECT_NAME,
 	};
 	const int effectNum = sizeof(effectNames)/sizeof(effectNames[0]);
 	// メモリの最大値設定.
@@ -1070,6 +1157,7 @@ void CPlayer::EditRender()
 // ウィジェット設定.
 bool CPlayer::WidgetSetting()
 {
+	m_pWidget.emplace_back(std::make_shared<CBackGauge>());
 	m_pWidget.emplace_back(std::make_shared<CLifeGauge>());
 	m_pWidget.emplace_back(std::make_shared<CSpecialAbilityGauge>());
 

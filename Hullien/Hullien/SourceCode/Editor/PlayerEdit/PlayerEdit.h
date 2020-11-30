@@ -20,6 +20,8 @@ public:
 	virtual void Render() override;
 	// モデルの描画.
 	virtual void ModelRender() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 
 private:
 	std::unique_ptr<CPlayer>	m_pPlayer;

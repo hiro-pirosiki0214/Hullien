@@ -14,7 +14,7 @@ CArm::CArm()
 	, m_ScalingValue	( SCALING_VALUE )
 	, m_AnimSpeed		( 0.0 )
 {
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 }
 
 CArm::~CArm()
@@ -74,7 +74,7 @@ void CArm::Render()
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
+	m_pSkinMesh->SetScale( m_vScale );
 	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
 	m_pSkinMesh->Render( m_pAC );
 }
@@ -82,11 +82,14 @@ void CArm::Render()
 // 掴んでいる座標の取得.
 D3DXVECTOR3 CArm::GetGrabPosition()
 {
+	m_GrabPosition.x = m_vPosition.x - sinf( m_vRotation.y ) * GRAB_DISTANCE;
+	m_GrabPosition.z = m_vPosition.z - cosf( m_vRotation.y ) * GRAB_DISTANCE;
+	m_GrabPosition.y = m_vPosition.y;
 	return m_GrabPosition;
 }
 
 // 出現する用意.
-void CArm::SetAppearance()
+void CArm::SetAppearancePreparation()
 {
 	if( m_NowArmState == EArmState::Appearance ) return;
 	if( m_NowArmState == EArmState::Grab ) return;
@@ -102,7 +105,7 @@ void CArm::SetAppearance()
 }
 
 // 片づける用意.
-void CArm::SetCleanUp()
+void CArm::SetCleanUpPreparation()
 {
 	if( m_NowArmState == EArmState::CleanUp ) return;
 	if( m_NowArmState == EArmState::Appearance ) return;
@@ -114,6 +117,23 @@ void CArm::SetCleanUp()
 	m_AppearanceCount	= APPEARANCE_COUNT_MAX;
 	m_pAC->ResetTime();
 	m_pSkinMesh->ChangeAnimSet_StartPos( 0, 0.0, m_pAC );
+}
+
+// 完全に取り出す
+void CArm::SetAppearance()
+{
+	m_vScale = { 1.0f, 1.0f, 1.0f };
+	m_pSkinMesh->ChangeAnimSet_StartPos( 0, m_AnimEndFrame, m_pAC );
+	m_NowArmState  = EArmState::End;	// 終了.
+}
+
+// 完全に片づける.
+void CArm::SetCleanUp()
+{
+	m_vScale = { 0.0f, 0.0f, 0.0f };
+	m_pSkinMesh->ChangeAnimSet_StartPos( 0, 0.0, m_pAC );
+	m_AnimSpeed			= 0.0;				// アニメーション速度変更.
+	m_NowArmState		= EArmState::Start;	// 次の状態へ移動.
 }
 
 // 出現.
@@ -134,7 +154,7 @@ void CArm::Appearance()
 	if( m_ScalingValue >= SCALING_VALUE_MAX ) m_ScalingValue = SCALING_VALUE_MAX;
 	// スケール値を計算.
 	const float scale = fabsf(sinf( static_cast<float>(D3DX_PI)*0.5f * m_AppearanceCount ));
-	m_vSclae = { scale * m_ScalingValue, scale*m_ScalingValue, scale };
+	m_vScale = { scale * m_ScalingValue, scale*m_ScalingValue, scale };
 }
 
 // 掴む.
@@ -159,5 +179,5 @@ void CArm::CleanUp()
 	}
 	// スケール値を計算.
 	const float scale = fabsf(sinf( static_cast<float>(D3DX_PI)*0.5f * m_AppearanceCount ));
-	m_vSclae = { scale, scale, scale };
+	m_vScale = { scale, scale, scale };
 }

@@ -10,10 +10,11 @@
 #include "..\..\..\Utility\XInput\XInput.h"
 #include "..\..\..\XAudio2\SoundManager.h"
 
-CTitle::CTitle(CSceneManager* pSceneManager)
-	: CSceneBase(pSceneManager)
-	, m_pWidget				( nullptr )
+CTitle::CTitle( CSceneManager* pSceneManager )
+	: CSceneBase		( pSceneManager )
+	, m_pWidget			( nullptr )
 	, m_IsChangeScene	( false )
+	, m_IsDecision		( false )
 {
 	m_pWidget	= std::make_unique< CTitleWidget >();
 	CFade::SetFadeOut();
@@ -29,9 +30,10 @@ CTitle::~CTitle()
 bool CTitle::Load()
 {
 	if ( m_pWidget->Init() == false ) return false;
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
-	CSoundManager::SetBGMVolume("TitleBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
+	CSoundManager::ThreadPlayBGM("TitleBGM");
+	CSoundManager::FadeInBGM("TitleBGM");
+	m_pSceneManager->SetNowBGMName("TitleBGM");
 	return true;
 }
 
@@ -40,14 +42,11 @@ bool CTitle::Load()
 //============================.
 void CTitle::Update()
 {
-	CSoundManager::ThreadPlayBGM("TitleBGM");
-
 	if (CFade::GetIsFade() == true) return;
-
-	m_pWidget->Update();
+	// 決定してない場合UIの更新.
+	if( m_IsDecision == false ) m_pWidget->Update();
 	//シーン切り替え.
 	ChangeScene();
-
 }
 
 //============================.
@@ -70,16 +69,28 @@ void CTitle::ChangeScene()
 	{
 		if (m_IsChangeScene == true) return;
 		CFade::SetFadeIn();
-		if(m_pWidget->GetSelectState() == CTitleWidget::ESelectState::Start) {
+		switch (m_pWidget->GetSelectState())
+		{
+		case CTitleWidget::ESelectState::Start:
 			CSoundManager::PlaySE("Determination");
-		}
-		else {
+			break;
+#ifndef IS_CONFIG_RENDER
+		case CTitleWidget::ESelectState::Config:
+			CSoundManager::PlaySE("Determination");
+			break;
+#endif	// #ifndef IS_CONFIG_RENDER.
+		case CTitleWidget::ESelectState::End:
 			CSoundManager::PlaySE("CancelDetermination");
+			break;
+		default:
+			break;
 		}
 		CSoundManager::FadeOutBGM("TitleBGM");
 		m_IsChangeScene = true;
+		m_IsDecision = true;
 	}
 
+	if (m_IsChangeScene == false) return;
 	// フェードイン状態かつフェード中なら処理しない.
 	if (CFade::GetFadeState() != CFade::EFadeState::In) return;
 	if(CFade::GetIsFade() == true) return;
@@ -91,6 +102,13 @@ void CTitle::ChangeScene()
 		while( CSoundManager::StopBGMThread("TitleBGM") == false);
 		m_pSceneManager->NextSceneMove();
 		break;
+#ifndef IS_CONFIG_RENDER
+	case CTitleWidget::ESelectState::Config:
+		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
+		while( CSoundManager::StopBGMThread("TitleBGM") == false);
+		m_pSceneManager->ConfigSceneMove();
+		break;
+#endif	// #ifndef IS_CONFIG_RENDER.
 	case CTitleWidget::ESelectState::End:
 		if (CSoundManager::GetBGMVolume("TitleBGM") > 0.0f) return;
 		while (CSoundManager::StopBGMThread("TitleBGM") == false);

@@ -7,13 +7,14 @@
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\Common\D3DX\D3DX11.h"
 
-//#define ENDING_STG // Clear時のSTGを入れるか.
+#define ENDING_STG // Clear時のSTGを入れるか.
 
 CGameClear::CGameClear( CSceneManager* pSceneManager )
 	: CSceneBase			( pSceneManager )
 	, m_pClearWidget		( nullptr )
 	, m_pSTGManager			( nullptr )
 	, m_IsChangeScene		( false )
+	, m_SkipWaitCount		( 0 )
 {
 	m_pClearWidget	= std::make_unique<CClearWidget>();
 	m_pSTGManager	= std::make_unique<CSTGManager>();
@@ -32,9 +33,10 @@ bool CGameClear::Load()
 {
 	if ( m_pClearWidget->Init() == false ) return false;
 	if( m_pSTGManager->Init() == false ) return false;
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.7f;
-	CSoundManager::SetBGMVolume("ClearBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
+	CSoundManager::ThreadPlayBGM("ClearBGM");
+	CSoundManager::FadeInBGM("ClearBGM");
+	m_pSceneManager->SetNowBGMName("ClearBGM");
 	return true;
 }
 
@@ -43,15 +45,35 @@ bool CGameClear::Load()
 //============================.
 void CGameClear::Update()
 {
-#ifndef ENDING_STG
-	CSoundManager::ThreadPlayBGM("ClearBGM");
 
-	if (CFade::GetFadeState() == CFade::EFadeState::Out
+	if (CFade::GetFadeState() == CFade::EFadeState::Out 
 		&& CFade::GetIsFade() == true) return;
+#ifndef ENDING_STG
 	m_pClearWidget->Update();
 	ChangeScene();
 #else
-	m_pSTGManager->Update();
+	m_pClearWidget->Update();
+
+	// ゲームクリアのスプライト表示が終了したら.
+	if( m_pClearWidget->IsSpriteRenderEnd() == true ){
+		// STGの更新.
+		m_pSTGManager->Update();
+	}
+
+	// STGが終了したら.
+	if( m_pSTGManager->IsSTGEnd() == true ){
+		m_pClearWidget->SetIsSTGEnd();
+		OnChangeScene( false );
+	} else {
+		SkipUpdate();
+	}
+	ChangeScene();
+
+#ifdef _DEBUG
+	if( GetAsyncKeyState(VK_F4) & 0x0001 ){
+		m_pSceneManager->NextSceneMove();
+	}
+#endif	// #ifdef _DEBUG.
 #endif	// #ifndef ENDING_STG
 }
 
@@ -60,10 +82,15 @@ void CGameClear::Update()
 //============================.
 void CGameClear::Render()
 {
-#ifndef ENDING_STG
-	if (m_pClearWidget == nullptr) return;
+	ModelRender();
 	m_pClearWidget->Render();
-#else
+}
+
+//============================.
+// モデルの描画.
+//============================.
+void CGameClear::ModelRender()
+{
 	//--------------------------------------------.
 	// 描画パス1.
 	//--------------------------------------------.
@@ -94,10 +121,19 @@ void CGameClear::Render()
 	// 最終描画.
 	//--------------------------------------------.
 	// G-Bufferを使用して、画面に描画する.
-
-	CDirectX11::SetBackBuffer();
 	CSceneTexRenderer::Render();
-#endif	// #ifndef ENDING_STG
+}
+
+//============================.
+// シーンを切り替える.
+//============================.
+void CGameClear::OnChangeScene( const bool& isPlaySE )
+{
+	if(m_IsChangeScene == true) return;
+	CFade::SetFadeIn();
+	if( isPlaySE == true )CSoundManager::PlaySE("Determination");
+	CSoundManager::FadeOutBGM("ClearBGM");
+	m_IsChangeScene = true;
 }
 
 //============================.
@@ -105,15 +141,7 @@ void CGameClear::Render()
 //============================.
 void CGameClear::ChangeScene()
 {
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
-		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD)
-	{
-		if(m_IsChangeScene == true) return;
-		CFade::SetFadeIn();
-		CSoundManager::PlaySE("Determination");
-		CSoundManager::FadeOutBGM("ClearBGM");
-		m_IsChangeScene = true;
-	}
+	if(m_IsChangeScene == false) return;
 
 	// フェードイン状態かつフェード中なら処理しない.
 	if(CFade::GetFadeState() != CFade::EFadeState::In) return;
@@ -121,4 +149,22 @@ void CGameClear::ChangeScene()
 	if(CSoundManager::GetBGMVolume("ClearBGM") > 0.0f) return;
 	while(CSoundManager::StopBGMThread("ClearBGM")== false);
 	m_pSceneManager->NextSceneMove();
+}
+
+//============================.
+// スキップの更新関数.
+//============================.
+void CGameClear::SkipUpdate()
+{
+	// スキップ.
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000
+		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
+		m_SkipWaitCount++;
+
+	}
+	else {
+		if (m_SkipWaitCount < SKIP_WAIT_COUNT) m_SkipWaitCount = 0;
+	}
+	if (m_SkipWaitCount < SKIP_WAIT_COUNT) return;
+	OnChangeScene( true );
 }

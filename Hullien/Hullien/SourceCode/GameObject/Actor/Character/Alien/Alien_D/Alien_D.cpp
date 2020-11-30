@@ -7,11 +7,15 @@
 #include "..\..\..\..\..\Resource\SpriteResource\SpriteResource.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
-
-#define IS_TEMP_MODEL_RENDER
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 
 CAlienD::CAlienD()
-	: m_pAttackRangeSprite	( nullptr )
+	: CAlienD	( nullptr )
+{}
+
+CAlienD::CAlienD( const SAlienParam* pParam )
+	: CAlien				( pParam )
+	, m_pAttackRangeSprite	( nullptr )
 	, m_pLaserBeam			( nullptr )
 	, m_ControlPositions	( 1 )
 	, m_AttackCount			( 0.0f )
@@ -28,25 +32,24 @@ CAlienD::~CAlienD()
 // 初期化関数.
 bool CAlienD::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
-	if( GetModel( MODEL_NAME ) == false ) return false;
-#else
-	// 既に読み込めていたら終了.
-	if( m_pTempStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
-	// モデルが読み込めてなければ false.
-	if( m_pTempStaticMesh == nullptr ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
-	if( GetSprite( SPRITE_NAME ) == false ) return false;
-	if( ColliderSetting() == false ) return false;
-	if( m_pLaserBeam->Init() == false ) return false; 
+	if( pPARAMETER					== nullptr ) return false;
+	if( GetModel( MODEL_NAME )		== false ) return false;
+	if( GetAnimationController()	== false ) return false;
+	if( SetAnimFrameList()			== false ) return false;
+	if( GetSprite( SPRITE_NAME )	== false ) return false;
+	if( EffectSetting()				== false ) return false;
+	if( ColliderSetting()			== false ) return false;
+	if( EffectSetting()				== false ) return false;
+	if( m_pLaserBeam->Init()		== false ) return false;
+
+	m_pSkinMesh->ChangeAnimSet_StartPos( alien::EAnimNo_Move, 0.0, m_pAC );
 	return true;
 }
 
 // 更新関数.
 void CAlienD::Update()
 {
+	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
 	SetMoveVector( m_TargetPosition );	// 目的のベクトルを取得.
 	m_pLaserBeam->Update();	// レーザーの更新.
 	CurrentStateUpdate();	// 現在の状態の更新.
@@ -55,15 +58,34 @@ void CAlienD::Update()
 // 描画関数.
 void CAlienD::Render()
 {
+	m_pLaserBeam->Render();	// レーザーの描画.
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-	m_pLaserBeam->Render();	// レーザーの描画.
 	ModelRender();			// モデルの描画.
 
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
+}
+
+// エフェクトの描画.
+void CAlienD::EffectRender()
+{
+	// ヒット時のエフェクト.
+	m_pEffects[alien::EEffectNo_Hit]->SetScale( 2.0f );
+	m_pEffects[alien::EEffectNo_Hit]->Render();
+
+	// スポーンエフェクト.
+	m_pEffects[alien::EEffectNo_Spawn]->SetLocation( m_vPosition );
+	m_pEffects[alien::EEffectNo_Spawn]->SetScale( 5.0f );
+	m_pEffects[alien::EEffectNo_Spawn]->Render();
+
+	// 死亡エフェクト.
+	m_pEffects[alien::EEffectNo_Dead]->Render();
+
+	// レーザーエフェクト.
+	m_pLaserBeam->EffectRender();
 }
 
 // 当たり判定関数.
@@ -78,21 +100,18 @@ void CAlienD::Collision( CActor* pActor )
 }
 
 // スポーン.
-bool CAlienD::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
+bool CAlienD::Spawn( const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
-	if( m_NowState != EAlienState::None ) return true;
-	m_Parameter = param;	// パラメータを設定.
-	// 初期化に失敗したら終了.
-	if( Init() == false ) return false;
+	if( m_NowState != alien::EAlienState::None ) return true;
 	m_vPosition		= spawnPos;					// スポーン座標の設定.
-	m_LifePoint		= m_Parameter.LifeMax;		// 体力の設定.
-	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
-	
+	m_LifePoint		= pPARAMETER->LifeMax;		// 体力の設定.
+	m_NowState = alien::EAlienState::Spawn;		// 現在の状態をスポーンに変更.
+	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	// レーザーの移動速度の設定.
-	m_pLaserBeam->SetMoveSpped( m_Parameter.LaserMoveSpeed );
+	m_pLaserBeam->SetMoveSpped( pPARAMETER->LaserMoveSpeed );
 	// レーザーの麻痺時間の設定.
-	m_pLaserBeam->SetParalysisTime( m_Parameter.ParalysisTime );
+	m_pLaserBeam->SetParalysisTime( pPARAMETER->ParalysisTime );
 
 	if (CSoundManager::GetIsPlaySE("AlienDApp", 0) == false)
 	{
@@ -110,35 +129,23 @@ void CAlienD::SpriteRender()
 // モデルの描画.
 void CAlienD::ModelRender()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pSkinMesh->Render();
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
-#else
-	if( m_pTempStaticMesh == nullptr ) return;
-	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vSclae );
-	m_pTempStaticMesh->SetColor( { 0.8f, 0.8f, 0.0f, 1.0f } );
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pTempStaticMesh->Render();
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
+	m_pSkinMesh->SetScale( m_vScale );
+	m_pSkinMesh->SetColor( { 0.8f, 0.8f, 0.2f, 1.0f } );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::Back );
+	m_pSkinMesh->Render( m_pAC );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::None );
 }
 
 // 攻撃範囲のスプライト描画.
 void CAlienD::AttackRangeSpriteRender()
 {
 	if( m_pAttackRangeSprite == nullptr ) return;
-	if( m_NowMoveState != EMoveState::Attack ) return;
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;
 
 	D3DXVECTOR4 color;
 	if( m_IsAttackStart == true ){
@@ -152,14 +159,14 @@ void CAlienD::AttackRangeSpriteRender()
 	}
 
 	// 攻撃範囲スプライトの描画.
-	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, m_Parameter.AttackRangeSpritePosY, m_TargetPosition.z } );
+	m_pAttackRangeSprite->SetPosition( { m_TargetPosition.x, pPARAMETER->AttackRangeSpritePosY, m_TargetPosition.z } );
 	m_pAttackRangeSprite->SetRotation( { static_cast<float>(D3DXToRadian(90)), 0.0f, 0.0f } );
-	m_pAttackRangeSprite->SetScale( m_Parameter.AttackRangeSpriteScale );	
+	m_pAttackRangeSprite->SetScale( pPARAMETER->AttackRangeSpriteScale );	
 	m_pAttackRangeSprite->SetColor( color );
 	m_pAttackRangeSprite->SetBlend( true );
-	m_pAttackRangeSprite->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pAttackRangeSprite->SetRasterizerState( ERS_STATE::Back );
 	m_pAttackRangeSprite->Render();
-	m_pAttackRangeSprite->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pAttackRangeSprite->SetRasterizerState( ERS_STATE::None );
 	m_pAttackRangeSprite->SetBlend( false );
 }
 
@@ -178,9 +185,10 @@ void CAlienD::Move()
 	CAlien::WaitMove();		// 待機.
 
 	if( *m_pIsAlienOtherAbduct == false ) return;
-	if( m_NowState == EAlienState::Abduct ) return;
-	m_NowState		= EAlienState::Escape;	// 逃げる状態へ遷移.
-	m_NowMoveState	= EMoveState::Rotation;	// 移動状態を回転する.
+	if( m_NowState == alien::EAlienState::Abduct ) return;
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
+	m_NowState		= alien::EAlienState::Escape;	// 逃げる状態へ遷移.
+	m_NowMoveState	= alien::EMoveState::Rotation;	// 移動状態を回転する.
 }
 
 // 拐う.
@@ -210,14 +218,12 @@ void CAlienD::Escape()
 // 攻撃関数.
 void CAlienD::Attack()
 {
-	if( m_NowMoveState != EMoveState::Attack ) return;
+	if( m_NowMoveState != alien::EMoveState::Attack ) return;
 
-	const float attackSpeed = m_IsAttackStart == false ? 
-		m_Parameter.AttackRangeAddValue : m_Parameter.AttackRangeSubValue;
-	m_AttackCount += attackSpeed;	// 攻撃カウントの追加.
+	const double attackSpeed = m_IsAttackStart == false ? m_AnimSpeed : -m_AnimSpeed;
+	m_AttackCount += static_cast<float>(attackSpeed);	// 攻撃カウントの追加.
 
-	// 攻撃カウントが攻撃時間より多くなれば攻撃を始める.
-	if( m_AttackCount >= ATTACK_TIME ){
+	if( m_AnimFrameList[m_NowAnimNo].NowFrame >= 0.7 ){
 		m_IsAttackStart = true;
 
 		// 相手への向きを取得.
@@ -225,47 +231,51 @@ void CAlienD::Attack()
 			m_TargetPosition.x - m_vPosition.x,
 			m_TargetPosition.z - m_vPosition.z );
 
-		// 相手との距離を測る.
-		const float lenght = D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) - m_Parameter.ControlPointTwoLenght;
+		D3DXVECTOR3 headPos = m_vPosition;
+		headPos.y += 15.0f;
+		headPos.x += sinf( radius ) * 3.5f;
+		headPos.z += cosf( radius ) * 3.5f;
 
 		// 上向き少し後ろに設定..
-		m_ControlPositions[0].x = m_vPosition.x + sinf( radius ) * m_Parameter.ControlPointOneLenght;
-		m_ControlPositions[0].y = m_vPosition.y + m_Parameter.ControlPointOneLenghtY;
-		m_ControlPositions[0].z = m_vPosition.z + cosf( radius ) * m_Parameter.ControlPointOneLenght;
+		m_ControlPositions[0].x = headPos.x + sinf( radius ) * pPARAMETER->ControlPointOneLenght;
+		m_ControlPositions[0].y = headPos.y + pPARAMETER->ControlPointOneLenghtY;
+		m_ControlPositions[0].z = headPos.z + cosf( radius ) * pPARAMETER->ControlPointOneLenght;
 
 		// 上で設定したコントロールポジションを設定.
 		m_pLaserBeam->SetControlPointList( m_ControlPositions );
 
-		m_pLaserBeam->Shot( m_vPosition );	// ビームを打つ.
+		m_pLaserBeam->Shot( headPos );	// ビームを打つ.
 		CSoundManager::NoMultipleSEPlay("AlienDAttack");
 	}
 
-	if( m_AttackCount >= 0.0f ) return;
-	m_NowMoveState = EMoveState::Wait;	// 待機状態へ遷移.
+	if( m_AnimFrameList[m_NowAnimNo].IsNowFrameOver() == false ) return;
+	m_NowMoveState = alien::EMoveState::Wait;	// 待機状態へ遷移.
+	SetAnimation( alien::EAnimNo_Move, m_pAC );
 }
 
 // 移動関数.
 void CAlienD::VectorMove( const float& moveSpeed )
 {
-	if( m_NowMoveState != EMoveState::Move ) return;
+	if( m_NowMoveState != alien::EMoveState::Move ) return;
 
 	// ベクトルを使用して移動.
 	m_vPosition.x -= m_MoveVector.x * moveSpeed;
 	m_vPosition.z -= m_MoveVector.z * moveSpeed;
 
 	// 再度座標を検索し、回転するか比較.
-	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= m_Parameter.ResearchLenght ){
-		m_NowMoveState	= EMoveState::Rotation;	// 回転状態へ遷移.
+	if( D3DXVec3Length(&D3DXVECTOR3(m_BeforeMoveingPosition-m_vPosition)) >= pPARAMETER->ResearchLenght ){
+		m_NowMoveState	= alien::EMoveState::Rotation;	// 回転状態へ遷移.
 		m_IsAttackStart = false;	// 攻撃が始まるフラグを下す.
 		return;
 	}
 
 	// プレイヤーとの距離が一定値より低いか比較.
-	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= m_Parameter.AttackLenght ) return;
+	if( D3DXVec3Length(&D3DXVECTOR3(m_TargetPosition-m_vPosition)) >= pPARAMETER->AttackLenght ) return;
 	if( m_pLaserBeam->IsEndAttack() == false ) return;
 	m_IsAttackStart	= false;	// 攻撃が始まるフラグを下す.
 	m_AttackCount	= 0.0f;		// 攻撃カウントを初期化,
-	m_NowMoveState	= EMoveState::Attack;	// 攻撃状態へ遷移.
+	m_NowMoveState	= alien::EMoveState::Attack;	// 攻撃状態へ遷移.
+	SetAnimation( alien::EAnimNo_Attack, m_pAC );
 }
 
 // 相手座標の設定.
@@ -308,7 +318,6 @@ bool CAlienD::GetSprite( const char* spriteName )
 // 当たり判定の設定.
 bool CAlienD::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -317,22 +326,8 @@ bool CAlienD::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
+		&m_vScale.x,
+		pPARAMETER->SphereAdjPos,
+		pPARAMETER->SphereAdjRadius ) )) return false;
 	return true;
-#else
-	if( m_pTempStaticMesh == nullptr ) return false;
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }

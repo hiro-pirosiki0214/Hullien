@@ -18,7 +18,7 @@ CContinueWidget::CContinueWidget()
 	, m_DrawTurn			( EDrawTurn::BackGround )
 {
 	m_pCursor = std::make_shared<CCursor>();
-	m_vSclae = D3DXVECTOR3(0.9f, 0.9f, 0.9f);
+	m_vScale = D3DXVECTOR3(0.9f, 0.9f, 0.9f);
 }
 
 CContinueWidget::~CContinueWidget()

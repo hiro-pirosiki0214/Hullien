@@ -13,6 +13,7 @@ CLifeRecoveryItem::CLifeRecoveryItem(
 	: CItemBase				( pParam )
 	, pLIFE_RECOVERY_VALUE	( pLifeRecoveryValue)
 {
+	m_ObjectTag = EObjectTag::LifeRecoveryItem;
 }
 
 CLifeRecoveryItem::~CLifeRecoveryItem()
@@ -26,7 +27,7 @@ bool CLifeRecoveryItem::Init()
 	if( GetModel( MODEL_NAME ) == false ) return false;
 	if( EffectSetting() == false ) return false;
 	if( ColliderSetting() == false ) return false;
-	m_vSclae = { 0.0f, 0.0f, 0.0f };
+	m_vScale = { 0.0f, 0.0f, 0.0f };
 	m_ObjectTag = EObjectTag::LifeRecoveryItem;
 	return true;
 }
@@ -41,6 +42,12 @@ void CLifeRecoveryItem::Update()
 void CLifeRecoveryItem::Render()
 {
 	CItemBase::Render();
+}
+
+// エフェクトの描画.
+void CLifeRecoveryItem::EffectRender()
+{
+	CItemBase::EffectRender();
 }
 
 // 当たり判定関数.

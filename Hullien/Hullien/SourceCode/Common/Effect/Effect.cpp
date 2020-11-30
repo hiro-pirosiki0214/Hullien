@@ -112,7 +112,11 @@ void CEffect::Destroy()
 	ReleaseData();
 
 	//æ‚É´Ìª¸ÄŠÇ——p²Ý½ÀÝ½‚ð”jŠü.
-	m_pManager->Destroy();
+	if( m_pManager != nullptr ){
+		m_pManager->Destroy();
+		m_pManager = nullptr;
+	}
+
 
 #ifdef ENABLE_XAUDIO2
 	//ŽŸ‚É‰¹‚ÌÄ¶—p²Ý½ÀÝ½‚ð”jŠü.
@@ -120,7 +124,10 @@ void CEffect::Destroy()
 #endif//#ifdef ENABLE_XAUDIO2
 
 	//ŽŸ‚É•`‰æ—p²Ý½ÀÝ½‚ð”jŠü.
-	m_pRenderer->Destroy();
+	if( m_pRenderer != nullptr ){
+		m_pRenderer->Destroy();
+		m_pRenderer = nullptr;
+	}
 
 #ifdef ENABLE_XAUDIO2
 	//XAudio2‚Ì‰ð•ú.

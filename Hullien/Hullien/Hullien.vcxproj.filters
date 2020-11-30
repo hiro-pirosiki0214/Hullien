@@ -11,6 +11,7 @@
     <FxCompile Include="Data\Shader\SceneTexRenderer.hlsl" />
     <FxCompile Include="Data\Shader\Trajectory.hlsl" />
     <FxCompile Include="Data\Shader\FXAA.hlsl" />
+    <FxCompile Include="Data\Shader\SkyDome.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\ImGui\imgui.cpp" />
@@ -157,6 +158,23 @@
     <ClCompile Include="SourceCode\GameObject\STG\Bullet\STGBullet.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.cpp" />
     <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.cpp" />
+    <ClCompile Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\Slider\Slider.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\Scene\Scenes\Config\Config.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.cpp" />
+    <ClCompile Include="SourceCode\GameObject\UFOLight\UFOLight.cpp" />
+    <ClCompile Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.cpp" />
+    <ClCompile Include="SourceCode\Utility\Command\Command.cpp" />
+    <ClCompile Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ControllerConfigWidget\ControllerConfigWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\ImGui\imconfig.h" />
@@ -321,5 +339,32 @@
     <ClInclude Include="SourceCode\GameObject\STG\Bullet\STGBullet.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemy.h" />
     <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyManager\STGEnemyManager.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyParam.h" />
+    <ClInclude Include="SourceCode\GameObject\STG\Character\Enemy\STGEnemyFactory\STGEnemyFactory.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\Slider\Slider.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ConfigWidget.h" />
+    <ClInclude Include="SourceCode\Scene\Scenes\Config\Config.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\VolumeConfigWidget\VolumeConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\CameraConfigWidget\CameraConfigWidget.h" />
+    <ClInclude Include="SourceCode\GameObject\UFOLight\UFOLight.h" />
+    <ClInclude Include="SourceCode\Main\Resource\resource.h" />
+    <ClInclude Include="SourceCode\Common\SkyDomeModel\SkyDomeModel.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\AlienParam.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\GameWidget\CharacterWidget\BackGauge\BackGauge.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\EditAlien.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_A\EditAlien_A.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_B\EditAlien_B.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_C\EditAlien_C.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Character\Alien\EditAlien\Alien_D\EditAlien_D.h" />
+    <ClInclude Include="SourceCode\GameObject\Actor\Item\EditItem\EditItem.h" />
+    <ClInclude Include="SourceCode\Common\Mesh\MeshStruct.h" />
+    <ClInclude Include="SourceCode\Utility\Command\Command.h" />
+    <ClInclude Include="SourceCode\GameObject\Widget\SceneWidget\ConfigWidget\ControllerConfigWidget\ControllerConfigWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Data\Icon.ico" />
   </ItemGroup>
 </Project>

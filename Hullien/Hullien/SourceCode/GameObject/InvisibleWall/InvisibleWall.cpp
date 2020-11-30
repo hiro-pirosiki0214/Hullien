@@ -68,7 +68,7 @@ bool CInvisibleWall::InitCollision()
 	if( FAILED( m_pCollision->InitBox(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{ 0.0f, 0.0f, 0.0f },
 		m_BoxWall.Length ))) return false;
 #endif	// #ifdef _DEBUG.

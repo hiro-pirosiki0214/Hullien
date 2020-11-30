@@ -28,8 +28,7 @@ void CEditRenderer::Render()
 {
 	if( GetInstance()->m_RenderList.empty() == true ) return;
 
-	if( ( GetAsyncKeyState('H') & 0x0001 ) &&
-		( GetAsyncKeyState('T') & 0x0001 )){
+	if(( GetAsyncKeyState(VK_F7) & 0x0001 ) && ( GetAsyncKeyState(VK_SHIFT) & 0x8000 )){
 		GetInstance()->m_IsRender = !GetInstance()->m_IsRender;
 	}
 

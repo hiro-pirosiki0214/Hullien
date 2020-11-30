@@ -28,8 +28,6 @@ public:
 	void SetFadeIn(const float& alphaSpeed );
 	// フェードアウト設定関数.
 	void SetFadeOut( const float& alphaSpeed );
-	//位置設定関数.
-	void SetPosition( const D3DXVECTOR3& vPos ) { m_vPosition = vPos; }
 
 protected:
 	// スプライト設定関数.

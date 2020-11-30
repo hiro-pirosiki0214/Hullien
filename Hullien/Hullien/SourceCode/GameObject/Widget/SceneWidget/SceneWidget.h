@@ -12,6 +12,7 @@ class CReturnTitle;
 class CSceneWidget : public CWidget
 {
 protected:
+	inline static const float INPUT_WAIT_TIME_MAX = 30.0f;	// “ü—Í‚Ì‘Ò‹@ƒtƒŒ[ƒ€.
 	//	•`‰æó‘Ô.
 	enum class enDrawingState
 	{
@@ -24,7 +25,8 @@ public:
 	virtual ~CSceneWidget();
 
 protected:
-	EDrawingState m_DrawingState;		// •`‰æó‘Ô.
+	EDrawingState	m_DrawingState;		// •`‰æó‘Ô.
+	float			m_InputWaitTime;	// “ü—Í‚µ‚½Û‚Ì‘Ò‹@ŠÔ.
 
 private:
 };

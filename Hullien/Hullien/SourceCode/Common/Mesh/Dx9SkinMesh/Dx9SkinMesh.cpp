@@ -26,6 +26,7 @@ CDX9SkinMesh::CDX9SkinMesh()
 	: m_hWnd(nullptr)
 	, m_pDevice9(nullptr)
 	, m_pSampleLinear(nullptr)
+	, m_pToonSampleLinear(nullptr)
 	, m_pShadowMapSampler(nullptr)
 	, m_pVertexShader(nullptr)
 	, m_pPixelShader(nullptr)
@@ -35,6 +36,7 @@ CDX9SkinMesh::CDX9SkinMesh()
 	, m_pCBufferPerFrame(nullptr)
 	, m_pCBufferPerBone(nullptr)
 	, m_pToonTexture(nullptr)
+	, m_pFogTexture(nullptr)
 	, m_mWorld()
 	, m_mRotation()
 	, m_mView()
@@ -62,6 +64,7 @@ CDX9SkinMesh::~CDX9SkinMesh()
 
 	//シェーダやサンプラ関係.
 	SAFE_RELEASE( m_pShadowMapSampler );
+	SAFE_RELEASE( m_pToonSampleLinear );
 	SAFE_RELEASE( m_pSampleLinear );
 	SAFE_RELEASE( m_pVertexShader );
 	SAFE_RELEASE( m_pPixelShader );
@@ -75,7 +78,7 @@ CDX9SkinMesh::~CDX9SkinMesh()
 
 	m_pReleaseMaterial = nullptr;
 
-	SAFE_RELEASE(m_pD3dxMesh);
+	SAFE_RELEASE(m_pMeshForRay);
 
 	//Dx9 デバイス関係.
 	m_pDevice9 = nullptr;
@@ -83,7 +86,6 @@ CDX9SkinMesh::~CDX9SkinMesh()
 	//Dx11 デバイス関係.
 	m_pContext11 = nullptr;
 	m_pDevice11 = nullptr;
-
 	m_hWnd = nullptr;
 }
 
@@ -101,9 +103,8 @@ HRESULT CDX9SkinMesh::Init(
 	if( FAILED( InitPram( pDevice11, pContext11 ))) return E_FAIL;
 	//シェーダの作成.
 	if( FAILED( InitShader() ) ) return E_FAIL;
-
 	//モデル読み込み.
-	if( FAILED(LoadXMesh(fileName)))return E_FAIL;
+	if( FAILED( LoadXMesh( fileName ) ))return E_FAIL;
 
 
 	return S_OK;
@@ -311,11 +312,11 @@ HRESULT CDX9SkinMesh::LoadXMesh( const char* fileName )
 
 	//Xファイル読み込み.
 	m_pD3dxMesh = new D3DXPARSER();
-	m_pD3dxMesh->LoadMeshFromX( m_pDevice9, fileName);
-
+	if( FAILED( m_pD3dxMesh->LoadMeshFromX( m_pDevice9, fileName) )) return E_FAIL;
 
 	//全てのメッシュを作成する.
-	BuildAllMesh( m_pD3dxMesh->m_pFrameRoot );
+	if( FAILED( BuildAllMesh( m_pD3dxMesh->m_pFrameRoot ) ))
+		return E_FAIL;
 
 	// ﾃｸｽﾁｬ作成.
 	if (FAILED(D3DX11CreateShaderResourceViewFromFile(
@@ -392,22 +393,23 @@ void CDX9SkinMesh::Render( LPD3DXANIMATIONCONTROLLER pAC )
 
 
 //全てのメッシュを作成する.
-void CDX9SkinMesh::BuildAllMesh( D3DXFRAME* pFrame )
+HRESULT CDX9SkinMesh::BuildAllMesh( D3DXFRAME* pFrame )
 {
 	if( pFrame && pFrame->pMeshContainer )
 	{
-		CreateAppMeshFromD3DXMesh( pFrame );
+		if( FAILED( CreateAppMeshFromD3DXMesh( pFrame ) )) return E_FAIL;
 	}
 
 	//再帰関数.
 	if( pFrame->pFrameSibling != nullptr )
 	{
-		BuildAllMesh( pFrame->pFrameSibling );
+		if( FAILED( BuildAllMesh( pFrame->pFrameSibling ) )) return E_FAIL;
 	}
 	if( pFrame->pFrameFirstChild != nullptr )
 	{
-		BuildAllMesh( pFrame->pFrameFirstChild );
+		if( FAILED( BuildAllMesh( pFrame->pFrameFirstChild ) )) return E_FAIL;
 	}
+	return S_OK;
 }
 
 //メッシュ作成.
@@ -421,6 +423,9 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 
 	//アプリメッシュ(・・・ここにメッシュデータをコピーする).
 	SKIN_PARTS_MESH* pAppMesh = new SKIN_PARTS_MESH();
+	//パーツメッシュに設定.
+	pFrame->pPartsMesh = pAppMesh;
+	m_pReleaseMaterial = pAppMesh;
 	pAppMesh->bTex = false;
 
 	//事前に頂点数、ポリゴン数等を調べる.
@@ -433,6 +438,7 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		MessageBox( NULL,
 			"Direct3Dは、UVの数だけ頂点が必要です(UVを置く場所が必要です)テクスチャは正しく貼られないと思われます",
 			"Error", MB_OK );
+		SAFE_DELETE( pAppMesh );
 		return E_FAIL;
 	}
 	//一時的なメモリ確保(頂点バッファとインデックスバッファ).
@@ -466,8 +472,8 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 	}
 	//マテリアル読み込み.
 	pAppMesh->dwNumMaterial	= m_pD3dxMesh->GetNumMaterials( pContainer );
-	pAppMesh->pMaterial		= new MY_SKINMATERIAL[pAppMesh->dwNumMaterial]();
 
+	pAppMesh->pMaterial		= new MY_SKINMATERIAL[pAppMesh->dwNumMaterial]();
 	//マテリアルの数だけインデックスバッファを作成.
 	pAppMesh->ppIndexBuffer = new ID3D11Buffer*[pAppMesh->dwNumMaterial]();
 	//掛け算ではなく「ID3D11Buffer*」の配列という意味.
@@ -512,8 +518,9 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 					m_pDevice11, pAppMesh->pMaterial[i].TextureName,
 					NULL, NULL, &pAppMesh->pMaterial[i].pTexture, NULL )))
 		{
-			MessageBox( NULL, "テクスチャ読み込み失敗",
-				"Error", MB_OK );
+			MessageBox( NULL, "テクスチャ読み込み失敗", "Error", MB_OK );
+			SAFE_DELETE( piFaceBuffer );
+			SAFE_DELETE( pvVB );
 			return E_FAIL;
 		}
 		//そのマテリアルであるインデックス配列内の開始インデックスを調べる.
@@ -585,17 +592,9 @@ HRESULT CDX9SkinMesh::CreateAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		hRslt = E_FAIL;
 	}
 
-	//パーツメッシュに設定.
-	pFrame->pPartsMesh = pAppMesh;
-	m_pReleaseMaterial = pAppMesh;
-
 	//一時的な入れ物は不要なるので削除.
-	if( piFaceBuffer ){
-		delete[] piFaceBuffer;
-	}
-	if( pvVB ){
-		delete[] pvVB;
-	}
+	SAFE_DELETE( piFaceBuffer );
+	SAFE_DELETE( pvVB );
 
 	return hRslt;
 }
@@ -786,7 +785,8 @@ void CDX9SkinMesh::DrawPartsMesh( SKIN_PARTS_MESH* pMesh, D3DXMATRIX World, MYME
 	for( int i = 0; i < CSceneTexRenderer::MAX_CASCADE; i++ ){
 		m_pContext11->PSSetShaderResources( i+1, 1, &CSceneTexRenderer::GetShadowBuffer()[i] );
 	}
-	m_pContext11->PSSetSamplers( 1, 1, &m_pShadowMapSampler );
+	m_pContext11->PSSetSamplers( 1, 1, &m_pToonSampleLinear );
+	m_pContext11->PSSetSamplers( 2, 1, &m_pShadowMapSampler );
 
 	//------------------------------------------------.
 	//	コンスタントバッファに情報を設定(メッシュごと).
@@ -1156,7 +1156,7 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		if (pFrame->pPartsMesh->ppIndexBuffer)
 		{
 			//インデックスバッファ解放.
-			for (DWORD i = 0; i<pFrame->pPartsMesh->dwNumMaterial; i++){
+			for (int i = pFrame->pPartsMesh->dwNumMaterial-1; i>=0; i--){
 				if (pFrame->pPartsMesh->ppIndexBuffer[i] != nullptr){
 					pFrame->pPartsMesh->ppIndexBuffer[i]->Release();
 					pFrame->pPartsMesh->ppIndexBuffer[i] = nullptr;
@@ -1166,13 +1166,15 @@ HRESULT CDX9SkinMesh::DestroyAppMeshFromD3DXMesh( LPD3DXFRAME p )
 		}
 
 		//頂点バッファ開放.
-		pFrame->pPartsMesh->pVertexBuffer->Release();
-		pFrame->pPartsMesh->pVertexBuffer = nullptr;
-	}
+		if( pFrame->pPartsMesh->pVertexBuffer != nullptr ){
+			pFrame->pPartsMesh->pVertexBuffer->Release();
+			pFrame->pPartsMesh->pVertexBuffer = nullptr;
+		}
 
-	//パーツマテリアル開放.
-	delete[] pFrame->pPartsMesh;
-	pFrame->pPartsMesh = nullptr;
+		//パーツマテリアル開放.
+		delete pFrame->pPartsMesh;
+		pFrame->pPartsMesh = nullptr;
+	}
 
 	//SKIN_PARTS_MESH解放完了.
 
@@ -1369,6 +1371,16 @@ HRESULT CDX9SkinMesh::CreateLinearSampler(ID3D11SamplerState** pSampler)
 	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	if (FAILED(
 		m_pDevice11->CreateSamplerState(&samDesc, &m_pSampleLinear)))
+	{
+		return E_FAIL;
+	}
+
+	samDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	if (FAILED(
+		m_pDevice11->CreateSamplerState(&samDesc, &m_pToonSampleLinear)))
 	{
 		return E_FAIL;
 	}

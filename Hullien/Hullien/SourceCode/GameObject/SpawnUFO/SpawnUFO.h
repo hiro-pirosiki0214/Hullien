@@ -11,7 +11,9 @@
 #include <random>
 
 class CActor;
+class CUFOLight;
 class CCollisionManager;	// 当たり判定クラス.
+class CUltemateSing;
 
 class CSpawnUFO : public CGameObject
 {
@@ -24,28 +26,40 @@ public:
 
 	// 初期化関数.
 	virtual bool Init() override;
+	// 更新関数.
+	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// スプライトの描画.
+	void SpriteRender();
 
 	// 宇宙人をスポーンさせる.
 	void SpawnAlien( std::vector<std::shared_ptr<CAlien>>& );
 	// 宇宙人のパラメータリストを設定する.
-	void SetAlienParameterList( std::vector<CAlien::SAlienParam>* );
+	void SetAlienParameterList( std::vector<SAlienParam>* );
 	// スポーンパラメータの設定.
 	void SetSpawnParameter( const SSpawnUFOParam& param );
 	// 連れ去るUFOの座標設定.
-	void SetAbductUFOPosition( D3DXVECTOR3* pPos ){ m_pAbductUFOPosition = pPos; }
+	inline void SetAbductUFOPosition( D3DXVECTOR3* pPos ){ m_pAbductUFOPosition = pPos; }
+
+	// ライトを取り出す.
+	void LightDischarge();
+	// ライトをしまう.
+	void LightCleanUP();
+	// 光を完全に放出する.
+	void DischargePreparation();
+	// 光を片づける.
+	void CleanUPPreparation();
+
 	// 描画フラグ設定関数.
-	void SetDisp(const bool& disp) { m_IsDisp = disp; }
+	inline void SetDisp(const bool& disp) { m_IsDisp = disp; }
 
 	// スケール値の設定.
-	void SetScale(const D3DXVECTOR3& scale) { m_vSclae = scale; }
+	inline void SetScale(const D3DXVECTOR3& scale) { m_vScale = scale; }
 	// 当たり判定(イベントで使用).
 	D3DXVECTOR3 Collision(CActor* pActor);
-private:
-	// 更新関数.外部で使用しないので隠蔽.
-	virtual void Update() override;
 
+private:
 	// 宇宙人の作成.
 	std::shared_ptr<CAlien> AlienFactory();
 	// 宇宙人番号の取得.
@@ -62,15 +76,18 @@ private:
 
 private:
 	std::shared_ptr<CDX9StaticMesh>		m_pStaticMesh;			// メッシュ.
+	std::shared_ptr<CUFOLight>			m_pUFOLight;			// UFOライト.
+	std::unique_ptr<CUltemateSing>		m_pUltemateSing;		// 宇宙人Dの警告UI.
+	std::vector<std::shared_ptr<CAlien>>m_AilenList;			// 宇宙人リスト.
 	std::shared_ptr<CCollisionManager>	m_pCollManager;			// 当たり判定クラス.
 	SSpawnUFOParam						m_SpawnParameter;		// スポーンパラメータ.
 	D3DXVECTOR3							m_SpawnPoint;			// スポーンポイント.
 	D3DXVECTOR3*						m_pAbductUFOPosition;	// 連れ去るUFOの座標.
-	std::vector<CAlien::SAlienParam>*	m_pAlienParamList;		// 宇宙人パラメータリスト.
+	std::vector<SAlienParam>*			m_pAlienParamList;		// 宇宙人パラメータリスト.
 	int	m_FrameCount;	// 経過フレームカウント.
 	int m_SpawnCount;	// スポーンカウント.
 	int m_AlienIndex;	// 宇宙人.
-
+	int	m_AlienSpawnCount;
 	bool m_IsDisp;		//描画フラグ.
 
 	std::mt19937 m_RandomSeed;	// ランダムシード.

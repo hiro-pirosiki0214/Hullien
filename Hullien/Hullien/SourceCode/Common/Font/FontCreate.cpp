@@ -16,12 +16,9 @@ CFontCreate::CFontCreate( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext
 
 CFontCreate::~CFontCreate()
 {
+	// 利用可能にしたフォントを破棄する.
 	DESIGNVECTOR design;
-	RemoveFontResourceEx( 
-		TEXT(FONT_PATH),
-		FR_PRIVATE,
-		&design
-	);
+	RemoveFontResourceEx( TEXT(FONT_PATH), FR_PRIVATE, &design );
 }
 
 //-----------------------------------.
@@ -32,8 +29,6 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11ShaderResourceVie
 	if( m_pDevice11 == nullptr ) return E_FAIL;
 	if( m_pContext11 == nullptr ) return E_FAIL;
 
-	HRESULT hr;
-	
 	// 文字コード取得
 	UINT code = 0;
 #if _UNICODE
@@ -43,54 +38,55 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11ShaderResourceVie
 	// マルチバイト文字の場合、
 	// 1バイト文字のコードは1バイト目のUINT変換、
 	// 2バイト文字のコードは[先導コード]*256 + [文字コード]です
-	if(IsDBCSLeadByte(*c))
+	if( IsDBCSLeadByte(*c) ){
 		code = (BYTE)c[0]<<8 | (BYTE)c[1];
-	else
+	} else {
 		code = c[0];
+	}
 #endif
-
-	HDC hdc = nullptr;
-	HFONT hFont = nullptr;
-	HFONT oldFont = nullptr;
 
 	// フォントの生成
 	LOGFONT lf = { 
-		FONT_BMP_SIZE,
-		0,
-		0, 
-		0, 
-		0, 
-		0,
-		0,
-		0, 
-		SHIFTJIS_CHARSET,
-		OUT_TT_ONLY_PRECIS,
-		CLIP_DEFAULT_PRECIS, 
-		PROOF_QUALITY,
-		FIXED_PITCH | FF_MODERN,
-		TEXT("Data\\Font\\mplus-1p-medium.ttf")
+		FONT_BMP_SIZE,					// 文字セルまたは文字の高さ.
+		0,								// 平均文字幅.
+		0,								// 文字送りの方向とX軸との角度.
+		0,								// ベースラインとX軸との角度.
+		0,								// フォントの太さ.
+		0,								// イタリック体の指定.
+		0,								// 下線付き指定.
+		0,								// 打消し線付き指定.
+		SHIFTJIS_CHARSET,				// キャラクタセット.
+		OUT_TT_ONLY_PRECIS,				// 出力精度.
+		CLIP_DEFAULT_PRECIS,			// クリッピングの精度.
+		PROOF_QUALITY,					// 出力品質.
+		FIXED_PITCH | FF_MODERN,		// ピッチとファミリ.
+		TEXT("UD デジタル 教科書体 N-B")// フォント名.
 	};
 
+	HFONT hFont = nullptr;
 	hFont = CreateFontIndirect( &lf );
+	if(  hFont == nullptr ) return E_FAIL;
 
-	// デバイスコンテキスト取得
-	// デバイスにフォントを持たせないとGetGlyphOutline関数はエラーとなる
-	hdc = GetDC( NULL );
+	HDC hdc			= nullptr;
+	HFONT oldFont	= nullptr;
+	// デバイスコンテキスト取得.
+	// デバイスにフォントを持たせないとGetGlyphOutline関数はエラーとなる.
+	hdc = GetDC( nullptr );
 	oldFont = (HFONT)SelectObject( hdc, hFont );
 
-	// フォントビットマップ取得
+	// フォントビットマップ取得.
 	TEXTMETRIC TM;
 	GetTextMetrics( hdc, &TM );
 	GLYPHMETRICS GM;
 	CONST MAT2 Mat = { {0,1}, {0,0}, {0,0}, {0,1} };
-	DWORD size = GetGlyphOutline( hdc, code, GGO_GRAY4_BITMAP, &GM, 0, NULL, &Mat );
+	DWORD size = GetGlyphOutline( hdc, code, GGO_GRAY4_BITMAP, &GM, 0, nullptr, &Mat );
 	BYTE* ptr = new BYTE[size];
 	GetGlyphOutline( hdc, code, GGO_GRAY4_BITMAP, &GM, size, ptr, &Mat );
 
 	// デバイスコンテキストとフォントハンドルの開放
 	SelectObject( hdc, oldFont );
 	DeleteObject( hFont );
-	ReleaseDC( NULL, hdc );
+	ReleaseDC( nullptr, hdc );
 
 
 	//--------------------------------
@@ -100,23 +96,23 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11ShaderResourceVie
 	D3D11_TEXTURE2D_DESC desc = CreateDesc( GM.gmCellIncX, TM.tmHeight );
 	ID3D11Texture2D* texture2D = nullptr;
 
-	hr = m_pDevice11->CreateTexture2D( &desc, 0, &texture2D );
+	if( FAILED( m_pDevice11->CreateTexture2D( &desc, 0, &texture2D ))){
+		return E_FAIL;
+	}
 
 	D3D11_MAPPED_SUBRESOURCE hMappedResource;
-	hr = m_pContext11->Map( 
-		texture2D,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&hMappedResource );
+	if( FAILED( m_pContext11->Map( 
+		texture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &hMappedResource ))){
+		return E_FAIL;
+	}
 
-	// ここで書き込む
+	// データを取得する.
 	BYTE* pBits = (BYTE*)hMappedResource.pData;
 	
-	// フォント情報の書き込み
-	// iOfs_x, iOfs_y : 書き出し位置(左上)
-	// iBmp_w, iBmp_h : フォントビットマップの幅高
-	// Level : α値の段階 (GGO_GRAY4_BITMAPなので17段階)
+	// フォント情報の書き込み.
+	// iOfs_x, iOfs_y : 書き出し位置(左上).
+	// iBmp_w, iBmp_h : フォントビットマップの幅高.
+	// Level : α値の段階 (GGO_GRAY4_BITMAPなので17段階).
 	int iOfs_x = GM.gmptGlyphOrigin.x;
 	int iOfs_y = TM.tmAscent - GM.gmptGlyphOrigin.y;
 	int iBmp_w = GM.gmBlackBoxX + ( 4 - ( GM.gmBlackBoxX % 4 ) ) % 4 ;
@@ -137,6 +133,9 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11ShaderResourceVie
 
 	delete[] ptr;
 
+	//-------------------------------------------------.
+	// テクスチャ情報をシェーダーリソースビューにする.
+
 	// テクスチャ情報を取得する.
 	D3D11_TEXTURE2D_DESC texDesc;
 	texture2D->GetDesc( &texDesc );
@@ -149,10 +148,11 @@ HRESULT CFontCreate::CreateFontTexture2D( const char* c, ID3D11ShaderResourceVie
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = texDesc.MipLevels;
 
-	m_pDevice11->CreateShaderResourceView( texture2D, &srvDesc, resource );
+	if( FAILED( m_pDevice11->CreateShaderResourceView( texture2D, &srvDesc, resource ))){
+		return E_FAIL;
+	}
 
 	return S_OK;
-
 }
 
 //-----------------------------------.

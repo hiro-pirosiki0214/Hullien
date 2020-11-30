@@ -39,7 +39,7 @@ void CEventCharacter::SetOptionalState(const SOptionalState& state)
 {
 	m_vPosition = state.vPosition;
 	m_vRotation = state.vRotation;
-	m_vSclae = state.vScale;
+	m_vScale = state.vScale;
 	m_Parameter.ModelAlpha = state.ModelAlpha;
 	m_Parameter.MoveSpeed = state.MoveSpeed;
 	m_Parameter.RotationalSpeed = state.RotationalSpeed;
@@ -51,28 +51,18 @@ void CEventCharacter::SetOptionalState(const SOptionalState& state)
 // メッシュの表示関数.
 void CEventCharacter::MeshRender()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if (m_pSkinMesh == nullptr) return;
 
 	m_pSkinMesh->SetPosition(m_vPosition);
 	m_pSkinMesh->SetRotation(m_vRotation);
-	m_pSkinMesh->SetScale(m_vSclae);
-	m_pSkinMesh->SetAnimSpeed(0.01);
+	m_pSkinMesh->SetScale(m_vScale);
+	m_pSkinMesh->SetAnimSpeed(m_AnimSpeed);
 	m_pSkinMesh->Render();
-#else
-	if (m_pTempStaticMesh == nullptr) return;
-
-	m_pTempStaticMesh->SetPosition(m_vPosition);
-	m_pTempStaticMesh->SetRotation(m_vRotation);
-	m_pTempStaticMesh->SetScale(m_vSclae);
-	m_pTempStaticMesh->Render();
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
 }
 
 // モデルの取得関数
 bool CEventCharacter::GetModel(const char * modelName)
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	// 既に読み込めていたら終了.
 	if (m_pSkinMesh != nullptr) return true;
 	// モデルの取得.
@@ -80,15 +70,6 @@ bool CEventCharacter::GetModel(const char * modelName)
 	// モデルが読み込めてなければ false.
 	if (m_pSkinMesh == nullptr) return false;
 	return true;
-#else
-	// 既に読み込めていたら終了.
-	if (m_pTempStaticMesh != nullptr) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic(m_pTempStaticMesh, modelName);
-	// モデルが読み込めてなければ false.
-	if (m_pTempStaticMesh == nullptr) return false;
-	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }
 
 // アニメーション設定.
@@ -144,7 +125,7 @@ bool CEventCharacter::FootStepCollisionSetting()
 	if (FAILED(m_pGroundCollision->InitSphere(
 		&m_vGroundPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
 
@@ -155,13 +136,13 @@ bool CEventCharacter::FootStepCollisionSetting()
 	if (FAILED(m_pFootCollision[0]->InitSphere(
 		&m_vRightPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
 	if (FAILED(m_pFootCollision[1]->InitSphere(
 		&m_vLeftPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		0.5f))) return false;
 //#endif
@@ -223,31 +204,31 @@ void CEventCharacter::SetRotationZ(const float& vRot_z)
 // 大きさ取得関数.
 D3DXVECTOR3 CEventCharacter::GetScale() const
 {
-	return m_vSclae;
+	return m_vScale;
 }
 
 // 大きさ設定関数.
 void CEventCharacter::SetScale(const D3DXVECTOR3& vScale)
 {
-	m_vSclae = vScale;
+	m_vScale = vScale;
 }
 
 // X座標大きさ設定関数.
 void CEventCharacter::SetScaleX(const float & vScale_x)
 {
-	m_vSclae.x = vScale_x;
+	m_vScale.x = vScale_x;
 }
 
 // Y座標大きさ設定関数.
 void CEventCharacter::SetScaleY(const float & vScale_y)
 {
-	m_vSclae.y = vScale_y;
+	m_vScale.y = vScale_y;
 }
 
 // Z座標大きさ設定関数.
 void CEventCharacter::SetScaleZ(const float & vScale_z)
 {
-	m_vSclae.z = vScale_z;
+	m_vScale.z = vScale_z;
 }
 
 float CEventCharacter::RotationMoveRight(const float& rotValue, const float& rotSpeed, bool IsRightRot)

@@ -6,7 +6,7 @@
 class CDX9StaticMesh;
 struct stSpawnUFOParam;
 
-class CSpawnEdit : CEditBase
+class CSpawnEdit : public CEditBase
 {
 	const char* FILE_PATH = "Data\\GameParam\\Alien\\SpaenParam\\SpaenParam.bin";
 	const char* MODEL_NAME = "ufo_mini";
@@ -22,6 +22,8 @@ public:
 	virtual void Render() override;
 	// モデルの描画.
 	virtual void ModelRender() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 
 private:
 	// ファイルの読み込み.

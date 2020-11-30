@@ -1,0 +1,18 @@
+//ローカル座標の番号.
+#LocalPosNumber
+1
+//表示幅、高さ
+#dispSize
+418, 18
+//元画像幅、高さ
+#baseSize
+418, 38
+//1コマ当たりの幅、高さ
+#strideSize
+418, 18
+//表示座標
+#dispPos
+30, 49, 5
+//最大アニメーション数
+#animNum
+2

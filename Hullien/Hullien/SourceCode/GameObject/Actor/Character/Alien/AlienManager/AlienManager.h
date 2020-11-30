@@ -37,6 +37,8 @@ public:
 	DropItemList GetDropItemList(){ return m_DropItemList; }
 	// 女の子を連れ去っているか.
 	bool IsGirlAbduct();
+	// アニメーションを止める.
+	void StopAnimation();
 
 private:
 	// スポーン.
@@ -54,16 +56,16 @@ private:
 	bool ReadExplosionParam();
 
 private:
-	std::vector<std::shared_ptr<CAlien>>	m_AilenList;		// 宇宙人リスト.
-	std::vector<CSpawnUFO>					m_SpawnUFOList;		// スポーンUFOリスト.
-	std::vector<CAlien::SAlienParam>		m_AlienParamList;	// 宇宙人パラメータリスト.
-	std::vector<CExplosion>		m_ExplosionList;	// 爆発リスト.
-	CExplosion::SExplosionParam	m_ExplosionParam;	// 爆発パラメーター.
-	DropItemList m_DropItemList;		// 落とすアイテムのリスト.
-	D3DXVECTOR3	m_MotherShipUFOPos;		// 連れ去るUFOの座標.
-	bool		m_IsAlienAbduct;		// 宇宙人が連れ去っているかどうか.
-	int			m_SortCount;			// ソートする時のカウント.
-	bool		m_IsRisingMotherShip;	// マザーシップに昇っているか.
+	std::vector<std::shared_ptr<CAlien>>	m_AilenList;			// 宇宙人リスト.
+	std::vector<std::shared_ptr<CSpawnUFO>>	m_SpawnUFOList;			// スポーンUFOリスト.
+	std::vector<SAlienParam>				m_AlienParamList;		// 宇宙人パラメータリスト.
+	std::vector<CExplosion>					m_ExplosionList;		// 爆発リスト.
+	CExplosion::SExplosionParam				m_ExplosionParam;		// 爆発パラメーター.
+	DropItemList							m_DropItemList;			// 落とすアイテムのリスト.
+	D3DXVECTOR3								m_MotherShipUFOPos;		// 連れ去るUFOの座標.
+	bool									m_IsAlienAbduct;		// 宇宙人が連れ去っているかどうか.
+	int										m_SortCount;			// ソートする時のカウント.
+	bool									m_IsRisingMotherShip;	// マザーシップに昇っているか.
 };
 
 #endif	// #ifdef ALIEN_MANAGER_H.

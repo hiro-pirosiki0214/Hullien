@@ -23,7 +23,7 @@ CItemBase::CItemBase()
 	, m_HitEffectCount		( 0.0f )
 	, pPRAMETER				( nullptr )
 {
-	m_vSclae = { 1.0f, 1.0f, 1.0f };
+	m_vScale = { 1.0f, 1.0f, 1.0f };
 }
 
 CItemBase::CItemBase( const SParameter* pParam )
@@ -42,7 +42,7 @@ CItemBase::CItemBase( const SParameter* pParam )
 	, m_HitEffectCount		( 0.0f )
 	, pPRAMETER				( pParam )
 {
-	m_vSclae = { pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax };
+	m_vScale = { pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax, pPRAMETER->ModelScaleMax };
 
 	for( auto& e : m_pEffects ) e = std::make_shared<CEffectManager>();
 }
@@ -82,8 +82,15 @@ void CItemBase::Render()
 	if( IsDisplayOut() == true ) return;
 	// ドロップ　アクティブ時の描画.
 	DropAndActiveRender();
-	// ヒット時の描画.
-	HitRender();
+}
+
+// エフェクトの描画.
+void CItemBase::EffectRender()
+{
+	// 画面の外なら終了.
+	if( IsDisplayOut() == true ) return;
+	DropAndActiveEffectRender();
+	HitEffectRender();
 }
 
 // 当たり判定関数.
@@ -110,9 +117,14 @@ void CItemBase::Collision( CActor* pActor )
 void CItemBase::Drop( const D3DXVECTOR3& vPos )
 {
 	this->Init();
+	m_ModelAlpha		= 1.0f;
+	m_AccelerationValue	= 0.0f;
+	m_BoundCount		= 0;
+	m_ActiveCount		= 0;
+	m_HitEffectCount	= 0.0f;
 	m_NowState = ENowState::Drop;
 	this->m_vPosition = vPos;
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( vPos );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Play( { vPos.x, 0.001f, vPos.z } );
 	CSoundManager::PlaySE("DropItem");
 }
 
@@ -123,13 +135,13 @@ void CItemBase::Drop()
 	if( m_Scale <= pPRAMETER->ModelScaleMax ){
 		m_Scale += pPRAMETER->ModelScaleAddValue;
 		if( m_Scale >= 1.0f ) m_Scale = 1.0f;
-		m_vSclae = { m_Scale, m_Scale, m_Scale };
+		m_vScale = { m_Scale, m_Scale, m_Scale };
 	}
 
 	m_AccelerationValue += m_Gravity;		// 重力の加算.
 	m_vPosition.y -= m_AccelerationValue;	// 座標を加算値で引く.
 
-	// 高さが0.0fより低くなった場合.
+	// 高さが1.0fより低くなった場合.
 	if( m_vPosition.y <= 1.0f ){
 		m_AccelerationValue = -m_AccelerationValue;	// 加算値を反転する.
 		m_Gravity += m_Gravity;	// 重力を加算する.
@@ -211,7 +223,7 @@ bool CItemBase::ColliderSetting()
 	if( FAILED( m_pCollManager->InitCapsule(
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		{ 0.0f, 0.0f, 0.0f },
 		1.0f,
 		1.0f ) )) return false;
@@ -230,25 +242,35 @@ void CItemBase::DropAndActiveRender()
 	if( m_pStaticMesh == nullptr ) return;
 	m_pStaticMesh->SetPosition( m_vPosition );
 	m_pStaticMesh->SetRotation( m_vRotation );
-	m_pStaticMesh->SetScale( m_vSclae );
+	m_pStaticMesh->SetScale( m_vScale );
 	m_pStaticMesh->SetAlpha( m_ModelAlpha );
 	AlphaBlendSetting();
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
+	m_pStaticMesh->SetRasterizerState( ERS_STATE::Back );
 	m_pStaticMesh->Render();
-	m_pStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
+	m_pStaticMesh->SetRasterizerState( ERS_STATE::None );
 	m_pStaticMesh->SetBlend( false );
-
-	// エフェクトの描画.
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetLocation( m_vPosition );
-	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
 
 #if _DEBUG
 	m_pCollManager->DebugRender();
 #endif	// #if _DEBUG.
 }
 
+// ドロップ　アクティブ時のエフェクトの描画.
+void CItemBase::DropAndActiveEffectRender()
+{
+	if( m_NowState == ENowState::HitDisappear ) return;
+	if( m_NowState == ENowState::Delete ) return;
+	if( m_NowState == ENowState::None ) return;
+	if( m_NowState == ENowState::Max ) return;
+	if( m_ModelAlpha < 1.0f ) return;
+
+	// エフェクトの描画.
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->SetScale( 1.5f );
+	m_pEffects[static_cast<int>(EEffectNumber::DropAndActive)]->Render();
+}
+
 // ヒット時の描画.
-void CItemBase::HitRender()
+void CItemBase::HitEffectRender()
 {
 	if( m_NowState != ENowState::HitDisappear ) return;
 

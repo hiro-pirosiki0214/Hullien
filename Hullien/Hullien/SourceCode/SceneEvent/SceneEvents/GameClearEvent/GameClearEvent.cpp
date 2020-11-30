@@ -56,8 +56,7 @@ CGameClearEvent::~CGameClearEvent()
 bool CGameClearEvent::Load()
 {
 	CFade::SetFadeOut();
-	CSoundManager::ThreadPlayBGM("ClearEventBGM");
-	CSoundManager::FadeInBGM("ClearEventBGM");
+
 
 	if( m_pGroundStage->Init() == false )	return false;	// ステージの初期化.
 	if( SpawnUFOInit() == false )			return false;	// UFOの初期化.
@@ -71,6 +70,9 @@ bool CGameClearEvent::Load()
 	m_IsEventEnd = false;
 	m_IsSkip = false;
 	m_Speed = static_cast<float>(D3DX_PI) * 0.05f;
+
+	CSoundManager::ThreadPlayBGM("ClearEventBGM");
+	CSoundManager::FadeInBGM("ClearEventBGM");
 
 	return true;
 }
@@ -97,13 +99,13 @@ void CGameClearEvent::Render()
 {
 	m_pSkyDome->Render();		// 背景の描画.
 	m_pGroundStage->Render();	// ステージの描画.
-	m_pSpawnUFO->Render();		// UFOの描画.
 	m_pPlayer->Render();		// プレイヤーの描画.
 	m_pGirl->Render();			// 女の子の描画.
 	m_pAlienA->Render();		// 宇宙人Aの描画.
+	m_pSpawnUFO->Render();		// UFOの描画.
 
 #if 1
-	DebugRender();
+//	DebugRender();
 #endif
 
 }
@@ -129,6 +131,7 @@ bool CGameClearEvent::CameraInit()
 bool CGameClearEvent::SpawnUFOInit()
 {
 	if( m_pSpawnUFO->Init() == false ) return false;
+	m_pSpawnUFO->DischargePreparation();
 	m_vUFOPosition = INIT_UFOPOSITION;
 	return true;
 }
@@ -176,6 +179,7 @@ void CGameClearEvent::ActorUpdate()
 	// UFO.
 	m_pSpawnUFO->SetPosition( m_vUFOPosition );
 	m_pSpawnUFO->SetScale(m_vUFOScale);
+	m_pSpawnUFO->Update();
 }
 
 // カメラの更新関数.
@@ -221,7 +225,7 @@ void CGameClearEvent::SceneSetting()
 	}
 
 	// スキップ.
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001
+	if (GetAsyncKeyState(VK_RETURN) & 0x8000
 		|| CXInput::B_Button() == CXInput::enPRESS_AND_HOLD) {
 		m_SkipWaitCount++;
 
@@ -245,6 +249,7 @@ void CGameClearEvent::NextStep()
 // スキップ.
 void CGameClearEvent::Skip()
 {
+	if( m_EventStep == EEventStep::Move_UFO ) return;
 	if(m_EventStep == EEventStep::NextScene) return;
 	if(m_IsSkip == true) return;
 
@@ -274,6 +279,7 @@ void CGameClearEvent::RunTowardsUFO()
 
 	if (m_stPlayer.vPosition.z > m_vUFOPosition.z) return;
 	m_pPlayer->SetAnimationBlend(player::EAnimNo::EAnimNo_Wait);
+	m_pGirl->SetAnimationBlend(girl::EAnimNo::EAnimNo_Wait);
 	CSoundManager::PlaySE("UFOSucked");
 	NextStep();
 }
@@ -299,6 +305,7 @@ void CGameClearEvent::SuckedIntoUFO()
 	m_stPlayer.IsDisp = false;
 	m_stGirl.IsDisp = false;
 	NextStep();
+	m_pSpawnUFO->LightCleanUP();
 }
 
 // UFOのアップ.
@@ -372,6 +379,8 @@ void CGameClearEvent::KickedOutAlien()
 
 	if (m_stCamera.ViewingAngle <= m_pEventCamera->ResetViewingAngle()) return;
 	CSoundManager::PlaySE("AlienFall");
+	m_pAlienA->SetAnimation( CEventAlien::EAnimNo_Move );
+	m_pAlienA->SetAnimSpeed( 0.0 );
 	NextStep();
 }
 
@@ -389,6 +398,13 @@ void CGameClearEvent::FallAlien()
 	{
 		if(m_SwingCameraCount == 50) CSoundManager::PlaySE("FallDown");
 		if(m_SwingCameraCount != 0) m_SwingCameraCount--;
+		if (m_SwingCameraCount != 0){
+			m_SwingCameraCount--;
+			// 画面の揺れに合わせてコントローラーのバイブをする.
+			CXInput::SetVibration( 0, INPUT_VIBRATION_MAX );
+		} else {
+			CXInput::SetVibration( 0, 0 );
+		}
 		// カメラ揺らす.
 		m_stCamera.vLookPosition.y 
 			= m_stCamera.vLookPosition.y + static_cast<float>(sin(D3DX_PI * TWO / FREQUENCY_LOOKPOS_Y * m_SwingCameraCount) * (m_SwingCameraCount * AMPLITUDE_LOOKPOS));
@@ -444,10 +460,10 @@ void CGameClearEvent::MoveUFO()
 // 次のシーンに移動.
 void CGameClearEvent::NextScene()
 {
-	CSoundManager::FadeInBGM("ClearEventBGM");
+	CSoundManager::FadeOutBGM("ClearEventBGM");
 
 	if (CFade::GetIsFade() == true) return;
-	CSoundManager::StopBGMThread("ClearEventBGM");
+	while(CSoundManager::StopBGMThread("ClearEventBGM") == false);
 	m_IsEventEnd = true;
 }
 

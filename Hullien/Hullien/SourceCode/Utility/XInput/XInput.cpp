@@ -1,10 +1,14 @@
 #include "XInput.h"
+#include "..\FileManager\FileManager.h"
+#include <algorithm>
 
 CXInput::CXInput()
 	: m_State			( FOUR_LIMITED_CONTROLLER )
+	, m_Vibration		( FOUR_LIMITED_CONTROLLER )
 	, m_ConnectedCount	( 0 )
+	, m_IsVibration		( false )
 {
-	std::unordered_map<INT, enBUTTON_STATE> inputState;
+	std::unordered_map<INT, ButtonState> inputState;
 	inputState[XINPUT_GAMEPAD_DPAD_UP]			= enNOT_PUSHING;
 	inputState[XINPUT_GAMEPAD_DPAD_DOWN]		= enNOT_PUSHING;
 	inputState[XINPUT_GAMEPAD_DPAD_LEFT]		= enNOT_PUSHING;
@@ -22,10 +26,15 @@ CXInput::CXInput()
 	for( int i = 0; i < FOUR_LIMITED_CONTROLLER; i++ ){
 		m_ButtonStateList.emplace_back(inputState);
 	}
+	CFileManager::BinaryReading( VIBRATION_CONFIG_FILE_PATH, m_IsVibration );
 }
 
 CXInput::~CXInput()
-{}
+{
+	for( int i = 0; i < GetInstance()->m_ConnectedCount; i++ ){
+		SetVibration( 0, 0, i );	// バイブレーションの初期化.
+	}
+}
 
 void CXInput::StatsUpdate()
 {
@@ -42,22 +51,22 @@ void CXInput::StatsUpdate()
 //--------------------------------.
 // ボタン.
 //--------------------------------.
-CXInput::enBUTTON_STATE CXInput::A_Button( const int& connectNum )
+CXInput::ButtonState CXInput::A_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, GetInstance()->m_Button[A] );
 }
-CXInput::enBUTTON_STATE CXInput::B_Button( const int& connectNum )
+CXInput::ButtonState CXInput::B_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, GetInstance()->m_Button[B] );
 }
-CXInput::enBUTTON_STATE CXInput::X_Button( const int& connectNum )
+CXInput::ButtonState CXInput::X_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, GetInstance()->m_Button[X] );
 }
-CXInput::enBUTTON_STATE CXInput::Y_Button( const int& connectNum )
+CXInput::ButtonState CXInput::Y_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, GetInstance()->m_Button[Y] );
@@ -66,28 +75,28 @@ CXInput::enBUTTON_STATE CXInput::Y_Button( const int& connectNum )
 //--------------------------------.
 // 方向キー.
 //--------------------------------.
-CXInput::enBUTTON_STATE CXInput::DPadUp( const int& connectNum )
+CXInput::ButtonState CXInput::DPadUp( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_DPAD_UP );
 
 }
-CXInput::enBUTTON_STATE CXInput::DPadDown( const int& connectNum )
+CXInput::ButtonState CXInput::DPadDown( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_DPAD_DOWN );
 
 }
-CXInput::enBUTTON_STATE CXInput::DPadLEFT( const int& connectNum )
+CXInput::ButtonState CXInput::DPadLEFT( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_DPAD_LEFT );
 
 }
-CXInput::enBUTTON_STATE CXInput::DPadRIGHT( const int& connectNum )
+CXInput::ButtonState CXInput::DPadRIGHT( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 
@@ -125,12 +134,12 @@ SHORT CXInput::RThumbY_Axis( const int& connectNum )
 //--------------------------------.
 // スティックボタン.
 //--------------------------------.
-CXInput::enBUTTON_STATE CXInput::LThumb_Button( const int& connectNum )
+CXInput::ButtonState CXInput::LThumb_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_LEFT_THUMB );
 }
-CXInput::enBUTTON_STATE CXInput::RThumb_Button( const int& connectNum )
+CXInput::ButtonState CXInput::RThumb_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_RIGHT_THUMB );
@@ -153,12 +162,12 @@ INT CXInput::RTrigger( const int& connectNum )
 //--------------------------------.
 // ショルダー.
 //--------------------------------.
-CXInput::enBUTTON_STATE CXInput::L_Button( const int& connectNum )
+CXInput::ButtonState CXInput::L_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, GetInstance()->m_Button[Left] );
 }
-CXInput::enBUTTON_STATE CXInput::R_Button( const int& connectNum )
+CXInput::ButtonState CXInput::R_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, GetInstance()->m_Button[Right] );
@@ -167,7 +176,7 @@ CXInput::enBUTTON_STATE CXInput::R_Button( const int& connectNum )
 //--------------------------------.
 // スタート ボタン.
 //--------------------------------.
-CXInput::enBUTTON_STATE CXInput::Start_Button( const int& connectNum )
+CXInput::ButtonState CXInput::Start_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_START );
@@ -175,12 +184,27 @@ CXInput::enBUTTON_STATE CXInput::Start_Button( const int& connectNum )
 //--------------------------------.
 // バック ボタン.
 //--------------------------------.
-CXInput::enBUTTON_STATE CXInput::Back_Button( const int& connectNum )
+CXInput::ButtonState CXInput::Back_Button( const int& connectNum )
 {
 	GetInstance()->ConnectCheck( connectNum );
 	return GetInstance()->ButtonInputState( connectNum, XINPUT_GAMEPAD_BACK );
 }
 
+//--------------------------------.
+//振動設定.
+//--------------------------------.
+bool CXInput::SetVibration( WORD LMotorSpd, WORD RMotorSpd, const int& connectNum  )
+{
+	if( GetInstance()->m_IsVibration == false ) return false;
+	GetInstance()->m_Vibration[connectNum].wLeftMotorSpeed = std::clamp<WORD>( LMotorSpd, INPUT_VIBRATION_MIN, INPUT_VIBRATION_MAX );
+	GetInstance()->m_Vibration[connectNum].wRightMotorSpeed = std::clamp<WORD>( RMotorSpd, INPUT_VIBRATION_MIN, INPUT_VIBRATION_MAX );
+
+	if( ERROR_SUCCESS == XInputSetState(
+		connectNum, &GetInstance()->m_Vibration[connectNum] ) ){
+		return true;
+	}
+	return false;
+}
 
 void CXInput::ConnectCheck( const int& connectNum )
 {
@@ -195,7 +219,7 @@ bool CXInput::IsButtonInput( const int& connectNum, const DWORD& button_mask )
 	return ( GetInstance()->m_State[connectNum].Gamepad.wButtons & button_mask );
 }
 
-CXInput::enBUTTON_STATE CXInput::ButtonInputState( const int& connectNum, const DWORD& button_mask )
+CXInput::ButtonState CXInput::ButtonInputState( const int& connectNum, const DWORD& button_mask )
 {
 	if( m_ButtonStateList[connectNum][button_mask] == enNOT_PUSHING ||
 		m_ButtonStateList[connectNum][button_mask] == enSEPARATED ){

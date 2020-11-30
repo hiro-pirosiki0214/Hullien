@@ -83,15 +83,17 @@ public:
 	virtual void Update() override;
 	// 描画関数.
 	virtual void Render() override;
+	// エフェクトの描画.
+	virtual void EffectRender() override;
 	// 当たり判定関数.
 	virtual void Collision( CActor* pActor ) override;
 	// 出現処理.
-	void Drop( const D3DXVECTOR3& vPos );
+	virtual void Drop( const D3DXVECTOR3& vPos );
 
 	// 消えたかどうか.
-	bool IsDelete(){ return m_NowState == ENowState::Delete; }
+	inline bool IsDelete(){ return m_NowState == ENowState::Delete; }
 	// 当たって消えたか.
-	bool IsHitDisappear(){ return m_NowState == ENowState::HitDisappear; }
+	inline bool IsHitDisappear(){ return m_NowState == ENowState::HitDisappear; }
 
 protected:
 	// 当たった際の効果を与える.
@@ -113,13 +115,15 @@ protected:
 	// モデルの取得.
 	bool GetModel( const char* modelName );
 	// 当たり判定の設定.
-	bool ColliderSetting();
+	virtual bool ColliderSetting();
 
 private:
 	// ドロップ　アクティブ時の描画.
 	void DropAndActiveRender();
-	// ヒット時の描画.
-	void HitRender();
+	// ドロップ　アクティブ時のエフェクトの描画.
+	void DropAndActiveEffectRender();
+	// ヒット時のエフェクトの描画.
+	void HitEffectRender();
 	// アルファブレンドの設定.
 	void AlphaBlendSetting();
 
@@ -136,8 +140,8 @@ protected:
 
 	int m_ActiveCount;		// アクティブカウント.
 
-	float m_FlashingCount;	// 点滅カウント.
-	float m_DisappearCount;	// 消える時間.
+	float m_FlashingCount;		// 点滅カウント.
+	float m_DisappearCount;		// 消える時間.
 	float m_FlashingAccValue;	// 点滅加速値.
 
 	float m_HitEffectCount;	// ヒット時のエフェクトカウント.

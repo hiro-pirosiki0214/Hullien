@@ -28,6 +28,8 @@ public:
 
 	// 読み込み(ラッパー).
 	static void Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
+	// 解放.
+	static void Release();
 	// エフェクト取得関数.
 	static std::shared_ptr<CEffect> GetEffect( const std::string& fileName );
 

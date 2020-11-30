@@ -25,17 +25,19 @@ public:
 	static CSpriteResource* GetInstance();
 
 	// スプライトの読み込み(ラッパー).
-	static void Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
+	static HRESULT Load( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
 
 	// スプライト取得関数.
 	static std::shared_ptr<CSprite> GetSprite( const std::string& spriteName );
 
+	// スプライト情報の読み込み.
+	static SSpriteState SpriteStateRead( const std::string& filePath );
+	// スプライト情報の読み込み.
+	static HRESULT SpriteStateRead( const std::string& filePath, SSpriteState* ss );
 private:
 	// スプライト読み込み.
-	void SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
+	HRESULT SpriteLoad( ID3D11Device* pDevice11, ID3D11DeviceContext* pContext11 );
 
-	// スプライト情報の読み込み.
-	CSprite::SPRITE_STATE SpriteStateRead( const std::string& filePath );
 
 private:
 	sprite_map m_SpriteList;	// スプライトリスト.

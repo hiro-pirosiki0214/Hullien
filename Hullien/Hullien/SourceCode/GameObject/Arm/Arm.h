@@ -11,7 +11,7 @@ public:
 private:
 	const char* MODEL_NAME = "armsandwich_s";
 
-	const float APPEARANCE_ADD_VALUE	= 0.005f;	// 出現時の加算値.
+	const float APPEARANCE_ADD_VALUE	= 0.1f;		// 出現時の加算値.
 	const float APPEARANCE_COUNT_MAX	= 1.0f;		// 出現時の最大数.
 	const float CLEAN_UP_SUB_VALUE		= 0.015f;	// 片づけ時の減算値.
 	const float CLEAN_UP_COUNT_MIN		= 0.0f;		// 片づけ時の最小数.
@@ -48,19 +48,26 @@ public:
 	virtual void Render() override;
 
 	// Y軸の設定.
-	void SetRotationY( const float& rotY ){ m_vRotation.y = rotY; }
+	inline void SetRotationY( const float& rotY ){ m_vRotation.y = rotY; }
 
 	// 掴んでいるか.
-	bool IsGrab(){ return m_NowArmState == EArmState::End; }
+	inline bool IsGrab(){ return m_NowArmState == EArmState::End; }
 	// 片づけているか.
-	bool IsCleanUp(){ return m_NowArmState == EArmState::Start; }
+	inline bool IsCleanUp(){ return m_NowArmState == EArmState::Start; }
 	// 掴んでいる座標の取得.
 	D3DXVECTOR3 GetGrabPosition();
 
 	// 出現する用意.
-	void SetAppearance();
+	void SetAppearancePreparation();
 	// 片づける用意.
+	void SetCleanUpPreparation();
+
+	// 完全に取り出す
+	void SetAppearance();
+	// 完全に片づける.
 	void SetCleanUp();
+
+	inline void SetCleanUpScale( const D3DXVECTOR3& scale ){ m_vScale = scale; }
 
 private:
 	// 出現.

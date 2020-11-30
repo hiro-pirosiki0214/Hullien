@@ -18,6 +18,7 @@ CEventPlayer::CEventPlayer()
 	, m_SpecialAbility		(0.0f)
 	, m_IsYButtonPressed	(false)
 	, m_HasUsableSP			(false)
+	, m_IsAlienHit			(false)
 	, m_IsAttackSE			(false)
 {
 	m_ObjectTag = EObjectTag::Player;
@@ -68,7 +69,7 @@ void CEventPlayer::Render()
 
 	m_pSkinMesh->SetPosition(m_vPosition);
 	m_pSkinMesh->SetRotation(m_vRotation);
-	m_pSkinMesh->SetScale(m_vSclae);
+	m_pSkinMesh->SetScale(m_vScale);
 	m_pSkinMesh->SetAnimSpeed(m_AnimSpeed);
 	m_pSkinMesh->Render();
 
@@ -104,6 +105,16 @@ bool CEventPlayer::IsSpecialAbility()
 	m_IsYButtonPressed = false;
 	m_HasUsableSP = false;	
 	return true;
+}
+
+// ダメージアニメーションの更新.
+void CEventPlayer::DamageAnimUpdate()
+{
+	if( m_IsAlienHit == false ) return;
+	m_AnimFrameList[player::EAnimNo_Damage].UpdateFrame( m_AnimSpeed );
+
+	if( m_AnimFrameList[player::EAnimNo_Damage].IsNowFrameOver() == false ) return;
+	SetAnimationBlend( player::EAnimNo_Wait );
 }
 
 // 特殊能力操作関数.
@@ -154,7 +165,7 @@ bool CEventPlayer::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
 	return true;
@@ -168,7 +179,7 @@ bool CEventPlayer::ColliderSetting()
 		m_pTempStaticMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
+		&m_vScale.x,
 		m_Parameter.SphereAdjPos,
 		m_Parameter.SphereAdjRadius))) return false;
 	return true;

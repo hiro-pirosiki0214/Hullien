@@ -11,7 +11,8 @@ Texture2D g_ToonMap		: register(t5); // toonシェーダー用のテクスチャ.
 Texture2D g_FogTexture	: register(t6); // フォグ用のテクスチャ.
 // サンプラ.
 SamplerState g_SamLinear : register(s0);
-SamplerState g_ShadowSamLinear : register(s1);
+SamplerState g_ToonSamLinear : register(s1);
+SamplerState g_ShadowSamLinear : register(s2);
 
 struct FOG
 {
@@ -90,7 +91,6 @@ VS_OUTPUT VS_Main(VS_INPUT input)
 	Out.LightDir	= normalize(g_vLightDir).xyz; // ライト方向.
 	Out.EyeVector	= normalize(g_vCamPos - Out.PosW).xyz; // 視点ベクトル.
 	Out.Tex = input.Tex; //　テクスチャ座標.
-
 	// 各ライトからの深度値の取得.
 	Out.ZDepth[0] = mul(input.Pos, g_LightWVP[0]);
 	Out.ZDepth[1] = mul(input.Pos, g_LightWVP[1]);
@@ -176,7 +176,7 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 		float sm = depthColor.r + (depthColor.g + (depthColor.b + depthColor.a / 256.0f) / 256.0f) / 256.0f;
 		shadowColor = (zValue > sm - baias) ? 0.5f : 1.0f;
 	}
-	if (g_IsShadow.x >= 1.0f) color.xyz *= shadowColor;
+	if (g_IsShadow.x >= 1.0f) color.rgb *= shadowColor;
 	
 	//-----トゥーン処理------.
 	// ハーフランバート拡散照明によるライティング計算
@@ -184,8 +184,8 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 	p = p * 0.5f + 0.5f;
 	p = p * p;
 	// 計算結果よりトゥーンシェーダー用のテクスチャから色をフェッチする
-	float4 toonColor = g_ToonMap.Sample(g_SamLinear, float2(p, 0.0f));
-	color *= toonColor * g_fIntensity.x;
+	float4 toonColor = g_ToonMap.Sample(g_ToonSamLinear, float2(p, 0.0f));
+	color.rgb *= toonColor.rgb * g_fIntensity.x;
 	
 	//-----高さフォグ処理------.
 	// fogテクスチャの座標を取得、計算.
@@ -195,13 +195,12 @@ PS_OUTPUT PS_Main(VS_OUTPUT input) : SV_Target
 	float alpha = clamp((input.PosW.y - g_Fog.MinHeight) / (g_Fog.MaxHeight - g_Fog.MinHeight), 0.0f, 1.0f);
 	float alphas = 1.0f - (1.0f - alpha) * fogColor;
 
-	color = color * alphas + g_Fog.FogColor * (1.0f - alphas);
-
+	color.rgb = color.rgb * alphas + g_Fog.FogColor.rgb * (1.0f - alphas);
 	
 	PS_OUTPUT output = (PS_OUTPUT) 0;
 	output.Color = color;
 	output.Normal = float4(input.Normal, 1.0f);
-	output.ZDepth = outRBGA(zValue);
+	output.ZDepth = input.Pos.z / input.Pos.w;
 	return output;
 }
 
@@ -284,7 +283,7 @@ PS_OUTPUT PS_NoTex(VS_OUTPUT input) : SV_Target
 		float sm = depthColor.r + (depthColor.g + (depthColor.b + depthColor.a / 256.0f) / 256.0f) / 256.0f;
 		shadowColor = (zValue > sm - baias) ? 0.5f : 1.0f;
 	}
-	if (g_IsShadow.x >= 1.0f) color.xyz *= shadowColor;
+	if (g_IsShadow.x >= 1.0f) color.rgb *= shadowColor;
 	
 	//-----トゥーン処理------.
 	// ハーフランバート拡散照明によるライティング計算
@@ -292,8 +291,8 @@ PS_OUTPUT PS_NoTex(VS_OUTPUT input) : SV_Target
 	p = p * 0.5f + 0.5f;
 	p = p * p;
 	// 計算結果よりトゥーンシェーダー用のテクスチャから色をフェッチする
-	float4 toonColor = g_ToonMap.Sample(g_SamLinear, float2(p, 0.0f));
-	color *= toonColor * g_fIntensity.x;
+	float4 toonColor = g_ToonMap.Sample(g_ToonSamLinear, float2(p, 0.0f));
+	color.rgb *= toonColor.rgb * g_fIntensity.x;
 	
 	//-----高さフォグ処理------.
 	// fogテクスチャの座標を取得、計算.
@@ -303,11 +302,11 @@ PS_OUTPUT PS_NoTex(VS_OUTPUT input) : SV_Target
 	float alpha = clamp((input.PosW.y - g_Fog.MinHeight) / (g_Fog.MaxHeight - g_Fog.MinHeight), 0.0f, 1.0f);
 	float alphas = 1.0f - (1.0f - alpha) * fogColor;
 
-	color = color * alphas + fogColor * (1.0f - alphas);
+	color.rgb = color.rgb * alphas + g_Fog.FogColor.rgb * (1.0f - alphas);
 	
 	PS_OUTPUT output = (PS_OUTPUT) 0;
 	output.Color = color;
 	output.Normal = float4(input.Normal, 1.0f);
-	output.ZDepth = outRBGA(zValue);
+	output.ZDepth = input.Pos.z / input.Pos.w;
 	return output;
 }

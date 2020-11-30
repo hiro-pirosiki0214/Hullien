@@ -10,6 +10,7 @@ class CArm;
 **/
 class CEventAlien : public CEventCharacter
 {
+	
 public:
 	// 宇宙人状態.
 	enum class enEventAlienState
@@ -27,6 +28,21 @@ public:
 
 	} typedef EEventAlienState;
 
+	enum enAnimNo
+	{
+		EAnimNo_None = -1,
+
+		EAnimNo_Move,
+		EAnimNo_Arm,
+		EAnimNo_Damage,
+		EAnimNo_Dead,
+
+		EAnimNo_Max,
+
+		EAnimNo_Begin	= EAnimNo_Move,
+		EAnimNo_End		= EAnimNo_Max,
+	} typedef EAnimNo;
+
 public:
 	CEventAlien();
 	virtual ~CEventAlien();
@@ -34,11 +50,11 @@ public:
 	// 相手座標の設定.
 	virtual void SetTargetPos(CActor& actor) override;
 	// バリアに当たっているか.
-	bool IsBarrierHit() const { return m_IsBarrierHit; }
+	inline bool IsBarrierHit() const { return m_IsBarrierHit; }
 	// 宇宙人の状態設定.
-	void SetAlienState(const EEventAlienState& state) { m_NowState = state; }
+	inline void SetAlienState(const EEventAlienState& state) { m_NowState = state; }
 	// ターゲット位置取得関数.
-	D3DXVECTOR3 GetTargetPosition() const { return m_vTargetPosition; }
+	inline D3DXVECTOR3 GetTargetPosition() const { return m_vTargetPosition; }
 	// ターゲットをつかんでいるか.
 	bool IsGrab() const;
 
@@ -52,6 +68,7 @@ private:
 	bool IsAbduct() const { return m_NowState == EEventAlienState::Abduct; }
 	// 連れ去るUFOの座標の取得.
 	void SetAbductUFOPosition(D3DXVECTOR3* pos) { m_pAbductUFOPosition = pos; }
+	
 
 protected:
 	// 現在の状態の更新関数.

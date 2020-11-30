@@ -11,6 +11,7 @@
 #include "Game/Game.h"
 #include "GameClear/GameClear.h"
 #include "GameOver/GameOver.h"
+#include "Config/Config.h"
 #include "Editor/Editor.h"
 
 #endif	// #ifndef SCENE_LIST_H.

@@ -39,7 +39,7 @@ struct stPlayerParam : public CCharacter::SParameter
 namespace player
 {
 // アニメーション番号.
-enum enAnimNo
+enum enAnimNo : char
 {
 	EAnimNo_None = -1,
 
@@ -61,7 +61,7 @@ enum enAnimNo
 } typedef EAnimNo;
 
 // 攻撃番号,
-enum enAttackNo
+enum enAttackNo : unsigned char
 {
 	EAttackNo_None,
 
@@ -73,7 +73,7 @@ enum enAttackNo
 } typedef EAttackNo;
 
 // 効果時間計測番号.
-enum enEffectTimerNo
+enum enEffectTimerNo : unsigned char
 {
 	EEffectTimerNo_None,
 
@@ -86,19 +86,20 @@ enum enEffectTimerNo
 } typedef EEffectTimerNo;
 
 // 使用エフェクト番号.
-enum enEffectNo
+enum enEffectNo : unsigned char
 {
 	EEffectNo_AttackOne,		// 攻撃1.
 	EEffectNo_AttackTwo,		// 攻撃2.
 	EEffectNo_AttackThree,		// 攻撃3.
 	EEffectNo_SP,				// 特殊能力.
 	EEffectNo_Avoidance,		// 回避.
+	EEffectNo_Paralysis,		// 麻痺.
 	
 	EEffectNo_Max,
 } typedef EEffectNo;
 
 // 特殊能力のカメラ状態.
-enum enSPCameraState
+enum enSPCameraState : unsigned char
 {
 	ESPCameraState_None,
 
@@ -121,10 +122,11 @@ enum enStatusFlag : unsigned char
 
 	EStatusFlag_DuringAvoid		= 1 << 0,	// 回避中か.
 	EStatusFlag_EndSPCameraMove	= 1 << 1,	// 特殊能力のカメラの移動が終了したか.
-	EStatusFlag_UsableSP		= 1 << 2,	// 特殊能力が使えるか.
-	EStatusFlag_KnockBack		= 1 << 3,	// ノックバック中か.
-	EStatusFlag_Dead			= 1 << 4,	// 死亡中か.
-	EStatusFlag_AttackSE		= 1 << 5,	// 攻撃SEを鳴らすか.
+	EStatusFlag_AttackRange		= 1 << 2,	// 攻撃範囲に敵がいるか.
+	EStatusFlag_UsableSP		= 1 << 3,	// 特殊能力が使えるか.
+	EStatusFlag_KnockBack		= 1 << 4,	// ノックバック中か.
+	EStatusFlag_Dead			= 1 << 5,	// 死亡中か.
+	EStatusFlag_AttackSE		= 1 << 6,	// 攻撃SEを鳴らすか.
 
 	EStatusFlag_Max,
 

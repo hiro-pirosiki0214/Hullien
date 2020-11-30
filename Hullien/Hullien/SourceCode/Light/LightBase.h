@@ -43,6 +43,9 @@ public:
 	// À•W‚Ìæ“¾.
 	D3DXVECTOR3 GetPosition() const { return m_vPosition; }
 
+	// ‹“_À•W‚Ìİ’è.
+	void SetLookPosition( const D3DXVECTOR3& lookPos ){ m_vLookPosition = lookPos; }
+
 	// •ûŒü‚Ìİ’è.
 	void SetDirection( const D3DXVECTOR3& dir ){ m_vDirection = dir; }
 	// •ûŒü‚Ìæ“¾.

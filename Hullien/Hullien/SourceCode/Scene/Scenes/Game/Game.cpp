@@ -19,6 +19,7 @@
 #include "..\..\..\Common\Shader\ShadowMap\ShadowMap.h"
 #include "..\..\..\Common\SceneTexRenderer\SceneTexRenderer.h"
 #include "..\..\..\Common\Fog\Fog.h"
+#include "..\..\..\Resource\EffectResource\EffectResource.h"
 
 CGame::CGame( CSceneManager* pSceneManager )
 	: CSceneBase		( pSceneManager )
@@ -27,6 +28,9 @@ CGame::CGame( CSceneManager* pSceneManager )
 	, m_ContinueWidget	( nullptr )
 	, m_NowEventScene	( EEventSceneState::GameStart )
 	, m_NextSceneState	( ENextSceneState::None )
+	, m_WaitCount		( 0.0f )
+	, m_IsPlayGameBGM	( false )
+	, m_IsPlayDangerBGM	( false )
 {
 	m_GameObjManager		= std::make_unique<CGameActorManager>();
 	m_WidgetManager			= std::make_unique<CGameWidgetManager>();
@@ -43,6 +47,8 @@ CGame::~CGame()
 //============================.
 bool CGame::Load()
 {
+	CEffectResource::Release();
+	CEffectResource::Load( CDirectX11::GetDevice(), CDirectX11::GetContext() );
 	if( m_GameObjManager->Init() == false )	return false;
 	if( m_WidgetManager->Init() == false )	return false;
 	if( m_ContinueWidget->Init() == false )	return false;
@@ -56,9 +62,6 @@ bool CGame::Load()
 		m_NowEventScene = EEventSceneState::Game;
 		CFade::SetFadeOut();
 	}
-	CSoundManager::GetInstance()->m_fMaxBGMVolume = 0.5f;
-	CSoundManager::SetBGMVolume("GameBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
-	CSoundManager::SetBGMVolume("DangerBGM", CSoundManager::GetInstance()->m_fMaxBGMVolume);
 
 	return true;
 }
@@ -70,9 +73,11 @@ void CGame::Update()
 {
 	CFog::Update();	// フォグの更新.
 
+
 	switch (m_NowEventScene)
 	{
 	case EEventSceneState::Game:
+		m_pSceneManager->OnEditSceneChangeActive();
 		GameUpdate();
 		break;
 	case EEventSceneState::Continue:
@@ -81,6 +86,7 @@ void CGame::Update()
 	case EEventSceneState::GameStart:
 	case EEventSceneState::GameOver_Girl:
 	case EEventSceneState::Clear:
+		m_pSceneManager->OffEditSceneChangeActive();
 		m_pEventManager->Update();
 		break;
 	default:
@@ -143,9 +149,10 @@ void CGame::Render()
 	CEditRenderer::PushRenderProc( 
 		[&]()
 		{
+			ImGui::Image( CSceneTexRenderer::GetGBuffer()[0], ImVec2(800, 400) );
+			ImGui::Image( CSceneTexRenderer::GetGBuffer()[1], ImVec2(800, 400) );
+			ImGui::Image( CSceneTexRenderer::GetGBuffer()[2], ImVec2(800, 400) );
 			ImGui::Image( CSceneTexRenderer::GetTransBaffer(), ImVec2(800, 400) );
-			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[1], ImVec2(800, 400) );
-			ImGui::Image( CSceneTexRenderer::GetShadowBuffer()[2], ImVec2(800, 400) );
 		});	
 }
 
@@ -184,8 +191,6 @@ void CGame::ModelRender()
 	// 最終描画.
 	//--------------------------------------------.
 	// G-Bufferを使用して、画面に描画する.
-
-	CDirectX11::SetBackBuffer();
 	CSceneTexRenderer::Render();
 }
 
@@ -194,15 +199,38 @@ void CGame::GameUpdate()
 {
 	if (m_GameObjManager->IsDanger() == false)
 	{
-		CSoundManager::ThreadPlayBGM("GameBGM");
-		CSoundManager::FadeInBGM("GameBGM");
-		CSoundManager::FadeOutBGM("DangerBGM");
+		if( m_IsPlayGameBGM == false ){
+			if( CSoundManager::GetMoveUpThread("GameBGM") == false ){
+				CSoundManager::ThreadPlayBGM( "GameBGM" );
+				m_pSceneManager->SetNowBGMName("GameBGM");
+
+				CSoundManager::SetBGMVolume( "DangerBGM", 0.0f );
+				CSoundManager::ThreadPlayBGM("DangerBGM");
+			} else {
+				CSoundManager::AgainPlayBGM("GameBGM");
+			}
+			CSoundManager::StopBGM("DangerBGM");
+			CSoundManager::FadeInBGM("GameBGM");
+			m_IsPlayGameBGM = true;
+			m_IsPlayDangerBGM = false;
+		}
 	}
 	else
 	{
-		CSoundManager::ThreadPlayBGM("DangerBGM");
-		CSoundManager::FadeInBGM("DangerBGM");
-		CSoundManager::FadeOutBGM("GameBGM");
+		if( m_IsPlayDangerBGM == false ){
+			CSoundManager::StopBGM("GameBGM");
+			if( CSoundManager::GetMoveUpThread("DangerBGM") == false ){
+				CSoundManager::ThreadPlayBGM("DangerBGM");
+				m_pSceneManager->SetNowBGMName("DangerBGM");
+			} else {
+				CSoundManager::AgainPlayBGM("DangerBGM");
+			}
+			CSoundManager::BGMPointSeek("DangerBGM", 0, 0, 0.0 );
+			CSoundManager::FadeInBGM("DangerBGM");
+
+			m_IsPlayDangerBGM = true;
+			m_IsPlayGameBGM = false;
+		}
 	}
 
 	m_GameObjManager->Update();
@@ -218,7 +246,7 @@ void CGame::ContinueUpdate()
 	switch (m_ContinueWidget->GetSelectState())
 	{
 	case CContinueWidget::ESelectState::Yes:
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001
 			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
 			CSoundManager::PlaySE("Determination");
@@ -226,7 +254,7 @@ void CGame::ContinueUpdate()
 		}
 		break;
 	case CContinueWidget::ESelectState::No:
-		if (GetAsyncKeyState(VK_RETURN) & 0x8000
+		if (GetAsyncKeyState(VK_RETURN) & 0x0001
 			|| CXInput::B_Button() == CXInput::enPRESSED_MOMENT)
 		{
 			CSoundManager::PlaySE("CancelDetermination");
@@ -292,6 +320,7 @@ void CGame::NextSceneMove()
 		break;
 	case ENextSceneState::Clear:
 		m_pEventManager->NextEventMove();
+		m_pSceneManager->OnEditSceneChangeActive();
 		m_pSceneManager->NextSceneMove();
 		break;
 	case ENextSceneState::GameOver:
@@ -300,6 +329,7 @@ void CGame::NextSceneMove()
 		if (CFade::GetIsFade() == true) return;
 		m_pSceneManager->OnGameOver();
 		m_pEventManager->NextEventMove();
+		m_pSceneManager->OnEditSceneChangeActive();
 		m_pSceneManager->NextSceneMove();
 		break;
 	default:
@@ -333,12 +363,19 @@ void CGame::StopBGM(const char* name)
 	// スプライトフェードが終了していなければ処理しない.
 	if (CFade::GetIsFade() == true) return;
 	// BGMを止める.
-	CSoundManager::StopBGMThread(name);
+	while( CSoundManager::StopBGMThread(name) == false);
 }
 
 // 全てのBGM停止.
 void CGame::StopAllBGM()
 {
+	// StopBGM で止められている場合、
+	// StopBGMThread が機能しないので一瞬だけ鳴らす.
+	CSoundManager::SetBGMVolume( "DangerBGM", 0.0f );
+	CSoundManager::SetBGMVolume( "GameBGM", 0.0f );
+	CSoundManager::AgainPlayBGM("DangerBGM");
+	CSoundManager::AgainPlayBGM("GameBGM");
+
 	StopBGM("StartEventBGM");
 	StopBGM("GameBGM");
 	StopBGM("DangerBGM");

@@ -54,7 +54,7 @@ class CGameClearEvent : public CEventBase
 	// 宇宙人.
 	const float INIT_ALIENPOSITION_Y			= 9.0f;	//宇宙人の初期y座標.
 	const float ALIEN_ROTATION_Y				= static_cast<float>(D3DXToRadian(145)); // 宇宙人のy座標回転値.
-	const float ALIEN_FALL_POSITION_Y			= 2.0f;		//宇宙人の落下位置.
+	const float ALIEN_FALL_POSITION_Y			= 7.0f;		//宇宙人の落下位置.
 	const float ALIEN_FALL_SPEED_X				= 0.19f;	//宇宙人の落下速度.
 	const float ALIEN_FALL_SPEED_Y				= 0.4f;		//宇宙人の落下速度.
 	const float ALIEN_FALL_SPEED_Z				= 0.2f;		//宇宙人の落下速度.

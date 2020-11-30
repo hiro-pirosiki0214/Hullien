@@ -4,11 +4,15 @@
 #include "..\..\..\..\..\Collider\CollsionManager\CollsionManager.h"
 #include "..\..\..\..\..\XAudio2\SoundManager.h"
 #include "..\..\..\..\Arm\Arm.h"
+#include "..\..\..\..\..\Common\Effect\EffectManager.h"
 #include "..\..\..\..\..\Resource\MeshResource\MeshResource.h"
 
-#define IS_TEMP_MODEL_RENDER
-
 CAlienC::CAlienC()
+	: CAlienC	( nullptr )
+{}
+
+CAlienC::CAlienC( const SAlienParam* pParam )
+	: CAlien	( pParam )
 {
 	m_ObjectTag = EObjectTag::Alien_C;
 	m_pArm = std::make_unique<CArm>();
@@ -21,34 +25,33 @@ CAlienC::~CAlienC()
 // 初期化関数.
 bool CAlienC::Init()
 {
-#ifndef IS_TEMP_MODEL_RENDER
-	if( GetModel( MODEL_NAME ) == false ) return false;
-#else
-	// 既に読み込めていたら終了.
-	if( m_pTempStaticMesh != nullptr ) return true;
-	// モデルの取得.
-	CMeshResorce::GetStatic( m_pTempStaticMesh, MODEL_TEMP_NAME );
-	// モデルが読み込めてなければ false.
-	if( m_pTempStaticMesh == nullptr ) return false;
-#endif	// #ifndef IS_TEMP_MODEL_RENDER.
-	if( ColliderSetting() == false ) return false;
-	if( m_pArm->Init() == false ) return false;
+	if( pPARAMETER					== nullptr ) return false;
+	if( GetModel( MODEL_NAME )		== false ) return false;
+	if( GetAnimationController()	== false ) return false;
+	if( SetAnimFrameList()			== false ) return false;
+	if( ColliderSetting()			== false ) return false;
+	if( EffectSetting()				== false ) return false;
+	if( m_pArm->Init()				== false ) return false;
+	m_pSkinMesh->ChangeAnimSet_StartPos( alien::EAnimNo_Move, 0.0f, m_pAC );
 	return true;
 }
 
 // 更新関数.
 void CAlienC::Update()
 {
+	// アニメーションフレームの更新.
+	m_AnimFrameList[m_NowAnimNo].UpdateFrame( m_AnimSpeed );
 	SetMoveVector( m_TargetPosition );	// 目的のベクトルを取得.
 	CurrentStateUpdate();				// 現在の状態の更新.
 	// アーム.
-	m_pArm->SetPosition( m_vPosition );		// 座標を設定.
+	if( m_IsRisingMotherShip == false )
+		m_pArm->SetPosition( {m_vPosition.x, m_vPosition.y+5.0f, m_vPosition.z} );		// 座標を設定.
 	m_pArm->SetRotationY( m_vRotation.y );	// 回転値を設定.
 	m_pArm->Update();						// 更新.
 
 	// アルファ値が0より多ければ終了.
 	if( m_IsDelete == false ) return;
-	if( m_NowState == EAlienState::RisingMotherShip ) return;	// マザーシップに昇っている状態なら終了.
+	if( m_NowState == alien::EAlienState::RisingMotherShip ) return;	// マザーシップに昇っている状態なら終了.
 	m_IsExplosion = true;	// 爆発させる.
 	CSoundManager::PlaySE("Bomb");
 }
@@ -58,30 +61,16 @@ void CAlienC::Render()
 {
 	// 画面の外なら終了.
 	if( IsDisplayOut() == true ) return;
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return;
 
 	m_pSkinMesh->SetPosition( m_vPosition );
 	m_pSkinMesh->SetRotation( m_vRotation );
-	m_pSkinMesh->SetScale( m_vSclae );
-	m_pSkinMesh->SetColor( { 0.5f, 0.8f, 0.5f, 1.0f } );
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pSkinMesh->Render();
-	m_pSkinMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pSkinMesh->SetBlend( false );
-#else
-	if( m_pTempStaticMesh == nullptr ) return;
-
-	if( m_pTempStaticMesh == nullptr ) return;
-	m_pTempStaticMesh->SetPosition( m_vPosition );
-	m_pTempStaticMesh->SetRotation( m_vRotation );
-	m_pTempStaticMesh->SetScale( m_vSclae );
-	m_pTempStaticMesh->SetColor( { 0.0f, 0.0f, 0.8f, 1.0f } );
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::Back );
-	m_pTempStaticMesh->Render();
-	m_pTempStaticMesh->SetRasterizerState( CCommon::enRS_STATE::None );
-	m_pTempStaticMesh->SetBlend( false );
-#endif	// #ifdef IS_TEMP_MODEL_RENDER.
+	m_pSkinMesh->SetScale( m_vScale );
+	m_pSkinMesh->SetColor( { 0.2f, 0.2f, 0.8f, 1.0f } );
+	m_pSkinMesh->SetAnimSpeed( m_AnimSpeed );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::Back );
+	m_pSkinMesh->Render( m_pAC );
+	m_pSkinMesh->SetRasterizerState( ERS_STATE::None );
 	m_pArm->Render();	// アームの描画.
 #if _DEBUG
 	if( m_pCollManager == nullptr ) return;
@@ -101,17 +90,15 @@ void CAlienC::Collision( CActor* pActor )
 }
 
 // スポーン.
-bool CAlienC::Spawn( const stAlienParam& param, const D3DXVECTOR3& spawnPos )
+bool CAlienC::Spawn( const D3DXVECTOR3& spawnPos )
 {
 	// 既にスポーン済みなら終了.
-	if( m_NowState != EAlienState::None ) return true;
-	m_Parameter = param;	// パラメータを設定.
-	// 初期化に失敗したら終了.
-	if( Init() == false ) return false;
-	m_vPosition = spawnPos;	// スポーン座標の設定.
-	m_LifePoint = m_Parameter.LifeMax;	// 体力の設定.
-	m_NowState = EAlienState::Spawn;	// 現在の状態をスポーンに変更.
-
+	if( m_NowState != alien::EAlienState::None ) return true;
+	m_vPosition		= spawnPos;						// スポーン座標の設定.
+	m_LifePoint		= pPARAMETER->LifeMax;			// 体力の設定.
+	m_NowState		= alien::EAlienState::Spawn;	// 現在の状態をスポーンに変更.
+	m_AnimSpeed		= 0.0;							// アニメーション速度を止める.
+	m_pEffects[alien::EEffectNo_Spawn]->Play( m_vPosition );
 	return true;
 }
 
@@ -154,7 +141,6 @@ void CAlienC::Escape()
 // 当たり判定の設定.
 bool CAlienC::ColliderSetting()
 {
-#ifndef IS_TEMP_MODEL_RENDER
 	if( m_pSkinMesh == nullptr ) return false;
 	if( m_pCollManager == nullptr ){
 		m_pCollManager = std::make_shared<CCollisionManager>();
@@ -163,22 +149,8 @@ bool CAlienC::ColliderSetting()
 		m_pSkinMesh->GetMesh(),
 		&m_vPosition,
 		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
+		&m_vScale.x,
+		pPARAMETER->SphereAdjPos,
+		pPARAMETER->SphereAdjRadius ) )) return false;
 	return true;
-#else
-	if( m_pTempStaticMesh == nullptr ) return false;
-	if( m_pCollManager == nullptr ){
-		m_pCollManager = std::make_shared<CCollisionManager>();
-	}
-	if( FAILED( m_pCollManager->InitSphere( 
-		m_pTempStaticMesh->GetMesh(),
-		&m_vPosition,
-		&m_vRotation,
-		&m_vSclae.x,
-		m_Parameter.SphereAdjPos,
-		m_Parameter.SphereAdjRadius ) )) return false;
-	return true;
-#endif	// #ifndef IS_MODEL_RENDER.
 }
